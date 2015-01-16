@@ -1,0 +1,241 @@
+<!doctype>
+<html lang="en">
+<title>Plugins !</title>
+
+<head>
+
+  <!-- Styles -->
+  <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,500,700' rel='stylesheet' type='text/css'>
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/bootstrap.css') }}">
+  <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/material.css') }}"> -->
+  <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/material-wfont.css') }}"> -->
+  <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/ripples.css') }}"> -->
+  <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/jquery.nouislider.min.css') }}"> -->
+
+
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
+
+
+</head>
+
+<body>
+
+<!-- <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/plugins">Web OpenFX</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/plugins">Home</a></li>
+                <li class="active"><a href="/plugins">Plugins documentation</a></li>
+            </ul>
+            <form class="navbar-form navbar-right" role="search">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>
+                <button type="submit" class="btn btn-default glyphicon glyphicon-search"></button>
+            </form>
+            <p class="navbar-text pull-right">Signed in as Armand Biteau</p>
+        </div>
+    </div>
+</nav> -->
+
+
+<!-- <div id="left-nav">
+    <ul>
+        <li class='has-sub first'>
+            <a href='#'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
+            <ul>
+                <li><a href='#'>Sous menu 1</a></li>
+                <li><a href='#'>Sous menu 2</a></li>
+                <li><a href='#'>Sous menu 3</a></li>
+            </ul>
+        </li>
+        <li class='has-sub'>
+            <a href='#'>Plugins list</a>
+            <ul>
+                <li><a href='#'>Sous menu 3</a></li>
+                <li><a href='#'>Sous menu 3</a></li>
+                <li><a href='#'>Sous menu 3</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href='#'>Contact</a>
+        </li>
+    </ul>
+</div> -->
+
+
+<div id="left-nav">
+    <div class="logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="" class="img-responsive">
+    </div>
+    <ul>
+        <!-- <li>
+            <form class="navbar-form navbar-left">
+                <input type="text" class="form-control col-lg-8" placeholder="Search">
+            </form>
+        </li> -->
+
+        <li class="title-nav"><h4>NAVIGATION</h4></li>
+
+        <li>
+            <a href='#'><i class="fa fa-user"></i>Personnal account</a>
+            <ul>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">Plugins</a></li>
+                <li><a href="#">Bundles</a></li>
+            </ul>
+        </li>
+
+        <li>
+            <a href='#'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
+        </li>
+        <li class="active">
+            <a href='#'><i class="fa fa-crop"></i>Explore plugins</a>
+            <ul>
+                <li><a href="#">View all plugins</a></li>
+                <li><a href="#">Search a plugin</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href='#'><i class="fa fa-photo"></i>Get a render</a>
+        </li>
+        <li class="title-nav"><h4>MORE</h4></li>
+        <li>
+            <a href='#'><i class="fa fa-sitemap"></i>About the plateform</a>
+            <ul>
+                <li><a href="#">sous menu 1</a></li>
+                <li><a href="#">sous menu 2</a></li>
+                <li><a href="#">sous menu 3</a></li>
+            </ul>
+        </li>
+        <li>
+            <a href='#'><i class="fa fa-share-alt"></i>OFX community</a>
+        </li>
+    </ul>
+</div>
+
+
+<header class="page-app">
+
+
+    <div class="navbar">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse navbar-responsive-collapse">
+            <form class="navbar-form navbar-left">
+                <div class="form-group">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li><i class="fa fa-search" style="font-size:1.2em;padding-right:9px;margin-top:2px;"></i></li>
+                        <li><input type="text" class="form-control control-label" placeholder="Search"></li>
+                    </ul>
+                </div>
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <p class="navbar-text pull-right">Signed in as Armand Biteau</p>
+                </li>
+                <li class="dropdown">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Settings <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="javascript:void(0)">Action</a></li>
+                        <li><a href="javascript:void(0)">Another action</a></li>
+                        <li><a href="javascript:void(0)">Something else here</a></li>
+                        <li class="divider"></li>
+                        <li><a href="javascript:void(0)">Separated link</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+
+
+
+</header>
+
+
+
+<div class="main page-app">
+
+    {% block content %}{% endblock %}
+
+</div>
+
+
+
+
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+<script src="{{ url_for('static', filename='scripts/combined-scripts.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/ripples.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/material.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/jquery.nouislider.min.js') }}"></script>
+
+
+
+
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+    $.material.init();
+
+
+
+    $slider = $(".shor").noUiSlider({
+        start: 40,
+        connect: "lower",
+        range: {
+            min: 0,
+            max: 100
+        },
+        step: 1,
+        handles : 1,
+        format: wNumb({
+            decimals: false,
+            // postfix: ' %'
+        })
+    });
+    $value = $slider.val();
+
+    // $slider.Link('lower').to('-inline-');
+    $slider.Link('lower').to($('.input-number'));
+    $slider.Link('lower').to($('#input-number'));
+
+});
+
+$(document).ready(function(){
+    $("#left-nav a").click(function(){
+        $("#left-nav ul ul").slideUp();
+        if(!$(this).next().is(":visible"))
+        {
+            $(this).next().slideDown();
+        }
+    });
+})
+
+</script>
+
+
+</body>
+</html>
