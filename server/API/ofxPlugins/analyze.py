@@ -49,7 +49,7 @@ def getPluginProperties(tuttlePlugin):
         node = tuttle.createNode(tuttlePlugin.getIdentifier())
     except Exception as e:
         logging.error("Error in node creation: " + str(e))
-    return (pluginObject.__dict__)
+        return (pluginObject.__dict__)
 
     # plugin properties
     pluginObject.properties = getDictOfProperties(node.getProperties())
