@@ -13,7 +13,7 @@ configParser.read('ofxPlugins/configuration.conf')
 
 version = "0.0.1"
 
-globalOfxPluginPath = configParser.get("ofxPath", "globalOfxPluginPath")
+globalOfxPluginPath = configParser.get("OFX_PATH", "globalOfxPluginPath")
 tuttle.core().getPluginCache().addDirectoryToPath(globalOfxPluginPath)
 
 tuttle.core().preload(False)
@@ -41,4 +41,4 @@ def getPlugin(pluginId):
 
 if __name__ == '__main__':
     # logging.getLogger().setLevel(10)
-    app.run(host=configParser.get("app:plugin", "host"), port=configParser.getint("app:plugin", "port"), debug=True)
+    app.run(host=configParser.get("APP_PLUGIN", "host"), port=configParser.getint("APP_PLUGIN", "port"), debug=True)
