@@ -21,11 +21,11 @@ def getDictOfProperty(prop):
     pythonType = propTypeToPythonType[prop.getType()]
 
     return {
-    "name": prop.getName(),
-    "readOnly": prop.getPluginReadOnly(),
-    "type": prop.getType(),
-    "modifiedBy": prop.getModifiedBy(),
-    "value": [pythonType(v) for v in prop.getStringValue().split(', ')]
+        "name": prop.getName(),
+        "readOnly": prop.getPluginReadOnly(),
+        "type": prop.getType(),
+        "modifiedBy": prop.getModifiedBy(),
+        "value": [pythonType(v) for v in prop.getStringValue().split(', ')]
     }
 
 def getDictOfProperties(props):
@@ -39,10 +39,10 @@ def getPluginProperties(tuttlePlugin):
 
     pluginObject = plugin.Plugin()
     pluginObject.id = str(uuid.uuid1())
-    pluginObject.uri = "/plugins/"+ tuttlePlugin.getIdentifier()
+    pluginObject.uri = "/plugins/" + tuttlePlugin.getIdentifier()
     pluginObject.version = {
-    'major': tuttlePlugin.getVersionMajor(),
-    'minor': tuttlePlugin.getVersionMinor()
+        'major': tuttlePlugin.getVersionMajor(),
+        'minor': tuttlePlugin.getVersionMinor()
     }
 
     try:
