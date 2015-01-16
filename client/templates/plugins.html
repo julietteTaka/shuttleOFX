@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+
+{% block content %}
+
+
+<div class="header-content">
+    <div class="top-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>OpenFX plugins</h1>
+                    <p>Choose a filter</p>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+    <div class="bottom-header">
+        
+    </div>
+</div>
+
+
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+
+                {% for plugin in dico.plugins %}
+                    
+                    <div class="col-md-3">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">{{ plugin.name }}</h3>
+                            </div>
+                            <div class="panel-img">
+                                <img src="http://placehold.it/275x100/ddd/fff&text=OpenFX%20Plateform" alt="" class="img-responsive">
+                            </div>
+                            <div class="panel-body">
+                                {{ plugin.version }} - {{ plugin.author }}
+                                <a href="/plugins/{{ plugin.id }}" class="btn btn-primary">Test plugin</a>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
