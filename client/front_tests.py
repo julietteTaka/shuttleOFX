@@ -56,8 +56,7 @@ dico = {
                 }
 
             ]
-        }
-        ,
+        },
         {
             "id" : "opacity",
             "name" : "Opacity",
@@ -78,6 +77,69 @@ dico = {
                 }
 
             ]
+        },
+        {
+            "id" : "text",
+            "name" : "Text decorator",
+            "version" : "1.2",
+            "author" : "Armand Biteau",
+            "parameters" : [
+                {
+                    "id" : "wid",
+                    "name" : "Width",
+                    "type" : "int"
+
+                },
+                 {
+                    "id" : "hei",
+                    "name" : "Height",
+                    "type" : "int"
+
+                }
+
+            ]
+        },
+        {
+            "id" : "rgba",
+            "name" : "Convert to rgba",
+            "version" : "1.4",
+            "author" : "Armand Biteau",
+            "parameters" : [
+                {
+                    "id" : "wid",
+                    "name" : "Width",
+                    "type" : "int"
+
+                },
+                 {
+                    "id" : "hei",
+                    "name" : "Height",
+                    "type" : "int"
+
+                }
+
+            ]
+        },
+        {
+            "id" : "rgb",
+            "name" : "Convert to rgb",
+            "version" : "3.8.1",
+            "author" : "Armand Biteau",
+            "parameters" : [
+                {
+                    "id" : "wid",
+                    "name" : "Width",
+                    "type" : "int"
+
+                },
+                 {
+                    "id" : "hei",
+                    "name" : "Height",
+                    "type" : "int"
+
+                }
+
+            ]
         }
     ]
 }
@@ -92,6 +154,11 @@ def Plugin(pluginName=None):
     newdico = dict(dico)
     newdico["currentPlugin"] = pluginName
     return render_template('plugin.html', dico=newdico)
+
+
+@app.route('/upload')
+def uploadPlugins():
+    return render_template('upload.html')
 
 
 
