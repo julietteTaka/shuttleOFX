@@ -1,15 +1,16 @@
 {% extends "layout.html" %}
 
 
-{% block content %}
+{% block title %}
 
-
-<div class="header-content">
+<div class="header-content" data-0="height:175px" data-150="height:0px">
     <div class="top-header">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h1>OpenFX plugins</h1>
+                    <h1 data-0="margin-top:80px;font-size: 3.5em;" data-150="margin-top:-55px;font-size: 2em;">
+                      OpenFX plugins
+                    </h1>
                 </div>
                 
             </div>
@@ -18,62 +19,73 @@
 
 </div>
 
+{% endblock %}
+
+
+{% block subtitle %}
+
 <div class="bottom-header">
-    <div class="navbar navbar-default">
-        <div class="navbar-header">
+                    <div class="navbar navbar-default">
+                        <div class="navbar-header">
 
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse-filter">
-                <span><i class="fa fa-filter" style="padding-right:7px;"></i>Filter plugins</span>
-            </button>
-        </div>
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse-filter">
+                                <span><i class="fa fa-filter" style="padding-right:7px;"></i>Filter plugins</span>
+                            </button>
+                        </div>
 
-        <div class="navbar-collapse collapse navbar-responsive-collapse-filter">
-            <form class="navbar-form">
+                        <div class="navbar-collapse collapse navbar-responsive-collapse-filter">
+                            <form class="navbar-form">
 
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class='filter-title'>Display plugins by</div>
-                        </div>
-                        <div class="col-md-2 pull-right filter-item">
-                            <div class="radio radio-primary">
-                                <label>
-                                    <input type="radio" name="optionsRadios" id="optionsRadios4" value="option4">
-                                    <i class="fa fa-gavel"></i>License
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-2 pull-right filter-item">
-                            <div class="radio radio-primary">
-                                <label>
-                                    <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                                    <i class="fa fa-male"></i>Author
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-2 pull-right filter-item">
-                            <div class="radio radio-primary">
-                                <label>
-                                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                    <i class="fa fa-star-half-o"></i>Rating
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-2 pull-right filter-item">
-                            <div class="radio radio-primary">
-                                <label>
-                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
-                                    <i class="fa fa-sort-alpha-asc"></i>All
-                                </label>
-                            </div>
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class='filter-title'>Display plugins by</div>
+                                        </div>
+                                        <div class="col-md-2 pull-right filter-item">
+                                            <div class="radio radio-primary">
+                                                <label>
+                                                    <input type="radio" name="optionsRadios" id="optionsRadios4" value="option4">
+                                                    <i class="fa fa-gavel"></i>License
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 pull-right filter-item">
+                                            <div class="radio radio-primary">
+                                                <label>
+                                                    <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
+                                                    <i class="fa fa-male"></i>Author
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 pull-right filter-item">
+                                            <div class="radio radio-primary">
+                                                <label>
+                                                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                                                    <i class="fa fa-star-half-o"></i>Rating
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 pull-right filter-item">
+                                            <div class="radio radio-primary">
+                                                <label>
+                                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+                                                    <i class="fa fa-sort-alpha-asc"></i>All
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                </div>
-            </form>
-        </div>
-    </div>
 
-</div>
+                </div>
+
+{% endblock %}
+
+
+
+{% block content %}
 
 
 <div class="main-content">
