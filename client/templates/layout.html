@@ -58,6 +58,10 @@
             <img src="http://placehold.it/265x80/ddd/fff&text=OpenFX%20Plateform" alt="" class="img-responsive">
         </div>
         <ul>
+            <li>
+                <p class="signedIn">Signed in as Armand Biteau</p>
+            </li>
+
             <li class="title-nav"><h4>NAVIGATION</h4></li>
 
             <li>
@@ -108,21 +112,9 @@
         <header class="header">
             <span class="open icon">&#9776;</span>
                 <div class="navbar">
-                    <div class="col-md-6">
-                        <form class="navbar-left">
-                            <div class="form-group">
-                                <ul class="nav navbar-nav navbar-left search-header plain inline">
-                                    <li><input type="text" class="input-search" placeholder="Search something..."></li>
-                                </ul>
-                            </div>
-                        </form>
-                        </div>
-                    <div class="col-md-6">
+                        
 
-                        <ul class="nav navbar-nav navbar-right desktop">
-                            <li>
-                                <p class="navbar-text">Signed in as Armand Biteau</p>
-                            </li>
+                       <!--  <ul class="nav navbar-nav navbar-left desktop">
                             <li class="dropdown">
                                 <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Settings <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
@@ -134,17 +126,39 @@
                                 </ul>
                             </li>
                         </ul>
-                    </div>
+                        -->
+                        <form id="searchForm">
+                              <input type="text" placeholder="Search" id="query" />
+                              <button type="submit" value="Submit query"><i class="fa fa-search"></i></button>
+                        </form>
+
+
                 </div>
+
+
+               {% block title %}{% endblock %}
+
+
+
+                {% block subtitle %}{% endblock %}
+
+
+                
+
+
+
+
         </header>
 
 
-        <section id="scroller" class="overflow">
+        <section id="scroller" class="">
 
 
-        <div class="main">
+        <div class="main" data-0="padding-top:350px" data-150="padding-top: 200px">
+
 
             {% block content %}{% endblock %}
+
 
         </div>
 
@@ -167,6 +181,8 @@
 
 
     <script>
+
+
     var site = new Bamboo({
         menu: true,
         breakpoint: 768,
@@ -180,18 +196,6 @@
 
     <script type="text/javascript">
 
-    $(function() {
-        var header = $(".header");
-        $(window).scroll(function() {
-            var scroll = $(window).scrollTop();
-
-            if (scroll >= 200) {
-                header.addClass("shrink");
-            } else {
-                header.removeClass("shrink");
-            }
-        });
-    });
 
     $(document).ready(function() {
 
