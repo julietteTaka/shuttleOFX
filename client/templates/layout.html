@@ -70,17 +70,17 @@
             </li>
 
             <li>
-                <a href='#'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
+                <a href='/upload'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
             </li>
             <li class="active">
                 <a href='#'><i class="fa fa-crop"></i>Explore plugins</a>
                 <ul>
-                    <li><a href="#">View all plugins</a></li>
-                    <li><a href="#">Search a plugin</a></li>
+                    <li><a href="/plugins">View all plugins</a></li>
+                    <li><a href="/plugins">Search a plugin</a></li>
                 </ul>
             </li>
             <li>
-                <a href='#'><i class="fa fa-photo"></i>Get a render</a>
+                <a href='/plugin'><i class="fa fa-photo"></i>Get a render</a>
             </li>
             <li class="title-nav"><h4>MORE</h4></li>
             <li>
@@ -157,12 +157,13 @@
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
-    <script src="{{ url_for('static', filename='scripts/combined-scripts.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/vendor/ripples.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/vendor/material.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/vendor/dropzone.js') }}"></script>
-
     <script src="{{ url_for('static', filename='scripts/vendor/jquery.nouislider.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='scripts/combined-scripts.js') }}"></script>
+
 
 
     <script>
