@@ -3,7 +3,10 @@ from flask import render_template
 
 
 
-app = Flask(__name__)
+# app = Flask(__name__)
+
+
+from client import app
 
 
 def get_resource_as_string(name, charset='utf-8'):
@@ -156,11 +159,5 @@ def Plugin(pluginName=None):
     return render_template('plugin.html', dico=newdico)
 
 
-@app.route('/upload')
-def uploadPlugins():
-    return render_template('upload.html')
 
 
-
-if __name__ == "__main__":
-    app.run(debug=True)
