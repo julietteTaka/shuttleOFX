@@ -2,8 +2,6 @@
 from flask import Flask, jsonify
 from pyTuttle import tuttle
 from ofxPlugins import analyze
-
-import logging
 import ConfigParser
 
 
@@ -40,5 +38,4 @@ def getPlugin(pluginId):
     return jsonify(**pluginDescription)
 
 if __name__ == '__main__':
-    # logging.getLogger().setLevel(10)
     app.run(host=configParser.get("APP_PLUGIN", "host"), port=configParser.getint("APP_PLUGIN", "port"), debug=True)
