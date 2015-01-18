@@ -34,19 +34,20 @@ def getDictOfProperties(props):
         properties.append(getDictOfProperty(p))
     return properties
 
-def getPluginProperties(tuttlePlugin):
-    logging.info('Analyzing plugin for ' + tuttlePlugin.getRawIdentifier())
+def getPluginProperties(pluginToAnalyse):
+    logging.info('Analyzing plugin for ' + pluginToAnalyse.getRawIdentifier())
 
     pluginObject = plugin.Plugin()
+
     pluginObject.id = str(uuid.uuid1())
-    pluginObject.uri = "/plugins/" + tuttlePlugin.getIdentifier()
+    pluginObject.uri = "/plugins/" + pluginToAnalyse.getIdentifier()
     pluginObject.version = {
-        'major': tuttlePlugin.getVersionMajor(),
-        'minor': tuttlePlugin.getVersionMinor()
+        'major': pluginToAnalyse.getVersionMajor(),
+        'minor': pluginToAnalyse.getVersionMinor()
     }
 
     try:
-        node = tuttle.createNode(tuttlePlugin.getIdentifier())
+        node = tuttle.createNode(pluginToAnalyse.getIdentifier())
     except Exception as e:
         logging.error("Error in node creation: " + str(e))
         return (pluginObject.__dict__)
