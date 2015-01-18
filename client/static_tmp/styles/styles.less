@@ -40,8 +40,10 @@ header .side { left: auto; right: 0; }
 
 
 header .navbar{
-    background: transparent!important;
-    background: rgba(0, 0, 0, 0.05)!important;
+    // background: transparent!important;
+    // background: rgba(0, 0, 0, 0.05)!important;
+    background-image:linear-gradient(90deg, @ofxColor, @ofxColor - 10);
+
     margin-bottom: 0px;
     height: 100%;
 }
@@ -207,12 +209,16 @@ header form{
         max-width: 200px;
         display: inline-block;
     }
+    .header-content{
+        padding-right: 15px;
+    }
 }
 
 
 
 .header-content{
     // padding-top: 9em;
+    padding-right: 265px;
     color: #fff;
     width: 100%;
     background: @ofxColor;
@@ -222,7 +228,7 @@ header form{
 
 
 .header-content h1{
-    margin-left: -130px; 
+    // margin-left: -130px; 
     color: #fff;
     // position: absolute;
     line-height: 1;
