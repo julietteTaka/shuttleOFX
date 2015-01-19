@@ -2,7 +2,7 @@
 from flask import Flask, jsonify
 from pyTuttle import tuttle
 from ofxPlugins import analyze
-import ConfigParser
+import ConfigParser, requests
 
 
 app = Flask(__name__, static_folder='', static_url_path='')
@@ -18,18 +18,20 @@ tuttle.core().preload(False)
 pluginCache = tuttle.core().getPluginCache()
 plugins = pluginCache.getPlugins()
 
-@app.route('/', methods=['GET'])
-def index():
-    index = "<html><head><title>WebOpenFX - Catalog</title></head><body><h1><center>WebOpenFX - Catalog</center></h1><br/><br/><ul><li>version: " + str(version) + "</li></ul></body>"
-    return index
-
 
 @app.route('/plugins/', methods=['GET'])
 def getPlugins():
     pluginsDescription = {'plugins':[], 'total': len(plugins)}
     for plugin in plugins:
         pluginsDescription['plugins'].append(analyze.getPluginProperties(plugin))
+
+    headers = {
+        'content-type': 'application/json',
+        'mimetype': 'application/json'
+    }
+
     return jsonify(**pluginsDescription)
+
 
 @app.route('/plugins/<string:pluginId>', methods=['GET'])
 def getPlugin(pluginId):
