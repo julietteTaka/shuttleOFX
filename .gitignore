@@ -1,3 +1,5 @@
+client/node_modules/
 node_modules/
-static/
-upload/
+client/static/
+client/upload/
+client/*.pyc
