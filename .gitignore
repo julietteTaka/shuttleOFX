@@ -1,5 +1,8 @@
 client/node_modules/
 node_modules/
 client/static/
+static/
 client/upload/
+upload/
 client/*.pyc
+*.pyc
