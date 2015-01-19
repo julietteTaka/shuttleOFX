@@ -3,7 +3,10 @@ from flask import render_template
 
 
 
-app = Flask(__name__)
+# app = Flask(__name__)
+
+
+from client import app
 
 
 def get_resource_as_string(name, charset='utf-8'):
@@ -56,8 +59,7 @@ dico = {
                 }
 
             ]
-        }
-        ,
+        },
         {
             "id" : "opacity",
             "name" : "Opacity",
@@ -78,6 +80,69 @@ dico = {
                 }
 
             ]
+        },
+        {
+            "id" : "text",
+            "name" : "Text decorator",
+            "version" : "1.2",
+            "author" : "Armand Biteau",
+            "parameters" : [
+                {
+                    "id" : "wid",
+                    "name" : "Width",
+                    "type" : "int"
+
+                },
+                 {
+                    "id" : "hei",
+                    "name" : "Height",
+                    "type" : "int"
+
+                }
+
+            ]
+        },
+        {
+            "id" : "rgba",
+            "name" : "Convert to rgba",
+            "version" : "1.4",
+            "author" : "Armand Biteau",
+            "parameters" : [
+                {
+                    "id" : "wid",
+                    "name" : "Width",
+                    "type" : "int"
+
+                },
+                 {
+                    "id" : "hei",
+                    "name" : "Height",
+                    "type" : "int"
+
+                }
+
+            ]
+        },
+        {
+            "id" : "rgb",
+            "name" : "Convert to rgb",
+            "version" : "3.8.1",
+            "author" : "Armand Biteau",
+            "parameters" : [
+                {
+                    "id" : "wid",
+                    "name" : "Width",
+                    "type" : "int"
+
+                },
+                 {
+                    "id" : "hei",
+                    "name" : "Height",
+                    "type" : "int"
+
+                }
+
+            ]
         }
     ]
 }
@@ -95,5 +160,4 @@ def Plugin(pluginName=None):
 
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
+

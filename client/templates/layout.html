@@ -5,7 +5,7 @@
 <head>
 
   <!-- Styles -->
-  <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,500,700' rel='stylesheet' type='text/css'>
+  <!-- <link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'> -->
   <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/bootstrap.css') }}">
@@ -52,189 +52,177 @@
 </nav> -->
 
 
-<!-- <div id="left-nav">
-    <ul>
-        <li class='has-sub first'>
-            <a href='#'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
-            <ul>
-                <li><a href='#'>Sous menu 1</a></li>
-                <li><a href='#'>Sous menu 2</a></li>
-                <li><a href='#'>Sous menu 3</a></li>
-            </ul>
-        </li>
-        <li class='has-sub'>
-            <a href='#'>Plugins list</a>
-            <ul>
-                <li><a href='#'>Sous menu 3</a></li>
-                <li><a href='#'>Sous menu 3</a></li>
-                <li><a href='#'>Sous menu 3</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href='#'>Contact</a>
-        </li>
-    </ul>
-</div> -->
-
-
-<div id="left-nav">
-    <div class="logo">
-        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="" class="img-responsive">
-    </div>
-    <ul>
-        <!-- <li>
-            <form class="navbar-form navbar-left">
-                <input type="text" class="form-control col-lg-8" placeholder="Search">
-            </form>
-        </li> -->
-
-        <li class="title-nav"><h4>NAVIGATION</h4></li>
-
-        <li>
-            <a href='#'><i class="fa fa-user"></i>Personnal account</a>
-            <ul>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Plugins</a></li>
-                <li><a href="#">Bundles</a></li>
-            </ul>
-        </li>
-
-        <li>
-            <a href='#'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
-        </li>
-        <li class="active">
-            <a href='#'><i class="fa fa-crop"></i>Explore plugins</a>
-            <ul>
-                <li><a href="#">View all plugins</a></li>
-                <li><a href="#">Search a plugin</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href='#'><i class="fa fa-photo"></i>Get a render</a>
-        </li>
-        <li class="title-nav"><h4>MORE</h4></li>
-        <li>
-            <a href='#'><i class="fa fa-sitemap"></i>About the plateform</a>
-            <ul>
-                <li><a href="#">sous menu 1</a></li>
-                <li><a href="#">sous menu 2</a></li>
-                <li><a href="#">sous menu 3</a></li>
-            </ul>
-        </li>
-        <li>
-            <a href='#'><i class="fa fa-share-alt"></i>OFX community</a>
-        </li>
-    </ul>
-</div>
-
-
-<header class="page-app">
-
-
-    <div class="navbar">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+<nav id="main-nav" class="navigation overflow">
+    <div id="left-nav">
+        <div class="logo">
+            <img src="http://placehold.it/265x80/ddd/fff&text=OpenFX%20Plateform" alt="" class="img-responsive">
         </div>
-        <div class="navbar-collapse collapse navbar-responsive-collapse">
-            <form class="navbar-form navbar-left">
-                <div class="form-group">
-                    <ul class="nav navbar-nav navbar-left">
-                        <li><i class="fa fa-search" style="font-size:1.2em;padding-right:9px;margin-top:2px;"></i></li>
-                        <li><input type="text" class="form-control control-label" placeholder="Search"></li>
-                    </ul>
+        <ul>
+            <li>
+                <p class="signedIn">Signed in as Armand Biteau</p>
+            </li>
+
+            <li class="title-nav"><h4>NAVIGATION</h4></li>
+
+            <li>
+                <a href='#'><i class="fa fa-user"></i>Personnal account</a>
+                <ul>
+                    <li><a href="#">Profile</a></li>
+                    <li><a href="#">Plugins</a></li>
+                    <li><a href="#">Bundles</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href='/upload'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
+            </li>
+            <li class="active">
+                <a href='#'><i class="fa fa-crop"></i>Explore plugins</a>
+                <ul>
+                    <li><a href="/plugins">View all plugins</a></li>
+                    <li><a href="/plugins">Search a plugin</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href='/plugin'><i class="fa fa-photo"></i>Get a render</a>
+            </li>
+            <li class="title-nav"><h4>MORE</h4></li>
+            <li>
+                <a href='#'><i class="fa fa-sitemap"></i>About the plateform</a>
+                <ul>
+                    <li><a href="#">sous menu 1</a></li>
+                    <li><a href="#">sous menu 2</a></li>
+                    <li><a href="#">sous menu 3</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href='#'><i class="fa fa-share-alt"></i>OFX community</a>
+            </li>
+        </ul>
+        <div class="legacy">
+           <p class="legacy-title">WebOpenFX ©</p>
+           <p class="legacy-links"><a href="#">Privacy</a> & <a href="#">Terms</a></p>
+
+        </div>
+    </div>
+</nav>
+
+    <div id="container">
+
+        <header class="header">
+            <span class="open icon">&#9776;</span>
+                <div class="navbar search-bar">
+                        
+
+                       <!--  <ul class="nav navbar-nav navbar-left desktop">
+                            <li class="dropdown">
+                                <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Settings <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="javascript:void(0)">Action</a></li>
+                                    <li><a href="javascript:void(0)">Another action</a></li>
+                                    <li><a href="javascript:void(0)">Something else here</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="javascript:void(0)">Separated link</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        -->
+                        <form id="searchForm">
+                              <input type="text" placeholder="Search" id="query" />
+                              <button type="submit" value="Submit query"><i class="fa fa-search"></i></button>
+                        </form>
                 </div>
-            </form>
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <p class="navbar-text pull-right">Signed in as Armand Biteau</p>
-                </li>
-                <li class="dropdown">
-                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Settings <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0)">Action</a></li>
-                        <li><a href="javascript:void(0)">Another action</a></li>
-                        <li><a href="javascript:void(0)">Something else here</a></li>
-                        <li class="divider"></li>
-                        <li><a href="javascript:void(0)">Separated link</a></li>
-                    </ul>
-                </li>
-            </ul>
+
+
+                {% block title %}{% endblock %}
+
+                {% block subtitle %}{% endblock %}
+
+        </header>
+
+
+        <section id="scroller">
+
+
+        <div class="main" data-0="padding-top:350px" data-150="padding-top: 200px">
+
+
+            {% block content %}{% endblock %}
+
+
         </div>
+
+
+        </section>
+
+
     </div>
 
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <script src="{{ url_for('static', filename='scripts/vendor/ripples.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/vendor/material.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/vendor/dropzone.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/vendor/jquery.nouislider.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='scripts/combined-scripts.js') }}"></script>
 
 
 
-
-</header>
-
+    <script>
 
 
-<div class="main page-app">
-
-    {% block content %}{% endblock %}
-
-</div>
-
-
-
-
-<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-
-<script src="{{ url_for('static', filename='scripts/combined-scripts.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/vendor/ripples.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/vendor/material.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/vendor/jquery.nouislider.min.js') }}"></script>
+    var site = new Bamboo({
+        menu: true,
+        breakpoint: 768,
+        menuWidth: 265,
+        headerHeight: 50,
+        resize: function(){
+        }
+    });
+    </script>
 
 
+    <script type="text/javascript">
 
 
+    $(document).ready(function() {
 
-<script type="text/javascript">
-
-$(document).ready(function() {
-    $.material.init();
-
+    
+        $.material.init();
 
 
-    $slider = $(".shor").noUiSlider({
-        start: 40,
-        connect: "lower",
-        range: {
-            min: 0,
-            max: 100
-        },
-        step: 1,
-        handles : 1,
-        format: wNumb({
-            decimals: false,
+        $slider = $(".shor").noUiSlider({
+            start: 40,
+            connect: "lower",
+            range: {
+                min: 0,
+                max: 100
+            },
+            step: 1,
+            handles : 1,
+            format: wNumb({
+                decimals: false,
             // postfix: ' %'
         })
-    });
-    $value = $slider.val();
-
-    // $slider.Link('lower').to('-inline-');
+        });
+        $value = $slider.val();
     $slider.Link('lower').to($('.input-number'));
     $slider.Link('lower').to($('#input-number'));
 
-});
 
-$(document).ready(function(){
     $("#left-nav a").click(function(){
-        $("#left-nav ul ul").slideUp();
-        if(!$(this).next().is(":visible"))
-        {
-            $(this).next().slideDown();
-        }
-    });
-})
+            $("#left-nav ul ul").slideUp();
+            if(!$(this).next().is(":visible"))
+            {
+                $(this).next().slideDown();
+            }
+        });
 
-</script>
+    });
+
+    </script>
 
 
 </body>
