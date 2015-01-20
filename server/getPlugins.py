@@ -8,7 +8,7 @@ import ConfigParser, requests, json
 app = Flask(__name__, static_folder='', static_url_path='')
 
 configParser =  ConfigParser.RawConfigParser()
-configParser.read('ofxPlugins/configuration.conf')
+configParser.read('server/configuration.conf')
 
 version = "0.0.1"
 
