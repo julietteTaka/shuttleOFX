@@ -35,8 +35,7 @@ class Bundle(object):
     contributors = db.Column(ARRAY(db.Integer))
     architecture = db.Column(ARRAY(db.String), nullable=False)
     plugins = db.Column(ARRAY(db.Integer), nullable=False)
-    
-
+    uploaded = db.Column(db.Boolean, nullable=False)
 
     def __init__(self):
         '''
@@ -44,20 +43,9 @@ class Bundle(object):
         '''
         super(Bundle, self).__init__()
         self.uid = str(uuid.uuid1())
-        self.idFileSystem
-        self.userID
-        self.companyID
-        self.name
-        self.description
         self.uploadDate = datetime.now()
         self.shared = False
-        self.contributors
-        self.artichecture
-        self.plugins
-        
-
-
-
+        self.uploaded = False
 
 db.create_all()
 db.session.commit()

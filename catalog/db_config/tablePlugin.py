@@ -4,10 +4,8 @@ import psycopg2
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID, ARRAY , JSON
 
-
 app = Flask(__name__)
 
-# ADD
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://webopenfx:tuttle@localhost:5432/webopenfx_db"
 db = SQLAlchemy(app)
 

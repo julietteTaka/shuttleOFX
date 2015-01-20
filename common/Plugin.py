@@ -32,16 +32,4 @@ class Plugin(db.Model, object):
         Constructor for a Plugin
         '''
         super(Plugin, self).__init__()
-        self.pluginID 
-        self.name 
-        self.description 
-        self.shortDescription 
-        self.version 
-        self.clip 
-        self.parameters 
-        self.properties 
-        self.tags 
-        self.presets
-        self.defautImagePath
-        self.sampleImagePath 
-
+        
