@@ -9,7 +9,7 @@ from flask import (
     jsonify
 )
 from werkzeug import secure_filename
-import os
+import os, zipfile
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -24,7 +24,7 @@ from client import app
 
 UPLOAD_FOLDER = 'upload/'
 
-app.config['ALLOWED_EXTENSIONS'] = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi'])
+app.config['ALLOWED_EXTENSIONS'] = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi', 'zip', 'tar.gz'])
 
 
 def allowed_file(filename):
@@ -47,20 +47,36 @@ def upld():
 def upldfile():
     if request.method == 'POST':
 
-        print basedir
+        # print basedir
 
         saved_files_urls = []
+
         for f in request.files.getlist('file[]'):
             if f and allowed_file(f.filename):
+
+
+                # filename = uniqueId BD
                 filename = secure_filename(f.filename)
 
-                print f
+                print filename
 
                 updir = os.path.join(basedir, UPLOAD_FOLDER)
                 f.save(os.path.join(updir, filename))
                 file_size = os.path.getsize(os.path.join(updir, filename))
                 saved_files_urls.append(url_for('uploaded_file', filename=filename))
-        #return jsonify(name=filename, size=file_size)
+
+                # zipf = zipfile.ZipFile(updir + filename, "r")
+                # for name in zipf.namelist():
+                #     print name
+
+            with zipfile.ZipFile(updir + filename, "r") as zipf:
+                zipf.extractall(updir)
+
+            os.remove(os.path.join(updir, filename))
+
+
+
+        return saved_files_urls[0]
 
     return render_template('upload.html', uploaded="true")
 
