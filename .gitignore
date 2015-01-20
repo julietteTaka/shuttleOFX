@@ -6,5 +6,7 @@ client/upload/
 upload/
 client/*.pyc
 *.pyc
+client/configuration.conf
+server/ofxPlugins/configuration.conf
 
 
