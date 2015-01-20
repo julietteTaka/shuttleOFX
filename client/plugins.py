@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 from flask import render_template, jsonify, json
 
-import ConfigParser, requests
+import ConfigParser
+import requests
 
 from client import app
 
@@ -52,5 +53,3 @@ def getPlugin(pluginId):
 #     return render_template('plugin.html', dico=newdico)
 
 
-if __name__ == "__main__":
-    app.run(host=configParser.get("APP_CLIENT", "host"), port=configParser.getint("APP_CLIENT", "port"), debug=True)
