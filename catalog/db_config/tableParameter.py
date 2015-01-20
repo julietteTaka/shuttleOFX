@@ -10,7 +10,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://webopenfx:tuttle@localhost
 
 db = SQLAlchemy(app)
 
-parameter = db.Table('paramater',
+parameter = db.Table('parameter',
     db.Column('id', db.Integer, primary_key = True),
     db.Column('name', db.String, nullable = False),
     db.Column('type', db.Integer, primary_key = True),

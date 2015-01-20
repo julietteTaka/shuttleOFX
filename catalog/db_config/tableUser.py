@@ -21,7 +21,6 @@ user = db.Table('user',
     db.Column('mail', db.String, nullable=False),
     db.Column('company', ARRAY(db.Integer)),
     db.Column('bundle', ARRAY(db.Integer)),
-
 )
 
 db.create_all()

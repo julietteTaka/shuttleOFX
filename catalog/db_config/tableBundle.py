@@ -25,7 +25,7 @@ bundle = db.Table('bundle',
     db.Column('shared', db.Boolean, nullable=False),
     db.Column('contributors', ARRAY(db.Integer)),
     db.Column('architecture', ARRAY(db.String), nullable=False),
-    db.Column('plugins', ARRAY(db.Integer), nullable=False)
+    db.Column('plugins', ARRAY(db.Integer), nullable=False),
     db.Column('uploadDate', db.Boolean, nullable=False)
 )
 
