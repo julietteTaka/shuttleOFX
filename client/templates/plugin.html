@@ -4,7 +4,6 @@
 {% block title %}
 
 {% for plugin in dico.plugins %}
-    {% if dico.currentPlugin == plugin.id %}
         <div class="header-content" data-0="height:175px" data-150="height:0px">
             <div class="top-header">
                 <div class="container-fluid">
@@ -12,7 +11,7 @@
                         <div class="col-md-12">
                             <h1 data-0="margin-top:80px;font-size: 3.5em;" data-150="margin-top:-55px;font-size: 2em;">{{ plugin.name }} 
                                 <small style="color:rgba(255,255,255,0.7);font-weight:300;">
-                                    {{ plugin.version }} by {{ plugin.author }}
+                                    Version {{ plugin.version.major }}
                                 </small>
                             </h1>
                         </div>
@@ -20,7 +19,6 @@
                 </div>
             </div>
         </div>
-    {% endif %}
 {% endfor %}
 
 
@@ -54,7 +52,6 @@
 
 
 {% for plugin in dico.plugins %}
-    {% if dico.currentPlugin == plugin.id %}
         
 
 <div class="main-content">
@@ -75,17 +72,24 @@
                                 <th>#</th>
                                 <th>Name</th>
                                 <th>Type</th>
+                                <th>Values</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% set count = 1 %}
-                            {% for parameter in plugin.parameters %}
-                                <tr>
-                                    <td>{{ count }}</td>
-                                    <td>{{ parameter.name }}</td>
-                                    <td>{{ parameter.type }}</td>
-                                </tr>
-                                {% set count = count + 1 %}
+                            {% set count1 = 1 %}
+                            {% for parameterTab in plugin.parameters %}
+                                {% for parameter in parameterTab %}
+                                        <tr>
+                                            <td>{{ count1 }}</td>
+                                            <td>{{ parameter.name }}</td>
+                                            <td>{{ parameter.type }}</td>
+                                            <td>
+                                                {{ parameter.value[0] }},
+                                                {{ parameter.value[1] }}
+                                            </td>
+                                        </tr>
+                                {% endfor %}
+                            {% set count1 = count1 + 1 %}
                             {% endfor %}
                         </tbody>
                     </table>
@@ -236,7 +240,6 @@
     </div>
 </div>
 
-{% endif %}
 {% endfor %}
 
 {% endblock %}
