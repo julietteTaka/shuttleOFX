@@ -8,5 +8,6 @@ client/*.pyc
 *.pyc
 client/configuration.conf
 server/ofxPlugins/configuration.conf
-
+server/plugins.json
+server/plugin.json
 
