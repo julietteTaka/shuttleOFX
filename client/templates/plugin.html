@@ -2,33 +2,30 @@
 
 
 {% block title %}
-
-{% for plugin in dico.plugins %}
-    {% if dico.currentPlugin == plugin.id %}
-        <div class="header-content" data-0="height:175px" data-150="height:0px">
-            <div class="top-header">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h1 data-0="margin-top:80px;font-size: 3.5em;" data-150="margin-top:-55px;font-size: 2em;">{{ plugin.name }} 
-                                <small style="color:rgba(255,255,255,0.7);font-weight:300;">
-                                    {{ plugin.version }} by {{ plugin.author }}
-                                </small>
-                            </h1>
-                        </div>
-                    </div>
+<div class="header-content" data-0="height:175px" data-150="height:0px">
+    <div class="top-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 data-0="margin-top:80px;font-size: 3.5em;" data-150="margin-top:-55px;font-size: 2em;">
+                        {% for property in dico.properties %}
+                            {% if property.name == "OfxPropShortLabel" %}
+                                {{property.value[0]}}
+                            {% endif %}
+                        {% endfor %}
+                        <small style="color:rgba(255,255,255,0.7);font-weight:300;">
+                            Version {{ dico.version.major }}.{{ dico.version.minor }}
+                        </small>
+                    </h1>
                 </div>
             </div>
         </div>
-    {% endif %}
-{% endfor %}
-
-
+    </div>
+</div>
 {% endblock %}
 
 
 {% block subtitle %}
-
 <div class="bottom-header">
     <div class="navbar navbar-default">
         <div class="navbar-collapse collapse navbar-responsive-collapse-filter">
@@ -41,22 +38,13 @@
             </div>
         </div>
     </div>
-
 </div>
-
 {% endblock %}
 
 
 
 
 {% block content %}
-
-
-
-{% for plugin in dico.plugins %}
-    {% if dico.currentPlugin == plugin.id %}
-        
-
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
@@ -75,21 +63,27 @@
                                 <th>#</th>
                                 <th>Name</th>
                                 <th>Type</th>
+                                <th>Values</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% set count = 1 %}
-                            {% for parameter in plugin.parameters %}
-                                <tr>
-                                    <td>{{ count }}</td>
-                                    <td>{{ parameter.name }}</td>
-                                    <td>{{ parameter.type }}</td>
-                                </tr>
-                                {% set count = count + 1 %}
+                            {% set count1 = 1 %}
+                            {% for parameterTab in dico.parameters %}
+                                {% for parameter in parameterTab %}
+                                        <tr>
+                                            <td>{{ count1 }}</td>
+                                            <td>{{ parameter.name }}</td>
+                                            <td>{{ parameter.type }}</td>
+                                            <td>
+                                                {{ parameter.value[0] }},
+                                                {{ parameter.value[1] }}
+                                            </td>
+                                        </tr>
+                                {% endfor %}
+                            {% set count1 = count1 + 1 %}
                             {% endfor %}
                         </tbody>
                     </table>
-
             </div>
         </div>
 
@@ -99,21 +93,15 @@
                     <div class="col-md-12">
                         <h2>Ask for a render</h2>
                     </div>
-
-
                     <div class="col-md-6">
                         <h3>Default image</h3>
                         <img src="{{ url_for('static', filename='images/test.png') }}" alt="" class=" panel render-img img-responsive">
                         
                     </div>
-                    
-
-
                     <div class="col-md-6">
                         <h3>Choose parameters</h3>
                         <div class="render-form">
                             <fieldset>
-
                                 <div class="form-group">
                                     <label for="input0" class="col-lg-2 control-label">Range</label>
                                     <div class="col-lg-10">
@@ -122,8 +110,6 @@
                                         <input id="input-number" type="number" id="input0" value="" hidden>
                                     </div>
                                 </div>
-
-
                                 <div class="form-group">
                                     <label for="input1" class="col-lg-2 control-label">Text</label>
                                     <div class="col-lg-10">
@@ -136,7 +122,6 @@
                                         <input type="number" class="form-control" id="input2" placeholder="2">
                                     </div>
                                 </div>
-
                                 <div class="form-group">
                                     <label for="input3" class="col-lg-2 control-label">Toggle</label>
                                     <div class="col-lg-10">
@@ -147,7 +132,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="form-group">
                                     <label for="input4" class="col-lg-2 control-label">Check</label>
                                     <div class="col-lg-10">
@@ -158,8 +142,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                
                                 <div class="form-group">
                                     <label class="col-lg-2 control-label">Radio</label>
                                     <div class="col-lg-10">
@@ -177,11 +159,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-
-
-                                
-
                                 <div class="form-group">
                                     <label for="select" class="col-lg-2 control-label">Selects</label>
                                     <div class="col-lg-10">
@@ -192,7 +169,6 @@
                                         </select>
                                     </div>
                                 </div>
-
                                 <div class="form-group">
                                     <label for="select" class="col-lg-2 control-label">Multiple</label>
                                     <div class="col-lg-10">
@@ -205,7 +181,6 @@
                                         </select>
                                     </div>
                                 </div>
-
                                 <div class="form-group">
                                     <label for="inputFile" class="col-lg-2 control-label">Image</label>
                                     <div class="col-lg-10">
@@ -213,8 +188,6 @@
                                         <input type="file" id="inputFile" multiple="">
                                     </div>
                                 </div>
-
-
                                 <div class="form-group submit-form">
                                     <div class="col-lg-10 col-lg-offset-2">
                                         <button class="btn btn-default">Cancel</button>
@@ -224,21 +197,11 @@
                             </fieldset>
                         </div>
                     </div>
-
-
-                    
-
-
-                    
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-{% endif %}
-{% endfor %}
-
 {% endblock %}
 
 
