@@ -1,4 +1,18 @@
-class Plugin(db.Model, object):
+from flask import Flask
+import psycopg2
+
+from flask.ext.sqlalchemy import SQLAlchemy
+from sqlalchemy.dialects.postgresql import UUID, ARRAY, JSON
+
+
+app = Flask(__name__)
+
+# ADD
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://webopenfx:tuttle@localhost:5432/webopenfx_db"
+
+db = SQLAlchemy(app)
+
+class Plugin(db.Model):
 
     '''
     This is the representation as an object and as seen from the DB perspective
@@ -10,7 +24,7 @@ class Plugin(db.Model, object):
     '''
     id = db.Column(db.Integer, primary_key=True)
     # The pluginID isn't generated in the Class but some other instance, hence the primary key type
-    pluginID = db.Column(UUID, unique=True)
+    pluginId = db.Column(UUID, unique=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String(250), nullable=False)
     shortDescription = db.Column(db.String(250), nullable=False)
@@ -27,9 +41,4 @@ class Plugin(db.Model, object):
     sampleImagePath = db.Column(ARRAY(db.String))
 
 
-    def __init__(self):
-        '''
-        Constructor for a Plugin
-        '''
-        super(Plugin, self).__init__()
-        
+db.create_all()
