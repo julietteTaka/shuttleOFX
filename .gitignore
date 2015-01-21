@@ -1,10 +1,14 @@
-client/node_modules/
-node_modules/
-client/static/
-static/
-client/upload/
-upload/
-client/*.pyc
+
+# used in front to generate js and css files
+node_modules
+static
+# temporary upload directory
+upload
+
+*.pyc
 *.pyc
 
+*.conf
+
+*.json
 
