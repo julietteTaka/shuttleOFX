@@ -109,11 +109,37 @@
 
                     <li class="col-md-3">
                         <div class="panel panel-primary">
-                                <h3 class="panel-title">{{ plugin.name }}</h3>
-                                <img src="http://placehold.it/275x100/ddd/fff&text=OpenFX%20Plateform" alt="" class="img-responsive">
-                                <span>{{ plugin.version.major }}</span>
-                                <a href="/plugins/{{ plugin.id }}" class="btn btn-primary">Test plugin</a>
+                            <div class="plugins-titles">
+                                <!-- <img src="http://lorempixel.com/260/125/abstract" alt="" class="img-responsive"> -->
+                                <img src="http://placehold.it/260x125/009688/00897B&text=OpenFX%20Plateform" alt="" class="img-responsive">
+
+                                <h3 class="panel-title">
+                                    {% for property in plugin.properties %}
+                                        {% if property.name == "OfxPropShortLabel" %}
+                                            {{property.value[0]}}
+                                        {% endif %}
+                                    {% endfor %}
+                                </h3>
+                            </div>
+                            <div class="plugins-infos">
+                                <span>
+                                    Version {{ plugin.version.major }}.{{ plugin.version.minor }}
+                                </span>
+                                <span>
+                                    Rating {{ plugin.rate }}
+                                </span>
+
+                                {% for property in plugin.properties %}
+                                    {% if property.name == "OfxPropType" %}
+                                        <p>{{property.value[0]}}</p>
+                                    {% endif %}
+                                {% endfor %}
+
+                                <a href="{{ plugin.uri }}" class="btn btn-flat btn-primary">View infos</a>
+                                <a href="{{ plugin.uri }}" class="btn btn-flat btn-primary">Live render</a>
+                            </div>
                         </div>
+
                     </li>
 
                 {% endfor %}
