@@ -39,6 +39,12 @@ $('[data-toggle]').on('click', function() {
   return $('.surveys').removeClass('grid list').addClass(toggle);
 });
 
+$('#tab-parameters').hide();
+$('#tab-parameters-toggle').on('click', function() {
+  $('#tab-parameters').slideToggle();
+});
+
+
 
 
 /*
