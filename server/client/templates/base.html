@@ -1,15 +1,46 @@
 <!doctype html>
-	<html>
-	<head>
-		<title>WEB OpenFX</title>
-		{% block headerExtension %}{% endblock %}
-	</head>
-	<body>
-		<div id="main-content">
-			{% block content %}{% endblock %}
-		</div>
-		<div class="footer">
-			<p> ________ footer________ </p>
-		</div>
-	</body>
+<html>
+<head>
+	<title>RENDER</title>
+	<style>
+	#actions, #parameters, #display #progress{
+		/ * border : 1px solid black; */
+	}
+
+	#display {
+		width : 60%;
+		height: 500px;
+		border : 1px solid cyan;
+	}
+
+	#actions {
+		width : 60%;
+		height: 500px;
+		border : 1px solid pink;
+	}
+
+	#progress {
+		width : 60%;
+		height: 20px;
+		border : 1px solid green;
+	}
+
+	#parameters {
+		width : 35%;
+		min-height: 900px;
+		float : right;
+		border : 1px solid magenta;
+	}
+
+</style>
+</head>
+<body>
+	<div id="wrapper">
+		<div id="parameters"></div>
+		<div id="display"></div>
+		<div id="progress"></div>
+		<div id="actions"></div>
+	</div>
+	<div class="footer"><p>footer</p></div>
+</body>
 </html>

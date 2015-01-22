@@ -8,10 +8,47 @@ configParser.read('client/configuration.conf')
 version = "0.0.1"
 
 analyzeRootUri = configParser.get("APP_CLIENT", "analyzeRootUri")
+'''
+sendGraphExample = {
+    "nodes": [
+        {
+            "id": 0,
+            "plugin": "tuttle.text",
+           "parameters" : [
+                {
+                    "id":"color",
+                    "value":[1,0,1,1]
+                },
+                {
+                    "id":"text",
+                    "value": "HEY CECI EST UN SUPER PROJET"
+                },
+                {
+                    "id":"italic",
+                    "value": true
+                },
+                {
+                    "id":"textSize",
+                    "value": 80
+                }
+           ]
+        },
+        {
+            "id": 1,
+            "plugin": "tuttle.pngwriter",
+           "parameters" : []
+        }
+    ],
+    "connections": [
+        {"src": {"id": 0}, "dst": {"id": 1}}
+    ]
+}
+'''
 
-@app.route('/')
+@app.route('/demo/')
 def displayIndex():
-    return render_template('form.html')
+    renderGraph = {"graph":"graph"}
+    return render_template('base.html', renderGraph=renderGraph)
 
 @app.route('/plugins/')
 def getPlugins():
