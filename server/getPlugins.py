@@ -8,7 +8,7 @@ import ConfigParser, requests, json
 app = Flask(__name__, static_folder='', static_url_path='')
 
 configParser =  ConfigParser.RawConfigParser()
-configParser.read('server/configuration.conf')
+configParser.read('configuration.conf')
 
 version = "0.0.1"
 
@@ -54,4 +54,4 @@ if __name__ == '__main__':
     app.run(host=configParser.get("APP_PLUGIN", "host"), port=configParser.getint("APP_PLUGIN", "port"), debug=True)
 
 
-    
+
