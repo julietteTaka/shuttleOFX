@@ -46,7 +46,6 @@ def getPlugin(pluginId):
     # json_data= open('plugin.json')
     # data = json.load(json_data)
     # json_data.close()
-
     # return jsonify(**data)
 
 

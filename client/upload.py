@@ -79,7 +79,7 @@ def upldfile():
                     tarf.extractall(updir)
 
 
-                os.remove(os.path.join(updir, filename))
+                # os.remove(os.path.join(updir, filename))
 
             # return saved_files_urls[0]
 
