@@ -3,3 +3,5 @@ app = Flask(__name__)
 
 import client.plugins
 import client.upload
+import client.demo
+
