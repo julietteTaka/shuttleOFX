@@ -90,21 +90,12 @@
                                         <td>{{ count }}</td>
                                         <td>{{ parameter.value[0] }}</td>
                                         <td>
-                                            {% if parameter.type == -1 %}
-                                                none
-                                            {% endif %}
-                                            {% if parameter.type == 0 %}
-                                                int
-                                            {% endif %}
-                                            {% if parameter.type == 1 %}
-                                                double
-                                            {% endif %}
-                                            {% if parameter.type == 2 %}
-                                                string
-                                            {% endif %}
-                                            {% if parameter.type == 3 %}
-                                                pointer
-                                            {% endif %}
+                                            {% for parameter in parameterTab %}
+                                                {% if parameter.name == "OfxParamPropType" %}
+                                                    {% set val = parameter.value[0] %}
+                                                    {{ val[12:] }}
+                                                {% endif %}
+                                            {% endfor %}
                                         </td>
                                     </tr>
                                 {% endif %}

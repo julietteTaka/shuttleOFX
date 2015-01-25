@@ -21,6 +21,7 @@
 
 }
 
+
 ul.surveys{
 	margin: 0;
 	padding: 0;
@@ -29,15 +30,20 @@ ul.surveys{
 ul.surveys.grid{
 	li{
 		list-style: none;
-		h3{
+		width: auto;
+		.plugins-titles{
 			width: 100%;
-			// background: @ofxColor;
-			padding:10px;
-			font-size: 1.2em;
-			position: absolute;
-			margin-top: -50px;
-			color: #fff;
-			font-family: "Roboto-Light";
+			overflow-x: hidden!important;
+			h3{
+				width: 100%;
+				// position: absolute;
+				background: @ofxColor2;
+				// margin-top: -45px;
+				padding:10px;
+				font-size: 1.1em;
+				color: #fff;
+				font-family: "Roboto-Light";
+			}
 		}
 		span{
 			padding: 10px;

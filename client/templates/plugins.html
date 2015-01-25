@@ -110,16 +110,16 @@
                     <li class="col-md-3">
                         <div class="panel panel-primary">
                             <div class="plugins-titles">
-                                <img src="http://lorempixel.com/260/125/abstract" alt="" class="img-responsive">
+                                <img src="http://lorempixel.com/260/100/abstract" alt="" class="img-responsive">
                                 <!-- <img src="http://placehold.it/260x125/009688/00897B&text=OpenFX%20Plateform" alt="" class="img-responsive"> -->
 
-                                <h3 class="panel-title">
-                                    {% for property in plugin.properties %}
-                                        {% if property.name == "OfxPropShortLabel" %}
-                                            {{property.value[0]}}
-                                        {% endif %}
-                                    {% endfor %}
-                                </h3>
+                                    <h3 class="panel-title">
+                                        {% for property in plugin.properties %}
+                                            {% if property.name == "OfxPropShortLabel" %}
+                                                {{property.value[0]}}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </h3>
                             </div>
                             <div class="plugins-infos">
                                 <span>

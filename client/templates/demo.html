@@ -1,0 +1,273 @@
+{% extends "layout.html" %}
+
+
+
+{% block title %}
+
+<div class="header-content" data-0="height:175px" data-150="height:0px">
+	<div class="top-header">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12">
+					<h1 data-0="margin-top:80px;font-size: 3.5em;" data-150="margin-top:-55px;font-size: 2em;">
+						Get a render
+						<small style="color:rgba(255,255,255,0.7);font-weight:300;">
+							{% for property in plugin.properties %}
+	                            {% if property.name == "OfxPropShortLabel" %}
+	                                {{property.value[0]}}
+	                            {% endif %}
+	                        {% endfor %}
+						</small>
+					</h1>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+{% endblock %}
+
+
+{% block subtitle %}
+
+<div class="bottom-header">
+	<div class="navbar navbar-default">
+		<div class="navbar-collapse collapse navbar-responsive-collapse-filter">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-md-12">
+						<a href="/plugins"><i class="fa fa-angle-left"></i> View all plugins</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<div class="main-content">
+	<div id="demo">
+		<div class="container-fluid">
+
+			<div class="row-fluid">
+
+				<div class="col-md-9">
+
+
+					<div class="row-fluid">
+						<div class="col-md-12">
+							<div class="demo-links">
+								<h3>Settings</h3>
+								<a href="#" class="btn btn-success">Save the render</a>
+								<a href="#" class="btn btn-flat" style="color:#E53935">Delete the render</a>
+
+							</div>
+						</div>
+					</div>
+
+
+
+					<div class="row-fluid">
+						<div class="col-md-12">
+							<div class="panel panel-primary displayDemo">
+								<img src="http://lorempixel.com/1000/500/abstract" alt="" class="img-responsive">
+							</div>
+						</div>
+					</div>
+
+
+					<div class="row-fluid">
+						<div class="col-md-12">
+							<div class="panel panel-primary graphDemo">
+								<img src="http://placehold.it/1000x400/fff/ddd&text=Editable%20graph%20for%20render" alt="" class="img-responsive">
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="col-md-3">
+					<div class="changeParameters">
+						<div class="changeParameters-title">
+							<h3>Parameters</h3>
+						</div>
+						<div class="changeParameters-content">
+
+							<form action="/demo" methods="GET">
+								<fieldset>
+
+									{% set count = 1 %}
+									{% for parameterTab in plugin.parameters %}
+			                            {% for parameter in parameterTab %}
+			                                {% if parameter.name == "OfxPropName" %}
+			                                	<div class="form-group">
+													<label for="input{{count}}" class="control-label">{{ parameter.value[0] }}</label>
+													{% for parameter in parameterTab %}
+		                                                {% if parameter.name == "OfxParamPropType" %}
+
+		                                                    {% set val = parameter.value[0] %}
+
+		                                                    
+
+		                                                    {% if val == "OfxParamTypeInteger" %}
+																<input type="number" class="form-control" id="input{{count}}" placeholder="Int">
+		                                                    {% endif %}
+
+		                                                    {% if val == "OfxParamTypeInteger2D" %}
+																<input type="text" class="form-control" id="input{{count}}" placeholder="Integer2D">
+		                                                    {% endif %}
+
+		                                                    {% if val == "OfxParamTypeRange" %}
+																<div class="slider shor"></div>
+																<input class="input-number" type="number" id="input{{count}}" name="{{count}}" value="">
+		                                                    {% endif %}
+
+		                                                    {% if val == "OfxParamTypeText" %}
+																<input type="text" class="form-control" id="input{{count}}" placeholder="Text">
+		                                                    {% endif %}
+
+		                                                    {% if val == "OfxParamTypeDouble" %}
+																<input type="number" class="form-control" id="input{{count}}" placeholder="Double">
+		                                                    {% endif %}
+
+		                                                    {% if val == "OfxParamTypeString" %}
+																<input type="text" class="form-control" id="input{{count}}" placeholder="String">
+		                                                    {% endif %}
+
+		                                                    {% if val == "OfxParamTypeChoice" %}
+																<div class="checkbox">
+																	<label>
+																		<input id="input{{count}}" type="checkbox">
+																	</label>
+																</div>
+		                                                    {% endif %}
+
+		                                                    {% if val == "OfxParamTypeBoolean" %}
+																<div class="togglebutton">
+																	<label>
+																		<input id="input{{count}}" type="checkbox">
+																	</label>
+																</div>
+		                                                    {% endif %}
+
+		                                                {% endif %}
+		                                            {% endfor %}
+		                                            {% set count = count + 1 %}
+												</div>
+			                                {% endif %}
+			                            {% endfor %}
+			                        {% endfor %}
+
+
+									<!-- <div class="form-group">
+										<label for="input0" class="control-label">Range</label>
+										<div class="slider shor"></div>
+										<input class="input-number" id="input-number" type="number" id="input0" value="">
+									</div>
+									<div class="form-group">
+										<label for="input1" class="control-label">Text</label>
+										<input type="text" class="form-control" id="input1" placeholder="First input">
+									</div>
+									<div class="form-group">
+										<label for="input2" class="control-label">Number</label>
+										<input type="number" class="form-control" id="input2" placeholder="2">
+									</div>
+									<div class="form-group">
+										<div class="togglebutton">
+											<label>
+												<input id="input3" type="checkbox">
+											</label>
+										</div>
+										<label for="input3" class="control-label">Toggle</label>
+									</div>
+									<div class="form-group">
+										<div class="checkbox">
+											<label>
+												<input id="input4" type="checkbox">
+											</label>
+										</div>
+										<label for="input4" class="control-label">Check</label>
+									</div>
+									<div class="form-group">
+										<label class="control-label">Radio</label>
+										<div class="radio radio-primary">
+											<label>
+												<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="">
+												Option one
+											</label>
+										</div>
+										<div class="radio radio-primary">
+											<label>
+												<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+												Option two
+											</label>
+										</div>
+									</div> -->
+								</fieldset>
+
+							</div>
+
+							<div class="changeParameters-result">
+
+								<div class="form-group submit-form">
+									<button type="submit" class="btn btn-primary">Ask a new render</button>
+								</div>
+
+
+							</div>
+						</form>
+
+
+					</div>
+
+				</div>
+
+			</div>
+
+
+		</div>
+	</div>
+</div>
+
+
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+	$slider = $(".shor").noUiSlider({
+		start: 40,
+		connect: "lower",
+		range: {
+			min: 0,
+			max: 100
+		},
+		step: 1,
+		handles : 1,
+		format: wNumb({
+			decimals: false
+		})
+	});
+	$value = $slider.val();
+	$slider.Link('lower').to($('.input-number'));
+	$slider.Link('lower').to($('#input-number'));
+
+});
+
+</script>
+{% endblock %}
+
+
+
