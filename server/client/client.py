@@ -1,4 +1,4 @@
-from flask import Flask, request, abort, send_file, render_template, jsonify, json
+from flask import Flask, request, abort, send_file, render_template, jsonify, json, Response
 import ConfigParser, requests, tarfile, uuid, os
 
 app = Flask(__name__)
@@ -8,53 +8,38 @@ configParser.read('client/configuration.conf')
 version = "0.0.1"
 
 analyzeRootUri = configParser.get("APP_CLIENT", "analyzeRootUri")
-'''
-sendGraphExample = {
-    "nodes": [
-        {
-            "id": 0,
-            "plugin": "tuttle.text",
-           "parameters" : [
-                {
-                    "id":"color",
-                    "value":[1,0,1,1]
-                },
-                {
-                    "id":"text",
-                    "value": "HEY CECI EST UN SUPER PROJET"
-                },
-                {
-                    "id":"italic",
-                    "value": true
-                },
-                {
-                    "id":"textSize",
-                    "value": 80
-                }
-           ]
-        },
-        {
-            "id": 1,
-            "plugin": "tuttle.pngwriter",
-           "parameters" : []
-        }
-    ],
-    "connections": [
-        {"src": {"id": 0}, "dst": {"id": 1}}
-    ]
-}
-'''
+renderRootUri = configParser.get("APP_CLIENT", "renderRootUri")
+current_render = ""
+_id = 0
 
 @app.route('/demo/')
 def displayIndex():
-    renderGraph = {"graph":"graph"}
-    return render_template('base.html', renderGraph=renderGraph)
+    return render_template('base.html')
 
-@app.route('/plugins/')
+@app.route('/plugins/', methods=['GET'])
 def getPlugins():
     resp = requests.get(analyzeRootUri+"/plugins/")
     return resp.text
 
+@app.route('/demo/<resourceName>', methods=['GET'])
+def resource(resourceName):
+    resp = requests.get(renderRootUri + "/render/" + current_render['render']['id'] + "/resources/" + resourceName )
+    return Response(resp.content, mimetype="image/png", content_type='image/png')
+
+@app.route('/render/', methods=['POST'])
+def render():
+    global current_render
+    headers = {
+        'content-type': 'application/json'
+    }
+    resp = requests.post(renderRootUri + "/render", data=request.get_json(), headers=headers)
+    current_render = resp.json()
+    return resp.text
+
+@app.route('/stats/', methods=['GET'])
+def getStatus():
+    resp = requests.get(renderRootUri+"/stats/")
+    return resp.text
 
 @app.route('/bundles/', methods=['GET', 'POST'])
 def sendBundle():

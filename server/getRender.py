@@ -4,7 +4,7 @@ import os, uuid, time, random, ConfigParser
 app = Flask(__name__, static_folder='', static_url_path='')
 
 configParser =  ConfigParser.RawConfigParser()
-configParser.read('ofxPlugins/configuration.conf')
+configParser.read('worker/configuration.conf')
 
 listImg = {}
 renderList = {}
@@ -13,6 +13,7 @@ renderList = {}
 
 @app.route('/render/', methods=['POST'])
 def render():
+
     scene = request.get_json()
     uid = str(uuid.uuid1())
     outputId = random.choice(listImg.keys())
@@ -22,8 +23,13 @@ def render():
     newRender['outputFile'] = outputId
     newRender['scene'] = scene
     renderList['outputListId'] = ["sample"]
+
+    response = jsonify(**newRender)
+
     time.sleep(2)
-    return jsonify(**newRender)
+
+    return response
+
 
 
 @app.route('/resources/', methods=['GET'])
@@ -73,4 +79,4 @@ def getAllResources():
 
 if __name__ == "__main__":
     getAllResources()
-    app.run(host=configParser.get("APP_PLUGIN", "host"), port=configParser.getint("APP_PLUGIN", "port"), debug=True)
+    app.run(host=configParser.get("APP_RENDER", "host"), port=configParser.getint("APP_RENDER", "port"), debug=True)
