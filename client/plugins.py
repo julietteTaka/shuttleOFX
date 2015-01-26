@@ -27,7 +27,6 @@ def getPlugins(pluginName=None):
     resp = requests.get(analyzeRootUri+"/plugins")
     # resp = requests.get("http://localhost:5004/plugins/")
 
-    # return jsonify(**resp.json())
     return render_template('plugins.html', dico=resp.json())
 
 
@@ -36,20 +35,10 @@ def getPlugin(pluginId):
     resp = requests.get(analyzeRootUri+"/plugins/"+pluginId)
     # resp = requests.get("http://localhost:5004/plugins/<pluginId>")
 
-    # return = jsonify(**resp.json())
-    return render_template('plugin.html', dico=resp.json())
+    return render_template('plugin.html', plugin=resp.json())
 
 
 
-# @app.route('/pluginsWrong')
-# def getPluginsWrong(pluginName=None):
-#     return render_template('plugins.html', dico=dico)
 
-
-# @app.route('/pluginsWrong/<pluginName>')
-# def pluginWrong(pluginName=None):
-#     newdico = dict(dico)
-#     newdico["currentPlugin"] = pluginName
-#     return render_template('plugin.html', dico=newdico)
 
 

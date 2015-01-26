@@ -8,7 +8,7 @@ import ConfigParser, requests, json
 app = Flask(__name__, static_folder='', static_url_path='')
 
 configParser =  ConfigParser.RawConfigParser()
-configParser.read('server/configuration.conf')
+configParser.read('ofxPlugins/configuration.conf')
 
 version = "0.0.1"
 
@@ -20,7 +20,7 @@ pluginCache = tuttle.core().getPluginCache()
 plugins = pluginCache.getPlugins()
 
 
-@app.route('/plugins', methods=['GET'])
+@app.route('/plugins/', methods=['GET'])
 def getPlugins():
     pluginsDescription = {'plugins':[], 'total': 0}
     for plugin in plugins:
@@ -54,4 +54,4 @@ if __name__ == '__main__':
     app.run(host=configParser.get("APP_PLUGIN", "host"), port=configParser.getint("APP_PLUGIN", "port"), debug=True)
 
 
-    
+

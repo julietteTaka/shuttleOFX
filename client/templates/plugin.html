@@ -8,13 +8,13 @@
             <div class="row">
                 <div class="col-md-12">
                     <h1 data-0="margin-top:80px;font-size: 3.5em;" data-150="margin-top:-55px;font-size: 2em;">
-                        {% for property in dico.properties %}
+                        {% for property in plugin.properties %}
                             {% if property.name == "OfxPropShortLabel" %}
                                 {{property.value[0]}}
                             {% endif %}
                         {% endfor %}
                         <small style="color:rgba(255,255,255,0.7);font-weight:300;">
-                            Version {{ dico.version.major }}.{{ dico.version.minor }}
+                            Version {{plugin.version.major}}.{{plugin.version.minor}}
                         </small>
                     </h1>
                 </div>
@@ -49,41 +49,70 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                    <h2>Plugin description</h2>
-                    <p>This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information. This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information. This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information. This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+                <div class="page-header">
+                <h2>Plugin description</h2>
+                </div>
+                {% for property in plugin.properties %}
+                    {% if property.name == "OfxPropPluginDescription" %}
+
+                    <p>
+                        {% for desc in property.value %}
+                            {{desc}}
+                        {% endfor %}
+                    </p>
+
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
+                <div class="page-header">
                     <h2>Parameters</h2>
-                    
-                    <table class="table table-striped table-hover ">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Type</th>
-                                <th>Values</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% set count1 = 1 %}
-                            {% for parameterTab in dico.parameters %}
-                                {% for parameter in parameterTab %}
-                                        <tr>
-                                            <td>{{ count1 }}</td>
-                                            <td>{{ parameter.name }}</td>
-                                            <td>{{ parameter.type }}</td>
-                                            <td>
-                                                {{ parameter.value[0] }},
-                                                {{ parameter.value[1] }}
-                                            </td>
-                                        </tr>
-                                {% endfor %}
-                            {% set count1 = count1 + 1 %}
+                </div>
+
+                <a href="#0" id="tab-parameters-toggle" class="btn btn-primary">View all parameters</a>
+                
+                <table class="table table-striped table-hover" id="tab-parameters">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set count = 1 %}
+                        {% for parameterTab in plugin.parameters %}
+                            {% for parameter in parameterTab %}
+                                {% if parameter.name == "OfxPropName" %}
+                                    <tr>
+                                        <td>{{ count }}</td>
+                                        <td>{{ parameter.value[0] }}</td>
+                                        <td>
+                                            {% if parameter.type == -1 %}
+                                                none
+                                            {% endif %}
+                                            {% if parameter.type == 0 %}
+                                                int
+                                            {% endif %}
+                                            {% if parameter.type == 1 %}
+                                                double
+                                            {% endif %}
+                                            {% if parameter.type == 2 %}
+                                                string
+                                            {% endif %}
+                                            {% if parameter.type == 3 %}
+                                                pointer
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
                             {% endfor %}
-                        </tbody>
-                    </table>
+                            {% set count = count + 1 %}
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -91,15 +120,20 @@
             <form class="form-horizontal">
                 <div class="plugin-render">
                     <div class="col-md-12">
-                        <h2>Ask for a render</h2>
+                        <div class="page-header">
+                            <h2>Ask for a render</h2>
+                        </div>
+                        <a href="/demo" class="btn btn-primary">Go to demo page</a>
                     </div>
-                    <div class="col-md-6">
+                    
+
+                    <!-- <div class="col-md-6">
                         <h3>Default image</h3>
                         <img src="{{ url_for('static', filename='images/test.png') }}" alt="" class=" panel render-img img-responsive">
                         
                     </div>
                     <div class="col-md-6">
-                        <h3>Choose parameters</h3>
+                        <h3>Change render's parameters</h3>
                         <div class="render-form">
                             <fieldset>
                                 <div class="form-group">
@@ -196,13 +230,10 @@
                                 </div>
                             </fieldset>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </form>
         </div>
     </div>
 </div>
 {% endblock %}
-
-
-
