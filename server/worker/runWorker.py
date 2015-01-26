@@ -1,85 +1,49 @@
 from pyTuttle import tuttle
-from flask import Flask, jsonify, request, abort, send_file
+from flask import Flask, jsonify, request, abort, Response, send_file
 from logging.handlers import RotatingFileHandler
-import tempfile
-import uuid
-import io
-import logging
-import os
+import tempfile, ConfigParser, uuid, io, logging, os
 
 #class
 import renderScene
+
+configParser =  ConfigParser.RawConfigParser()
+configParser.read('configuration.conf')
 
 app = Flask(__name__)
 renders = []
 
 currentAppDir = os.path.dirname(__file__)
-tmpRenderingPath = os.path.join(currentAppDir, "tmp")
+tmpRenderingPath = os.path.join(currentAppDir, "render")
 if not os.path.exists(tmpRenderingPath):
   os.mkdir(tmpRenderingPath)
 
-'''
-sendGraphExample = {
-    "nodes": [
-        {
-            "id": 0,
-            "plugin": "tuttle.text",
-           "parameters" : [
-                {
-                    "id":"color",
-                    "value":[1,0,1,1]
-                },
-                {
-                    "id":"text",
-                    "value": "HEY CECI EST UN SUPER PROJET"
-                },
-                {
-                    "id":"italic",
-                    "value": true
-                },
-                {
-                    "id":"textSize",
-                    "value": 80
-                }
-           ]
-        },
-        {
-            "id": 1,
-            "plugin": "tuttle.pngwriter",
-           "parameters" : []
-        }
-    ],
-    "connections": [
-        {"src": {"id": 0}, "dst": {"id": 1}}
-    ]
-}
-'''
+r = renderScene.RenderScene()
 
 # send graph informations, nodes and connections
 @app.route('/render', methods=['POST'])
 def newRender():
+    global r
     datas = request.json
-    userID = "jonhDoe"
-
-    tmpFile = tempfile.mkstemp(prefix='tuttle_', suffix="_"+userID+".png", dir=tmpRenderingPath)
+    userID = "johnDoe"
     renderID = str(uuid.uuid1())
 
-    render = {
-    "id" : renderID,
-    "scene" : datas,
-    "resources": [
-        "/render/"+str(renderID)+"/resources/"+os.path.basename(tmpFile[1])
-    ]}
+    tmpFile = tempfile.mkstemp(prefix='tuttle_', suffix="_"+userID+".png", dir=tmpRenderingPath)
+    resourcePath = os.path.basename(tmpFile[1])
 
-    app.logger.debug("new resource id is " + os.path.basename(tmpFile[1]))
-    renders.append( render )
+    newRender = {}
+    newRender['id'] = renderID
+    newRender['outputFile'] = resourcePath
+    newRender['scene'] = datas
+
+    app.logger.debug("new resource is " + resourcePath)
+    renders.append( newRender )
 
     r = renderScene.RenderScene()
     r.setPluginPaths("")
-    r.loadGraph(render, outputFilename=tmpFile[1])
+    r.loadGraph(newRender, outputFilename=tmpFile[1])
     r.computeGraph()
     
-    return jsonify(renderID=renderID) #is it useful to return the json instead of the renderid?
+    return jsonify(render=newRender)
 
 '''
  update graph informations
@@ -94,12 +58,19 @@ def newRender():
 '''
 
 @app.route('/render/<renderID>', methods=['PUT'])
-def updateRequest(renderID):
-    if renderID not in renders:
-        app.logger.error('id '+renderID+" doesn't exists")
-        abort(404)
+def updateRequest(renderPath):
+    for render in renders:
+        if renderID not in render:
+            app.logger.error('id '+renderID+" doesn't exists")
+            abort(404)
     for key, value in request.json["update"].items():
         renders[renderID][key] = value
+
+# return compute status
+@app.route('/stats/', methods=['GET'])
+def getStatus():
+    global r
+    return str(r.getStatus())
 
 
 # return all renders in json format
@@ -112,26 +83,28 @@ def getRenders():
 # get a render by id in json format
 @app.route('/render/<renderID>', methods=['GET'])
 def getRenderById(renderID):
-    if renderID not in renders:
-        jsonify(render=None)
-        app.logging.error('id '+renderID+" doesn't exists")
-        abort(404)
-    return jsonify(render=renders[renderID])
+    global renders
+
+    for render in renders:
+        if renderID == render['id']:
+            return jsonify(render=render)
+    jsonify(render=None)
+    app.logger.error('id '+ renderID +" doesn't exists")
+    abort(404)
+
 
 @app.route('/render/<renderId>/resources/<resourceId>', methods=['GET'])
 def resource(renderId, resourceId):
-    if os.path.isfile('tmp/' + resourceId):
-        return send_file('tmp/' + resourceId, mimetype='image/png')
+    if os.path.isfile(tmpRenderingPath + "/" + resourceId):
+        return send_file( tmpRenderingPath + "/" + resourceId )
     else:
-        logging.error('tmp/' + resourceId + " doesn't exists")
+        logging.error(tmpRenderingPath + resourceId + " doesn't exists")
         abort(404)
 
 
 # delete a render from the render array
 @app.route('/render/<renderID>', methods=['DELETE'])
 def deleteRenderById(renderID):
-    print renders
-    print renders["id"]
     if renderID not in renders:
         app.logger.error('id '+renderID+" doesn't exists")
         abort(400)
@@ -139,7 +112,8 @@ def deleteRenderById(renderID):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
-    handler = RotatingFileHandler('/tmp/apiMethods.log', backupCount=1)
+    app.run(host=configParser.get("APP_RENDER", "host"), port=configParser.getint("APP_RENDER", "port"), debug=True)
+
+    handler = RotatingFileHandler('/tmp/worker.log', backupCount=1)
     handler.setLevel(logging.DEBUG)
     app.logger.addHandler(handler)
