@@ -1,14 +1,16 @@
 from pyTuttle import tuttle
-import logging
-import time
+import logging, time, ConfigParser
 
+configParser =  ConfigParser.RawConfigParser()
+configParser.read('configuration.conf')
 
 class RenderScene:
     def __init__(self):
         self.nodes = []
         self.tuttleGraph = tuttle.Graph()
-        self.globalOfxPluginPath = "/home/juliette/Programmation_compilation/webOpenOFX/TuttleOFX/install/" #install path ?
+        self.globalOfxPluginPath = configParser.get("OFX_PATH", "globalOfxPluginPath")
         self.graph = None
+        self.status = 0 #-1 aborted 0 undefined, 1 loading, 2 computing  3, complete
 
 
     def setPluginPaths(self, ofxPluginPath):
@@ -16,12 +18,13 @@ class RenderScene:
         tuttle.core().getPluginCache().addDirectoryToPath(self.globalOfxPluginPath)
         tuttle.core().getPluginCache().addDirectoryToPath(ofxPluginPath)
         pluginCache = tuttle.core().getPluginCache()
-        tuttle.core().preload()
+        tuttle.core().preload(False)
 
 
     def loadGraph(self, graphToLoad, outputFilename):
         pythonType =  None
         self.graph = graphToLoad
+        self.status = 1
         try:
             for node in graphToLoad['scene']['nodes']:
                 tuttleNode =  self.tuttleGraph.createNode(str(node['plugin']))
@@ -31,7 +34,7 @@ class RenderScene:
                     if type(parameter["value"]) == unicode:
                         parameter["value"] = str(parameter["value"])
 
-                    param.setValue( parameter["value"])
+                    param.setValue(parameter["value"])
                 self.nodes.append(tuttleNode)
 
             for connection in graphToLoad['scene']['connections']:
@@ -45,7 +48,13 @@ class RenderScene:
 
     def computeGraph(self):
         try:
+            self.status = 2
             self.graph["startDate"] = time.time()
             self.tuttleGraph.compute(self.nodes[len(self.nodes)-1] )
+            self.status = 3
         except Exception as e:
-                logging.error("Error in render: " + str(e))
+            self.status = -1
+            logging.error("Error in render: " + str(e))
+
+    def getStatus(self):
+        return self.status
