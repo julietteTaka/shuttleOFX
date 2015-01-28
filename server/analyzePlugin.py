@@ -1,5 +1,5 @@
 from pyTuttle import tuttle
-from ofxPlugins import plugin
+from server import plugin
 from flask import jsonify
 import logging
 import json

@@ -4,8 +4,7 @@ from pyTuttle import tuttle
 from ofxPlugins import analyze
 import ConfigParser, requests, json
 
-
-app = Flask(__name__, static_folder='', static_url_path='')
+from server import app
 
 configParser =  ConfigParser.RawConfigParser()
 configParser.read('ofxPlugins/configuration.conf')
@@ -47,11 +46,4 @@ def getPlugin(pluginId):
     # data = json.load(json_data)
     # json_data.close()
     # return jsonify(**data)
-
-
-
-if __name__ == '__main__':
-    app.run(host=configParser.get("APP_PLUGIN", "host"), port=configParser.getint("APP_PLUGIN", "port"), debug=True)
-
-
 
