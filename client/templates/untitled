@@ -1,0 +1,6 @@
+<span>
+    Version {{ plugin.version.major }}.{{ plugin.version.minor }}
+</span>
+
+{% set urldemo = plugin.uri %}
+{% set urldemo = urldemo[9:] %}

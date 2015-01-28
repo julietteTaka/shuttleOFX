@@ -1,0 +1,73 @@
+.clip{
+	margin-top: 50px;
+	margin-left: 70px;
+	width: 250px;
+	min-height: 100px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+
+.clip-name{
+	z-index: 20;
+	line-height: 100px;
+	position: absolute;
+	margin-left: 60px;
+	font-size: 1.5em;
+	background: #fff;
+	color: #ccc;
+	font-family: "Roboto-Light";
+}
+
+
+
+.clip-input{
+	z-index: 30;
+	position: absolute;
+	margin-left: -70px;
+}
+.clip-input:before{
+	content: "";
+	width: 12px;
+	height: 12px;
+	background: @ofxColor2;
+	border-radius: 3px;
+	position: absolute;
+	margin-left: 65px;
+	margin-top: 9px;
+}
+
+.clip-output{
+	z-index: 30;
+	position: absolute;
+	margin-left: 265px;
+}
+.clip-output:before{
+	content: "";
+	width: 12px;
+	height: 12px;
+	background: @ofxColor2;
+	border-radius: 3px;
+	position: absolute;
+	margin-left: -20px;
+	margin-top: 9px;
+}
+
+
+.clip-mask{
+	z-index: 30;
+	position: absolute;
+	margin-top: -35px;
+	margin-left: 60px;
+}
+.clip-mask:before{
+	content: "";
+	width: 12px;
+	height: 12px;
+	background: @ofxColor2;
+	border-radius: 3px;
+	position: absolute;
+	margin-left: 0px;
+	margin-top: 28px;
+}
