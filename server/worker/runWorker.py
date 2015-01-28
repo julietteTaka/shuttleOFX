@@ -9,8 +9,8 @@ import renderScene
 configParser =  ConfigParser.RawConfigParser()
 configParser.read('configuration.conf')
 
-app = Flask(__name__)
 renders = []
+listImg = {}
 
 currentAppDir = os.path.dirname(__file__)
 tmpRenderingPath = os.path.join(currentAppDir, "render")
@@ -18,6 +18,12 @@ if not os.path.exists(tmpRenderingPath):
   os.mkdir(tmpRenderingPath)
 
 r = renderScene.RenderScene()
+
+
+app = Flask(__name__)
+
+
+
 
 # send graph informations, nodes and connections
 @app.route('/render', methods=['POST'])
@@ -111,7 +117,55 @@ def deleteRenderById(renderID):
     del renders[renderID]
 
 
+
+
+@app.route('/resources/', methods=['POST'])
+def addResource():
+    global listImg
+
+    uid = str(uuid.uuid1())
+    img = request.data
+    print request.headers
+    ext = request.headers.get("Content-Type").split('/')[1]
+
+    imgFile = "/resources/" + uid + "." + ext
+
+    f = open("../resources/" + uid + "." + ext, 'w')
+    f.write(img)
+    f.close()
+
+    objectId = {'id': uid,
+                'uri': imgFile
+    }
+
+    listImg[uid] = imgFile
+
+    return jsonify(**objectId)
+
+@app.route('/resources/<resourceId>', methods=['GET'])
+def getResource(resourceId):
+    if os.path.isfile("../resources/"+resourceId):
+        return send_file("../resources/"+resourceId)
+    abort(404)
+    return
+
+@app.route('/resources/', methods=['GET'])
+def getResourcesDict():
+    global listImg
+    ret = {"files" : listImg }
+    return jsonify(**ret)
+
+def getAllResources():
+    for image in os.listdir("../resources"):
+        _id = str(uuid.uuid4())
+        listImg[_id] = "/resources/" + str(image)
+
+
+
+
+
 if __name__ == "__main__":
+    getAllResources()
     app.run(host=configParser.get("APP_RENDER", "host"), port=configParser.getint("APP_RENDER", "port"), debug=True)
 
     handler = RotatingFileHandler('/tmp/worker.log', backupCount=1)

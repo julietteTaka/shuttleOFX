@@ -43,6 +43,7 @@ def getPluginProperties(pluginToAnalyse):
 
     pluginObject.id = str(uuid.uuid1())
     pluginObject.uri = "/plugins/" + str(pluginToAnalyse.getIdentifier())
+    pluginObject.rawIdentifier = str(pluginToAnalyse.getIdentifier())
     pluginObject.version = {
         'major': pluginToAnalyse.getVersionMajor(),
         'minor': pluginToAnalyse.getVersionMinor()
