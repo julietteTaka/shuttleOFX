@@ -4,11 +4,10 @@ from flask import Flask, jsonify
 # from ofxPlugins import analyze
 import ConfigParser, requests, json
 
-
-app = Flask(__name__, static_folder='', static_url_path='')
+from server import app
 
 configParser =  ConfigParser.RawConfigParser()
-configParser.read('configuration.conf')
+configParser.read('server/configuration.conf')
 
 version = "0.0.1"
 
@@ -25,7 +24,7 @@ def getPlugins():
     # pluginsDescription = {'plugins':[], 'total': 0}
     # for plugin in plugins:
     #     pluginsDescription['plugins'].append(analyze.getPluginProperties(plugin))
-    json_data= open('plugins.json')
+    json_data= open('server/plugins.json')
     data = json.load(json_data)
     json_data.close()
 
@@ -43,15 +42,12 @@ def getPlugin(pluginId):
     # pluginDescription = analyze.getPluginProperties(plugin)
     # return jsonify(**pluginDescription)
 
-    json_data= open('plugin.json')
+    json_data= open('server/plugin.json')
     data = json.load(json_data)
     json_data.close()
     return jsonify(**data)
 
 
-
-if __name__ == '__main__':
-    app.run(host=configParser.get("APP_PLUGIN", "host"), port=configParser.getint("APP_PLUGIN", "port"), debug=True)
 
 
 
