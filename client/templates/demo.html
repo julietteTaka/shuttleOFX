@@ -140,27 +140,27 @@
                                                                             <input type="number" ofxType="OfxParamTypeInteger" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
                                                                         {% endif %}
                                                                         {% if val == "OfxParamTypeInteger2D" %}
-                                                                            <input type="text" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                                            <input type="text" ofxType="OfxParamTypeInteger2D" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
                                                                         {% endif %}
                                                                         {% if val == "OfxParamTypeRange" %}
                                                                             <div class="slider shor"></div>
-                                                                            <input name="{{name}}" id="{{name}}" class="input-number" type="number" value="{{default}}">
+                                                                            <input name="{{name}}" ofxType="OfxParamTypeRange"  id="{{name}}" class="input-number" type="number" value="{{default}}">
                                                                         {% endif %}
                                                                         {% if val == "OfxParamTypeText" %}
-                                                                            <input type="text" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                                            <input type="text" ofxType="OfxParamTypeText" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
                                                                         {% endif %}
                                                                         {% if val == "OfxParamTypeDouble" %}
-                                                                            <input type="number" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                                            <input type="number" ofxType="OfxParamTypeDouble" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
                                                                         {% endif %}
                                                                         {% if val == "OfxParamTypeString" %}
-                                                                            <input type="text" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                                            <input type="text" ofxType="OfxParamTypeString" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
                                                                         {% endif %}
 
                                                                         {% if val == "OfxParamTypeChoice" %}
 
                                                                         {% for parameter in parameterTab %}
                                                                             {% if parameter.name == "OfxParamPropChoiceOption" %}
-                                                                                <select name="{{name}}" id="{{name}}" style="display:block">
+                                                                                <select ofxType="OfxParamTypeChoice" name="{{name}}" id="{{name}}" style="display:block">
                                                                                     {% for val in parameter.value %}
                                                                                         <option value="{{val}}">{{val}}</option>
                                                                                     {% endfor %}
@@ -187,9 +187,9 @@
                                                                             <div class="togglebutton">
                                                                                 <label>
                                                                                     {% if default == 1%}
-                                                                                        <input name="{{name}}" id="{{name}}" type="checkbox" checked>
+                                                                                        <input ofxType="OfxParamTypeBoolean" name="{{name}}" id="{{name}}" type="checkbox" checked>
                                                                                     {% else %}
-                                                                                        <input name="{{name}}" id="{{name}}" type="checkbox" >
+                                                                                        <input ofxType="OfxParamTypeBoolean" name="{{name}}" id="{{name}}" type="checkbox" >
                                                                                     {% endif %}
                                                                                 </label>
                                                                             </div>

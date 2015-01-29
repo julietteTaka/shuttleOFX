@@ -231,26 +231,42 @@
         $("input", $('#renderForm')).each(function(index){
             var jsonForm={};
             // console.log(this.type);
-            switch(this.type) {
-                case 'text':
+            switch($(this).attr("ofxType")) {
+            // switch(this.type) {
+                case 'OfxParamTypeInteger':
+                    jsonForm["id"] = $(this).attr("id");
+                    jsonForm["value"] = parseInt(this.value);
+                    renderParameters.push(jsonForm);
+                    break;
+                case 'OfxParamTypeInteger2D':
                     var tab = [];
-                    tab.push(3);
-                    tab.push(3);
+                    tab.push(4);
+                    tab.push(4);
                     jsonForm["id"] = $(this).attr("id");
                     jsonForm["value"] = tab;
                     renderParameters.push(jsonForm);
                     break;
-                case 'number':
+                case 'OfxParamTypeRange':
                     jsonForm["id"] = $(this).attr("id");
                     jsonForm["value"] = parseInt(this.value);
                     renderParameters.push(jsonForm);
                     break;
-                case 'range':
+                case 'OfxParamTypeText':
                     jsonForm["id"] = $(this).attr("id");
-                    jsonForm["value"] = parseInt(this.value);
+                    jsonForm["value"] = this.value;
                     renderParameters.push(jsonForm);
                     break;
-                case 'checkbox':
+                case 'OfxParamTypeDouble':
+                    jsonForm["id"] = $(this).attr("id");
+                    jsonForm["value"] = parseFloat(this.value);
+                    renderParameters.push(jsonForm);
+                    break;
+                case 'OfxParamTypeString':
+                    jsonForm["id"] = $(this).attr("id");
+                    jsonForm["value"] = this.value;
+                    renderParameters.push(jsonForm);
+                    break;
+                case 'OfxParamTypeBoolean':
                     if (this.checked) {
                         jsonForm["id"] = $(this).attr("id");
                         jsonForm["value"] = true;
@@ -261,16 +277,9 @@
                         renderParameters.push(jsonForm);
                     };
                     break;
-                case 'radio':
-                    if (this.checked) {
-                        jsonForm["id"] = $(this).attr("id");
-                        jsonForm["value"] = this.value;
-                        renderParameters.push(jsonForm);
-                    };
-                    break;
                 default:
                     jsonForm["id"] = $(this).attr("id");
-                    jsonForm["value"] = parseInt(this.value);
+                    jsonForm["value"] = this.value;
                     renderParameters.push(jsonForm);
                     break;
             }
