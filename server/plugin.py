@@ -1,6 +1,7 @@
 class Plugin:
     def __init__(self):
         self.id = ""
+        self.rawIdentifier = ""
         self.pluginID = ""
         self.name = ""
         self.version = ""

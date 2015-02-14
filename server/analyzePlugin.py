@@ -1,9 +1,11 @@
 from pyTuttle import tuttle
-from ofxPlugins import plugin
+from server import plugin
 from flask import jsonify
 import logging
 import json
 import uuid
+
+# logging.basicConfig(filename='/tmp/analyze.log',level=logging.DEBUG)
 
 class pointer:
     def __init__(self, p):
@@ -18,6 +20,7 @@ propTypeToPythonType = {
 }
 
 def getDictOfProperty(prop):
+
     pythonType = propTypeToPythonType[prop.getType()]
 
     return {
@@ -35,17 +38,17 @@ def getDictOfProperties(props):
     return properties
 
 def getPluginProperties(pluginToAnalyse):
-    logging.info('Analyzing plugin for ' + pluginToAnalyse.getRawIdentifier())
-
+    logging.info('Analyzing plugin for ' + str(pluginToAnalyse.getRawIdentifier()))
     pluginObject = plugin.Plugin()
 
     pluginObject.id = str(uuid.uuid1())
-    pluginObject.uri = "/plugins/" + pluginToAnalyse.getIdentifier()
+    pluginObject.uri = "/plugins/" + str(pluginToAnalyse.getIdentifier())
+    pluginObject.rawIdentifier = str(pluginToAnalyse.getIdentifier())
     pluginObject.version = {
         'major': pluginToAnalyse.getVersionMajor(),
         'minor': pluginToAnalyse.getVersionMinor()
     }
-
+    
     try:
         node = tuttle.createNode(pluginToAnalyse.getIdentifier())
     except Exception as e:
@@ -66,6 +69,6 @@ def getPluginProperties(pluginToAnalyse):
     for clip in node.getClipImageSet().getClips():
         clips.append(getDictOfProperties(clip.getProperties()))
     pluginObject.clips = clips
-
+    
     return (pluginObject.__dict__)
 
