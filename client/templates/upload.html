@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 
-
 {% block title %}
 <div class="header-content" data-0="height:175px" data-150="height:0px">
     <div class="top-header">
@@ -8,7 +7,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <h1 data-0="margin-top:80px;font-size: 3.5em;" data-150="margin-top:-55px;font-size: 2em;">
-                      Welcome to Wofx
+                      Upload a bundle
                     </h1>
                 </div>
                 
@@ -26,7 +25,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <a href="/plugins">View plugins</a>
+                        <a href="/plugins"><i class="fa fa-angle-left"></i> Back to all plugins</a>
                     </div>
                 </div>
             </div>
@@ -37,17 +36,41 @@
 
 
 {% block content %}
-    <section id="intro">
+
+{% if uploaded == None  %}
+    <div class="main-content">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <div class="intro-txt">
-                        
+                    <div id="droparea" class="dropzone">
+                        <h1>Click or drag a bundle folder</h1>
+                        <div id="previewsContainer">
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- <div id="selectImage"><a href="#">Select folder</a></div> -->
+            <div id="fileSubmit"><a href="" class="btn btn-primary">Upload bundle</a></div>
         </div>
-    </section>
-    <section id="test">
-    </section>
+    </div>
+{% else %}
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    LOL
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/dropzone.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/dropzone-config.js') }}"></script>
+
 {% endblock %}
+
+
+
