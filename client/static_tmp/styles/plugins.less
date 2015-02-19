@@ -18,12 +18,10 @@
 	&:active{
 		color: @ofxColor2;
 	}
-
 }
 
 
 ul.surveys{
-
 	margin: 0;
 	margin-top: 30px;
 	padding: 0;
@@ -151,35 +149,38 @@ ul.surveys.list{
 	padding-bottom: 45px;
 	border-bottom: 1px solid #fff;
 }
-
-#plugins p.pager-size{
-	float: left;
-	display: inline-block;
-	width: auto;
-}
-#plugins ul.pager-check{
-	float: right;
-	display: inline-block;
-	margin: 0;
-	display: inline-block;
-}
-#plugins ul.pager-check li{
-	list-style: none;
+.filter-title span:first-of-type{
+    font-weight: 400;
+    line-height: 70px;
 }
 
-#plugins ul.pager-check li a{
-	color: @ofxColor;
-	padding: 8px;
-	padding-left: 10px;
-	padding-right: 10px;
+#plugins{
+	p.pager-size{
+		float: left;
+		display: inline-block;
+		width: auto;
+	}
+	ul.pager-check{
+		float: right;
+		display: inline-block;
+		margin: 0;
+		display: inline-block;
+		li{
+			list-style: none;
+			a{
+				color: @ofxColor;
+				padding: 8px;
+				padding-left: 10px;
+				padding-right: 10px;
+			}
+			&.active a{
+				background: @ofxColor;
+				color: #fff;
+			}
+		}
+	}
 
 }
-
-#plugins ul.pager-check li.active a{
-	background: @ofxColor;
-	color: #fff;
-}
-
 
 // #plugins ul.pager-check li a.disabled{
 // 	cursor: not-allowed;
