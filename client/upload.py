@@ -10,8 +10,6 @@ from flask import (
 )
 
 
-
-
 from client import app
 
 
