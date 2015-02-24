@@ -1,0 +1,18 @@
+[OFX_PATH]
+globalOfxPluginPath = /home/hugo/TuttleOFX/TuttleOFX
+
+
+[APP_PLUGIN]
+host = 0.0.0.0
+port = 5004
+analyzeRootUri = http://0.0.0.0:5004
+renderRootUri = http://0.0.0.0:5003
+catalogRootUri = http://0.0.0.0:5002
+clientRootUri = http://0.0.0.0:5001
+analyzeFake = http://0.0.0.0:5010
+
+[DB_CONFIG]
+dbName = webopenfx_db
+dbUser = webopenfx
+dbMdp = tuttle
+dbUrl = localhost:5432
