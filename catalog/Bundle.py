@@ -3,8 +3,8 @@
 class Bundle:
     def __init__(self, bundleId, name):
         self.bundleId = bundleId
-        self.userId = 0
-        self.companyId = 0
+        self.userId = None
+        self.companyId = None
         self.name = name
         self.description = ""
         self.shared = false
