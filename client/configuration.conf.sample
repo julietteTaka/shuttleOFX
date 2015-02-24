@@ -1,0 +1,11 @@
+[OFX_PATH]
+globalOfxPluginPath = /home/juliette/Programmation_compilation/webOpenOFX/TuttleOFX/install/
+genArtsPath = /usr/genarts/SapphireOFX/
+
+[APP_CLIENT]
+host = 0.0.0.0
+port = 5001
+analyzeRootUri = http://10.201.9.26:5004
+renderRootUri = http://10.201.9.26:5003
+catalogRootUri = http://10.201.9.26:5002
+clientRootUri = http://localhost:5001

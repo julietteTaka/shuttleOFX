@@ -8,13 +8,6 @@ from flask import (
     url_for,
     jsonify
 )
-from werkzeug import secure_filename
-import os, zipfile, tarfile
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-
-# app = Flask(__name__)
 
 
 from client import app
@@ -33,6 +26,7 @@ def allowed_file(filename):
 
 
 @app.route('/upload')
+# @login_required
 def upld():
     return render_template('upload.html', uploaded=None)
 
@@ -43,6 +37,7 @@ def upld():
 
 
 @app.route('/upload', methods=['POST'])
+# @login_required
 def upldfile():
     if request.method == 'POST':
 
@@ -89,6 +84,7 @@ def upldfile():
 
 
 @app.route('/uploads/<filename>')
+# @login_required
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 

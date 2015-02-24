@@ -1,10 +1,10 @@
 
 # used in front to generate js and css files
 node_modules
-static
+
 # temporary upload directory
 upload
-
+static
 *.pyc
 *.pyc
 

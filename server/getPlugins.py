@@ -19,7 +19,7 @@ pluginCache = tuttle.core().getPluginCache()
 plugins = pluginCache.getPlugins()
 
 
-@app.route('/plugins/', methods=['GET'])
+@app.route('/plugins', methods=['GET'])
 def getPlugins():
     pluginsDescription = {'plugins':[], 'total': 0}
     for plugin in plugins:

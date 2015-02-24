@@ -1,0 +1,234 @@
+{% extends "layout.html" %}
+
+{% block title %}
+<div class="header-content" data-0="height:175px" data-150="height:0px">
+    <div class="top-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <h1 data-0="margin-top:80px;font-size: 3.5em;" data-150="margin-top:-55px;font-size: 2em;">
+                        Get a render
+                        <small>
+                            {% for property in plugin.properties %}
+                                {% if property.name == "OfxPropShortLabel" %}
+                                    <a style="color:rgba(255,255,255,0.7);font-weight:300;" href="{{ plugin.uri }}">
+                                        {{property.value[0]}}
+                                        <i style="color:rgba(255,255,255,0.4);font-size:0.5em;" class="fa fa-link"></i>
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        </small>
+                    </h1>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block subtitle %}
+<div class="bottom-header">
+    <div class="navbar navbar-default">
+        <div class="navbar-collapse collapse navbar-responsive-collapse-filter">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="/plugins"><i class="fa fa-angle-left"></i> View all plugins</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="main-content">
+    <div id="demo">
+        <div class="container-fluid">
+            <!-- <div class="row-fluid">
+                <div class="col-md-4">
+                    <div class="form-group" style="padding-bottom:60px;">
+                        <label for="select" class="control-label">Selects an other plugin</label>
+                        <select class="form-control" id="select">
+                            <option>PushPixel</option>
+                            <option>2</option>
+                            <option>3</option>
+                        </select>
+                    </div>
+                </div>
+            </div> -->
+            <div class="row-fluid">
+                <div class="col-md-9">
+                    <div class="row-fluid">
+                        <div class="demo-links">
+                            <h3>Settings</h3>
+                            <a href="{{ url_for('static', filename='images/lol.png') }}" id="download-view" download="OFX_view.png" class="disabled btn btn-success">Download render view</a>
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                        <div id="viewer" class="displayDemo">
+                            <img src="{{ url_for('static', filename='images/lol.png') }}" alt="" class="panel panel-primary img-responsive">
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                        <div id="graph" class="graphDemo">
+                            <div id="resultForm"></div>
+                            <img src="http://placehold.it/1000x400/fff/ddd&text=Editable%20graph%20for%20render" alt="" class="panel panel-primary img-responsive">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="changeParameters">
+                        <div class="changeParameters-title">
+                            <h3>Parameters</h3>
+                        </div>
+                        <div class="changeParameters-content">
+                            <form id="renderForm" name="renderForm">
+                                <fieldset>
+                                    {% set count = 1 %}
+                                    {% for parameterTab in plugin.parameters %}
+                                        {% for parameter in parameterTab %}
+                                            {% if parameter.name == "OfxPropLabel" %}
+                                                <div class="form-group">
+                                                    <label class="control-label">{{ parameter.value[0] }}</label>
+
+                                                    {% for parameter in parameterTab %}
+                                                        {% if parameter.name == "OfxParamPropDefault" %}
+                                                            {% set default = parameter.value[0] %}
+
+                                                            {% for parameter in parameterTab %}
+                                                                {% if parameter.name == "OfxPropName" %}
+                                                                    {% set name = parameter.value[0] %}
+
+                                                                {% for parameter in parameterTab %}
+                                                                    {% if parameter.name == "OfxParamPropType" %}
+                                                                        {% set val = parameter.value[0] %}
+
+                                                                        {% if val == "OfxParamTypeInteger" %}
+                                                                            <input type="number" ofxType="OfxParamTypeInteger" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                                        {% endif %}
+                                                                        {% if val == "OfxParamTypeInteger2D" %}
+                                                                            <input type="text" ofxType="OfxParamTypeInteger2D" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                                        {% endif %}
+                                                                        {% if val == "OfxParamTypeRange" %}
+                                                                            <div class="slider shor"></div>
+                                                                            <input name="{{name}}" ofxType="OfxParamTypeRange"  id="{{name}}" class="input-number" type="number" value="{{default}}">
+                                                                        {% endif %}
+                                                                        {% if val == "OfxParamTypeText" %}
+                                                                            <input type="text" ofxType="OfxParamTypeText" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                                        {% endif %}
+                                                                        {% if val == "OfxParamTypeDouble" %}
+                                                                            <input type="number" ofxType="OfxParamTypeDouble" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                                        {% endif %}
+                                                                        {% if val == "OfxParamTypeString" %}
+                                                                            <input type="text" ofxType="OfxParamTypeString" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                                        {% endif %}
+
+                                                                        {% if val == "OfxParamTypeChoice" %}
+
+                                                                        {% for parameter in parameterTab %}
+                                                                            {% if parameter.name == "OfxParamPropChoiceOption" %}
+                                                                                <select ofxType="OfxParamTypeChoice" name="{{name}}" id="{{name}}" style="display:block">
+                                                                                    {% for val in parameter.value %}
+                                                                                        <option value="{{val}}">{{val}}</option>
+                                                                                    {% endfor %}
+                                                                                </select>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                            <!-- <div class="checkbox">
+                                                                                <label>
+                                                                                    {% if default == 1%}
+                                                                                        <input type="checkbox" name="{{name}}" id="{{name}}" checked>
+                                                                                    {% else %}
+                                                                                        <input type="checkbox" name="{{name}}" id="{{name}}">
+                                                                                    {% endif %}
+                                                                                </label>
+                                                                            </div> -->
+                                                                        {% endif %}
+                                                                        {% if val == "OfxParamTypeBoolean" %}
+                                                                            <div class="togglebutton">
+                                                                                <label>
+                                                                                    {% if default == 1%}
+                                                                                        <input ofxType="OfxParamTypeBoolean" name="{{name}}" id="{{name}}" type="checkbox" checked>
+                                                                                    {% else %}
+                                                                                        <input ofxType="OfxParamTypeBoolean" name="{{name}}" id="{{name}}" type="checkbox" >
+                                                                                    {% endif %}
+                                                                                </label>
+                                                                            </div>
+                                                                        {% endif %}
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                                {% set count = count + 1 %}
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endfor %}
+                                </fieldset>
+                            </div>
+                            <div class="changeParameters-result">
+                                <div class="form-group submit-form">
+                                    <input type="button" value="Reset" class="btn btn-default">
+                                    {% for property in plugin.properties %}
+                                        {% if property.name == "OfxPropShortLabel" %}
+                                            {% set rawIdentifier = plugin.uri %}
+                                                <input type="button" value="Render" id="render" pluginId="{{rawIdentifier[9:]}}" 
+                                                    {% for property in plugin.properties %}
+                                                        {% if property.name == "OfxImageEffectPropSupportedContexts" %}
+                                                            {% for context in property.value %}
+                                                                {% if context != "OfxImageEffectContextGeneral" %}
+                                                                    class="btn btn-primary {{context}}"
+                                                                {% endif %}
+                                                            {% endfor%}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                >
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $slider = $(".shor").noUiSlider({
+        start: 40,
+        connect: "lower",
+        range: {
+            min: 0,
+            max: 100
+        },
+        step: 1,
+        handles : 1,
+        format: wNumb({
+            decimals: false
+        })
+    });
+    $value = $slider.val();
+    $slider.Link('lower').to($('.input-number'));
+    $slider.Link('lower').to($('#input-number'));
+});
+
+</script>
+
+
+{% endblock %}
+
+
+
