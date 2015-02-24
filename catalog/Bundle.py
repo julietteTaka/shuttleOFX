@@ -1,8 +1,8 @@
 
 
 class Bundle:
-    def __init__(self, id, name):
-        self.id = id
+    def __init__(self, bundleId, name):
+        self.bundleId = bundleId
         self.name = name
         self.description = ""
 
@@ -11,6 +11,6 @@ class Bundle:
 
     def printBundle():
         print "Bundle :"
-        print "id:", self.id
+        print "bundleId:", self.bundleId
         print "name:", self.name
         print "description:", self.description
