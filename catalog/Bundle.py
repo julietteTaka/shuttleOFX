@@ -15,6 +15,9 @@ class Bundle:
     def setDescription(self, description):
         self.description = description
 
+    def addPluginId(self, plugin):
+        self.plugin.append(plugin)
+
     def printBundle():
         print "Bundle :"
         print "bundleId:", self.bundleId
