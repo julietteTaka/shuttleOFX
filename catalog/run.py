@@ -37,7 +37,7 @@ def newBundle():
     if bundleId == None or bundleName == None:
         abort(404)
 
-    bundle = Bundle( bundleId, bundleName)
+    bundle = Bundle(bundleId, bundleName)
     
     bundleTable.insert(bundle.__dict__)
 
