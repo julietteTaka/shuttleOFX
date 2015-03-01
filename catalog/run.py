@@ -103,7 +103,7 @@ def getPlugins(bundleId):
     requestResult = pluginTable.find({"bundleId":bundleId}).limit(count).skip(skip)
     return mongodoc_jsonify({"plugins":[ result for result in requestResult ]})
 
-@app.route("/plugin/<pluginId>")
+@app.route("/plugin")
 def getAllPlugins():
     count = int(request.args.get('count', 10))
     skip = int(request.args.get('skip', 0))
