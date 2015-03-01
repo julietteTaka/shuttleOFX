@@ -5,14 +5,11 @@ import uuid
 import tempfile
 import ConfigParser
 import multiprocessing
-from multiprocessing import Process, Manager
 
 import renderScene
 
-
-
 configParser =  ConfigParser.RawConfigParser()
-configParser.read('configuration.cfg')
+configParser.read('render.cfg')
 
 g_app = Flask(__name__, static_folder='', static_url_path='')
 

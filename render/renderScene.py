@@ -1,10 +1,8 @@
 from pyTuttle import tuttle
 import logging, time, ConfigParser
 
-
-
 configParser =  ConfigParser.RawConfigParser()
-configParser.read('configuration.cfg')
+configParser.read('render.cfg')
 
 globalOfxPluginPath = configParser.get("OFX_PATH", "globalOfxPluginPath")
 
