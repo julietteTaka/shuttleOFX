@@ -26,15 +26,16 @@ catalogRootUri = configParser.get("APP_CLIENT", "catalogRootUri")
 
 
 
-@app.route('/plugins')
+@app.route('/plugin')
 def getPlugins(pluginName=None):
-    resp = requests.get(catalogRootUri+"/plugins", params=request.args)
+    resp = requests.get(catalogRootUri+"/plugin", params=request.args)
+    print resp, resp.text
     return render_template('plugins.html', dico=resp.json())
 
 
-@app.route('/plugins/<pluginId>')
+@app.route('/plugin/<pluginId>')
 def getPlugin(pluginId):
-    resp = requests.get(analyzeRootUri+"/plugins/"+pluginId)
+    resp = requests.get(analyzeRootUri+"/plugin/"+pluginId)
     print resp.text
     return render_template('plugin.html', plugin=resp.json())
 
