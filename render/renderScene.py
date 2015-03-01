@@ -1,5 +1,7 @@
 from pyTuttle import tuttle
-import logging, time, ConfigParser
+import logging
+import time
+import ConfigParser
 
 configParser =  ConfigParser.RawConfigParser()
 configParser.read('render.cfg')
@@ -34,7 +36,6 @@ class ProgressHandle(tuttle.IProgressHandle):
         print "---> endSequence"
 
 def setPluginPaths(ofxPluginPath):
-
     tuttle.core().getPluginCache().addDirectoryToPath(globalOfxPluginPath)
     tuttle.core().getPluginCache().addDirectoryToPath(ofxPluginPath)
     pluginCache = tuttle.core().getPluginCache()
@@ -102,4 +103,3 @@ def computeGraph(renderSharedInfo, newRender, outputFilename):
     except Exception as e:
         renderSharedInfo['status'] = -1
         logging.error("Error in render: " + str(e))
-    
