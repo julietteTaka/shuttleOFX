@@ -18,7 +18,7 @@ g_app = Flask(__name__, static_folder='', static_url_path='')
 g_pool = multiprocessing.Pool(processes=4)
 g_sharedBundleDatas = {}
 
-# Manager to share rendering information
+# Manager to share analysing information
 g_manager = multiprocessing.Manager()
 
 
