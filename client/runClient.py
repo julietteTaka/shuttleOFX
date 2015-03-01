@@ -31,14 +31,16 @@ def index():
 
 @app.route('/plugin')
 def getPlugins(pluginName=None):
-    resp = requests.get(catalogRootUri+"/plugin", params=request.args)
-    print resp, resp.text
+    try:
+        resp = requests.get(catalogRootUri+"/plugin", params=request.args)
+    except:
+        return render_template('plugins.html', dico=None)
+
     return render_template('plugins.html', dico=resp.json())
 
 @app.route('/plugin/<pluginId>')
 def getPlugin(pluginId):
     resp = requests.get(catalogRootUri+"/plugin/"+pluginId)
-    print resp.text
     return render_template('plugin.html', plugin=resp.json())
 
 @app.route('/demo')
