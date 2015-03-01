@@ -13,7 +13,7 @@ from flask import (
 app = Flask(__name__)
 
 configParser =  ConfigParser.RawConfigParser()
-configParser.read('client.cfg')
+configParser.read(['client.cfg', 'heroku.cfg'])
 
 def get_resource_as_string(name, charset='utf-8'):
     with app.open_resource(name) as f:
