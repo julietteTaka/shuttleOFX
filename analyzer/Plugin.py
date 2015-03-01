@@ -1,5 +1,5 @@
 from pyTuttle import tuttle
-import logging, uuid
+import logging
 
 propTypeToPythonType = {
     tuttle.ePropTypeDouble: float,
@@ -80,4 +80,3 @@ class Plugin:
         self.clips = clips
 
         return (self.__dict__)
-        
