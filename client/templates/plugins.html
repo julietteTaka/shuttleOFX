@@ -2,121 +2,152 @@
 
 
 {% block title %}
-
 <div class="header-content" data-0="height:175px" data-150="height:0px">
-    
     <div class="top-header">
         <div class="">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h1 data-0="margin-top:80px;font-size: 3.5em;" data-150="margin-top:-55px;font-size: 2em;">
-                              OpenFX plugins
-                            </h1>
-                        </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1 data-0="margin-top:80px;font-size: 3.5em;" data-150="margin-top:-55px;font-size: 2em;">
+                          OpenFX plugins
+                        </h1>
                     </div>
                 </div>
-
-        </div>  
+            </div>
+        </div>
     </div>
 </div>
-
 {% endblock %}
 
 
 {% block subtitle %}
-
 <div class="bottom-header">
-                    <div class="navbar navbar-default">
-                        <div class="navbar-header">
-
-                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse-filter">
-                                <span><i class="fa fa-filter" style="padding-right:7px;"></i>Filter plugins</span>
-                            </button>
-                        </div>
-
-                        <div class="navbar-collapse collapse navbar-responsive-collapse-filter">
-                            <form class="navbar-form">
-
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class='filter-title'>Display plugins by</div>
-                                        </div>
-                                        <div class="col-md-2 pull-right filter-item">
-                                            <div class="radio radio-primary">
-                                                <label>
-                                                    <input type="radio" name="optionsRadios" id="optionsRadios4" value="option4">
-                                                    <i class="fa fa-gavel"></i>License
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 pull-right filter-item">
-                                            <div class="radio radio-primary">
-                                                <label>
-                                                    <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                                                    <i class="fa fa-male"></i>Author
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 pull-right filter-item">
-                                            <div class="radio radio-primary">
-                                                <label>
-                                                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                                    <i class="fa fa-star-half-o"></i>Rating
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2 pull-right filter-item">
-                                            <div class="radio radio-primary">
-                                                <label>
-                                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
-                                                    <i class="fa fa-sort-alpha-asc"></i>All
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
+    <div class="navbar navbar-default">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse-filter">
+                <span><i class="fa fa-filter" style="padding-right:7px;"></i>Filter plugins</span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse navbar-responsive-collapse-filter">
+            <form class="navbar-form">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class='filter-title'><span>Display : </span>
+                                <div class="toggler-group">
+                                    <span class="toggler active" data-toggle="grid">
+                                        <i class="fa fa-th-large"></i>
+                                    </span>
+                                    <span class="toggler" data-toggle="list">
+                                        <i class="fa fa-th-list"></i>
+                                    </span>
                                 </div>
-                            </form>
+                            </div>
+                        </div>
+                        <div class="col-md-2 pull-right filter-item">
+                            <div class="radio radio-primary">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios4" value="option4">
+                                    <i class="fa fa-gavel"></i>License
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-2 pull-right filter-item">
+                            <div class="radio radio-primary">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
+                                    <i class="fa fa-male"></i>Author
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-2 pull-right filter-item">
+                            <div class="radio radio-primary">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                                    <i class="fa fa-star-half-o"></i>Rating
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-2 pull-right filter-item">
+                            <div class="radio radio-primary">
+                                <label>
+                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+                                    <i class="fa fa-sort-alpha-asc"></i>All
+                                </label>
+                            </div>
                         </div>
                     </div>
-
                 </div>
-
-{% endblock %}
-
-
-
-{% block content %}
-
-
-<div class="main-content">
-    <div class="container-fluid">
-        <div class="row">
-
-                {% for plugin in dico.plugins %}
-                    
-                    <div class="col-md-3">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">{{ plugin.name }}</h3>
-                            </div>
-                            <div class="panel-img">
-                                <img src="http://placehold.it/275x100/ddd/fff&text=OpenFX%20Plateform" alt="" class="img-responsive">
-                            </div>
-                            <div class="panel-body">
-                                {{ plugin.version }} - {{ plugin.author }}
-                                <a href="/plugins/{{ plugin.id }}" class="btn btn-primary">Test plugin</a>
-                            </div>
-                        </div>
-                    </div>
-
-                {% endfor %}
-
+            </form>
         </div>
     </div>
 </div>
+{% endblock %}
 
+
+{% block content %}
+<div class="main-content" id="plugins">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="filter-page">
+                    <p class="pager-size">
+                        Plugins par page : 
+                        <select name="size" class="">
+                            <option value="10">10</option>
+                            <option value="20" selected>20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                        </select>
+                    </p>
+                    <ul class="pagination pagination-sm pager-check">
+                        <li class="disabled"><a href="javascript:void(0)">«</a></li>
+                        <li><a href="javascript:void(0)">»</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <ul class="surveys grid">
+                {% set counterImg = 1 %}
+                {% for plugin in dico.plugins %}
+                    <li class="col-md-3">
+                        <div class="panel panel-primary">
+                            <div class="plugins-titles">
+                                <img src="http://loremflickr.com/260/100/abstract?random={{counterImg}}" alt="" class="img-responsive">
+                                    <h3 class="panel-title">
+                                        <!-- {% for property in plugin.properties %}
+                                            {% if property.name == "OfxPropShortLabel" %}
+                                                {{property.value[0]}}
+                                            {% endif %}
+                                        {% endfor %} -->
+                                        {{plugin.name}}
+                                    </h3>
+                            </div>
+                            <div class="plugins-infos">
+                                <span>
+                                    Version 1.0
+                                </span>
+                                <span>
+                                    Rating {{ plugin.rate }}
+                                </span>
+                                <!-- {% for property in plugin.properties %}
+                                    {% if property.name == "OfxPropType" %}
+                                        <p>{{property.value[0]}}</p>
+                                    {% endif %}
+                                {% endfor %} -->
+                                <p>{{plugin.shortDescription}}</p>
+                                <a href="{{ plugin.uri }}" class="btn btn-flat btn-primary">View infos</a>
+                                <a href="/demo/{{plugin.rawIdentifier}}" class="btn btn-flat btn-primary">Live render</a>
+                            </div>
+                        </div>
+                    </li>
+                {% set counterImg = counterImg + 1 %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 

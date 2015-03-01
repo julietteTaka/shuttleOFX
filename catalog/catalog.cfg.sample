@@ -1,0 +1,6 @@
+
+[MONGODB]
+hostname: localhost
+port: 27017
+bundleTable: bundles
+pluginTable: plugins
