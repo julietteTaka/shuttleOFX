@@ -14,10 +14,10 @@ app = Flask(__name__)
 currentDir = os.path.dirname(os.path.realpath(__file__))
 
 config = ConfigParser.ConfigParser()
-config.readfp(open(os.path.join(currentDir, 'catalog.cfg')))
+configParser.read(['catalog.cfg', 'heroku.cfg'])
 
 client = pymongo.MongoClient(config.get('MONGODB', 'hostname'), config.getint('MONGODB', 'port'))
-db = client.wofx
+db = client.__getattr__(config.get('MONGODB', 'dbName'))
 bundleTable = db.__getattr__(config.get('MONGODB', 'bundleTable'))
 pluginTable = db.__getattr__(config.get('MONGODB', 'pluginTable'))
 
