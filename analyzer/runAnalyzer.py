@@ -1,7 +1,10 @@
 #!/usr/bin/python
 from flask import Flask, request, jsonify, abort
-import uuid, ConfigParser, tarfile, multiprocessing, shutil, os
-from multiprocessing import Manager, Pool
+import os
+import shutil
+import ConfigParser
+import tarfile
+import multiprocessing
 import atexit
 import Bundle
 
@@ -16,7 +19,7 @@ g_pool = multiprocessing.Pool(processes=4)
 g_sharedBundleDatas = {}
 
 # Manager to share rendering information
-g_manager = Manager()
+g_manager = multiprocessing.Manager()
 
 
 @g_app.route('/bundle/<bundleId>', methods=['POST'])
@@ -76,4 +79,3 @@ def quit():
 
 if __name__ == '__main__':
     g_app.run(host=configParser.get('APP_ANALYZER', 'host'), port=configParser.getint('APP_ANALYZER', 'port'), debug=True)
-    
