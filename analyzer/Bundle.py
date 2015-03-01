@@ -7,7 +7,7 @@ import tempfile
 
 
 from pyTuttle import tuttle
-import plugin
+import Plugin
 
 
 def extractDatasAsTar(datas, outputPath):
@@ -95,5 +95,3 @@ def launchAnalyze(sharedBundleDatas, bundleExt, bundleBin, bundleId):
 
     sharedBundleDatas['datas'] = analyzedBundle
     sharedBundleDatas['globalStatus'] = 'done'
-    
-
