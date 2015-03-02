@@ -14,7 +14,7 @@ app = Flask(__name__)
 currentDir = os.path.dirname(os.path.realpath(__file__))
 
 config = ConfigParser.ConfigParser()
-configParser.read(catalog.cfg)
+config.read('catalog.cfg')
 
 client = pymongo.MongoClient(config.get('MONGODB', 'hostname'), config.getint('MONGODB', 'port'))
 db = client.__getattr__(config.get('MONGODB', 'dbName'))
