@@ -73,9 +73,9 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
     Launches the analyse. Set the process status and fill sharedBundleDatas with the analysed bundle datas. Delete temporary files and directories created during the archive extraction.
     '''
 
-    sharedBundleDatas['globalStatus'] = 'running'
-    sharedBundleDatas['analyseStatus'] = 'waiting'
-    sharedBundleDatas['extractionStatus'] = 'running'
+    sharedBundleDatas['status'] = 'running'
+    sharedBundleDatas['analyse'] = 'waiting'
+    sharedBundleDatas['extraction'] = 'running'
 
     bundlePath = 'tmp/' + str(bundleId)
     os.mkdir(bundlePath)
@@ -84,14 +84,14 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
         extractDatasAsTar(bundleBin, bundlePath)
     elif 'zip' == bundleExt.split('/')[1]:
         extractDatasAsZip(bundleBin, bundlePath)
-    sharedBundleDatas['extractionStatus'] = 'done'
+    sharedBundleDatas['extraction'] = 'done'
 
     analysedBundle = None
-    sharedBundleDatas['analyseStatus'] = 'running'
+    sharedBundleDatas['analyse'] = 'running'
     analysedBundle = analyse(bundlePath)
-    sharedBundleDatas['analyseStatus'] = 'done'
+    sharedBundleDatas['analyse'] = 'done'
 
     shutil.rmtree(bundlePath)
 
     sharedBundleDatas['datas'] = analysedBundle
-    sharedBundleDatas['globalStatus'] = 'done'
+    sharedBundleDatas['status'] = 'done'

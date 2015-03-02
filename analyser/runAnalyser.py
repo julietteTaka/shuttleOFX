@@ -34,38 +34,27 @@ def analyseBundle(bundleId):
 
     datas = g_sharedBundleDatas[bundleId] = g_manager.dict()
 
-    datas['globalStatus'] = None
-    datas['analyseStatus'] = None
-    datas['extractionStatus'] = None
+    datas['status'] = "waiting"
+    datas['analyse'] = "waiting"
+    datas['extraction'] = "waiting"
     datas['datas'] = None
 
     g_pool.apply(Bundle.launchAnalyse, args=[datas, bundleExt, bundleBin, bundleId])
 
-    return str(True)
+    return jsonify(**datas)
 
 @g_app.route('/bundle/<bundleId>', methods=['GET'])
 def getStatus(bundleId):
     '''
     Return the analyse status.
     '''
+    global g_sharedBundleDatas
 
     if bundleId not in g_sharedBundleDatas:
         g_app.logger.error('the id ' + bundleId + ''' doesn't exist''')
         abort (404)
 
-    status = { 'status': g_sharedBundleDatas[bundleId]['globalStatus'], 'extraction': g_sharedBundleDatas[bundleId]['extractionStatus'], 'analyse' : g_sharedBundleDatas[bundleId]['analyseStatus']}
-    return str(status)
-
-@g_app.route('/bundle/<bundleId>/datas', methods=['GET'])
-def getBundleDatas(bundleId):
-    '''
-    Return the analysed bundle datas.
-    '''
-    if bundleId not in g_sharedBundleDatas:
-        g_app.logger.error('the id ' + bundleId + ''' doesn't exist''')
-        abort (404)
-
-    return str(g_sharedBundleDatas[bundleId]['datas'])
+    return jsonify(**g_sharedBundleDatas[bundleId])
 
 @atexit.register
 def quit():
