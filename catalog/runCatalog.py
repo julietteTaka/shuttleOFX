@@ -8,6 +8,7 @@ from bson import json_util
 from flask import Flask, jsonify, Response, request, abort
 
 from Bundle import Bundle
+from Plugin import Plugin
 
 app = Flask(__name__)
 
@@ -92,7 +93,7 @@ def newPlugin(bundleId):
     
     pluginTable.insert(plugin.__dict__)
 
-    requestResult = pluginTable.find_one({"id": pluginId})
+    requestResult = pluginTable.find_one({"pluginId": pluginId})
     return mongodoc_jsonify(requestResult)
 
 
