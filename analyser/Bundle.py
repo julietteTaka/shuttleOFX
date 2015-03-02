@@ -49,12 +49,12 @@ def extractDatasAsZip(datas, outputPath):
         # TODO : extract archive as zip
 
 
-def analyze(pluginPath):
+def analyse(pluginPath):
     '''
-    Analyze the bundle an return a description for each plugin.
+    Analyse the bundle an return a description for each plugin.
     '''
 
-    p = plugin.Plugin()
+    p = Plugin.Plugin()
     pluginCache = tuttle.core().getPluginCache()
     pluginCache.addDirectoryToPath(pluginPath)
     tuttle.core().preload(False)
@@ -68,13 +68,13 @@ def analyze(pluginPath):
     return pluginsDescription
 
 
-def launchAnalyze(sharedBundleDatas, bundleExt, bundleBin, bundleId):
+def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
     '''
-    Launches the analyze. Set the process status and fill sharedBundleDatas with the analyzed bundle datas. Delete temporary files and directories created during the archive extraction.
+    Launches the analyse. Set the process status and fill sharedBundleDatas with the analysed bundle datas. Delete temporary files and directories created during the archive extraction.
     '''
 
     sharedBundleDatas['globalStatus'] = 'running'
-    sharedBundleDatas['analyzeStatus'] = 'waiting'
+    sharedBundleDatas['analyseStatus'] = 'waiting'
     sharedBundleDatas['extractionStatus'] = 'running'
 
     bundlePath = 'tmp/' + str(bundleId)
@@ -86,12 +86,12 @@ def launchAnalyze(sharedBundleDatas, bundleExt, bundleBin, bundleId):
         extractDatasAsZip(bundleBin, bundlePath)
     sharedBundleDatas['extractionStatus'] = 'done'
 
-    analyzedBundle = None
-    sharedBundleDatas['analyzeStatus'] = 'running'
-    analyzedBundle = analyze(bundlePath)
-    sharedBundleDatas['analyzeStatus'] = 'done'
+    analysedBundle = None
+    sharedBundleDatas['analyseStatus'] = 'running'
+    analysedBundle = analyse(bundlePath)
+    sharedBundleDatas['analyseStatus'] = 'done'
 
     shutil.rmtree(bundlePath)
 
-    sharedBundleDatas['datas'] = analyzedBundle
+    sharedBundleDatas['datas'] = analysedBundle
     sharedBundleDatas['globalStatus'] = 'done'

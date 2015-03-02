@@ -38,7 +38,7 @@ class Plugin:
         return properties
 
     def getPluginProperties(self, pluginToAnalyse):
-        logging.info('Analyzing plugin for ' + str(pluginToAnalyse.getRawIdentifier()))
+        logging.info('Analysing plugin for ' + str(pluginToAnalyse.getRawIdentifier()))
 
         self.uri = "/plugins/" + str(pluginToAnalyse.getIdentifier())
         self.rawIdentifier = str(pluginToAnalyse.getIdentifier())
