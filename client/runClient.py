@@ -2,6 +2,7 @@
 
 import ConfigParser
 import requests
+import json
 
 from flask import (
     Flask,
@@ -76,6 +77,14 @@ def getRenderResource(renderId, resourceId):
 # @login_required
 def upload():
     return render_template('upload.html', uploaded=None)
+
+@app.route('/bundle', methods=['POST'])
+def newMetaBundle() :
+    header = {'content-type' : 'application/json'}
+    req = requests.post(catalogRootUri + '/bundle', data=json.dumps(request.form), headers=header)
+    if req.status_code != 200:
+        abort(req.status_code)
+    return jsonify(**req.json())
 
 @app.route('/upload', methods=['POST'])
 # @login_required
