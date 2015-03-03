@@ -8,7 +8,8 @@ from flask import (
     Flask,
     request,
     jsonify,
-    render_template
+    render_template,
+    abort
     )
 
 app = Flask(__name__)
@@ -78,42 +79,27 @@ def getRenderResource(renderId, resourceId):
 def upload():
     return render_template('upload.html', uploaded=None)
 
+@app.route('/bundle')
+def getBundles() :
+    req = requests.get(catalogRootUri + '/bundle', headers=request.headers)
+    if req.status_code != 200:
+        abort(req.status_code)
+    return jsonify(**req.json())
+
 @app.route('/bundle', methods=['POST'])
-def newMetaBundle() :
+def newBundle() :
     header = {'content-type' : 'application/json'}
     req = requests.post(catalogRootUri + '/bundle', data=json.dumps(request.form), headers=header)
     if req.status_code != 200:
         abort(req.status_code)
     return jsonify(**req.json())
 
-@app.route('/upload', methods=['POST'])
-# @login_required
-def uploadFiles():
-    if request.method == 'POST':
-        saved_files_urls = []
-
-        for f in request.files.getlist('file[]'):
-            app.loggin.debug(f)
-            # if f and allowed_file(f.filename):
-            #     # filename = uniqueId BD
-            #     filename = secure_filename(f.filename)
-
-            #     updir = os.path.join(basedir, UPLOAD_FOLDER)
-            #     f.save(os.path.join(updir, filename))
-            #     file_size = os.path.getsize(os.path.join(updir, filename))
-            #     saved_files_urls.append(url_for('uploaded_file', filename=filename))
-
-            #     extension = os.path.splitext(filename)[1]
-            #     print extension
-
-            #     if extension == ".zip":
-            #         with zipfile.ZipFile(updir + filename, "r") as zipf:
-            #             zipf.extractall(updir)
-            #     if extension == ".gz":
-            #         tarf = tarfile.open(updir + filename, 'r')
-            #         tarf.extractall(updir)
-
-        return render_template('upload.html', uploaded="true")
+@app.route('/bundle/<bundleId>/archive', methods=['POST'])
+def uploadArchive(bundleId):
+    req = requests.post(catalogRootUri + '/bundle/' + bundleId + '/archive', data=request.data, headers=request.headers)
+    if req.status_code != 200:
+        abort(req.status_code)
+    return jsonify(**req.json())
 
 if __name__ == "__main__":
     app.run(host=configParser.get("APP_CLIENT", "host"), port=configParser.getint("APP_CLIENT", "port"), debug=True)

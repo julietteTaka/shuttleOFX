@@ -46,6 +46,13 @@ def newBundle():
     requestResult = bundleTable.find_one({"bundleId": bundleId})
     return mongodoc_jsonify(requestResult)
 
+@app.route('/bundle/<bundleId>/archive', methods=['POST'])
+def uploadArchive(bundleId):
+    requestResult = bundleTable.find_one({"bundleId": bundleId})
+    if requestResult == None:
+        abort(404)
+
+    return mongodoc_jsonify(requestResult)
 
 @app.route("/bundle")
 def getBundles():
