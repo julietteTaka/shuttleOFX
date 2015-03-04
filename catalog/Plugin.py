@@ -16,6 +16,8 @@ class Plugin:
         self.parameters = []
         self.properties = []
         self.clip = []
+        self.uri= None
+        self.rawIdentifier = None
 
     def setDescription(self, description):
         self.description = description
