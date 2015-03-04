@@ -1,53 +1,210 @@
-{% extends "layout.html" %}
+<!doctype>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Armand Biteau, Juliette Belin, Hugo Garrido">
+    <title>WebOpenFX | Sharing Platform</title>
+
+    <!-- Styles -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:200,300,400,500,700' rel='stylesheet' type='text/css'>
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
+</head>
+
+<body>
 
 
-{% block title %}
-<div class="header-content" data-0="height:175px" data-150="height:0px">
-    <div class="top-header">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1 data-0="margin-top:80px;font-size: 3.5em;" data-150="margin-top:-55px;font-size: 2em;">
-                      Welcome to Wofx
-                    </h1>
+<div id="main-home">
+
+        <header class="header" id="header-index">
+            <div class="container">
+                <div class="row">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li class="active"><a href="javascript:void(0)">Home</a></li>
+                        <li><a href="javascript:void(0)">Plugins</a></li>
+                        <li><a href="javascript:void(0)">Render</a></li>
+                        <li><a href="javascript:void(0)">Community</a></li>
+
+                        <li><a href="javascript:void(0)"><i class="fa fa-lock" style="padding-right:7px;"></i>Log In</a></li>
+                    </ul>
+                    <div class="navbar search-bar navbar-right">
+                        <form id="searchForm">
+                            <input type="text" placeholder="Search" id="query" />
+                            <button type="submit" value="Submit query"><i class="fa fa-search"></i></button>
+                        </form>
+                    </div>
                 </div>
-                
             </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+        </header>
+
+        <section id="intro">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="http://placehold.it/230x230/ddd/fff&text=OpenFX%20Plateform" alt="" class="img-responsive">
+                    </div>
+                    <div class="col-md-6">
+                        <h1>OFX Sharing Platform</h1>
+                        <p>
+                            But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings.
+                        </p>
+                        <a href="/plugin" class="btn btn-primary btn-raised ">View plugins</a>
+                        <a href="/demo/{{urldemo}}" class="btn btn-default ">Render demo</a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
 
-{% block subtitle %}
-<div class="bottom-header">
-    <div class="navbar navbar-default">
-        <div class="navbar-collapse collapse navbar-responsive-collapse-filter">
-            <div class="container-fluid">
+
+        <section id="slider">
+            <div class="container">
+                <div id="cbp-contentslider" class="cbp-contentslider">
+                    <nav>
+                        <a href="#explore"><span>Explore plugins</span></a>
+                        <a href="#upload"><span>Upload bundles</span></a>
+                        <a href="#render"><span>Get a render</span></a>
+                    </nav>
+                    <ul>
+                        <li id="explore">
+                                <div class="cbp-content">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <h2>Explore OFX plugins</h2>
+                                                <p>
+                                                    Veggies sunt bona vobis, proinde vos postulo esse magis desert raisin bush tomato soko salsify garbanzo horseradish cabbage burdock.
+                                                </p>
+                                                <p>
+                                                    Veggies sunt bona vobis, proinde vos postulo esse magis desert raisin bush tomato.
+                                                </p>
+                                                <p>
+                                                    <a href="/plugin" class="btn btn-primary btn-raised ">View plugins</a>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-4 slide-right">
+                                                <div class="slide-right1">
+                                                    <a href="#" class="btn btn-slider">
+                                                        Go to documentation
+                                                        <i class="fa fa-angle-right" style="padding-left:12px;"></i>
+                                                    </a>
+                                                    <div class="slider-right-content" style="background-image:url({{ url_for('static', filename='images/explore.png') }})">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>
+                        </li>
+                        <li id="upload">
+                                <div class="cbp-content">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <h2>Upload bundles</h2>
+                                                <p>
+                                                    Veggies sunt bona vobis, proinde vos postulo esse magis desert raisin bush tomato soko salsify garbanzo horseradish cabbage burdock.
+                                                </p>
+                                                <p>
+                                                    Veggies sunt bona vobis, proinde vos postulo esse magis desert raisin bush tomato.
+                                                </p>
+                                                <p>
+                                                    <a href="/upload" class="btn btn-primary btn-raised ">Upload page</a>
+                                                </p>
+                                            </div>
+                                            <div class="col-md-4 slide-right">
+                                                <div class="slide-right2">
+                                                    <a href="#" class="btn btn-slider">
+                                                        Upload a bundle
+                                                        <i class="fa fa-angle-right" style="padding-left:12px;"></i>
+                                                    </a>
+                                                    <div class="slider-right-content" style="background-image:url({{ url_for('static', filename='images/upload.png') }})">
+                                                    </div>
+                                                </div>
+                                        </div>
+                                </div>
+                        </li>
+                        <li id="render">
+                            <div class="cbp-content">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h2>Get a render</h2>
+                                            <p>
+                                                Veggies sunt bona vobis, proinde vos postulo esse magis desert raisin bush tomato soko salsify garbanzo horseradish cabbage burdock.
+                                            </p>
+                                            <p>
+                                                Veggies sunt bona vobis, proinde vos postulo esse magis desert raisin bush tomato.
+                                            </p>
+                                            <p>
+                                                <a href="/demo" class="btn btn-primary btn-raised ">Try a render</a>
+                                            </p>
+                                        </div>
+                                        <div class="col-md-4 slide-right">
+                                            <div class="slide-right3">
+                                                <a href="#" class="btn btn-slider">
+                                                    Try a render
+                                                    <i class="fa fa-angle-right" style="padding-left:12px;"></i>
+                                                </a>
+                                                <div class="slider-right-content" style="background-image:url({{ url_for('static', filename='images/render.png') }})">
+                                                </div>
+                                            </div>
+                                    </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="targets">
+            <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <a href="/plugins">View plugins</a>
+                        <h1>Targets</h1>
+                        <p>
+                            But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings.
+                        </p>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+
 </div>
-{% endblock %}
+
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/ripples.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/material.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/scripts.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/slider.min.js') }}"></script>
 
 
-{% block content %}
-    <section id="intro">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="intro-txt">
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section id="test">
-    </section>
-{% endblock %}
+<script type="text/javascript">
+
+$(document).ready(function() {
+    $.material.init();
+    $('#cbp-contentslider').cbpContentSlider();
+});
+
+$(window).scroll(function() {
+    if ($(this).scrollTop() == 0) {
+        $('#header-index').css({
+                'box-shadow': 'none',
+                '-moz-box-shadow' : 'none',
+                '-webkit-box-shadow' : 'none',
+                'background-color' : '#EEEEEE' });
+    }
+    else {
+        $('#header-index').css({
+                'box-shadow': '0 1px 5px rgba(0,0,0,0.3)',
+                '-moz-box-shadow' : '0 1px 5px rgba(0,0,0,0.3)',
+                '-webkit-box-shadow' : '0 1px 5px rgba(0,0,0,0.3)',
+                'background-color' : '#FFF' });
+    }
+});
+
+</script>
+
+
+</body>
+</html>
