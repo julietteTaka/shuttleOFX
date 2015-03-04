@@ -13,12 +13,22 @@ class Plugin:
         self.rate = 0
         self.defautImagePath = None
         self.sampleImagesPath = []
+        self.parameters = []
+        self.properties = []
+        self.clip = []
 
     def setDescription(self, description):
         self.description = description
 
     def addPluginDetails(self, details):
         self.details = details
+
+    def updateRating(self, val):
+        self.rate += val
+
+    def addSampleImages(sefl, paths):
+        for path in paths
+            self.sampleImagesPath.append(path)
 
     def printBundle():
         print "Plugin :"
