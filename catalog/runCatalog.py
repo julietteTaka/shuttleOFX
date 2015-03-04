@@ -33,13 +33,16 @@ def mongodoc_jsonify(*args, **kwargs):
 
 @app.route("/bundle", methods=["POST"])
 def newBundle():
-    bundleId = request.get_json().get('bundleId', None)
     bundleName = request.get_json().get('name', None)
+    userId = request.get_json().get('userId', None)
+    companyId = request.get_json().get('companyId')
 
-    if bundleId == None or bundleName == None:
+    bundleId = bundleTable.count()+1
+
+    if  bundleId == None or bundleName == None or userId == None:
         abort(404)
 
-    bundle = Bundle(bundleId, bundleName)
+    bundle = Bundle(bundleId, bundleName, userId)
     
     bundleTable.insert(bundle.__dict__)
 
