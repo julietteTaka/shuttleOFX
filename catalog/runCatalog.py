@@ -2,6 +2,7 @@
 import os
 import json
 import pymongo
+import requests
 import ConfigParser
 
 from bson import json_util
@@ -22,6 +23,11 @@ db = client.__getattr__(config.get('MONGODB', 'dbName'))
 bundleTable = db.__getattr__(config.get('MONGODB', 'bundleTable'))
 pluginTable = db.__getattr__(config.get('MONGODB', 'pluginTable'))
 
+uriAnalyser = config.get('ANALYSER', 'uri')
+
+bundleRootPath = config.get('CATALOG', 'bundleStore')
+if not os.path.exists(bundleRootPath):
+    os.makedirs(bundleRootPath)
 
 @app.route("/")
 def index():
@@ -35,7 +41,7 @@ def mongodoc_jsonify(*args, **kwargs):
 def newBundle():
     bundleName = request.get_json().get('name', None)
     userId = request.get_json().get('userId', None)
-    companyId = request.get_json().get('companyId')
+    companyId = request.get_json().get('companyId', None)
 
     bundleId = bundleTable.count()+1
 
@@ -47,14 +53,6 @@ def newBundle():
     bundleTable.insert(bundle.__dict__)
 
     requestResult = bundleTable.find_one({"bundleId": bundleId})
-    return mongodoc_jsonify(requestResult)
-
-@app.route('/bundle/<bundleId>/archive', methods=['POST'])
-def uploadArchive(bundleId):
-    requestResult = bundleTable.find_one({"bundleId": bundleId})
-    if requestResult == None:
-        abort(404)
-
     return mongodoc_jsonify(requestResult)
 
 @app.route("/bundle")
@@ -69,9 +67,38 @@ def getBundle(bundleId):
     requestResult = bundleTable.find_one({"bundleId": bundleId})
     if requestResult == None:
         abort(404)
-
     return mongodoc_jsonify(requestResult)
 
+
+@app.route('/bundle/<int:bundleId>/archive', methods=['POST'])
+def uploadArchive(bundleId):
+    requestResult = bundleTable.find_one({"bundleId": bundleId})
+
+    if requestResult == None:
+        abort(400)
+
+    mappingExtension = {
+        "application/zip": ".zip",
+        "application/gzip": ".tar.gz"
+    }
+
+    if request.headers['content-type'] not in mappingExtension:
+        abort(400)
+
+    extension = mappingExtension[ request.headers['content-type'] ]
+
+    archivePath = os.path.join("bundle", str(bundleId) + extension)
+
+    try:
+        f = open( archivePath, 'w')
+        f.write(request.data)
+        f.close()
+    except Exception, err:
+        app.logger.error(err)
+        abort(400)
+
+    requestResult["archivePath"] = archivePath
+    return mongodoc_jsonify(requestResult)
 
 @app.route("/bundle/<int:bundleId>", methods=["DELETE"])
 def deleteBundle(bundleId):
