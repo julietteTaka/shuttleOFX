@@ -27,7 +27,7 @@ class Plugin:
         self.rate += val
 
     def addSampleImages(sefl, paths):
-        for path in paths
+        for path in paths :
             self.sampleImagesPath.append(path)
 
     def printBundle():
