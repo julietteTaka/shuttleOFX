@@ -72,6 +72,7 @@ def getBundle(bundleId):
 
 @app.route('/bundle/<int:bundleId>/archive', methods=['POST'])
 def uploadArchive(bundleId):
+    #change var name to bundle
     requestResult = bundleTable.find_one({"bundleId": bundleId})
 
     if requestResult == None:
@@ -98,7 +99,51 @@ def uploadArchive(bundleId):
         abort(400)
 
     requestResult["archivePath"] = archivePath
+    bundleTable.update({'_id': requestResult['_id']}, requestResult)
     return mongodoc_jsonify(requestResult)
+
+
+@app.route('/bundle/<int:bundleId>/analyse', methods=['POST'])
+def analyseBundle(bundleId):
+    bundle = bundleTable.find_one({"bundleId": bundleId})
+
+    if bundle == None:
+        abort(400)
+
+    #We must also check and abort if the bundle as no path
+
+    headers = {'content-type': 'application/x-gzip'}
+    anylseReturn = requests.post(uriAnalyser+"/bundle/"+str(bundleId), data=open(bundle["archivePath"], 'r').read(), headers=headers)
+
+    pluginIdOffset = pluginTable.count()
+    bundleData = anylseReturn.json()
+
+    ofxPropList = {"OfxPropShortLabel", "OfxPropLongLabel"}
+
+    for index, plugin in enumerate(bundleData['datas']['plugins']) :
+        pluginId = pluginIdOffset + index
+        currentPlugin = Plugin(pluginId, bundleId)
+        currentPlugin.clips = plugin['clips']
+        currentPlugin.parameters = plugin['parameters']
+        currentPlugin.properties = plugin['properties']
+        currentPlugin.rawIdentifier = plugin['rawIdentifier']
+        currentPlugin.uri = plugin['uri']
+        currentPlugin.version = plugin['version']
+
+        for prop in plugin['properties']:
+            name = prop['name']
+            if name in ofxPropList :
+                value = prop['value']
+
+                if name == "OfxPropShortLabel":
+                    currentPlugin.shortName = value
+
+                if name == "OfxPropLongLabel":
+                    currentPlugin.name = value
+
+        pluginTable.insert(currentPlugin.__dict__)
+
+    return mongodoc_jsonify(bundle)
 
 @app.route("/bundle/<int:bundleId>", methods=["DELETE"])
 def deleteBundle(bundleId):
