@@ -1,9 +1,9 @@
 
 
 class Bundle:
-    def __init__(self, bundleId, name):
+    def __init__(self, bundleId, name, userId):
         self.bundleId = bundleId
-        self.userId = None
+        self.userId = userId
         self.companyId = None
         self.name = name
         self.description = ""
