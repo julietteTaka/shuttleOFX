@@ -11,7 +11,6 @@ class Bundle:
         self.contributors = []
         self.architecture = []
         self.plugins = []
-        self.uploaded = False
 
     def setDescription(self, description):
         self.description = description
@@ -30,4 +29,3 @@ class Bundle:
         print "contributors:", self.contributors
         print "architecture:", self.architecture
         print "plugins:", self.plugins
-        print "uploaded:", self.uploaded

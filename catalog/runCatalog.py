@@ -148,6 +148,7 @@ def analyseBundle(bundleId):
                 if name == "OfxPropLongLabel":
                     currentPlugin.name = value
 
+        bundle['plugins'].append(pluginId)
         pluginTable.insert(currentPlugin.__dict__)
 
     return mongodoc_jsonify(bundle)
