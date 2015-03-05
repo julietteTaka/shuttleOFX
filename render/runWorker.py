@@ -107,8 +107,8 @@ def resource(renderId, resourceId):
     '''
     Returns file resource by renderId and resourceId.
     '''
-    if os.path.isfile(tmpRenderingPath + "/" + resourceId):
-        return send_file( tmpRenderingPath + "/" + resourceId )
+    if os.path.isfile( os.path.join(tmpRenderingPath, resourceId) ):
+        return send_file( os.path.join(tmpRenderingPath, resourceId) )
     else:
         logging.error(tmpRenderingPath + resourceId + " doesn't exists")
         abort(404)
