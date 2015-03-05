@@ -30,9 +30,9 @@ g_manager = multiprocessing.Manager()
 g_listImg = {}
 
 currentAppDir = os.path.dirname(__file__)
-tmpRenderingPath = os.path.join(currentAppDir, "render")
+tmpRenderingPath = os.path.join(currentAppDir, configParser.get('RESOURCES', 'resourcesPath'))
 if not os.path.exists(tmpRenderingPath):
-  os.mkdir(tmpRenderingPath)
+  os.makedirs(tmpRenderingPath)
 
 # TODO: replace multiprocessing with https://github.com/celery/billiard to have timeouts in the Pool.
 
