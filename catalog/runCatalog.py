@@ -43,9 +43,10 @@ def newBundle():
     userId = request.get_json().get('userId', None)
     companyId = request.get_json().get('companyId', None)
 
-    bundleId = bundleTable.count()+1
+    bundleId = bundleTable.count()
 
     if  bundleId == None or bundleName == None or userId == None:
+        app.logger.error("bundleName, bundleId or userId is undefined")
         abort(404)
 
     bundle = Bundle(bundleId, bundleName, userId)
@@ -59,23 +60,24 @@ def newBundle():
 def getBundles():
     count = int(request.args.get('count', 10))
     skip = int(request.args.get('skip', 0))
-    requestResult = bundleTable.find().limit(count).skip(skip)
-    return mongodoc_jsonify({"bundles":[ result for result in requestResult ]})
+    bundle = bundleTable.find().limit(count).skip(skip)
+    return mongodoc_jsonify({"bundles":[ result for result in bundle ]})
 
 @app.route("/bundle/<int:bundleId>")
 def getBundle(bundleId):
-    requestResult = bundleTable.find_one({"bundleId": bundleId})
-    if requestResult == None:
+    bundle = bundleTable.find_one({"bundleId": bundleId})
+    if bundle == None:
+        app.logger.error("No matching bundle has been found")
         abort(404)
-    return mongodoc_jsonify(requestResult)
+    return mongodoc_jsonify(bundle)
 
 
 @app.route('/bundle/<int:bundleId>/archive', methods=['POST'])
 def uploadArchive(bundleId):
-    #change var name to bundle
-    requestResult = bundleTable.find_one({"bundleId": bundleId})
+    bundle = bundleTable.find_one({"bundleId": bundleId})
 
-    if requestResult == None:
+    if bundle == None:
+        app.logger.error("No matching bundle has been found")
         abort(400)
 
     mappingExtension = {
@@ -84,6 +86,7 @@ def uploadArchive(bundleId):
     }
 
     if request.headers['content-type'] not in mappingExtension:
+        app.logger.error("Format is not supported")
         abort(400)
 
     extension = mappingExtension[ request.headers['content-type'] ]
@@ -98,9 +101,9 @@ def uploadArchive(bundleId):
         app.logger.error(err)
         abort(400)
 
-    requestResult["archivePath"] = archivePath
-    bundleTable.update({'_id': requestResult['_id']}, requestResult)
-    return mongodoc_jsonify(requestResult)
+    bundle["archivePath"] = archivePath
+    bundleTable.update({'_id': bundle['_id']}, bundle)
+    return mongodoc_jsonify(bundle)
 
 
 @app.route('/bundle/<int:bundleId>/analyse', methods=['POST'])
@@ -108,9 +111,13 @@ def analyseBundle(bundleId):
     bundle = bundleTable.find_one({"bundleId": bundleId})
 
     if bundle == None:
+        app.logger.error("No matching bundle has been found")
         abort(400)
 
-    #We must also check and abort if the bundle as no path
+    if bundle["archivePath"] == None: 
+        app.logger.error("The bundle as no directory path")
+        abort(400)
+    
 
     headers = {'content-type': 'application/x-gzip'}
     anylseReturn = requests.post(uriAnalyser+"/bundle/"+str(bundleId), data=open(bundle["archivePath"], 'r').read(), headers=headers)
@@ -147,11 +154,11 @@ def analyseBundle(bundleId):
 
 @app.route("/bundle/<int:bundleId>", methods=["DELETE"])
 def deleteBundle(bundleId):
-    requestResult = bundleTable.find_one({"bundleId": bundleId})
-    if requestResult == None:
+    bundle = bundleTable.find_one({"bundleId": bundleId})
+    if bundle == None:
         abort(404)
 
-    for plugin in requestResult.plugins:
+    for plugin in bundle.plugins:
         deleteStatus = pluginTable.remove({"pluginId":pluginId})
         if deleteStatus['n'] == 0:
             abort(404)
@@ -183,24 +190,24 @@ def newPlugin(bundleId):
 def getPlugins(bundleId):
     count = int(request.args.get('count', 10))
     skip = int(request.args.get('skip', 0))
-    requestResult = pluginTable.find({"bundleId":bundleId}).limit(count).skip(skip)
-    return mongodoc_jsonify({"plugins":[ result for result in requestResult ]})
+    plugin = pluginTable.find({"bundleId":bundleId}).limit(count).skip(skip)
+    return mongodoc_jsonify({"plugins":[ result for result in plugin ]})
 
 @app.route("/plugin")
 def getAllPlugins():
     count = int(request.args.get('count', 10))
     skip = int(request.args.get('skip', 0))
-    requestResult = pluginTable.find().limit(count).skip(skip)
-    return mongodoc_jsonify({"plugins":[ result for result in requestResult ]})
+    plugin = pluginTable.find().limit(count).skip(skip)
+    return mongodoc_jsonify({"plugins":[ result for result in plugin ]})
 
 @app.route("/bundle/<int:bundleId>/plugin/<pluginId>")
 @app.route("/plugin/<pluginId>")
 def getPlugin(bundleId):
-    requestResult = pluginTable.find_one({"pluginId": pluginId})
-    if requestResult == None:
+    plugin = pluginTable.find_one({"pluginId": pluginId})
+    if plugin == None:
         abort(404)
 
-    return mongodoc_jsonify(requestResult)
+    return mongodoc_jsonify(plugin)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5002 ,debug=True)
