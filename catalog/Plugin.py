@@ -30,6 +30,9 @@ class Plugin:
     def setRating(self, val):
         self.rate = val
 
+    def getRating(sefl):
+        return self.rate
+
     def addSampleImages(sefl, paths):
         for path in paths :
             self.sampleImagesPath.append(path)
