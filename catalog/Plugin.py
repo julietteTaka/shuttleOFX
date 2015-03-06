@@ -27,8 +27,8 @@ class Plugin:
     def addPluginDetails(self, details):
         self.details = details
 
-    def updateRating(self, val):
-        self.rate += val
+    def setRating(self, val):
+        self.rate = val
 
     def addSampleImages(sefl, paths):
         for path in paths :
