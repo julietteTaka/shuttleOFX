@@ -34,8 +34,12 @@ class Plugin:
         return self.rate
 
     def addSampleImages(sefl, paths):
-        for path in paths :
-            self.sampleImagesPath.append(path)
+        if isinstance(paths, str):
+            self.sampleImagesPath.append(paths)
+
+        if isinstance(paths, list):
+            for path in paths :
+                self.sampleImagesPath.append(path)
 
     def printBundle():
         print "Plugin :"
