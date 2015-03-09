@@ -174,17 +174,18 @@ def getResourcesDict():
     '''
      Returns a list of all resources on server.
     '''
-    global listImg
-    ret = {"files" : listImg }
+    global g_listImg
+    ret = {"files" : g_listImg }
     return jsonify(**ret)
 
 def getAllResources():
     '''
     Fill the list of images with all resources path on the server.
     '''
-    for image in os.listdir("resources"):
+    global g_listImg
+    for image in os.listdir(str(resourcesPath)):
         _id = str(uuid.uuid4())
-        listImg[_id] = "/resources/" + str(image)
+        g_listImg[_id] = str(resourcesPath) + str(image)
 
 
 @atexit.register
