@@ -17,7 +17,6 @@ class ProgressHandle(tuttle.IProgressHandle):
     def beginSequence(self):
         """Called before the beginning of the process
         """
-        print "---> beginSequence"
 
     def setupAtTime(self):
         """Called when setting up an image
@@ -28,15 +27,12 @@ class ProgressHandle(tuttle.IProgressHandle):
         """Called before processing an image
         """
         self.renderSharedInfo["status"] = 99
-        print "---> processAtTime"
 
     def endSequence(self):
         """Called at the end of the process
         """
-        print "---> endSequence"
 
-def setPluginPaths(ofxPluginPath):
-    tuttle.core().getPluginCache().addDirectoryToPath(globalOfxPluginPath)
+def configLocalPluginPath(ofxPluginPath):
     tuttle.core().getPluginCache().addDirectoryToPath(ofxPluginPath)
     pluginCache = tuttle.core().getPluginCache()
     tuttle.core().preload(False)
@@ -78,12 +74,11 @@ def loadGraph(scene, outputFilename):
 
 
 def computeGraph(renderSharedInfo, newRender, outputFilename):
-    print "computeGraph"
-    
     try:
         renderSharedInfo['startDate'] = time.time()
 
-        setPluginPaths(globalOfxPluginPath)
+        #TODO set the right plugin path
+        configLocalPluginPath(globalOfxPluginPath)
 
         renderSharedInfo['status'] = 1
         tuttleGraph = loadGraph(newRender['scene'], outputFilename)
