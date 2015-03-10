@@ -30,11 +30,12 @@ g_manager = multiprocessing.Manager()
 g_listImg = {}
 
 currentAppDir = os.path.dirname(__file__)
-tmpRenderingPath = os.path.join(currentAppDir, configParser.get('RESOURCES', 'resourcesPath'))
+
+tmpRenderingPath = os.path.join(currentAppDir, configParser.get('RENDERED_IMAGE', 'renderedImagesDirectory'))
 if not os.path.exists(tmpRenderingPath):
   os.makedirs(tmpRenderingPath)
 
-resourcesPath = os.path.join(currentAppDir, "resources")
+resourcesPath = os.path.join(currentAppDir, configParser.get('RESOURCES', 'resourcesDirectory'))
 if not os.path.exists(resourcesPath):
   os.makedirs(resourcesPath)
 
