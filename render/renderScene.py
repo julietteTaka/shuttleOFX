@@ -83,15 +83,28 @@ def computeGraph(renderSharedInfo, newRender, outputFilename):
         renderSharedInfo['status'] = 1
         tuttleGraph = loadGraph(newRender['scene'], outputFilename)
 
+        computeOptions = newRender['scene']['options'];
         renderSharedInfo['status'] = 2
+        tuttleComputeOptions = tuttle.ComputeOptions()
 
-        computeOptions = tuttle.ComputeOptions()
-        computeOptions.setVerboseLevel(tuttle.eVerboseLevelError)
+        for option in computeOptions:
+
+            if "TimeRange" in option['id']:
+                begin = option['values']['begin']
+                end = option['values']['end']
+                step = option['values']['step']
+                tuttleComputeOptions.setTimeRange(begin, end, step)
+
+            if "RenderScale" in option['id']:
+                x = option['values']['x']
+                y = option['values']['y']
+                tuttleComputeOptions.setRenderScale(x, y)
+
         ## Create handle and set it in ComputeOptions
         progressHandle = ProgressHandle(renderSharedInfo)
-        computeOptions.setProgressHandle(progressHandle)
+        tuttleComputeOptions.setProgressHandle(progressHandle)
 
-        tuttleGraph.compute(computeOptions)
+        tuttleGraph.compute(tuttleComputeOptions)
 
         renderSharedInfo['status'] = 3
 

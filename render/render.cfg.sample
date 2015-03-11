@@ -7,4 +7,7 @@ port = 5004
 
 
 [RESOURCES]
-resourcesPath = path/to/rendered/resources
+resourcesDirectory = path/to/resources
+
+[RENDERED_IMAGE]
+renderedImagesDirectory = path/to/rendered/resources
