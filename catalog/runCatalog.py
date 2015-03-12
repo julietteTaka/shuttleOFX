@@ -5,6 +5,7 @@ import pymongo
 import requests
 import ConfigParser
 
+from time import sleep
 from bson import json_util
 from flask import Flask, jsonify, Response, request, abort
 
@@ -72,7 +73,7 @@ def getBundle(bundleId):
     return mongodoc_jsonify(bundle)
 
 
-@app.route('/bundle/<int:bundleId>/archive', methods=['POST'])
+@app.route('/bundle/<int:bundleId>/archive', methods=['POST', 'PUT'])
 def uploadArchive(bundleId):
     bundle = bundleTable.find_one({"bundleId": bundleId})
 
@@ -86,7 +87,7 @@ def uploadArchive(bundleId):
     }
 
     if request.headers['content-type'] not in mappingExtension:
-        app.logger.error("Format is not supported")
+        app.logger.error("Format is not supported : " + str(request.headers['content-type']))
         abort(400)
 
     extension = mappingExtension[ request.headers['content-type'] ]
@@ -119,15 +120,23 @@ def analyseBundle(bundleId):
         abort(400)
     
 
-    headers = {'content-type': 'application/x-gzip'}
-    anylseReturn = requests.post(uriAnalyser+"/bundle/"+str(bundleId), data=open(bundle["archivePath"], 'r').read(), headers=headers)
+    headers = {'content-type': 'application/gzip'}
+    analyseReturn = requests.post(uriAnalyser+"/bundle/"+str(bundleId), data=open(bundle["archivePath"], 'r').read(), headers=headers)
 
     pluginIdOffset = pluginTable.count()
-    bundleData = anylseReturn.json()
 
     ofxPropList = {"OfxPropShortLabel", "OfxPropLongLabel"}
+    bundleData = analyseReturn.json()['datas']
 
-    for index, plugin in enumerate(bundleData['datas']['plugins']) :
+    while 1:
+        analyseReturn = requests.get(uriAnalyser+"/bundle/"+str(bundleId)).json()
+        print analyseReturn
+        if analyseReturn['status'] == "done":
+            bundleData = analyseReturn['datas']
+            break
+        sleep(1)
+
+    for index, plugin in enumerate(bundleData['plugins']) :
         pluginId = pluginIdOffset + index
         currentPlugin = Plugin(pluginId, bundleId)
         currentPlugin.clips = plugin['clips']
@@ -143,10 +152,10 @@ def analyseBundle(bundleId):
                 value = prop['value']
 
                 if name == "OfxPropShortLabel":
-                    currentPlugin.shortName = value
+                    currentPlugin.shortName = value[0]
 
                 if name == "OfxPropLongLabel":
-                    currentPlugin.name = value
+                    currentPlugin.name = value[0]
 
         bundle['plugins'].append(pluginId)
         pluginTable.insert(currentPlugin.__dict__)
@@ -201,9 +210,9 @@ def getAllPlugins():
     plugin = pluginTable.find().limit(count).skip(skip)
     return mongodoc_jsonify({"plugins":[ result for result in plugin ]})
 
-@app.route("/bundle/<int:bundleId>/plugin/<pluginId>")
-@app.route("/plugin/<pluginId>")
-def getPlugin(bundleId):
+@app.route("/bundle/<int:bundleId>/plugin/<int:pluginId>")
+@app.route("/plugin/<int:pluginId>")
+def getPlugin(pluginId, bundleId=0):
     plugin = pluginTable.find_one({"pluginId": pluginId})
     if plugin == None:
         abort(404)

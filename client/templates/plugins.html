@@ -129,7 +129,7 @@
                                     Version 1.0
                                 </span>
                                 <span>
-                                    Rating {{ plugin.rate }}
+                                    Rating {{plugin.rate}}
                                 </span>
                                 <!-- {% for property in plugin.properties %}
                                     {% if property.name == "OfxPropType" %}
@@ -137,8 +137,8 @@
                                     {% endif %}
                                 {% endfor %} -->
                                 <p>{{plugin.shortDescription}}</p>
-                                <a href="{{ plugin.uri }}" class="btn btn-flat btn-primary">View infos</a>
-                                <a href="/editor/{{plugin.rawIdentifier}}" class="btn btn-flat btn-primary">Live render</a>
+                                <a href="/plugin/{{plugin.pluginId}}" class="btn btn-flat btn-primary">View infos</a>
+                                <a href="/editor/{{plugin.pluginId}}" class="btn btn-flat btn-primary">Live render</a>
                             </div>
                         </div>
                     </li>
