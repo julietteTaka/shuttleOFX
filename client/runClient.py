@@ -45,15 +45,15 @@ def getPlugin(pluginId):
     resp = requests.get(catalogRootUri+"/plugin/"+pluginId)
     return render_template('plugin.html', plugin=resp.json())
 
-@app.route('/demo')
+@app.route('/editor')
 def renderPage():
-    return render_template('demo.html', plugin=None)
+    return render_template('editor.html', plugin=None)
 
-@app.route('/demo')
-@app.route('/demo/<pluginId>')
+@app.route('/editor')
+@app.route('/editor/<pluginId>')
 def renderPageWithPlugin(pluginId):
     resp = requests.get(catalogRootUri+"/plugins/"+pluginId)
-    return render_template('demo.html', plugin=resp.json())
+    return render_template('editor.html', plugin=resp.json())
 
 @app.route('/render', methods=['POST'])
 def render():
