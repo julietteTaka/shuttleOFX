@@ -9,7 +9,8 @@ from flask import (
     request,
     jsonify,
     render_template,
-    abort
+    abort,
+    Response
     )
 
 app = Flask(__name__)
@@ -68,9 +69,9 @@ def getRenderStatus(renderId):
     req = requests.get(renderRootUri+"/render/"+str(renderId))
     return jsonify(**req.json())
 
-@app.route('/render/<int:renderId>/resources/<resourceId>', methods=['GET'])
+@app.route('/render/<renderId>/resource/<resourceId>', methods=['GET'])
 def getRenderResource(renderId, resourceId):
-    req = requests.get(renderRootUri+"/render/"+str(renderId)+"/resources/"+resourceId)
+    req = requests.get(renderRootUri+"/render/"+str(renderId)+"/resource/"+resourceId)
     return Response(req.content, mimetype="image/jpeg")
 
 @app.route('/upload')

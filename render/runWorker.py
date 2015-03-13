@@ -54,10 +54,9 @@ def newRender():
     global g_app, g_renders, g_pool
 
     datas = request.json
-    userID = "johnDoe"
     renderID = str(uuid.uuid1())
 
-    _, tmpFilepath = tempfile.mkstemp(prefix='tuttle_', suffix="_" + userID + ".png", dir=tmpRenderingPath)
+    _, tmpFilepath = tempfile.mkstemp(prefix='tuttle_', suffix=".png", dir=tmpRenderingPath)
     resourcePath = os.path.basename(tmpFilepath)
 
     newRender = {}
@@ -72,7 +71,7 @@ def newRender():
     renderSharedInfo['status'] = 0
     g_rendersSharedInfo[renderID] = renderSharedInfo
 
-    g_pool.apply_async(renderScene.computeGraph, args=[renderSharedInfo, newRender, tmpFilepath])
+    g_pool.apply(renderScene.computeGraph, args=[renderSharedInfo, newRender, tmpFilepath])
 
     return jsonify(render=newRender)
 
@@ -109,7 +108,7 @@ def getRenderById(renderID):
     abort(404)
 
 
-@g_app.route('/render/<renderId>/resources/<resourceId>', methods=['GET'])
+@g_app.route('/render/<renderId>/resource/<resourceId>', methods=['GET'])
 def resource(renderId, resourceId):
     '''
     Returns file resource by renderId and resourceId.
