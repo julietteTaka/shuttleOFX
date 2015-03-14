@@ -92,7 +92,7 @@ def uploadArchive(bundleId):
 
     extension = mappingExtension[ request.headers['content-type'] ]
 
-    archivePath = os.path.join("bundle", str(bundleId) + extension)
+    archivePath = os.path.join(bundleRootPath, str(bundleId) + extension)
 
     try:
         f = open( archivePath, 'w')
