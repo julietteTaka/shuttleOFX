@@ -32,10 +32,10 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <a href="/plugins"><i class="fa fa-angle-left"></i> Back to all plugins</a>
+                        <a href="/plugin"><i class="fa fa-angle-left"></i> Back to all plugins</a>
                         {% set urldemo = plugin.uri %}
                         {% set urldemo = urldemo[9:] %}
-                        <a href="/demo/{{urldemo}}" class="btn btn-primary btn-render-navbar">Render demo</a>
+                        <a href="/editor/{{plugin.pluginId}}" class="btn btn-primary btn-render-navbar">Online image editor</a>
                     </div>
                 </div>
             </div>

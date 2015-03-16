@@ -76,7 +76,7 @@ $("#render.OfxImageEffectContextGenerator").click(function(){
     console.log('Generator: ' + pluginId );
     var renderParameters = formToJson();
 
-    console.log(renderParameters);
+    // console.log(renderParameters);
     // $('#resultForm').text(JSON.stringify(renderParameters));
 
     $.ajax({
@@ -103,8 +103,8 @@ $("#render.OfxImageEffectContextGenerator").click(function(){
     })
     .done(function(data){
         console.log('POST DONE !');
-        $("#viewer img").attr("src", "/render/" + data.render.renderId + "/resource/" + data.render.outputFile);
-        $("#download-view").attr("href", "/render/" + data.render.renderId + "/resource/" + data.render.outputFile);
+        $("#viewer img").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
+        $("#download-view").attr("href", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
         $("#download-view").removeClass('disabled');
     })
     .error(function(data){
@@ -134,7 +134,7 @@ $("#render.OfxImageEffectContextFilter").click(function(){
                         "value" : "/home/hugo/WebOpenFX/github/server/resources/lol.jpg"
                     }
                 ]
-            },                {
+            },{
                 id: 1,
                 plugin: pluginId,
                 parameters: renderParameters
@@ -145,21 +145,20 @@ $("#render.OfxImageEffectContextFilter").click(function(){
             }],
 
             connections: [{
-                    src: {id: 0},
-                    dst: {id: 1}
+                src: {id: 0},
+                dst: {id: 1}
             },{
-                    src: {id: 1},
-                    dst: {id: 2}
+                src: {id: 1},
+                dst: {id: 2}
             }],
             renderNode: {id: 2}
         }),
     })
     .done(function(data){
         console.log('POST DONE !');
-        $("#viewer img").attr("src", "/render/" + data.render.renderId + "/resource/" + data.render.outputFile);
-        $("#download-view").attr("href", "/render/" + data.render.renderId + "/resource/" + data.render.outputFile);
+        $("#viewer img").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
+        $("#download-view").attr("href", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
         $("#download-view").removeClass('disabled');
-        console.log(data.render.outputFile);
     })
     .error(function(data){
         console.log('POST ERROR !');

@@ -9,7 +9,8 @@ from flask import (
     request,
     jsonify,
     render_template,
-    abort
+    abort,
+    Response
     )
 
 app = Flask(__name__)
@@ -45,15 +46,14 @@ def getPlugin(pluginId):
     resp = requests.get(catalogRootUri+"/plugin/"+pluginId)
     return render_template('plugin.html', plugin=resp.json())
 
-@app.route('/demo')
+@app.route('/editor')
 def renderPage():
-    return render_template('demo.html', plugin=None)
+    return render_template('editor.html', plugin=None)
 
-@app.route('/demo')
-@app.route('/demo/<pluginId>')
+@app.route('/editor/<pluginId>')
 def renderPageWithPlugin(pluginId):
-    resp = requests.get(catalogRootUri+"/plugins/"+pluginId)
-    return render_template('demo.html', plugin=resp.json())
+    resp = requests.get(catalogRootUri+"/plugin/"+pluginId)
+    return render_template('editor.html', plugin=resp.json())
 
 @app.route('/render', methods=['POST'])
 def render():
@@ -69,9 +69,9 @@ def getRenderStatus(renderId):
     req = requests.get(renderRootUri+"/render/"+str(renderId))
     return jsonify(**req.json())
 
-@app.route('/render/<int:renderId>/resources/<resourceId>', methods=['GET'])
+@app.route('/render/<renderId>/resource/<resourceId>', methods=['GET'])
 def getRenderResource(renderId, resourceId):
-    req = requests.get(renderRootUri+"/render/"+str(renderId)+"/resources/"+resourceId)
+    req = requests.get(renderRootUri+"/render/"+str(renderId)+"/resource/"+resourceId)
     return Response(req.content, mimetype="image/jpeg")
 
 @app.route('/upload')
