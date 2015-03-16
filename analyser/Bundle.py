@@ -91,9 +91,9 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
     analysedBundle = analyse(bundlePath)
     sharedBundleDatas['analyse'] = 'done'
 
-    # shutil.rmtree(bundlePath)
+    shutil.rmtree(bundlePath)
 
-    print analysedBundle
+    # print analysedBundle
 
     sharedBundleDatas['datas'] = analysedBundle
     sharedBundleDatas['status'] = 'done'

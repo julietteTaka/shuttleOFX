@@ -59,7 +59,7 @@ def newBundle():
 
 @app.route("/bundle")
 def getBundles():
-    count = int(request.args.get('count', 10))
+    count = int(request.args.get('count', 20))
     skip = int(request.args.get('skip', 0))
     bundle = bundleTable.find().limit(count).skip(skip)
     return mongodoc_jsonify({"bundles":[ result for result in bundle ]})
@@ -130,7 +130,7 @@ def analyseBundle(bundleId):
 
     while 1:
         analyseReturn = requests.get(uriAnalyser+"/bundle/"+str(bundleId)).json()
-        print analyseReturn
+        # print analyseReturn
         if analyseReturn['status'] == "done":
             bundleData = analyseReturn['datas']
             break
@@ -198,14 +198,14 @@ def newPlugin(bundleId):
 
 @app.route("/bundle/<int:bundleId>/plugin")
 def getPlugins(bundleId):
-    count = int(request.args.get('count', 10))
+    count = int(request.args.get('count', 20))
     skip = int(request.args.get('skip', 0))
     plugin = pluginTable.find({"bundleId":bundleId}).limit(count).skip(skip)
     return mongodoc_jsonify({"plugins":[ result for result in plugin ]})
 
 @app.route("/plugin")
 def getAllPlugins():
-    count = int(request.args.get('count', 10))
+    count = int(request.args.get('count', 20))
     skip = int(request.args.get('skip', 0))
     plugin = pluginTable.find().limit(count).skip(skip)
     return mongodoc_jsonify({"plugins":[ result for result in plugin ]})
