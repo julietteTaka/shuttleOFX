@@ -161,13 +161,13 @@
 		&#intro{
 			background: @ofxColor;
 			// background: @bkGrey;
-			padding-top: 3em;
+			padding-top: 2em;
 			padding-bottom: 6em;
 			min-height: 30em;
 			font-family: 'Roboto-Light';
 			img{
 				max-width: 170px;
-				margin: 40px auto;
+				margin: 20px auto;
 				position: relative;
 			}
 			.title-home{
@@ -194,9 +194,13 @@
 
 				}
 				a{
+					margin-top: 3em;
+					padding: 1em 2em;
 					color: #fff;
-					border-bottom: 1px dotted #fff;
-					padding-bottom: 0.2em;
+					font-size: 110%;
+					.fa{
+						padding-left: 12px;
+					}
 				}
 				// #fork{
 				// 	padding-top: 5px;
@@ -314,7 +318,7 @@
 
 		&#targets{
 			padding-top: 3em;
-			padding-bottom: 5em;
+			padding-bottom: 1em;
 			background: #fff;
 			h1{
 				font-family: 'Roboto-Light';
@@ -335,6 +339,46 @@
 					background-color: @ofxColor;
 				}
 			}
+			h1.target1{
+				font-family: 'Roboto-Light';
+				color: @grey;
+				font-weight: 200;
+				font-size: 2.4em;
+				text-transform: uppercase;
+				margin-top: 0px;
+				text-align: left;
+				line-height: 1;
+				&::before{
+					display: none;
+				}
+				span{
+					display: block;
+					font-size: 105%;
+				}
+			}
+			h1.target2{
+				font-family: 'Roboto-Light';
+				color: @grey;
+				font-weight: 200;
+				font-size: 2.85em;
+				text-transform: uppercase;
+				margin-top: 0px;
+				text-align: left;
+				line-height: 1;
+				&::before{
+					display: none;
+				}
+				span{
+					display: block;
+					font-size: 68%;
+				}
+			}
+			
+			img{
+				margin-top: 0px;
+				width: 130%;
+				height: auto;
+			}
 			.target{
 				img{
 					max-width: 150px;
@@ -353,8 +397,20 @@
 		}
 		&#format{
 			padding-top: 3em;
-			padding-bottom: 5em;
+			padding-bottom: 1em;
 			background: @ofxColor;
+			overflow: hidden;
+			#bg-openfx{
+				position: absolute;
+				left: 50%;
+				transform: translateX(-50%) translateY(0px);
+				width: 600px;
+				height: 600px;
+				background: url(../images/logo.png);
+				background-size: 100%;
+				background-repeat: no-repeat;
+				opacity: .1;
+			}
 			h1{
 				font-family: 'Roboto-Light';
 				color: #fff;
@@ -372,6 +428,24 @@
 					width: 100px;
 					height: 3px;
 					background-color: #fff;
+				}
+			}
+			h1.content-format{
+				font-family: 'Roboto-Light';
+				color: #fff;
+				font-weight: 200;
+				margin-bottom: 1.5em;
+				font-size: 4em;
+				text-transform: uppercase;
+				margin-top: 10px;
+				text-align: left;
+				line-height: 1;
+				&::before{
+					display: none;
+				}
+				span{
+					display: block;
+					font-size: 48%;
 				}
 			}
 			img{
@@ -393,7 +467,7 @@
 				font-family: 'Roboto-Light';
 				color: @grey;
 				font-weight: 200;
-				margin-bottom: 1.5em;
+				margin-bottom: 2em;
 				font-size: 2em;
 				text-align: center;
 				text-transform: uppercase;
@@ -406,6 +480,58 @@
 					width: 100px;
 					height: 3px;
 					background-color: @ofxColor;
+				}
+			}
+			h2{
+				transition: all 0.3s;
+				text-transform: uppercase;
+				font-family: 'Roboto-Light';
+				font-weight: 200;
+				font-size: 1.8em;
+				text-align: center;
+				span{
+					font-size: 0.8em;
+					text-transform: none;
+				}
+			}
+			.student{
+				margin-top: 3em;
+				text-align: center;
+				h4{
+					font-family: "Roboto";
+					font-weight: bold;
+					color: #444;
+					margin-top: 1.5em;
+				}
+				p{
+					color: @ofxColor;
+
+				}
+				ul{
+					list-style: none;
+					text-align: center;
+					margin: 0px auto;
+					padding: 0;
+					li{
+						list-style: none;
+						text-align: center;
+						display: inline-block;
+						padding: 0.5em;
+						a{
+							font-size: 1.2em;
+							transition: all 0.3s;
+							&:hover{
+								color: @ofxColor;
+								transition: all 0.3s;
+							}
+						}
+					}
+				}
+				img{
+					border-radius: 50%;
+					width: 100px;
+					height: 100px;
+					margin: 0px auto;
 				}
 			}
 		}
