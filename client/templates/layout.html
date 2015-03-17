@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Armand Biteau, Juliette Belin, Hugo Garrido">
-    <title>WebOpenFX | Sharing Platform</title>
+    <title>ShuttleOFX</title>
 
     <!-- Styles -->
     <link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
@@ -20,35 +20,26 @@
 <nav id="main-nav" class="navigation overflow">
     <div id="left-nav">
         <div class="logo">
-            <a href="/"><img src="http://placehold.it/265x80/ddd/fff&text=OpenFX%20Plateform" alt="" class="img-responsive"></a>
+            <a href="/"><img src="/static/images/logo.png" alt="" class="img-responsive"></a>
         </div>
         <ul>
-            <li>
+            <!--<li>
                 <img class="signedIn" src="http://loremflickr.com/100/100/">
                 <a href='#' class="signedIn">Settings <b class="caret"></b></a>
-                <p class="signedIn">Signed in as armandbiteau</p>
+                <p class="signedIn">Signed in as Armand Biteau</p>
+            </li>-->
+            <li>
+                <p class="signedIn"><b class="caret"></b> Login</p>
             </li>
             <li class="title-nav"><h4>NAVIGATION</h4></li>
-            <!-- <li>
-                <a href='#'><i class="fa fa-user"></i>Personnal account</a>
-                <ul>
-                    <li><a href="#">Profile</a></li>
-                    <li><a href="#">Plugins</a></li>
-                    <li><a href="#">Bundles</a></li>
-                </ul>
-            </li> -->
             <li>
                 <a href='/upload'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
             </li>
             <li class="active">
                 <a href='/plugin'><i class="fa fa-crop"></i>Explore plugins</a>
-                <!-- <ul>
-                    <li><a href="/plugin">View all plugins</a></li>
-                    <li><a href="/plugin">Search a plugin</a></li>
-                </ul> -->
             </li>
             <li>
-                <a href='/demo'><i class="fa fa-photo"></i>Get a render</a>
+                <a href='/editor'><i class="fa fa-photo"></i>Online image editor</a>
             </li>
             <li class="title-nav"><h4>MORE</h4></li>
             <li>
@@ -78,21 +69,15 @@
                   <button type="submit" value="Submit query"><i class="fa fa-search"></i></button>
             </form>
         </div>
-
         {% block title %}{% endblock %}
         {% block subtitle %}{% endblock %}
-
     </header>
-
 
     <section id="scroller">
         <div class="main" data-0="padding-top:350px" data-150="padding-top: 300px">
-
             {% block content %}{% endblock %}
-
         </div>
     </section>
-
 </div>
 
 <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
@@ -136,3 +121,4 @@ $("#left-nav a").click(function(){
 
 </body>
 </html>
+

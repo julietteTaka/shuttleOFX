@@ -93,5 +93,7 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
 
     shutil.rmtree(bundlePath)
 
+    # print analysedBundle
+
     sharedBundleDatas['datas'] = analysedBundle
     sharedBundleDatas['status'] = 'done'

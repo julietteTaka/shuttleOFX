@@ -1,7 +1,9 @@
 #!/usr/bin/python
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, abort
 import os
 import uuid
+import atexit
+import logging
 import tempfile
 import ConfigParser
 import multiprocessing
@@ -22,15 +24,20 @@ g_rendersSharedInfo = {}
 g_pool = multiprocessing.Pool(processes=4)
 
 # Manager to share rendering information
-g_manager = Manager()
+g_manager = multiprocessing.Manager()
 
 # list of all rendered resources
 g_listImg = {}
 
 currentAppDir = os.path.dirname(__file__)
-tmpRenderingPath = os.path.join(currentAppDir, "render")
+
+tmpRenderingPath = os.path.join(currentAppDir, configParser.get('RENDERED_IMAGE', 'renderedImagesDirectory'))
 if not os.path.exists(tmpRenderingPath):
-  os.mkdir(tmpRenderingPath)
+  os.makedirs(tmpRenderingPath)
+
+resourcesPath = os.path.join(currentAppDir, configParser.get('RESOURCES', 'resourcesDirectory'))
+if not os.path.exists(resourcesPath):
+  os.makedirs(resourcesPath)
 
 # TODO: replace multiprocessing with https://github.com/celery/billiard to have timeouts in the Pool.
 
@@ -47,10 +54,9 @@ def newRender():
     global g_app, g_renders, g_pool
 
     datas = request.json
-    userID = "johnDoe"
     renderID = str(uuid.uuid1())
 
-    _, tmpFilepath = tempfile.mkstemp(prefix='tuttle_', suffix="_" + userID + ".png", dir=tmpRenderingPath)
+    _, tmpFilepath = tempfile.mkstemp(prefix='tuttle_', suffix=".png", dir=tmpRenderingPath)
     resourcePath = os.path.basename(tmpFilepath)
 
     newRender = {}
@@ -65,7 +71,7 @@ def newRender():
     renderSharedInfo['status'] = 0
     g_rendersSharedInfo[renderID] = renderSharedInfo
 
-    g_pool.apply_async(renderScene.computeGraph, args=[renderSharedInfo, newRender, tmpFilepath])
+    g_pool.apply(renderScene.computeGraph, args=[renderSharedInfo, newRender, tmpFilepath])
 
     return jsonify(render=newRender)
 
@@ -102,13 +108,13 @@ def getRenderById(renderID):
     abort(404)
 
 
-@g_app.route('/render/<renderId>/resources/<resourceId>', methods=['GET'])
+@g_app.route('/render/<renderId>/resource/<resourceId>', methods=['GET'])
 def resource(renderId, resourceId):
     '''
     Returns file resource by renderId and resourceId.
     '''
-    if os.path.isfile(tmpRenderingPath + "/" + resourceId):
-        return send_file( tmpRenderingPath + "/" + resourceId )
+    if os.path.isfile( os.path.join(tmpRenderingPath, resourceId) ):
+        return send_file( os.path.join(tmpRenderingPath, resourceId) )
     else:
         logging.error(tmpRenderingPath + resourceId + " doesn't exists")
         abort(404)
@@ -168,17 +174,29 @@ def getResourcesDict():
     '''
      Returns a list of all resources on server.
     '''
-    global listImg
-    ret = {"files" : listImg }
+    global g_listImg
+    ret = {"files" : g_listImg }
     return jsonify(**ret)
 
 def getAllResources():
     '''
     Fill the list of images with all resources path on the server.
     '''
-    for image in os.listdir("resources"):
+    global g_listImg
+    for image in os.listdir(str(resourcesPath)):
         _id = str(uuid.uuid4())
-        listImg[_id] = "/resources/" + str(image)
+        g_listImg[_id] = str(resourcesPath) + str(image)
+
+
+@atexit.register
+def quit():
+    '''
+    Close processes and quit pool at exit.
+    '''
+    global g_pool
+    g_pool.close()
+    g_pool.terminate()
+    g_pool.join()
 
 if __name__ == "__main__":
     getAllResources()

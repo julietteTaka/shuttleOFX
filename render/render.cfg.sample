@@ -4,3 +4,10 @@ globalOfxPluginPath = /global/path/
 [APP_PLUGIN]
 host = 0.0.0.0
 port = 5004
+
+
+[RESOURCES]
+resourcesDirectory = path/to/resources
+
+[RENDERED_IMAGE]
+renderedImagesDirectory = path/to/rendered/resources
