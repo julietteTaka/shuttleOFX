@@ -277,7 +277,7 @@
 					font-family: "Roboto";
 					font-weight: bold;
 					color: @grey;
-					color: #444;
+					color: #2e3234;
 				}
 				p{
 					// font-family: 'Roboto-Light';
@@ -388,7 +388,7 @@
 				}
 				h3{
 					text-align: center;
-					color: #444;
+					color: #2e3234;
 				}
 				p{
 					text-align: center;
@@ -513,7 +513,7 @@
 					h4{
 						font-family: "Roboto";
 						font-weight: bold;
-						color: #444;
+						color: #2e3234;
 						margin-top: 1.5em;
 					}
 					p{
@@ -579,15 +579,62 @@
 
 	}
 	footer{
-		min-height: 300px;
-		background: #222;
-		.logo{
-			img{
-				max-height: 100px;
-				width: auto;
-				margin: 0px auto;
+		background: #2e3234;
+		padding-top: 2em;
+		padding-bottom: 6em;
+		h2{
+			font-size: 1em;
+			text-transform: uppercase;
+			color: #fff;
+		}
+		ul{
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			li{
+				list-style: none;
+				display: block;
+				font-family: 'Roboto-Light';
+				font-weight: 200;
+				a{
+					color: #fff;
+					opacity: .5;
+					transition: all 0.3s;
+					&:hover{
+						opacity: 1;
+						transition: all 0.3s;
+					}
+				}
 			}
-			
+		}
+		.logo{
+			display: flex;
+			align-items: center;
+			img{
+				max-height: 130px;
+				width: auto;
+				margin-top: 30px;
+			}
+			p{
+				margin-top: 30px;
+				margin-left: 2em;
+				a{
+					margin-top: 1.5em;
+					display: block;
+					font-family: 'Roboto-Light';
+					font-weight: 200;
+					color: #fff;
+					font-size: 90%;
+				}
+			}
+		}
+		.links{
+
+		}
+		.social{
+			.fa{
+				width: 30px;
+			}
 		}
 	}
 }
