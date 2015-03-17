@@ -53,6 +53,8 @@
                         <span>Help us to develop the plateform</span>
                         <iframe src="http://ghbtns.com/github-btn.html?user=ShuttleOFX&repo=shuttleofx&type=fork&count=true&size=large" frameborder="0" scrolling="0" allowTransparency="true" height="30" width="170" style="padding-top:0px;margin-left:10px;"></iframe>
                     </h3>
+
+                    <a href="/plugin" class="btn btn-primary">GET STARTED NOW<i class="fa fa-angle-right"></i></a>
                 </div>
             </div>
         </section>
@@ -133,7 +135,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6">
+                    <!-- <div class="col-md-6">
                         <div class="target">
                             <img src="{{ url_for('static', filename='images/rocket.png') }}">
                              <h3>Graphic artists</h3>
@@ -150,6 +152,34 @@
                                 This is a two line description of the lugin creators target.
                              </p>
                         </div>
+                    </div> -->
+                </div>
+                <div class="row">
+                    <div class="col-md-1">
+                        <img src="{{ url_for('static', filename='images/rocket.png') }}">
+                    </div>
+                    <div class="col-md-3">
+                        <h1 class="target1">Graphic<span>Artists</span></h1>
+                    </div>
+                    <div class="col-md-8">
+                        <p>
+                            The Web OpenFX platform is a search engine built for you, meant to provide crystal clear plugin’s intels. Use the samples visuals associate with a plugin to find what you need and then try it online with your own samples to quickly integrate it in your production.
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1">
+                        <img src="{{ url_for('static', filename='images/rocket.png') }}">
+                    </div>
+                    <div class="col-md-3">
+                        <h1 class="target2">Plugin<span>Creators</span></h1>
+                    </div>
+                    <div class="col-md-8">
+                        <p>
+                            Use the OFX platform to share the result of your work with the community. When coding is done, you can upload your bundle on our servers in a secure environment. 
+The platform works well with industries. It can bring visibility on your products and provide a beta testing.
+Also, The application acts as a validator service that will display in its catalog only the standard friendly plugins.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -157,22 +187,22 @@
 
 
         <section id="format">
+            <div id="bg-openfx"></div>
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <h1>OpenFX, a format built for everyone</h1>
+                        <h1>A format built for everyone</h1>
                     </div>
                 </div>
                 <div class="row">
-                     <div class="col-md-6">
-                        <img src="{{ url_for('static', filename='images/logo.png') }}">
-                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                        <h1 class="content-format">OpenFX<span>Open standard</span></h1>
+                    </div>
+                    <div class="col-md-8">
                         <p>
                             OpenFX is an open standard for image processing plug-ins. It allows plug-ins written to the standard to work on any application that supports the standard. This avoids the current per application fragmentation of plugin development and support, which causes much heartache to everyone: plug-in developers, application developers and end-users alike.
                         </p>
                     </div>
-                    
                 </div>
             </div>
         </section>
@@ -186,23 +216,72 @@
                     </div>
                 </div>
                 <div class="row">
-                     <div class="col-md-12">
-                        <h2>A project</h2>
-                        <p>
-                            The OFX platform allows to share OpenFX plugins between plugin creators and graphic artists. 
-In the continuity of the TuttleOFX initiative, the ambition is to promote the emergence of a standard way to create image processing algorithms usable across softwares. The project was initially proposed by Fabien Castan and Marc-Antoine Arnaud to a team of three students from the IMAC engineering school in Paris, FRANCE.
+                    <div class="col-md-12">
+                        <h2>A student team | <span>ShuttleOFX was created by a team of 3 students from IMAC engineering school</span></h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="student">
+                            <img src="http://placehold.it/100x100/ddd/fff&text=Profile">
+                            <h4>Armand Biteau</h4>
+                            <p>User interface</p>
+                            <div class="contact">
+                                <ul>
+                                    <li>
+                                        <a href=""><i class="fa fa-twitter"></i></a>
+                                    </li>
+                                    <li>
+                                        <a href=""><i class="fa fa-github"></i></a>
+                                    </li>
+                                    <li>
+                                        <a href=""><i class="fa fa-instagram"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="student">
+                            <img src="http://placehold.it/100x100/ddd/fff&text=Profile">
+                            <h4>Hugo Garrido Y Saez</h4>
+                            <p>Catalog services</p>
+                            <div class="contact">
+                                <ul>
+                                    <li>
+                                        <a href=""><i class="fa fa-twitter"></i></a>
+                                    </li>
+                                    <li>
+                                        <a href=""><i class="fa fa-github"></i></a>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="student">
+                            <img src="http://placehold.it/100x100/ddd/fff&text=Profile">
+                            <h4>Juliette Belin</h4>
+                            <p>Backend render and analyser</p>
+                            <div class="contact">
+                                <ul>
+                                    <li>
+                                        <a href=""><i class="fa fa-twitter"></i></a>
+                                    </li>
+                                    <li>
+                                        <a href=""><i class="fa fa-github"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        </p>
-
-                        <h2>A student team</h2>
-                        <p>
-                            Created by a team of 3 students from IMAC engineering school:
-                            Armand - user interface
-                            Hugo - catalog and communication between services
-                            Juliette - backend render and analyser
-                        </p>
-
-                        <h2>A support</h2>
+                <!-- 
+                    <div class="col-md-12">
+                        <div class="">
+                        <h2>With the help of some collaborators</h2>
                         <p>
                             <div style="display:inline-block; width: 30%;vertical-align: middle;">
                                 <img height="150px" width="99px" style="margin: 0 auto;" src="{{ url_for('static', filename='images/logo_ingenieur_imac_web.png') }}" />
@@ -214,10 +293,8 @@ In the continuity of the TuttleOFX initiative, the ambition is to promote the em
                                 <img height="150px" width="99px" style="margin: 0 auto;" src="{{ url_for('static', filename='images/logo_mikros.jpg') }}" />
                             </div>
                         </p>
-                     </div>
-                   
-                    
-                </div>
+                    </div>
+                    </div> -->
             </div>
         </section>
 
@@ -243,6 +320,7 @@ In the continuity of the TuttleOFX initiative, the ambition is to promote the em
 $(document).ready(function() {
     $.material.init();
     $('#cbp-contentslider').cbpContentSlider();
+
 
     $('.feature').click(function() {
       $('.feature').removeClass('active');
