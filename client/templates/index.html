@@ -208,24 +208,24 @@ Also, The application acts as a validator service that will display in its catal
         </section>
 
 
-        <section id="about">
+        <section id="students">
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
                         <h1>About ShuttleOFX</h1>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row imac">
                     <div class="col-md-12">
-                        <h2>A student team | <span>ShuttleOFX was created by a team of 3 students from IMAC engineering school</span></h2>
+                        <h2>A student team | <span>ShuttleOFX was created by a team of 3 students from <a href="">IMAC engineering school</a></span></h2>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row students">
                     <div class="col-md-4">
                         <div class="student">
-                            <img src="http://placehold.it/100x100/ddd/fff&text=Profile">
+                            <img src="{{ url_for('static', filename='images/team/armand.jpg') }}" class="panel panel-primary">
                             <h4>Armand Biteau</h4>
-                            <p>User interface</p>
+                            <p>UI design & Front-End app</p>
                             <div class="contact">
                                 <ul>
                                     <li>
@@ -243,7 +243,7 @@ Also, The application acts as a validator service that will display in its catal
                     </div>
                     <div class="col-md-4">
                         <div class="student">
-                            <img src="http://placehold.it/100x100/ddd/fff&text=Profile">
+                            <img src="{{ url_for('static', filename='images/team/hugo.jpg') }}" class="panel panel-primary">
                             <h4>Hugo Garrido Y Saez</h4>
                             <p>Catalog services</p>
                             <div class="contact">
@@ -261,9 +261,9 @@ Also, The application acts as a validator service that will display in its catal
                     </div>
                     <div class="col-md-4">
                         <div class="student">
-                            <img src="http://placehold.it/100x100/ddd/fff&text=Profile">
+                            <img src="{{ url_for('static', filename='images/team/juliette.jpg') }}" class="panel panel-primary">
                             <h4>Juliette Belin</h4>
-                            <p>Backend render and analyser</p>
+                            <p>Back-End render & analyser</p>
                             <div class="contact">
                                 <ul>
                                     <li>
@@ -274,6 +274,33 @@ Also, The application acts as a validator service that will display in its catal
                                     </li>
                                 </ul>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="collaborators">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>With the help of some collaborators</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="collaborator">
+                            <img src="{{ url_for('static', filename='images/collaborators/mikros.jpg') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="collaborator">
+                            <img src="{{ url_for('static', filename='images/collaborators/arkena.jpg') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="collaborator">
+                            <img src="{{ url_for('static', filename='images/collaborators/imac.jpg') }}">
                         </div>
                     </div>
                 </div>
@@ -293,7 +320,7 @@ Also, The application acts as a validator service that will display in its catal
         </section>
 
 
-        <footer>
+    <footer>
         
     </footer>
      
@@ -312,8 +339,11 @@ Also, The application acts as a validator service that will display in its catal
 <script type="text/javascript">
 
 $(document).ready(function() {
+    $("body").css({
+        "height":"auto"
+    });
     $.material.init();
-    $('#cbp-contentslider').cbpContentSlider();
+    // $('#cbp-contentslider').cbpContentSlider();
 
 
     $('.feature').click(function() {
