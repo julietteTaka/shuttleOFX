@@ -4,11 +4,21 @@ import tarfile
 import threading
 import multiprocessing
 import tempfile
+import ConfigParser
 
 
 from pyTuttle import tuttle
 import Plugin
 
+
+currentAppDir = os.path.dirname(__file__)
+
+configParser =  ConfigParser.RawConfigParser()
+configParser.read( os.path.join( currentAppDir, 'analyser.cfg' ) )
+tmpRenderingPath = configParser.get('APP_ANALYSER', 'workingTmpDir')
+
+if not os.path.exists(tmpRenderingPath):
+    os.mkdir(tmpRenderingPath)
 
 def extractDatasAsTar(datas, outputPath):
     '''
@@ -77,7 +87,7 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
     sharedBundleDatas['analyse'] = 'waiting'
     sharedBundleDatas['extraction'] = 'running'
 
-    bundlePath = 'tmp/' + str(bundleId)
+    bundlePath = os.path.join( tmpRenderingPath, str(bundleId) )
     os.mkdir(bundlePath)
 
     if 'gzip' == bundleExt.split('/')[1]:

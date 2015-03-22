@@ -8,8 +8,10 @@ import multiprocessing
 import atexit
 import Bundle
 
+currentAppDir = os.path.dirname(__file__)
+
 configParser =  ConfigParser.RawConfigParser()
-configParser.read('analyser.cfg')
+configParser.read( os.path.join( currentAppDir, 'analyser.cfg' ) )
 
 g_app = Flask(__name__, static_folder='', static_url_path='')
 
@@ -21,10 +23,9 @@ g_sharedBundleDatas = {}
 # Manager to share analysing information
 g_manager = multiprocessing.Manager()
 
-currentAppDir = os.path.dirname(__file__)
-tmpRenderingPath = os.path.join(currentAppDir, "tmp")
-if not os.path.exists(tmpRenderingPath):
-    os.mkdir(tmpRenderingPath)
+@g_app.route('/', methods=['GET'])
+def index():
+    return "Analyser service v1.0"
 
 @g_app.route('/bundle/<bundleId>', methods=['POST'])
 def analyseBundle(bundleId):
@@ -43,7 +44,8 @@ def analyseBundle(bundleId):
     datas['extraction'] = "waiting"
     datas['datas'] = None
 
-    g_pool.apply(Bundle.launchAnalyse, args=[datas, bundleExt, bundleBin, bundleId])
+    #g_pool.apply(Bundle.launchAnalyse, args=[datas, bundleExt, bundleBin, bundleId])
+    Bundle.launchAnalyse(datas, bundleExt, bundleBin, bundleId)
 
     return jsonify(**datas)
 
