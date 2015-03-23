@@ -1,0 +1,11 @@
+upstream shuttleofx_render {
+    server unix:///run/uwsgi/app/shuttleofx_render/socket;
+}
+
+server {
+    listen 5005;
+    location / {
+        include uwsgi_params;
+        uwsgi_pass shuttleofx_render;
+    }
+}
