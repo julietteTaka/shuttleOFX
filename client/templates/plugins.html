@@ -117,25 +117,18 @@
                                 <div class="plugins-titles">
                                     <img src="{{ url_for('static', filename='images/logo.png') }}" alt="" class="img-responsive plugin-thumbnail">
                                     <h3 class="panel-title">
-                                        {{plugin.name}}
+                                        {{plugin.name}} {{plugin.version.major}}.{{plugin.version.minor}}
                                     </h3>
                                 </div>
                             </a>
                             <div class="plugins-infos">
-                                <span>
-                                    Version 1.0
-                                </span>
-                                <span>
-                                    Rating {{plugin.rate}}
-                                </span>
-                                <!-- {% for property in plugin.properties %}
-                                    {% if property.name == "OfxPropType" %}
-                                        <p>{{property.value[0]}}</p>
-                                    {% endif %}
-                                {% endfor %} -->
-                                <p>{{plugin.shortDescription}}</p>
-                                <!--<a href="/plugin/{{plugin.pluginId}}" class="btn btn-flat btn-primary">View infos</a>
-                                <a href="/editor/{{plugin.pluginId}}" class="btn btn-flat btn-primary">Live render</a>-->
+                                <p>
+                                    {% for p in plugin.properties %}
+                                        {% if p.name == "OfxPropPluginDescription" %}*
+                                            {{p.value[0]}}
+                                        {% endif %}
+                                    {% endfor %}
+                                </p>
                             </div>
                         </div>
                     </li>
