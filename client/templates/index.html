@@ -32,14 +32,6 @@
         <header class="header" id="header-index">
             <div class="container">
                 <div class="row">
-                    <ul class="nav navbar-nav navbar-left">
-                        <li><a href="">Home</a></li>
-                        <li><a href="plugin">Plugins</a></li>
-                        <li><a href="editor">Render</a></li>
-                        <li><a href="http://openeffects.org/">Community</a></li>
-
-                        <li><a href="javascript:void(0)"><i class="fa fa-lock" style="padding-right:7px;"></i>Log In</a></li>
-                    </ul>
                     <div class="navbar search-bar navbar-right">
                         <form id="searchForm">
                             <input type="text" placeholder="Search" id="query" />
@@ -54,7 +46,10 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="" class="">
+                        <div class="mainLogo">
+                            <img src="{{ url_for('static', filename='images/logo.png') }}">
+                            <a>ShuttleOFX</a>
+                        </div>
                     </div>
                 </div>
                 <div class="row title-home">
@@ -227,7 +222,7 @@ Also, The application acts as a validator service that will display in its catal
                 </div>
                 <div class="row imac">
                     <div class="col-md-12">
-                        <h2>A student team | <span>ShuttleOFX was created by a team of 3 students from <a href="">IMAC engineering school</a></span></h2>
+                        <h2>A student team | <span>ShuttleOFX was created by a team of 3 students from <a href="http://imac.alwaysdata.net">IMAC engineering school</a></span></h2>
                     </div>
                 </div>
                 <div class="row students">
@@ -239,13 +234,7 @@ Also, The application acts as a validator service that will display in its catal
                             <div class="contact">
                                 <ul>
                                     <li>
-                                        <a href=""><i class="fa fa-twitter"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href=""><i class="fa fa-github"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href=""><i class="fa fa-instagram"></i></a>
+                                        <a href="https://github.com/ArmandBiteau"><i class="fa fa-github"></i></a>
                                     </li>
                                 </ul>
                             </div>
@@ -259,10 +248,7 @@ Also, The application acts as a validator service that will display in its catal
                             <div class="contact">
                                 <ul>
                                     <li>
-                                        <a href=""><i class="fa fa-twitter"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href=""><i class="fa fa-github"></i></a>
+                                        <a href="https://github.com/HugoGarrido"><i class="fa fa-github"></i></a>
                                     </li>
                                     
                                 </ul>
@@ -277,10 +263,7 @@ Also, The application acts as a validator service that will display in its catal
                             <div class="contact">
                                 <ul>
                                     <li>
-                                        <a href=""><i class="fa fa-twitter"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href=""><i class="fa fa-github"></i></a>
+                                        <a href="https://github.com/julietteTaka"><i class="fa fa-github"></i></a>
                                     </li>
                                 </ul>
                             </div>
@@ -314,24 +297,6 @@ Also, The application acts as a validator service that will display in its catal
                         </div>
                     </div>
                 </div>
-
-                <!-- 
-                    <div class="col-md-12">
-                        <div class="">
-                        <h2>With the help of some collaborators</h2>
-                        <p>
-                            <div style="display:inline-block; width: 30%;vertical-align: middle;">
-                                <img height="150px" width="99px" style="margin: 0 auto;" src="{{ url_for('static', filename='images/logo_ingenieur_imac_web.png') }}" />
-                            </div>
-                            <div style="display:inline-block; width: 30%;vertical-align: middle;">
-                                <img width="250px" style="margin: 0 auto;" src="{{ url_for('static', filename='images/logo_arkena.png') }}" />
-                            </div>
-                            <div style="display:inline-block; width: 30%;vertical-align: middle;">
-                                <img height="150px" width="99px" style="margin: 0 auto;" src="{{ url_for('static', filename='images/logo_mikros.jpg') }}" />
-                            </div>
-                        </p>
-                    </div>
-                    </div> -->
             </div>
         </section>
 
@@ -343,8 +308,8 @@ Also, The application acts as a validator service that will display in its catal
                     <div class="logo">
                         <img src="{{ url_for('static', filename='images/logo.png') }}">
                         <p>
-                            ShuttleOFX
-                            <a href="http://github.com/shuttleofx/ShuttleOFX/blob/develop/LICENSE.LGPL">LGPL License</a>
+                            <a>ShuttleOFX</a>
+                            <a class="license" href="http://github.com/shuttleofx/ShuttleOFX/blob/develop/LICENSE.LGPL">LGPL License</a>
                         </p>
                     </div>
                 </div>
@@ -384,15 +349,6 @@ Also, The application acts as a validator service that will display in its catal
                         <ul>
                             <li>
                                 <a target="_blank" href="https://github.com/ShuttleOFX/shuttleofx"><i class="fa fa-github"></i>Github</a>
-                            </li>
-                            <li>
-                                <a target="_blank" href="#"><i class="fa fa-twitter"></i>Twitter</a>
-                            </li>
-                            <li>
-                                <a target="_blank" href="#"><i class="fa fa-facebook"></i>Facebook</a>
-                            </li>
-                            <li>
-                                <a target="_blank" href="#"><i class="fa fa-envelope"></i>Mail</a>
                             </li>
                         </ul>
                     </div>

@@ -163,15 +163,31 @@
 		&#intro{
 			background: @ofxColor;
 			// background: @bkGrey;
-			padding-top: 2em;
-			padding-bottom: 6em;
-			min-height: 30em;
+			//padding-top: 2em;
+			//padding-bottom: 6em;
+			//min-height: 30em;
 			font-family: 'Roboto-Light';
-			img{
-				max-width: 170px;
+			display: flex;
+			.mainLogo{
+				text-align: center;
 				margin: 20px auto;
-				position: relative;
+				img{
+					max-width: 170px;
+					position: relative;
+					display: inline-block;
+				}
+				a{
+					margin-top: 1.5em;
+					display: inline-block;
+					font-family: 'Roboto-Light';
+					font-weight: 200;
+					font-size: 3em !important;
+					margin-left: 30px;
+					color: #fff;
+					font-size: 90%;
+				}
 			}
+
 			.title-home{
 				margin: 0px auto;
 				left: 50%;
@@ -196,7 +212,7 @@
 
 				}
 				a{
-					margin-top: 3em;
+					margin: 3em;
 					padding: 1em 2em;
 					color: #fff;
 					font-size: 110%;
@@ -204,13 +220,6 @@
 						padding-left: 12px;
 					}
 				}
-				// #fork{
-				// 	padding-top: 5px;
-				// 	margin-left: 10px;
-				// 	width: 150px;
-				// 	height: 30px;
-				// 	content: "Fork the project";
-				// }
 			}
 			
 		}
@@ -632,6 +641,9 @@
 					font-size: 90%;
 				}
 			}
+		}
+		.license{
+			color: @ofxTxt !important;
 		}
 		.links{
 
