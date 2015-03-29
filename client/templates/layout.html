@@ -13,14 +13,24 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/bootstrap.css') }}">
     <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/material.css') }}"> -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
+
+    <!-- favicon -->
+    <link rel="icon" type="image/png" sizes="192x192"  href="{{ url_for('static', filename='images/android-icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='images/favicon-96x96.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
 </head>
 
 <body>
 
 <nav id="main-nav" class="navigation overflow">
     <div id="left-nav">
-        <div class="logo">
-            <a href="/"><img src="/static/images/logo.png" alt="" class="img-responsive"></a>
+        <div class="mainLogo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}">
+            <a>ShuttleOFX</a>
         </div>
         <ul>
             <!--<li>
@@ -42,13 +52,14 @@
                 <a href='/editor'><i class="fa fa-photo"></i>Online image editor</a>
             </li>
             <li class="title-nav"><h4>MORE</h4></li>
+            <!--
             <li>
                 <a href='#'><i class="fa fa-sitemap"></i>About the plateform</a>
                 <ul>
                     <li><a href="#">About us</a></li>
                     <li><a href="#">Plateform authors</a></li>
                 </ul>
-            </li>
+            </li>-->
             <li>
                 <a href='http://www.openeffects.org' target="_blank"><i class="fa fa-share-alt"></i>OFX community</a>
             </li>

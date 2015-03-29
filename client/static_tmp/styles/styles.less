@@ -56,7 +56,6 @@ header{
     position: fixed;
     background: @ofxColor;
     top:0;
-    border-left: 1px solid #ddd;
     .icon {
         z-index:3;
         display:block;
@@ -277,6 +276,9 @@ header{
             font-weight: 400;
             line-height: 70px;
         }
+        .navbar-collapse.collapse{
+            border-left: 1px solid #ddd;
+        }
     }
     button span{
         color: @ofxTxt!important;
@@ -302,10 +304,6 @@ ul.right-nav li .fa{
     padding-left: 0.5em;
 }
 
-
-
-
-
 #left-nav{
     height: 100%;
     background: @bkWhi;
@@ -315,7 +313,19 @@ ul.right-nav li .fa{
     z-index: 3;
     padding-bottom: 100px;
     overflow-y: scroll;
-    max-width: 265px;
+    .mainLogo{
+        background-color: #009688;
+        padding: 3px;
+        text-align: center;
+        margin: 0px auto;
+        img{
+            height: 73px;
+            display: inline-block;
+        }
+        a{
+            color: #fff !important;
+        }
+    }
     .input-field{
         width: 205px;
         margin-left: 35px;
