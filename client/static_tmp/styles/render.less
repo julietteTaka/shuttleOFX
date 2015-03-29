@@ -4,30 +4,49 @@
 
 
 input.input-number{
-    position: absolute;
-    text-align: right;
-    right: 0px;
-    margin-top: -45px;
-    float: right;
-    background: none;
-    border: none;
-    padding: 0;
+	position: absolute;
+	text-align: right;
+	right: 0px;
+	margin-top: -45px;
+	float: right;
+	background: none;
+	border: none;
+	padding: 0;
 }
 
 
-.displayDemo{
+.display{
 	margin-bottom: 30px;
 	img{
 		margin: auto;
 		position: relative;
+		width: 100%;
+		height: 50vh;
+		background-color: #333333;
 	}
 }
 
-.graphDemo{
+.graph{
 	margin-top: 30px;
 	margin-bottom: 30px;
+	margin: auto;
+	text-align: center;
+	vertical-align: middle;
+	height: 50vh;
+	border: 1px solid #ddd;
+	box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 6px rgba(0, 0, 0, 0.12);
+	.node{
+		width: 120px;
+		height: 50px;
+		text-align: center;
+		padding-top: 8px;
+		color:#fff;
+		background-color:@ofxColor2;
+		border-radius: 8px;
+		display: inline-block;
+		margin-top: 10vh;
+	}
 }
-
 
 .changeParameters{
 	min-height: 50%;
@@ -124,6 +143,13 @@ input.input-number{
 		// border-bottom: 1px solid #ccc;
 	}
 	a{
+		display: inline-block;
+		float: right;
+		&.btn-success{
+			background-color: @ofxColor!important;
+		}
+	}
+	input{
 		display: inline-block;
 		float: right;
 		&.btn-success{
