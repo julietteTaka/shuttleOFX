@@ -35,7 +35,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <a href="/plugins"><i class="fa fa-angle-left"></i> View all plugins</a>
+                        <a href="/plugin"><i class="fa fa-angle-left"></i> View all plugins</a>
                     </div>
                 </div>
             </div>
@@ -51,35 +51,49 @@
 <div class="main-content">
     <div id="demo">
         <div class="container-fluid">
-            <!-- <div class="row-fluid">
-                <div class="col-md-4">
-                    <div class="form-group" style="padding-bottom:60px;">
-                        <label for="select" class="control-label">Selects an other plugin</label>
-                        <select class="form-control" id="select">
-                            <option>PushPixel</option>
-                            <option>2</option>
-                            <option>3</option>
-                        </select>
-                    </div>
-                </div>
-            </div> -->
             <div class="row-fluid">
                 <div class="col-md-9">
                     <div class="row-fluid">
                         <div class="demo-links">
                             <h3>Settings</h3>
-                            <a href="{{ url_for('static', filename='images/lol.png') }}" id="download-view" download="OFX_view.png" class="disabled btn btn-success">Download render view</a>
+                            {% for property in plugin.properties %}
+                                {% if property.name == "OfxPropShortLabel" %}
+                                    {% set rawIdentifier = plugin.uri %}
+                                        <input type="button" value="Render" id="render" pluginId="{{rawIdentifier[9:]}}" 
+                                            {% for property in plugin.properties %}
+                                                {% if property.name == "OfxImageEffectPropSupportedContexts" %}
+                                                    {% for context in property.value %}
+                                                        {% if context != "OfxImageEffectContextGeneral" %}
+                                                            class="btn btn-primary {{context}}"
+                                                        {% endif %}
+                                                    {% endfor%}
+                                                {% endif %}
+                                            {% endfor %}
+                                        >
+                                {% endif %}
+                            {% endfor %}
+                            <a href="{{ url_for('static', filename='images/lol.png') }}" id="download-view" download="OFX_view.png" class="disabled btn btn-success">Download</a>
                         </div>
                     </div>
                     <div class="row-fluid">
-                        <div id="viewer" class="displayDemo">
-                            <img src="{{ url_for('static', filename='images/lol.png') }}" alt="" class="panel panel-primary img-responsive">
+                        <div id="viewer" class="display">
+                            <img src="" alt="" class="panel panel-primary img-responsive">
                         </div>
                     </div>
                     <div class="row-fluid">
-                        <div id="graph" class="graphDemo">
+                        <div id="graph" class="graph">
                             <div id="resultForm"></div>
-                            <img src="http://placehold.it/1000x400/fff/ddd&text=Editable%20graph%20for%20render" alt="" class="panel panel-primary img-responsive">
+                            <div class="node">
+                                {% for property in plugin.properties %}
+                                    {% if property.name == "OfxPropShortLabel" %}
+                                        {{property.value[0]}}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <svg width="100px" height="10px">
+                                <path d="M0 4 L 85 4 L 85 0 L 100 5 L 85 10 L 85 6 L 0 6 Z" stroke="black" fill="black"/>
+                            </svg>
+                            <div class="node">Writer</div>
                         </div>
                     </div>
                 </div>

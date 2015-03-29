@@ -48,7 +48,8 @@ def getPlugin(pluginId):
 
 @app.route('/editor')
 def renderPage():
-    return render_template('editor.html', plugin=None)
+    resp = requests.get(catalogRootUri+"/plugin/0")
+    return render_template('editor.html', plugin=resp.json())
 
 @app.route('/editor/<pluginId>')
 def renderPageWithPlugin(pluginId):
