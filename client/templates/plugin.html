@@ -110,13 +110,13 @@
                     <h2>Clips <small>(Click on I/O to view specifications)</small></h2>
                 </div>
                 <div class="panel clip">
-                    <span class="clip-name">
+                    <div class="clip-name">
                         {% for property in plugin.properties %}
                             {% if property.name == "OfxPropShortLabel" %}
                                 {{property.value[0]}}
                             {% endif %}
                         {% endfor %}
-                    </span>
+                    </div>
                     {% for clipTab in plugin.clips %}
                         {% for clip in clipTab %}
                             {% if clip.name == "OfxPropName" %}
