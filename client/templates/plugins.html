@@ -113,12 +113,14 @@
                 {% for plugin in dico.plugins %}
                     <li class="col-md-3">
                         <div class="panel panel-primary">
-                            <div class="plugins-titles">
-                                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="" class="img-responsive plugin-thumbnail">
-                                <h3 class="panel-title">
-                                    {{plugin.name}}
-                                </h3>
-                            </div>
+                            <a href="/plugin/{{plugin.pluginId}}">
+                                <div class="plugins-titles">
+                                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="" class="img-responsive plugin-thumbnail">
+                                    <h3 class="panel-title">
+                                        {{plugin.name}}
+                                    </h3>
+                                </div>
+                            </a>
                             <div class="plugins-infos">
                                 <span>
                                     Version 1.0
@@ -132,8 +134,8 @@
                                     {% endif %}
                                 {% endfor %} -->
                                 <p>{{plugin.shortDescription}}</p>
-                                <a href="/plugin/{{plugin.pluginId}}" class="btn btn-flat btn-primary">View infos</a>
-                                <a href="/editor/{{plugin.pluginId}}" class="btn btn-flat btn-primary">Live render</a>
+                                <!--<a href="/plugin/{{plugin.pluginId}}" class="btn btn-flat btn-primary">View infos</a>
+                                <a href="/editor/{{plugin.pluginId}}" class="btn btn-flat btn-primary">Live render</a>-->
                             </div>
                         </div>
                     </li>
