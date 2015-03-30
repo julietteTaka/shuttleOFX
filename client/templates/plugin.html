@@ -137,31 +137,69 @@
                 <table class="table table-striped table-hover" id="tab-parameters">
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>Name</th>
+                            <th>Description</th>
+                            <th>Default</th>
+                            <th>Min.</th>
+                            <th>Max.</th>
+                            <th>Script name</th>
                             <th>Type</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% set count = 1 %}
                         {% for parameterTab in plugin.parameters %}
-                            {% for parameter in parameterTab %}
-                                {% if parameter.name == "OfxPropLabel" %}
-                                    <tr>
-                                        <td>{{ count }}</td>
-                                        <td>{{ parameter.value[0] }}</td>
-                                        <td>
-                                            {% for parameter in parameterTab %}
-                                                {% if parameter.name == "OfxParamPropType" %}
-                                                    {% set val = parameter.value[0] %}
-                                                    {{ val[12:] }}
-                                                {% endif %}
-                                            {% endfor %}
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                            {% endfor %}
-                            {% set count = count + 1 %}
+                            <tr>
+                                <td>
+                                    {% for parameter in parameterTab %}
+                                        {% if parameter.name == "OfxPropLabel" %}
+                                            {{ parameter.value[0] }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for parameter in parameterTab %}
+                                        {% if parameter.name == "OfxParamPropHint" %}
+                                            {{ parameter.value[0] }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for parameter in parameterTab %}
+                                        {% if parameter.name == "OfxParamPropDefault" %}
+                                            {{ parameter.value[0] }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for parameter in parameterTab %}
+                                        {% if parameter.name == "OfxParamPropMin" %}
+                                            {{ parameter.value[0] }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for parameter in parameterTab %}
+                                        {% if parameter.name == "OfxParamPropMax" %}
+                                            {{ parameter.value[0] }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for parameter in parameterTab %}
+                                        {% if parameter.name == "OfxPropName" %}
+                                            {{ parameter.value[0] }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for parameter in parameterTab %}
+                                        {% if parameter.name == "OfxParamPropType" %}
+                                            {% set val = parameter.value[0] %}
+                                            {{ val[12:] }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
