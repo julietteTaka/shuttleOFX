@@ -64,50 +64,11 @@
                 {% endfor %}
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="page-header">
-                    <h2>Parameters</h2>
-                </div>
-                <a href="#0" id="tab-parameters-toggle" class="btn btn-primary">View all parameters</a>
-                <table class="table table-striped table-hover" id="tab-parameters">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% set count = 1 %}
-                        {% for parameterTab in plugin.parameters %}
-                            {% for parameter in parameterTab %}
-                                {% if parameter.name == "OfxPropLabel" %}
-                                    <tr>
-                                        <td>{{ count }}</td>
-                                        <td>{{ parameter.value[0] }}</td>
-                                        <td>
-                                            {% for parameter in parameterTab %}
-                                                {% if parameter.name == "OfxParamPropType" %}
-                                                    {% set val = parameter.value[0] %}
-                                                    {{ val[12:] }}
-                                                {% endif %}
-                                            {% endfor %}
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                            {% endfor %}
-                            {% set count = count + 1 %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
 
         <div class="row">
             <div class="col-md-12">
                 <div class="page-header">
-                    <h2>Clips <small>(Click on I/O to view specifications)</small></h2>
+                    <h2>Clips</h2>
                 </div>
                 <div class="panel clip">
                     <div class="clip-name">
@@ -164,6 +125,46 @@
                         {% endfor %}
                     {% endfor %}
                 </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>Parameters</h2>
+                </div>
+                <a href="#0" id="tab-parameters-toggle" class="btn btn-primary">View all parameters</a>
+                <table class="table table-striped table-hover" id="tab-parameters">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set count = 1 %}
+                        {% for parameterTab in plugin.parameters %}
+                            {% for parameter in parameterTab %}
+                                {% if parameter.name == "OfxPropLabel" %}
+                                    <tr>
+                                        <td>{{ count }}</td>
+                                        <td>{{ parameter.value[0] }}</td>
+                                        <td>
+                                            {% for parameter in parameterTab %}
+                                                {% if parameter.name == "OfxParamPropType" %}
+                                                    {% set val = parameter.value[0] %}
+                                                    {{ val[12:] }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                            {% set count = count + 1 %}
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
 </div>
