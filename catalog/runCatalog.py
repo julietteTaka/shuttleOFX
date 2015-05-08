@@ -241,21 +241,18 @@ def addResource():
     uid = resourceTable.insert({ 
         "mimetype" : request.mimetype,
         "size" : request.content_length,
-        "name" : ""})
+        "name" : name})
 
     img = request.data
-    ext = request.mimetype.split('/')[1]
 
-    imgFile = resourcesPath + "/" + str(uid) + "." + ext
-    f = open(resourcesPath + "/" + str(uid) + "." + ext, 'w')
+
+    imgFile = os.path.join(resourcesPath, str(uid))
+    f = open(imgFile, 'w')
     f.write(img)
     f.close()
 
-    objectId = {'id': str(uid),
-                'uri': imgFile
-    }
-
-    return jsonify(**objectId)
+    resource = resourceTable.find_one({ "_id" : ObjectId(uid)})
+    return mongodoc_jsonify(resource)
 
 @app.route('/resources/', methods=['GET'])
 def getResources():
@@ -264,7 +261,7 @@ def getResources():
     '''
 
     count = int(request.args.get('count', 10))
-    skip = int(request.args.get('skip', 10))
+    skip = int(request.args.get('skip', 0))
     resources = resourceTable.find().limit(count).skip(skip)
     return mongodoc_jsonify({"resources":[ result for result in resources ]})
 
@@ -274,6 +271,9 @@ def getResourceById(resourceId):
     Returns resource datas from db.
     '''
     resourceData = resourceTable.find_one({ "_id" : ObjectId(resourceId)})
+
+    if resourceData == None:
+        abort(404)
     return mongodoc_jsonify(resourceData)
 
 
@@ -284,12 +284,16 @@ def getResourceData(resourceId):
     '''
 
     resourceData = resourceTable.find_one({ "_id" : ObjectId(resourceId)})
-    if not imgFile:
+    if not resourceData:
         abort(404)
-    filePath = resourcesPath + "/" + resourceId + "." + resourceData['mimetype'].split('/')[1]
-    if os.path.isfile(filePath):
-        return send_file(filePath)
-    abort(404)
+
+    filePath = os.path.join (resourcesPath, resourceId)
+
+    if not os.path.isfile(filePath):
+         abort(404)
+
+    resource = open(filePath)
+    return Response(resource.read(), mimetype=resourceData['mimetype'])
 
 
 if __name__ == "__main__":
