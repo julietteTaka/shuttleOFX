@@ -219,6 +219,38 @@ def getPlugin(pluginId, bundleId=0):
 
     return mongodoc_jsonify(plugin)
 
+@app.route('/resources/', methods=['POST'])
+def addResource():
+    '''
+    Upload resource file on the database
+    '''
+
+    mimetype = request.mimetype
+    name = ""
+    size = request.content_length
+
+    if not mimetype:
+        app.logger.error("Invalide resource.")
+        abort(404)
+
+    uid = resourceTable.insert({ 
+        "mimetype" : request.mimetype,
+        "size" : request.content_length,
+        "name" : ""})
+
+    img = request.data
+    ext = request.mimetype.split('/')[1]
+
+    imgFile = resourcesPath + "/" + str(uid) + "." + ext
+    f = open(resourcesPath + "/" + str(uid) + "." + ext, 'w')
+    f.write(img)
+    f.close()
+
+    objectId = {'id': str(uid),
+                'uri': imgFile
+    }
+
+    return jsonify(**objectId)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5002 ,debug=True)
 
