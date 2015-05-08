@@ -205,9 +205,26 @@ def getPlugins(bundleId):
 
 @app.route("/plugin")
 def getAllPlugins():
+    #Text search
+
+    #Alphabetical sorting
+    alphaSort = request.args.get('alphaSort', None)
+
+    if alphaSort != None :
+        if alphaSort != 'asc' and alphaSort != 'desc' :
+            alphaSort = None
+        else : 
+            if alphaSort == 'asc' :
+                alphaSort = 1
+            if alphaSort == 'desc' :
+                alphaSort = -1
+
+
+    print alphaSort
     count = int(request.args.get('count', 20))
     skip = int(request.args.get('skip', 0))
-    plugin = pluginTable.find().limit(count).skip(skip)
+    plugin = pluginTable.find().sort('name' , alphaSort).limit(count).skip(skip)
+    
     return mongodoc_jsonify({"plugins":[ result for result in plugin ]})
 
 @app.route("/bundle/<int:bundleId>/plugin/<int:pluginId>")
