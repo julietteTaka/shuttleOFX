@@ -4813,7 +4813,7 @@ body .jumbotron-material-blue-grey-A700,
   text-transform: uppercase;
   text-decoration: none;
   color: rgba(255, 255, 255, 0.84);
-  transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none !important;
 }
 .btn:hover:not(.btn-link):not(.btn-flat):not(.btn-fab) {
@@ -27744,7 +27744,7 @@ fieldset[disabled] .navbar .btn-link:focus {
 }
 .popover,
 .tooltip-inner {
-  background: #323232;
+  background: @ofxColor;
   color: #FFF;
   border-radius: 2px;
 }
@@ -27756,25 +27756,25 @@ fieldset[disabled] .navbar .btn-link:focus {
 .tooltip.left .arrow:after,
 .popover.left .tooltip-arrow,
 .tooltip.left .tooltip-arrow {
-  border-left-color: #323232;
+  border-left-color: @ofxColor;
 }
 .popover.right .arrow:after,
 .tooltip.right .arrow:after,
 .popover.right .tooltip-arrow,
 .tooltip.right .tooltip-arrow {
-  border-right-color: #323232;
+  border-right-color: @ofxColor;
 }
 .popover.top .arrow:after,
 .tooltip.top .arrow:after,
 .popover.top .tooltip-arrow,
 .tooltip.top .tooltip-arrow {
-  border-top-color: #323232;
+  border-top-color: @ofxColor;
 }
 .popover.bottom .arrow:after,
 .tooltip.bottom .arrow:after,
 .popover.bottom .tooltip-arrow,
 .tooltip.bottom .tooltip-arrow {
-  border-bottom-color: #323232;
+  border-bottom-color: @ofxColor;
 }
 .mdi,
 icon {
@@ -34714,3 +34714,27 @@ hr.on-light {
   pointer-events: none;
   color: #757575;
 }
+
+
+
+
+.popover{
+}
+
+.popover > .arrow{
+  // border-color: @ofxColor;
+}
+
+.popover-title {
+    color: @ofxColor;
+    border-radius: 0px;
+}
+.popover-content {
+  background: @ofxColor
+}
+
+
+
+
+
+
