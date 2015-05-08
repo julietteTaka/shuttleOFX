@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 from flask import Flask, request, jsonify, send_file, abort
 import os
 import uuid
@@ -30,15 +30,16 @@ g_manager = multiprocessing.Manager()
 # list of all rendered resources
 g_listImg = {}
 
-currentAppDir = os.path.dirname(__file__)
+currentAppDir = os.path.dirname(os.path.abspath(__file__))
 
-tmpRenderingPath = os.path.join(currentAppDir, configParser.get('RENDERED_IMAGE', 'renderedImagesDirectory'))
-if not os.path.exists(tmpRenderingPath):
-    os.makedirs(tmpRenderingPath)
+renderDirectory = os.path.join(currentAppDir, configParser.get('RENDERED_FILES', 'renderedFilesDirectory'))
+if not os.path.exists(renderDirectory):
+    os.makedirs(renderDirectory)
 
 resourcesPath = os.path.join(currentAppDir, configParser.get('RESOURCES', 'resourcesDirectory'))
 if not os.path.exists(resourcesPath):
     os.makedirs(resourcesPath)
+
 
 # TODO: replace multiprocessing with https://github.com/celery/billiard to have timeouts in the Pool.
 
@@ -137,10 +138,10 @@ def resource(renderId, resourceId):
     '''
     Returns file resource by renderId and resourceId.
     '''
-    if os.path.isfile( os.path.join(tmpRenderingPath, resourceId) ):
-        return send_file( os.path.join(tmpRenderingPath, resourceId) )
+    if os.path.isfile( os.path.join(renderDirectory, resourceId) ):
+        return send_file( os.path.join(renderDirectory, resourceId) )
     else:
-        logging.error(tmpRenderingPath + resourceId + " doesn't exists")
+        logging.error(renderDirectory + resourceId + " doesn't exists")
         abort(404)
 
 
