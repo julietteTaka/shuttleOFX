@@ -35,7 +35,11 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <a href="/plugin"><i class="fa fa-angle-left"></i> View all plugins</a>
+                        <a href="/plugin/{{plugin.pluginId}}"><i class="fa fa-angle-left"></i> Back to {% for property in plugin.properties %}
+                                {% if property.name == "OfxPropShortLabel" %}
+                                    {{property.value[0]}}
+                                {% endif %}
+                            {% endfor %} description</a>
                     </div>
                 </div>
             </div>
@@ -78,6 +82,26 @@
                     <div class="row-fluid">
                         <div id="viewer" class="display">
                             <img src="" alt="" class="panel panel-primary img-responsive">
+                            <div id="viewer-placeholder">
+                                <h2>Click
+                                {% for property in plugin.properties %}
+                                {% if property.name == "OfxPropShortLabel" %}
+                                    {% set rawIdentifier = plugin.uri %}
+                                        <input type="button" value="Render" id="render" pluginId="{{rawIdentifier[9:]}}" 
+                                            {% for property in plugin.properties %}
+                                                {% if property.name == "OfxImageEffectPropSupportedContexts" %}
+                                                    {% for context in property.value %}
+                                                        {% if context != "OfxImageEffectContextGeneral" %}
+                                                            class="btn btn-primary {{context}}"
+                                                        {% endif %}
+                                                    {% endfor%}
+                                                {% endif %}
+                                            {% endfor %}
+                                        >
+                                {% endif %}
+                            {% endfor %}
+                                 to try the plugin</h2>
+                            </div>
                         </div>
                     </div>
                     <div class="row-fluid">

@@ -66,7 +66,7 @@ def analyse(pluginPath):
 
     p = Plugin.Plugin()
     pluginCache = tuttle.core().getPluginCache()
-    pluginCache.addDirectoryToPath(pluginPath)
+    pluginCache.addDirectoryToPath(str(pluginPath))
     tuttle.core().preload(False)
     plugins = pluginCache.getPlugins()
 
@@ -88,6 +88,7 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
     sharedBundleDatas['extraction'] = 'running'
 
     bundlePath = os.path.join( tmpRenderingPath, str(bundleId) )
+    
     os.mkdir(bundlePath)
 
     if 'gzip' == bundleExt.split('/')[1]:
@@ -101,7 +102,7 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
     analysedBundle = analyse(bundlePath)
     sharedBundleDatas['analyse'] = 'done'
 
-    shutil.rmtree(bundlePath)
+    #shutil.rmtree(bundlePath)
 
     # print analysedBundle
 

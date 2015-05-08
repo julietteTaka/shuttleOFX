@@ -71,8 +71,9 @@ def newRender():
     renderSharedInfo['status'] = 0
     g_rendersSharedInfo[renderID] = renderSharedInfo
 
-    g_pool.apply(renderScene.computeGraph, args=[renderSharedInfo, newRender, tmpFilepath])
-
+    #g_pool.apply(renderScene.computeGraph, args=[renderSharedInfo, newRender, tmpFilepath])
+    renderScene.computeGraph(renderSharedInfo, newRender, tmpFilepath)
+    
     return jsonify(render=newRender)
 
 

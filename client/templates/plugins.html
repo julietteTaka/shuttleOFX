@@ -32,7 +32,7 @@
             <form class="navbar-form">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <div class='filter-title'><span>Display : </span>
                                 <div class="toggler-group">
                                     <span class="toggler active" data-toggle="grid">
@@ -44,38 +44,31 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2 pull-right filter-item">
+
+
+                        <div class="col-md-2 filter-item order-catag">
                             <div class="radio radio-primary">
-                                <label>
-                                    <input type="radio" name="optionsRadios" id="optionsRadios4" value="option4">
-                                    <i class="fa fa-gavel"></i>License
+                                <label class="ascendant">
+                                    <i class="fa fa-sort-alpha-asc"></i>Ascendant
                                 </label>
                             </div>
                         </div>
-                        <div class="col-md-2 pull-right filter-item">
-                            <div class="radio radio-primary">
-                                <label>
-                                    <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                                    <i class="fa fa-male"></i>Author
-                                </label>
+
+
+                        <div class="col-md-4 pull-right">
+                            <div id="filter-page">
+                                <p class="pager-size">
+                                    Plugins par page : 
+                                    <select name="size" class="">
+                                        <option value="10">10</option>
+                                        <option value="20" selected>20</option>
+                                        <option value="30">30</option>
+                                        <option value="40">40</option>
+                                    </select>
+                                </p>
                             </div>
                         </div>
-                        <div class="col-md-2 pull-right filter-item">
-                            <div class="radio radio-primary">
-                                <label>
-                                    <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                                    <i class="fa fa-star-half-o"></i>Rating
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-2 pull-right filter-item">
-                            <div class="radio radio-primary">
-                                <label>
-                                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
-                                    <i class="fa fa-sort-alpha-asc"></i>All
-                                </label>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </form>
@@ -91,15 +84,6 @@
         <div class="row">
             <div class="col-md-12">
                 <div id="filter-page">
-                    <p class="pager-size">
-                        Plugins par page : 
-                        <select name="size" class="">
-                            <option value="10">10</option>
-                            <option value="20" selected>20</option>
-                            <option value="30">30</option>
-                            <option value="40">40</option>
-                        </select>
-                    </p>
                     <ul class="pagination pagination-sm pager-check">
                         <li class="disabled"><a href="javascript:void(0)">«</a></li>
                         <li><a href="javascript:void(0)">»</a></li>
@@ -115,16 +99,16 @@
                         <div class="panel panel-primary">
                             <a href="/plugin/{{plugin.pluginId}}">
                                 <div class="plugins-titles">
-                                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="" class="img-responsive plugin-thumbnail">
+                                    <img src="{{ url_for('static', filename='images/logoPad.png') }}" alt="" class="img-responsive plugin-thumbnail">
                                     <h3 class="panel-title">
-                                        {{plugin.name}} {{plugin.version.major}}.{{plugin.version.minor}}
+                                        {{plugin.shortName}} {{plugin.version.major}}.{{plugin.version.minor}}
                                     </h3>
                                 </div>
                             </a>
                             <div class="plugins-infos">
                                 <p>
                                     {% for p in plugin.properties %}
-                                        {% if p.name == "OfxPropPluginDescription" %}*
+                                        {% if p.name == "OfxPropPluginDescription" %}
                                             {{p.value[0]}}
                                         {% endif %}
                                     {% endfor %}

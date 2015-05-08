@@ -72,6 +72,8 @@ function formToJson()
 
 
 $("#render.OfxImageEffectContextGenerator").click(function(){
+    $('#viewer-placeholder').hide();
+    $('#viewer img').css({height: "auto"});
     var pluginId = $(this).attr("pluginId");
     console.log('Generator: ' + pluginId );
     var renderParameters = formToJson();

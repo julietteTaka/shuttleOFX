@@ -33,9 +33,11 @@ class ProgressHandle(tuttle.IProgressHandle):
         """
 
 def configLocalPluginPath(ofxPluginPath):
-    tuttle.core().getPluginCache().addDirectoryToPath(ofxPluginPath)
+    tuttle.core().getPluginCache().addDirectoryToPath("/tmp/OFX/")#str(globalOfxPluginPath))
     pluginCache = tuttle.core().getPluginCache()
     tuttle.core().preload(False)
+    #logging.error(tuttle.core().getPluginCache())
+    logging.error(len(pluginCache.getPlugins()))
 
 def loadGraph(scene, outputFilename):
     tuttleGraph = tuttle.Graph()
