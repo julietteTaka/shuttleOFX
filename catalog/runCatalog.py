@@ -258,6 +258,27 @@ def addResource():
     }
 
     return jsonify(**objectId)
+
+@app.route('/resources/', methods=['GET'])
+def getResources():
+    '''
+    Returns resource file from db.
+    '''
+
+    count = int(request.args.get('count', 10))
+    skip = int(request.args.get('skip', 10))
+    resources = resourceTable.find().limit(count).skip(skip)
+    return mongodoc_jsonify({"resources":[ result for result in resources ]})
+
+@app.route('/resources/<resourceId>', methods=['GET'])
+def getResourceById(resourceId):
+    '''
+    Returns resource datas from db.
+    '''
+    resourceData = resourceTable.find_one({ "_id" : ObjectId(resourceId)})
+    return mongodoc_jsonify(resourceData)
+
+
 @app.route('/resources/<resourceId>/data', methods=['GET'])
 def getResourcesDict(resourceId):
     '''
