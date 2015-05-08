@@ -69,18 +69,21 @@ def login_required(f):
 # @login_required
 def index():
     if 'google_token' in session:
-        user = google.get('userinfo')
-        return render_template("index.html", user=user.data)
+        user = google.get('userinfo').data
+        return render_template("index.html", user=user)
     return render_template("index.html")
 
 @app.route('/plugin')
 def getPlugins(pluginName=None):
+    user = None
+    if 'google_token' in session:
+        user = google.get('userinfo').data
     try:
-        resp = requests.get(catalogRootUri+"/plugin", params=request.args)
+        resp = requests.get(catalogRootUri+"/plugin", params=request.args, user=user)
     except:
-        return render_template('plugins.html', dico=None)
+        return render_template('plugins.html', dico=None, user=user)
 
-    return render_template('plugins.html', dico=resp.json())
+    return render_template('plugins.html', dico=resp.json(), user=user)
 
 @app.route('/plugin/<pluginId>')
 def getPlugin(pluginId):

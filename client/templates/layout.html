@@ -39,9 +39,9 @@
         <ul>
             {% if user %}
                 <li class="userloged">
-                    <img class="signedIn" src="{user.picture}">
+                    <img class="signedIn" src="{{user.picture}}">
                     <p class="userName">
-                        {user.name}
+                        {{user.name}}
                         <a class="signedIn" href="/logout"><i class="fa fa-lock"></i>Logout</a>
                     </p>
                 </li>
