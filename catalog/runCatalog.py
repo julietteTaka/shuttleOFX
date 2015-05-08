@@ -6,8 +6,6 @@ import requests
 import ConfigParser
 
 from time import sleep
-from bson import json_util
-from flask import Flask, jsonify, Response, request, abort
 from bson import json_util, ObjectId
 from flask import Flask, jsonify, Response, request, abort, send_file
 
@@ -280,18 +278,20 @@ def getResourceById(resourceId):
 
 
 @app.route('/resources/<resourceId>/data', methods=['GET'])
-def getResourcesDict(resourceId):
+def getResourceData(resourceId):
     '''
      Returns the resource.
     '''
 
-    imgFile = resourceTable.find_one({ "_id" : ObjectId(resourceId)})
+    resourceData = resourceTable.find_one({ "_id" : ObjectId(resourceId)})
     if not imgFile:
         abort(404)
-    filePath = resourcesPath + "/" + resourceId + "." + imgFile['mimetype'].split('/')[1]
+    filePath = resourcesPath + "/" + resourceId + "." + resourceData['mimetype'].split('/')[1]
     if os.path.isfile(filePath):
         return send_file(filePath)
     abort(404)
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5002 ,debug=True)
 
