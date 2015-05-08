@@ -19,10 +19,15 @@ currentDir = os.path.dirname(os.path.realpath(__file__))
 config = ConfigParser.ConfigParser()
 config.read('catalog.cfg')
 
+resourcesPath = os.path.join(currentDir, config.get('RESOURCES', 'resourcesDirectory'))
+if not os.path.exists(resourcesPath):
+  os.makedirs(resourcesPath)
+
 client = pymongo.MongoClient(config.get('MONGODB', 'hostname'), config.getint('MONGODB', 'port'))
 db = client.__getattr__(config.get('MONGODB', 'dbName'))
 bundleTable = db.__getattr__(config.get('MONGODB', 'bundleTable'))
 pluginTable = db.__getattr__(config.get('MONGODB', 'pluginTable'))
+resourceTable = db.__getattr__(config.get('MONGODB', 'resourceTable'))
 
 uriAnalyser = config.get('ANALYSER', 'uri')
 
