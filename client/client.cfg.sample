@@ -6,5 +6,5 @@ catalogRootUri = http://localhost:5002
 renderRootUri  = http://localhost:5005
 
 [OAUTH_CONFIG]
-googleId = ""
-googleSecret = ""
+googleId = 
+googleSecret = 

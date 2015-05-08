@@ -3,7 +3,7 @@
 import ConfigParser
 import requests
 import json
-
+from functools import wraps
 from flask import (
     Flask,
     request,
@@ -47,8 +47,6 @@ google = oauth.remote_app(
 )
 
 
-
-
 def get_resource_as_string(name, charset='utf-8'):
     with app.open_resource(name) as f:
         return f.read().decode(charset)
@@ -57,6 +55,15 @@ app.jinja_env.globals['get_resource_as_string'] = get_resource_as_string
 
 catalogRootUri = configParser.get("APP_CLIENT", "catalogRootUri")
 renderRootUri  = configParser.get("APP_CLIENT", "renderRootUri")
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not 'google_token' in session:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 # @login_required
@@ -110,11 +117,11 @@ def getRenderResource(renderId, resourceId):
     return Response(req.content, mimetype="image/jpeg")
 
 @app.route('/upload')
-# @login_required
+@login_required
 def upload():
     if 'google_token' in session:
         me = google.get('userinfo')
-        return render_template("index.html", user=me.data)
+        return render_template("upload.html", user=me.data)
         
         return jsonify({"data": me.data})
     return redirect(url_for('login'))
