@@ -205,10 +205,39 @@ def getPlugins(bundleId):
 
 @app.route("/plugin")
 def getAllPlugins():
+    #Text search
+    keyWord = request.args.get('keyWord', None)
+    
+    #Alphabetical sorting
+    alphaSort = request.args.get('alphaSort', None)
+
+    if alphaSort != None :
+        if alphaSort != 'asc' and alphaSort != 'desc' :
+            alphaSort = None
+        else : 
+            if alphaSort == 'asc' :
+                alphaSort = 1
+            if alphaSort == 'desc' :
+                alphaSort = -1
+
     count = int(request.args.get('count', 20))
     skip = int(request.args.get('skip', 0))
-    plugin = pluginTable.find().limit(count).skip(skip)
-    return mongodoc_jsonify({"plugins":[ result for result in plugin ]})
+
+
+    if keyWord != None :
+        return textSearchPlugin(keyWord, count)
+
+    else :
+        plugin = pluginTable.find().sort('name' , alphaSort).limit(count).skip(skip)
+        return mongodoc_jsonify({"plugins":[ result for result in plugin ]})
+
+
+def textSearchPlugin(keyWord, count):
+    #To Do Tags
+    text_results = db.command('text', config.get('MONGODB', 'pluginTable'), search = keyWord, limit=count)
+    doc_matches = (res['obj'] for res in text_results['results'])
+    return mongodoc_jsonify({"plugins": text_results['results']})
+
 
 @app.route("/bundle/<int:bundleId>/plugin/<int:pluginId>")
 @app.route("/plugin/<int:pluginId>")
@@ -218,6 +247,36 @@ def getPlugin(pluginId, bundleId=0):
         abort(404)
 
     return mongodoc_jsonify(plugin)
+
+@app.route("/plugin/<int:pluginId>/images", methods= ['POST'])
+def addImageToPlugin(pluginId):
+    
+    if "ressourceId" not in request.get_json() :
+        abort(404)
+
+    imageId = request.get_json()["ressourceId"]
+
+    plugin = pluginTable.find_one({"pluginId": pluginId})
+    if plugin == None:
+        abort(404)
+
+    pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"sampleImagesPath" : imageId} }, upsert=True)
+    plugin = pluginTable.find_one({"pluginId": pluginId})
+    return mongodoc_jsonify(plugin)
+
+#TO DO : Tags
+pluginTable.ensure_index([
+        ('name', 'text'),
+        ('description', 'text'),
+        ('shortDescription', 'text'),
+    ],
+    name = "search_index",
+    weights={
+        'name':100,
+        'description':20,
+        'shortDescription':60
+    }
+)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5002 ,debug=True)
