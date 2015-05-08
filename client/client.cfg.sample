@@ -1,0 +1,10 @@
+[APP_CLIENT]
+host = 0.0.0.0
+port = 8080
+analyzeRootUri = http://localhost:5101
+catalogRootUri = http://localhost:5002
+renderRootUri  = http://localhost:5005
+
+[OAUTH_CONFIG]
+googleId = 
+googleSecret = 
