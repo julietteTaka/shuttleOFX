@@ -207,6 +207,7 @@ def getPlugins(bundleId):
 def getAllPlugins():
     #Text search
     keyWord = request.args.get('keyWord', None)
+    
     #Alphabetical sorting
     alphaSort = request.args.get('alphaSort', None)
 
@@ -224,21 +225,19 @@ def getAllPlugins():
 
 
     if keyWord != None :
-        #TO DO : TAG
-        text_results = db.command('text', config.get('MONGODB', 'pluginTable'), search = keyWord, limit=count)
-        
-        doc_matches = (res['obj'] for res in text_results['results'])
-        print text_results['results']
-        #return "hey"
-        return mongodoc_jsonify({"plugins": text_results['results']})
-        #return mongodoc_jsonify({"plugins":[ doc_matches]})
-        #return render_template("search.html", results=results)
+        return textSearchPlugin(keyWord, count)
 
     else :
-       
         plugin = pluginTable.find().sort('name' , alphaSort).limit(count).skip(skip)
-        
         return mongodoc_jsonify({"plugins":[ result for result in plugin ]})
+
+
+def textSearchPlugin(keyWord, count):
+    #To Do Tags
+    text_results = db.command('text', config.get('MONGODB', 'pluginTable'), search = keyWord, limit=count)
+    doc_matches = (res['obj'] for res in text_results['results'])
+    return mongodoc_jsonify({"plugins": text_results['results']})
+
 
 @app.route("/bundle/<int:bundleId>/plugin/<int:pluginId>")
 @app.route("/plugin/<int:pluginId>")
