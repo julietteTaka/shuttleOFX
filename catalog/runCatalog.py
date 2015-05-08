@@ -251,6 +251,19 @@ def addResource():
     }
 
     return jsonify(**objectId)
+@app.route('/resources/<resourceId>/data', methods=['GET'])
+def getResourcesDict(resourceId):
+    '''
+     Returns the resource.
+    '''
+
+    imgFile = resourceTable.find_one({ "_id" : ObjectId(resourceId)})
+    if not imgFile:
+        abort(404)
+    filePath = resourcesPath + "/" + resourceId + "." + imgFile['mimetype'].split('/')[1]
+    if os.path.isfile(filePath):
+        return send_file(filePath)
+    abort(404)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5002 ,debug=True)
 
