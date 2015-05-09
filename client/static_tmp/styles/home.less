@@ -212,7 +212,9 @@
 
 				}
 				a{
-					margin: 3em;
+					margin-top: 3em;
+					margin-bottom: 3em;
+
 					padding: 1em 2em;
 					color: #fff;
 					font-size: 110%;
@@ -409,19 +411,22 @@
 		&#format{
 			padding-top: 3em;
 			padding-bottom: 1em;
-			background: @ofxColor;
+			background: @ofxColor url(../images/logoOpa.png);
+			background-size: 50%;
+			background-position: center -100px;
+			background-repeat: no-repeat;
 			overflow: hidden;
-			#bg-openfx{
-				position: absolute;
-				left: 50%;
-				transform: translateX(-50%) translateY(0px);
-				width: 600px;
-				height: 600px;
-				background: url(../images/logo.png);
-				background-size: 100%;
-				background-repeat: no-repeat;
-				opacity: .1;
-			}
+			// #bg-openfx{
+			// 	position: absolute;
+			// 	left: 50%;
+			// 	transform: translateX(-50%) translateY(0px);
+			// 	width: 600px;
+			// 	height: 600px;
+			// 	background: url(../images/logo.png);
+			// 	background-size: 100%;
+			// 	background-repeat: no-repeat;
+			// 	opacity: .1;
+			// }
 			h1{
 				font-family: 'Roboto-Light';
 				color: #fff;
