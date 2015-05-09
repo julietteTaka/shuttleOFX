@@ -108,6 +108,7 @@ $("#render.OfxImageEffectContextGenerator").click(function(){
         $("#viewer img").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
         $("#download-view").attr("href", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
         $("#download-view").removeClass('disabled');
+        $("#viewer-placeholder").css('display', 'none');
     })
     .error(function(data){
         console.log('POST ERROR !');
@@ -161,6 +162,7 @@ $("#render.OfxImageEffectContextFilter").click(function(){
         $("#viewer img").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
         $("#download-view").attr("href", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
         $("#download-view").removeClass('disabled');
+        $("#viewer-placeholder").css('display', 'none');
     })
     .error(function(data){
         console.log('POST ERROR !');
