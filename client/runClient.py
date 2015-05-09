@@ -70,7 +70,7 @@ def login_required(f):
 def index():
     if 'google_token' in session:
         user = google.get('userinfo').data
-        return render_template("index.html", user=user.data)
+        return render_template("index.html", user=user)
     return render_template("index.html")
 
 @app.route('/plugin')
