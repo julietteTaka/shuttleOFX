@@ -129,11 +129,11 @@ $("#render.OfxImageEffectContextFilter").click(function(){
         data: JSON.stringify({
             nodes: [{
                 id: 0,
-                plugin: "tuttle.jpegreader",
+                plugin: "tuttle.pngreader",
                 parameters: [
                     {
                         "id" : "filename",
-                        "value" : "/home/hugo/WebOpenFX/github/server/resources/lol.jpg"
+                        "value" : "/tmp/lol.png"
                     }
                 ]
             },{
