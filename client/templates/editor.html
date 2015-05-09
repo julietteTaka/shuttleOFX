@@ -107,6 +107,17 @@
                     <div class="row-fluid">
                         <div id="graph" class="graph">
                             <div id="resultForm"></div>
+                            {% for property in plugin.properties %}
+                                {% if property.name == "OfxImageEffectPropSupportedContexts" %}
+                                    {% if "OfxImageEffectContextFilter" in property.value %}
+                                        <div class="node">Reader</div>
+                                        <svg width="100px" height="10px">
+                                            <path d="M0 4 L 85 4 L 85 0 L 100 5 L 85 10 L 85 6 L 0 6 Z" stroke="black" fill="black"/>
+                                        </svg>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+
                             <div class="node">
                                 {% for property in plugin.properties %}
                                     {% if property.name == "OfxPropShortLabel" %}
