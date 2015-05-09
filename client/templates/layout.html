@@ -32,8 +32,8 @@
     <div id="left-nav">
         <a href="/">
             <div class="mainLogo">
-                <img src="{{ url_for('static', filename='images/logo.png') }}">
-                <a href="/">ShuttleOFX</a>
+                <img src="{{ url_for('static', filename='images/logo2.png') }}">
+                <span>ShuttleOFX</span>
             </div>
         </a>
         <ul>
@@ -53,7 +53,7 @@
                 </li>
             {% endif %}
 
-            <li class="title-nav"><h4>NAVIGATION</h4></li>
+            <li class="title-nav" style="margin-top:2em;"><h4>NAVIGATION</h4></li>
             {% if user %}
             <li>
                 <a href='/upload'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
