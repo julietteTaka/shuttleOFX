@@ -136,13 +136,6 @@
                                 Upload your own plugins manually or instantly from github/travis.
                             </p>
                         </div>
-                        <div class="feature" data-feature="validation">
-                            <div class="line"></div>
-                            <h3>Standard validation</h3>
-                            <p>
-                                Check that your plugin works in the open source TuttleOFX host.
-                            </p>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -389,20 +382,11 @@ Also, The application acts as a validator service that will display in its catal
 
 <script type="text/javascript">
 
-// var wid = $(window).width();
-// var hei = (wid*9)/16;
-// $("#hero-home").css({
-//     "height":hei
-// });
-
 function playShuttleVideo() 
 { 
-    // $("#cover-home").fadeOut(1000);
     var myPlayer = videojs("#shuttleVideo"); 
     myPlayer.play(); 
 }
-
-
 function shuttlePlugin(options) {
   this.on('play', function(e) {
     console.log('playback has started!');
@@ -417,8 +401,6 @@ function shuttlePlugin(options) {
     $("#cover-home").fadeIn(1000, 'swing');
   });
 };
-
-
 videojs.plugin('shuttlePlugin', shuttlePlugin);
 videojs('#shuttleVideo', {
   plugins: {
@@ -429,8 +411,18 @@ videojs('#shuttleVideo', {
 });
 
 
-// var video = videojs('cool-vid');
-// video.shuttlePlugin({ shuttleOption: true });
+
+
+function preload(arrayOfImages) {
+    $(arrayOfImages).each(function(){
+        $('<img/>')[0].src = this;
+    });
+}
+preload([
+    'static/images/features/documentation.png',
+    'static/images/features/utilisation.png',
+    'static/images/features/share.png'
+]);
 
 
 
@@ -440,7 +432,6 @@ $(document).ready(function() {
         "height":"auto"
     });
     $.material.init();
-
 
     $('.feature').click(function() {
       $('.feature').removeClass('active');
