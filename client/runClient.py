@@ -70,7 +70,7 @@ def login_required(f):
 def index():
     if 'google_token' in session:
         user = google.get('userinfo').data
-        return render_template("index.html", user=user)
+        return render_template("index.html", user=user.data)
     return render_template("index.html")
 
 @app.route('/plugin')
@@ -79,7 +79,7 @@ def getPlugins(pluginName=None):
     if 'google_token' in session:
         user = google.get('userinfo').data
     try:
-        resp = requests.get(catalogRootUri+"/plugin", params=request.args, user=user)
+        resp = requests.get(catalogRootUri+"/plugin", params=request.args)
     except:
         return render_template('plugins.html', dico=None, user=user)
 
@@ -87,18 +87,27 @@ def getPlugins(pluginName=None):
 
 @app.route('/plugin/<pluginId>')
 def getPlugin(pluginId):
+    user = None
+    if 'google_token' in session:
+        user = google.get('userinfo').data
     resp = requests.get(catalogRootUri+"/plugin/"+pluginId)
-    return render_template('plugin.html', plugin=resp.json())
+    return render_template('plugin.html', plugin=resp.json(), user=user)
 
 @app.route('/editor')
 def renderPage():
+    user = None
+    if 'google_token' in session:
+        user = google.get('userinfo').data
     resp = requests.get(catalogRootUri+"/plugin/0")
-    return render_template('editor.html', plugin=resp.json())
+    return render_template('editor.html', plugin=resp.json(), user=user)
 
 @app.route('/editor/<pluginId>')
 def renderPageWithPlugin(pluginId):
+    user = None
+    if 'google_token' in session:
+        user = google.get('userinfo').data
     resp = requests.get(catalogRootUri+"/plugin/"+pluginId)
-    return render_template('editor.html', plugin=resp.json())
+    return render_template('editor.html', plugin=resp.json(), user=user)
 
 @app.route('/render', methods=['POST'])
 def render():
