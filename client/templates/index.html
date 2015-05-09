@@ -10,6 +10,7 @@
     <!-- Styles -->
     <link href='http://fonts.googleapis.com/css?family=Roboto:200,300,400,500,700' rel='stylesheet' type='text/css'>
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/bootstrap.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
 
@@ -32,40 +33,53 @@
 
 <div id="main-home">
 
-        <header class="header" id="header-index">
-            <div class="container">
-                <div class="row">
-                    <div class="navbar search-bar navbar-right">
-                        <form id="searchForm">
-                            <input type="text" placeholder="Search" id="query" />
-                            <button type="submit" value="Submit query"><i class="fa fa-search"></i></button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </header>
 
-        <section id="intro">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="mainLogo">
-                            <img src="{{ url_for('static', filename='images/logo.png') }}">
-                            <a>ShuttleOFX</a>
+        <div id="hero-home">
+            <video id="shuttleVideo" class="video-js vjs-sublime-skin"
+              controls preload="auto" width="100%" height="680"
+              poster="{{ url_for('static', filename='images/cover.jpg') }}"
+              data-setup='{"controls": true}'>
+             <source src="http://armandbiteau.com/shuttleofx/preview.mp4" type='video/mp4' />
+             <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+            </video>
+
+
+            <div id="cover-home">
+                <header class="header" id="header-index">
+                    <div class="container">
+                        <div class="row">
+                            <div class="navbar search-bar navbar-right">
+                                <form id="searchForm">
+                                    <input type="text" placeholder="Search" id="query" />
+                                    <button type="submit" value="Submit query"><i class="fa fa-search"></i></button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row title-home">
-                    <h1>Create, share and play online with image processing plugins.</h1>
-                    <h3>
-                        <span>Help us to develop the plateform</span>
-                        <iframe src="http://ghbtns.com/github-btn.html?user=ShuttleOFX&repo=shuttleofx&type=fork&count=true&size=large" frameborder="0" scrolling="0" allowTransparency="true" height="30" width="170" style="padding-top:0px;margin-left:10px;"></iframe>
-                    </h3>
-
-                    <a href="/plugin" class="btn btn-primary">GET STARTED NOW<i class="fa fa-angle-right"></i></a>
-                </div>
+                </header>
+                <section id="intro">
+                    <div class="content container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mainLogo">
+                                    <img src="{{ url_for('static', filename='images/logo.png') }}">
+                                    <a>ShuttleOFX</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row title-home">
+                            <h1>Create, share and play online with image processing plugins.</h1>
+                            <h3>
+                                <span>Help us to develop the plateform</span>
+                                <iframe src="http://ghbtns.com/github-btn.html?user=ShuttleOFX&repo=shuttleofx&type=fork&count=true&size=large" frameborder="0" scrolling="0" allowTransparency="true" height="30" width="170" style="padding-top:0px;margin-left:10px;"></iframe>
+                            </h3>
+                            <a onClick="playShuttleVideo()" class="btn btn-primary">WATCH THE VIDEO<i class="fa fa-expand"></i></a>
+                            <a href="/plugin" class="btn btn-primary">GET STARTED NOW<i class="fa fa-angle-right"></i></a>
+                        </div>
+                    </div>
+                </section>
             </div>
-        </section>
+        </div>
 
         <section id="hello">
             <div class="container">
@@ -366,6 +380,7 @@ Also, The application acts as a validator service that will display in its catal
 
 <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="http://vjs.zencdn.net/4.12/video.js"></script>
 <script src="{{ url_for('static', filename='scripts/vendor/ripples.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/vendor/material.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/scripts.js') }}"></script>
@@ -374,12 +389,57 @@ Also, The application acts as a validator service that will display in its catal
 
 <script type="text/javascript">
 
+// var wid = $(window).width();
+// var hei = (wid*9)/16;
+// $("#hero-home").css({
+//     "height":hei
+// });
+
+function playShuttleVideo() 
+{ 
+    // $("#cover-home").fadeOut(1000);
+    var myPlayer = videojs("#shuttleVideo"); 
+    myPlayer.play(); 
+}
+
+
+function shuttlePlugin(options) {
+  this.on('play', function(e) {
+    console.log('playback has started!');
+    $("#cover-home").fadeOut(1000, 'swing');
+  });
+  this.on('pause', function(e) {
+    console.log('playback has paused!');
+    $("#cover-home").fadeIn(1000, 'swing');
+  });
+  this.on('ended', function(e) {
+    console.log('playback has ended!');
+    $("#cover-home").fadeIn(1000, 'swing');
+  });
+};
+
+
+videojs.plugin('shuttlePlugin', shuttlePlugin);
+videojs('#shuttleVideo', {
+  plugins: {
+    shuttlePlugin: {
+      shuttleOption: true
+    }
+  }
+});
+
+
+// var video = videojs('cool-vid');
+// video.shuttlePlugin({ shuttleOption: true });
+
+
+
 $(document).ready(function() {
+
     $("body").css({
         "height":"auto"
     });
     $.material.init();
-    // $('#cbp-contentslider').cbpContentSlider();
 
 
     $('.feature').click(function() {
@@ -398,22 +458,6 @@ $(document).ready(function() {
 
 });
 
-// $(window).scroll(function() {
-//     if ($(this).scrollTop() == 0) {
-//         $('#header-index').css({
-//                 'box-shadow': 'none',
-//                 '-moz-box-shadow' : 'none',
-//                 '-webkit-box-shadow' : 'none',
-//                 'background-color' : 'blue' });
-//     }
-//     else {
-//         $('#header-index').css({
-//                 'box-shadow': '0 1px 5px rgba(0,0,0,0.3)',
-//                 '-moz-box-shadow' : '0 1px 5px rgba(0,0,0,0.3)',
-//                 '-webkit-box-shadow' : '0 1px 5px rgba(0,0,0,0.3)',
-//                 'background-color' : 'blue' });
-//     }
-// });
 
 </script>
 
