@@ -22,6 +22,7 @@ g_rendersSharedInfo = {}
 # Pool for rendering jobs
 # processes=None => os.cpu_count()
 g_pool = multiprocessing.Pool(processes=4)
+g_enablePool = False
 
 # Manager to share rendering information
 g_manager = multiprocessing.Manager()
@@ -41,17 +42,12 @@ if not os.path.exists(resourcesPath):
 
 # TODO: replace multiprocessing with https://github.com/celery/billiard to have timeouts in the Pool.
 
-# TODO atexit:
-# g_pool.terminate()
-# g_pool.join()
-
-
 @g_app.route('/render', methods=['POST'])
 def newRender():
     '''
     Create a new render and return graph informations.
     '''
-    global g_app, g_renders, g_pool
+    global g_renders, g_pool
 
     datas = request.json
     renderID = str(uuid.uuid1())
@@ -71,8 +67,10 @@ def newRender():
     renderSharedInfo['status'] = 0
     g_rendersSharedInfo[renderID] = renderSharedInfo
 
-    #g_pool.apply(renderScene.computeGraph, args=[renderSharedInfo, newRender, tmpFilepath])
-    renderScene.computeGraph(renderSharedInfo, newRender, tmpFilepath)
+    if g_enablePool:
+        g_pool.apply(renderScene.computeGraph, args=[renderSharedInfo, newRender, tmpFilepath])
+    else:
+        renderScene.computeGraph(renderSharedInfo, newRender, tmpFilepath)
     
     return jsonify(render=newRender)
 
@@ -82,7 +80,6 @@ def getProgress(renderID):
     '''
     Return render progress.
     '''
-    global g_rendersSharedInfo
     return str(g_rendersSharedInfo[renderID]['status'])
 
 
@@ -100,7 +97,6 @@ def getRenderById(renderID):
     '''
     Get a render by id in json format.
     '''
-    global g_renders
 
     for key, render in g_renders.iteritems():
         if renderID == key:
@@ -175,9 +171,7 @@ def getResourcesDict():
     '''
      Returns a list of all resources on server.
     '''
-    global g_listImg
-    ret = {"files" : g_listImg }
-    return jsonify(**ret)
+    return jsonify(files=g_listImg)
 
 def getAllResources():
     '''
@@ -194,7 +188,6 @@ def quit():
     '''
     Close processes and quit pool at exit.
     '''
-    global g_pool
     g_pool.close()
     g_pool.terminate()
     g_pool.join()
