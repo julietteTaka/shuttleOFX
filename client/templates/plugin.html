@@ -80,7 +80,9 @@
                 <div class="page-header">
                     <h2>
                         Preview gallery 
+                        {% if user %}
                         <button class="btn btn-primary btn-addImage" data-toggle="modal" data-target="#addImageGallery"><i class="fa fa-plus"></i></button>
+                        {% endif %}
                     </h2>
                 </div>
             </div>
@@ -319,6 +321,7 @@
         </div>
 </div>
 
+{% if user %}
 <div class="modal" id="addImageGallery">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -342,4 +345,5 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}
