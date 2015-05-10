@@ -25,7 +25,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
-                        <a href="/plugins"><i class="fa fa-angle-left"></i> Back to all plugins</a>
+                        <a href="/plugin"><i class="fa fa-angle-left"></i> Back to all plugins</a>
                     </div>
                 </div>
             </div>
@@ -40,14 +40,22 @@
 {% if uploaded == None  %}
     <div class="main-content">
         <div class="container-fluid">
-            <h2>Bundle's informations</h2>
-          <form id='metaBundle'>
-            <fieldset>
-                <input type='text' id="bundleName" required placeholder="your bundle's name" class="form-control empty">
-                <input type='text' id="bundleDescription" required placeholder="your bundle's description" class="form-control empty">
-                <input type='submit' value = 'Go' id="createBundle" class="btn btn-primary" attr-id="{{user.id}}">
-            </fieldset>
-          </form>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="page-header">
+                    <h2>Bundle's informations</h2>
+                    </div>
+                    <form id='metaBundle'>
+                        <fieldset>
+
+                            <input type='text' id="bundleName" required placeholder="Your bundle's name" class="form-control empty panel panel-primary">
+                            <input type='text' id="bundleDescription" required placeholder="Your bundle's description" class="form-control empty panel panel-primary">
+                            <input type='submit' value = 'Go' id="createBundle" class="btn btn-primary" attr-id="{{user.id}}">
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
         </div>
         <div class="container-fluid">
             <div class="row">
