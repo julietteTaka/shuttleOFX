@@ -1,11 +1,6 @@
 import os
-import shutil
 import tarfile
-import threading
-import multiprocessing
-import tempfile
 import ConfigParser
-
 
 from pyTuttle import tuttle
 import Plugin
