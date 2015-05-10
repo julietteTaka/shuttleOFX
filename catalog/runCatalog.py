@@ -246,7 +246,7 @@ def textSearchPlugin(keyWord, count):
 
 @app.route("/bundle/<int:bundleId>/plugin/<int:pluginId>")
 @app.route("/plugin/<int:pluginId>")
-def getPlugin(pluginId, bundleId=0):
+def getPlugin(pluginId, bundleId=None):
     plugin = pluginTable.find_one({"pluginId": pluginId})
     if plugin == None:
         abort(404)
