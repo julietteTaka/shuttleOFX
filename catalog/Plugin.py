@@ -1,6 +1,6 @@
 
 
-class Plugin:
+class Plugin(object):
     def __init__(self, pluginId, bundleId, pluginName=""):
         self.pluginId = pluginId
         self.bundleId = bundleId
