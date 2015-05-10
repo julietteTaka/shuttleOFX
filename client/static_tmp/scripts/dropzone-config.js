@@ -1,6 +1,6 @@
 
 Dropzone.autoDiscover = false;
-
+console.log("cache");
 var bundleId = undefined;
 var myDropzone = undefined;
 
@@ -27,8 +27,8 @@ $(function(){
         </div>';
 
     $('#fileSubmit').click(function(){
-        wofxDropzone.options.headers={"Content-Type": wofxDropzone.files[0].type};
-         wofxDropzone.processQueue();
+        //wofxDropzone.options.headers={"Content-Type": wofxDropzone.files[0].type};
+        wofxDropzone.processQueue();
     });
 
     $('#metaBundle').submit(function(event, bundleId){
@@ -40,7 +40,6 @@ $(function(){
         $.ajax({
             type : 'POST',
             url : '/bundle',
-            dataType: 'json',
             data : {'bundleName' : bundleName, 'bundleDescription' : bundleDescription, 'userId' : userId}
         }).done(function(data, bundleId){
             
@@ -53,18 +52,6 @@ $(function(){
             wofxDropzone.options.url = bundleURI;
             console.log(bundleId);
 
-                // wofxDropzone.on('success', function(bundleId){
-                //     console.log("success biatch");
-                
-                //     $.ajax({
-                //         type : 'POST',
-                //         url : '/bundle/'+bundleId+'/analyse',
-                //         data : {"bundleId" : bundleId}
-                //     }).done(function(data){
-                //         console.log("all done");
-                //         console.log(data);
-                //     })
-                // });
 
             wofxDropzone.on('success', function(){
                 console.log("success biatch");

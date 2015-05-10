@@ -3,6 +3,7 @@
 import ConfigParser
 import requests
 import json
+import os
 from functools import wraps
 from flask import (
     Flask,
@@ -154,19 +155,28 @@ def newBundle() :
 
 @app.route('/bundle/<bundleId>/archive', methods=['POST'])
 def uploadArchive(bundleId):
-    req = requests.post(catalogRootUri + '/bundle/' + bundleId + '/archive', data=request.data, headers=request.headers)
+    filename = request.files['file'].filename
+    file = request.files['file']
+    file.save(filename)
+
+    multiple_files = [('file', (filename, open(filename, 'rb'), 'application/gzip'))]
+
+    req = requests.post(catalogRootUri + '/bundle/' + bundleId + '/archive', files = multiple_files)
     if req.status_code != 200:
         abort(req.status_code)
+
+    os.remove(filename)
     return jsonify(**req.json())
 
 @app.route('/bundle/<bundleId>/analyse', methods=['POST'])
 def analyseBundle(bundleId):
     print "in client"
     req = requests.post(catalogRootUri + '/bundle/' + bundleId + '/analyse', data=request.data, headers=request.headers)
+    print req.text
     if req.status_code != 200:
         print "aborted client"
         abort(req.status_code)
-    return jsonify(**req.json())
+    return "ok"
 
 @app.route('/login')
 def login():
