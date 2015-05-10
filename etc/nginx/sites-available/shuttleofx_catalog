@@ -1,0 +1,11 @@
+upstream shuttleofx_catalog {
+    server unix:///run/uwsgi/app/shuttleofx_catalog/socket;
+}
+
+server {
+    listen 5002;
+    location / {
+        include uwsgi_params;
+        uwsgi_pass shuttleofx_catalog;
+    }
+}

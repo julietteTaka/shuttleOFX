@@ -72,11 +72,12 @@ function formToJson()
 
 
 $("#render.OfxImageEffectContextGenerator").click(function(){
+    
     var pluginId = $(this).attr("pluginId");
     console.log('Generator: ' + pluginId );
     var renderParameters = formToJson();
 
-    console.log(renderParameters);
+    // console.log(renderParameters);
     // $('#resultForm').text(JSON.stringify(renderParameters));
 
     $.ajax({
@@ -103,9 +104,11 @@ $("#render.OfxImageEffectContextGenerator").click(function(){
     })
     .done(function(data){
         console.log('POST DONE !');
-        $("#viewer img").attr("src", "/render/" + data.render.renderId + "/resource/" + data.render.outputFile);
-        $("#download-view").attr("href", "/render/" + data.render.renderId + "/resource/" + data.render.outputFile);
+        $("#viewer img").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
+        $("#download-view").attr("href", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
         $("#download-view").removeClass('disabled');
+        $("#viewer-placeholder").css('display', 'none');
+        $('.display img').css({height: "auto"});
     })
     .error(function(data){
         console.log('POST ERROR !');
@@ -127,14 +130,14 @@ $("#render.OfxImageEffectContextFilter").click(function(){
         data: JSON.stringify({
             nodes: [{
                 id: 0,
-                plugin: "tuttle.jpegreader",
+                plugin: "tuttle.pngreader",
                 parameters: [
                     {
                         "id" : "filename",
-                        "value" : "/home/hugo/WebOpenFX/github/server/resources/lol.jpg"
+                        "value" : "/tmp/lol.png"
                     }
                 ]
-            },                {
+            },{
                 id: 1,
                 plugin: pluginId,
                 parameters: renderParameters
@@ -145,21 +148,22 @@ $("#render.OfxImageEffectContextFilter").click(function(){
             }],
 
             connections: [{
-                    src: {id: 0},
-                    dst: {id: 1}
+                src: {id: 0},
+                dst: {id: 1}
             },{
-                    src: {id: 1},
-                    dst: {id: 2}
+                src: {id: 1},
+                dst: {id: 2}
             }],
             renderNode: {id: 2}
         }),
     })
     .done(function(data){
         console.log('POST DONE !');
-        $("#viewer img").attr("src", "/render/" + data.render.renderId + "/resource/" + data.render.outputFile);
-        $("#download-view").attr("href", "/render/" + data.render.renderId + "/resource/" + data.render.outputFile);
+        $("#viewer img").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
+        $("#download-view").attr("href", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
         $("#download-view").removeClass('disabled');
-        console.log(data.render.outputFile);
+        $("#viewer-placeholder").css('display', 'none');
+        $('.display img').css({height: "auto"});
     })
     .error(function(data){
         console.log('POST ERROR !');

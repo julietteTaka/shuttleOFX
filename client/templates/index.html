@@ -1,53 +1,467 @@
-{% extends "layout.html" %}
+<!doctype>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="">
+    <meta name="author" content="Armand Biteau, Juliette Belin, Hugo Garrido">
+    <title>ShuttleOFX</title>
+
+    <!-- Styles -->
+    <link href='http://fonts.googleapis.com/css?family=Roboto:200,300,400,500,700' rel='stylesheet' type='text/css'>
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="http://vjs.zencdn.net/4.12/video-js.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
+
+    <!-- favicon -->
+
+    <link rel="icon" type="image/png" sizes="192x192"  href="{{ url_for('static', filename='images/android-icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='images/favicon-96x96.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <!-- google referencement -->
+    <meta name="google-site-verification" content="_vjguy9WwHpmCc2ruO90YEf2Yyk0tTbh992JkOjTDBg" />
+</head>
+
+<body>
 
 
-{% block title %}
-<div class="header-content" data-0="height:175px" data-150="height:0px">
-    <div class="top-header">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1 data-0="margin-top:80px;font-size: 3.5em;" data-150="margin-top:-55px;font-size: 2em;">
-                      Welcome to Wofx
-                    </h1>
-                </div>
-                
+<div id="main-home">
+
+
+        <div id="hero-home">
+            <video id="shuttleVideo" class="video-js vjs-sublime-skin"
+              controls preload="auto" width="100%" height="680"
+              poster="{{ url_for('static', filename='images/cover.jpg') }}"
+              data-setup='{"controls": true}'>
+             <source src="http://armandbiteau.com/shuttleofx/preview.mp4" type='video/mp4' />
+             <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
+            </video>
+
+
+            <div id="cover-home">
+                <header class="header" id="header-index">
+                    <div class="container">
+                        <div class="row">
+                            <div class="navbar search-bar navbar-right">
+                                <form id="searchForm">
+                                    <input type="text" placeholder="Search" id="query" />
+                                    <button type="submit" value="Submit query"><i class="fa fa-search"></i></button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <section id="intro">
+                    <div class="content container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="mainLogo">
+                                    <img src="{{ url_for('static', filename='images/logo.png') }}">
+                                    <a>ShuttleOFX</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row title-home">
+                            <h1>Create, share and play online with image processing plugins.</h1>
+                            <h3>
+                                <span>Help us to develop the plateform</span>
+                                <iframe src="http://ghbtns.com/github-btn.html?user=ShuttleOFX&repo=shuttleofx&type=fork&count=true&size=large" frameborder="0" scrolling="0" allowTransparency="true" height="30" width="170" style="padding-top:0px;margin-left:10px;"></iframe>
+                            </h3>
+                            <a id="videotrigger" onClick="playShuttleVideo()" class="btn btn-primary">WATCH THE VIDEO<i class="fa fa-expand"></i></a>
+                            <a href="/plugin" class="btn btn-primary">GET STARTED NOW<i class="fa fa-angle-right"></i></a>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
-    </div>
-</div>
-{% endblock %}
+
+        <section id="hello">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h1>Welcome <span>on board</span></h1>
+                    </div>
+                    <div class="col-md-8">
+                        <p>
+                            The ShuttleOFX platform is designed to share OpenFX plugins between plugins creators (industrials, developpers, researchers, students, ...) and graphic artists.
+                            <br>Following the TuttleOFX initiative, the ambition is to promote a standard way to create image processing algorithms usable across softwares.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
 
-{% block subtitle %}
-<div class="bottom-header">
-    <div class="navbar navbar-default">
-        <div class="navbar-collapse collapse navbar-responsive-collapse-filter">
-            <div class="container-fluid">
+        <section id="features">
+            <div class="container">
                 <div class="row">
                     <div class="col-md-12">
-                        <a href="/plugins">View plugins</a>
+                        <h1>Multiple features</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="illu-feature pull-left panel panel-primary">
+                           <!--  <img id="illu-feature" src="{{ url_for('static', filename='images/features/documentation.png') }}"> -->
+                        </div>
+                    </div>
+                    <div class="col-md-3 pull-right">
+                        <div class="feature active" data-feature="documentation">
+                            <div class="line"></div>
+                            <h3>Documentation</h3>
+                            <p>
+                                Find the plugin that best suit your needs.<br>
+                                Learn how to use a plugin.<br>
+                                Share tips and tricks.
+                            </p>
+                        </div>
+                        <div class="feature" data-feature="utilisation">
+                            <div class="line"></div>
+                            <h3>Utilisation</h3>
+                            <p>
+                                Test plugins online on your own images in almost every formats.
+                            </p>
+                        </div>
+                        <div class="feature"  data-feature="share">
+                            <div class="line"></div>
+                            <h3>Share plugins</h3>
+                            <p>
+                                Upload useful plugins.<br>
+                                Upload your own plugins manually or instantly from github/travis.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+        </section>
 
 
-{% block content %}
-    <section id="intro">
-        <div class="container-fluid">
+         <section id="targets">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>Unique resource for everyone</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- <div class="col-md-6">
+                        <div class="target">
+                            <img src="{{ url_for('static', filename='images/rocket.png') }}">
+                             <h3>Graphic artists</h3>
+                             <p>
+                                This is a two line description of the graphic artists target.
+                             </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="target">
+                            <img src="{{ url_for('static', filename='images/rocket.png') }}">
+                             <h3>Plugin creators</h3>
+                             <p>
+                                This is a two line description of the lugin creators target.
+                             </p>
+                        </div>
+                    </div> -->
+                </div>
+                <div class="row">
+                    <div class="col-md-1">
+                        <img src="{{ url_for('static', filename='images/rocket.png') }}" class="img-responsive">
+                    </div>
+                    <div class="col-md-3">
+                        <h1 class="target1">Graphic<span>Artists</span></h1>
+                    </div>
+                    <div class="col-md-8">
+                        <p>
+                            The Web OpenFX platform is a search engine built for you, meant to provide crystal clear plugin’s intels. Use the samples visuals associate with a plugin to find what you need and then try it online with your own samples to quickly integrate it in your production.
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-1">
+                        <img src="{{ url_for('static', filename='images/rocket.png') }}" class="img-responsive">
+                    </div>
+                    <div class="col-md-3">
+                        <h1 class="target2">Plugin<span>Creators</span></h1>
+                    </div>
+                    <div class="col-md-8">
+                        <p>
+                            Use the OFX platform to share the result of your work with the community. When coding is done, you can upload your bundle on our servers in a secure environment. 
+The platform works well with industries. It can bring visibility on your products and provide a beta testing.
+Also, The application acts as a validator service that will display in its catalog only the standard friendly plugins.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="format">
+            <!-- <div id="bg-openfx"></div> -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>A format built for everyone</h1>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h1 class="content-format">OpenFX<span>Open standard</span></h1>
+                    </div>
+                    <div class="col-md-8">
+                        <p>
+                            OpenFX is an open standard for image processing plug-ins. It allows plug-ins written to the standard to work on any application that supports the standard. This avoids the current per application fragmentation of plugin development and support, which causes much heartache to everyone: plug-in developers, application developers and end-users alike.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="students">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h1>About ShuttleOFX</h1>
+                    </div>
+                </div>
+                <div class="row imac">
+                    <div class="col-md-12">
+                        <h2>A student team | <span>ShuttleOFX was created by a team of 3 students from <a href="http://imac.alwaysdata.net">IMAC engineering school</a></span></h2>
+                    </div>
+                </div>
+                <div class="row students">
+                    <div class="col-md-4">
+                        <div class="student">
+                            <img src="{{ url_for('static', filename='images/team/armand.jpg') }}" class="panel panel-primary">
+                            <h4>Armand Biteau</h4>
+                            <p>UI/UX design & Front-End app</p>
+                            <div class="contact">
+                                <ul>
+                                    <li>
+                                        <a href="https://github.com/ArmandBiteau" target="_blank"><i class="fa fa-github"></i></a>
+                                    </li>
+                                    <li>
+                                        <a href="https://twitter.com/Armand_Biteau" target="_blank"><i class="fa fa-twitter"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="student">
+                            <img src="{{ url_for('static', filename='images/team/hugo.jpg') }}" class="panel panel-primary">
+                            <h4>Hugo Garrido Y Saez</h4>
+                            <p>Catalog services</p>
+                            <div class="contact">
+                                <ul>
+                                    <li>
+                                        <a href="https://github.com/HugoGarrido" target="_blank"><i class="fa fa-github"></i></a>
+                                    </li>
+                                    <li>
+                                        <a href="https://twitter.com/CosmicKick" target="_blank"><i class="fa fa-twitter"></i></a>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="student">
+                            <img src="{{ url_for('static', filename='images/team/juliette.jpg') }}" class="panel panel-primary">
+                            <h4>Juliette Belin</h4>
+                            <p>Back-End services</p>
+                            <div class="contact">
+                                <ul>
+                                    <li>
+                                        <a href="https://github.com/julietteTaka" target="_blank"><i class="fa fa-github"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="collaborators">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>With the help of some collaborators</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="collaborator">
+                            <img href="http://imac.alwaysdata.net" src="{{ url_for('static', filename='images/collaborators/imac.jpg') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="collaborator">
+                            <img href="http://www.arkena.com" src="{{ url_for('static', filename='images/collaborators/arkena.jpg') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="collaborator">
+                            <img href="http://www.mikrosimage.eu" src="{{ url_for('static', filename='images/collaborators/mikros.jpg') }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+    <footer>
+        <div class="container">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="intro-txt">
-                        
+                <div class="col-md-6">
+                    <div class="logo">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}">
+                        <p>
+                            <a>ShuttleOFX</a>
+                            <a class="license" href="http://github.com/shuttleofx/ShuttleOFX/blob/develop/LICENSE.LGPL">LGPL License</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-2 col-xs-6">
+                    <div class="links">
+                        <h2>Make a tour</h2>
+                        <ul>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/plugin">Plugins</a></li>
+                            <li><a href="/editor">Render</a></li>
+                            <li><a href="http://openeffects.org/">Community</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2 col-xs-6">
+                    <div class="links">
+                        <h2>Discover</h2>
+                        <ul>
+                            <li>
+                                <a href="http://www.tuttleofx.org/">TuttleOFX</a>
+                            </li>
+                            <li>
+                                <a target="_blank" href="http://imac.alwaysdata.net/">IMAC school</a>
+                            </li>
+                            <li>
+                                <a target="_blank" href="http://www.arkena.com/">Arkena</a>
+                            </li>
+                            <li>
+                                <a target="_blank" href="http://www.mikrosimage.eu/">Mikros Image</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2 col-xs-12">
+                    <div class="social">
+                        <h2>Connect</h2>
+                        <ul>
+                            <li>
+                                <a target="_blank" href="https://github.com/ShuttleOFX/shuttleofx"><i class="fa fa-github"></i>Github</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-    <section id="test">
-    </section>
-{% endblock %}
+    </footer>
+     
+
+
+</div>
+
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="http://vjs.zencdn.net/4.12/video.js"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/ripples.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/material.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/scripts.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/slider.min.js') }}"></script>
+
+
+<script type="text/javascript">
+
+
+var triggerText = $("#videotrigger").html();
+console.log(triggerText);
+
+function playShuttleVideo() 
+{ 
+    var myPlayer = videojs("#shuttleVideo"); 
+    myPlayer.play(); 
+}
+function shuttlePlugin(options) {
+  this.on('play', function(e) {
+    $("#cover-home").fadeOut(1000, 'swing');
+    $("#videotrigger").delay(1000).html("Back to the video<i class='fa fa-expand'></i>");
+  });
+  this.on('pause', function(e) {
+    $("#cover-home").fadeIn(1000, 'swing');
+  });
+  this.on('ended', function(e) {
+    $("#videotrigger").html("Watch the video<i class='fa fa-expand'></i>");
+    myPlayer.posterImage.show();
+    $("#cover-home").fadeIn(1000, 'swing');
+  });
+};
+videojs.plugin('shuttlePlugin', shuttlePlugin);
+videojs('#shuttleVideo', {
+  plugins: {
+    shuttlePlugin: {
+      shuttleOption: true
+    }
+  }
+});
+
+
+
+
+function preload(arrayOfImages) {
+    $(arrayOfImages).each(function(){
+        $('<img/>')[0].src = this;
+    });
+}
+preload([
+    'static/images/features/documentation.png',
+    'static/images/features/utilisation.png',
+    'static/images/features/share.png'
+]);
+
+
+
+$(document).ready(function() {
+
+    $("body").css({
+        "height":"auto"
+    });
+    $.material.init();
+
+    $('.feature').click(function() {
+      $('.feature').removeClass('active');
+      $(this).addClass('active');
+      var source = $(this).attr("data-feature");
+      console.log(source);
+      // $(".illu-feature").fadeOut(200);
+      $(".illu-feature").css({
+        "background": "url(static/images/features/"+source+".png)",
+        "background-repeat":"no-repeat",
+        "background-size":"cover"
+      });
+      // $(".illu-feature").fadeIn(200);
+    });
+
+});
+
+
+</script>
+
+
+</body>
+</html>

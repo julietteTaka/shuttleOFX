@@ -1,13 +1,13 @@
 
 
-class Bundle:
-    def __init__(self, bundleId, name):
+class Bundle(object):
+    def __init__(self, bundleId, name, userId):
         self.bundleId = bundleId
-        self.userId = None
+        self.userId = userId
         self.companyId = None
         self.name = name
         self.description = ""
-        self.shared = false
+        self.shared = False
         self.contributors = []
         self.architecture = []
         self.plugins = []
@@ -18,7 +18,7 @@ class Bundle:
     def addPluginId(self, plugin):
         self.plugin.append(plugin)
 
-    def printBundle():
+    def printBundle(self):
         print "Bundle :"
         print "bundleId:", self.bundleId
         print "userId:", self.userId

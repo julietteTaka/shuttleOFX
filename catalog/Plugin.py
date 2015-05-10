@@ -1,9 +1,11 @@
 
 
-class Plugin:
-    def __init__(self, pluginId, bundleId, name):
+class Plugin(object):
+    def __init__(self, pluginId, bundleId, pluginName=""):
         self.pluginId = pluginId
         self.bundleId = bundleId
+        self.name = pluginName
+        self.shortName = None
         self.description = ""
         self.shortDescription = ""
         self.version = [0, 0]
@@ -13,6 +15,11 @@ class Plugin:
         self.rate = 0
         self.defautImagePath = None
         self.sampleImagesPath = []
+        self.parameters = []
+        self.properties = []
+        self.clip = []
+        self.uri= None
+        self.rawIdentifier = None
 
     def setDescription(self, description):
         self.description = description
@@ -20,7 +27,21 @@ class Plugin:
     def addPluginDetails(self, details):
         self.details = details
 
-    def printBundle():
+    def setRating(self, val):
+        self.rate = val
+
+    def getRating(self):
+        return self.rate
+
+    def addSampleImages(self, paths):
+        if isinstance(paths, str):
+            self.sampleImagesPath.append(paths)
+
+        if isinstance(paths, list):
+            for path in paths:
+                self.sampleImagesPath.append(path)
+
+    def printBundle(self):
         print "Plugin :"
         print "pluginId:", self.pluginId
         print "bundleId:", self.bundleId

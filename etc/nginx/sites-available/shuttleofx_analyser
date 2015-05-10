@@ -1,0 +1,11 @@
+upstream shuttleofx_analyser {
+    server unix:///run/uwsgi/app/shuttleofx_analyser/socket;
+}
+
+server {
+    listen 5004;
+    location / {
+        include uwsgi_params;
+        uwsgi_pass shuttleofx_analyser;
+    }
+}
