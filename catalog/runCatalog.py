@@ -6,8 +6,8 @@ import requests
 import ConfigParser
 
 from time import sleep
-from bson import json_util
-from flask import Flask, jsonify, Response, request, abort
+from bson import json_util, ObjectId
+from flask import Flask, jsonify, Response, request, abort, send_file
 
 from Bundle import Bundle
 from Plugin import Plugin
@@ -19,10 +19,15 @@ currentDir = os.path.dirname(os.path.realpath(__file__))
 config = ConfigParser.ConfigParser()
 config.read('catalog.cfg')
 
+resourcesPath = os.path.join(currentDir, config.get('RESOURCES', 'resourcesDirectory'))
+if not os.path.exists(resourcesPath):
+  os.makedirs(resourcesPath)
+
 client = pymongo.MongoClient(config.get('MONGODB', 'hostname'), config.getint('MONGODB', 'port'))
 db = client.__getattr__(config.get('MONGODB', 'dbName'))
 bundleTable = db.__getattr__(config.get('MONGODB', 'bundleTable'))
 pluginTable = db.__getattr__(config.get('MONGODB', 'pluginTable'))
+resourceTable = db.__getattr__(config.get('MONGODB', 'resourceTable'))
 
 uriAnalyser = config.get('ANALYSER', 'uri')
 
@@ -247,6 +252,78 @@ def getPlugin(pluginId, bundleId=0):
         abort(404)
 
     return mongodoc_jsonify(plugin)
+
+@app.route('/resources/', methods=['POST'])
+def addResource():
+    '''
+    Upload resource file on the database
+    '''
+
+    mimetype = request.mimetype
+    name = ""
+    size = request.content_length
+
+    if not mimetype:
+        app.logger.error("Invalide resource.")
+        abort(404)
+
+    uid = resourceTable.insert({ 
+        "mimetype" : request.mimetype,
+        "size" : request.content_length,
+        "name" : name})
+
+    img = request.data
+
+
+    imgFile = os.path.join(resourcesPath, str(uid))
+    f = open(imgFile, 'w')
+    f.write(img)
+    f.close()
+
+    resource = resourceTable.find_one({ "_id" : ObjectId(uid)})
+    return mongodoc_jsonify(resource)
+
+@app.route('/resources/', methods=['GET'])
+def getResources():
+    '''
+    Returns resource file from db.
+    '''
+
+    count = int(request.args.get('count', 10))
+    skip = int(request.args.get('skip', 0))
+    resources = resourceTable.find().limit(count).skip(skip)
+    return mongodoc_jsonify({"resources":[ result for result in resources ]})
+
+@app.route('/resources/<resourceId>', methods=['GET'])
+def getResourceById(resourceId):
+    '''
+    Returns resource datas from db.
+    '''
+    resourceData = resourceTable.find_one({ "_id" : ObjectId(resourceId)})
+
+    if resourceData == None:
+        abort(404)
+    return mongodoc_jsonify(resourceData)
+
+
+@app.route('/resources/<resourceId>/data', methods=['GET'])
+def getResourceData(resourceId):
+    '''
+     Returns the resource.
+    '''
+
+    resourceData = resourceTable.find_one({ "_id" : ObjectId(resourceId)})
+    if not resourceData:
+        abort(404)
+
+    filePath = os.path.join (resourcesPath, resourceId)
+
+    if not os.path.isfile(filePath):
+         abort(404)
+
+    resource = open(filePath)
+    return Response(resource.read(), mimetype=resourceData['mimetype'])
+
 
 @app.route("/plugin/<int:pluginId>/images", methods= ['POST'])
 def addImageToPlugin(pluginId):
