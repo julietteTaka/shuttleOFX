@@ -66,7 +66,6 @@ def login_required(f):
     return decorated_function
 
 @app.route('/')
-# @login_required
 def index():
     if 'google_token' in session:
         user = google.get('userinfo').data
@@ -140,7 +139,6 @@ def upload():
         user = google.get('userinfo')
         return render_template("upload.html", user=user.data)
     return redirect(url_for('login'))
-    #return render_template('upload.html', uploaded=None)
 
 @app.route('/bundle')
 def getBundles() :
@@ -172,7 +170,11 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('google_token', None)
-    return redirect(url_for('index'))
+    redirectTarget = None
+    for target in request.values.get('next'), request.referrer:
+        if target != None:
+            redirectTarget = target
+    return redirect( redirectTarget )
 
 
 @app.route('/login/authorized')
@@ -183,10 +185,15 @@ def authorized():
             request.args['error_reason'],
             request.args['error_description']
         )
-    print resp
+
     session['google_token'] = (resp['access_token'], '')
     user = google.get('userinfo')
-    return render_template("index.html", user=user.data)
+
+    redirectTarget = None
+    for target in request.values.get('next'), request.referrer:
+        if target != None:
+            redirectTarget = target
+    return redirect( redirectTarget )
 
 @google.tokengetter
 def get_google_oauth_token():
