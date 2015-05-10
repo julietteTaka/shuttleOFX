@@ -17,7 +17,7 @@ g_app = Flask(__name__, static_folder='', static_url_path='')
 # Pool for analysing jobs 
 g_pool = multiprocessing.Pool(processes=4)
 g_sharedBundleDatas = {}
-g_enablePool = False
+g_enablePool = True
 
 # Manager to share analysing information
 g_manager = multiprocessing.Manager()
@@ -31,7 +31,7 @@ def analyseBundle(bundleId):
     '''
     Apply a pool of process to analyse bundles asynchronously.
     '''
-    global g_sharedBundleDatas, g_pool
+    global g_sharedBundleDatas, g_pool, g_enablePool
 
     bundleBin = request.data
     bundleExt = request.headers.get('Content-Type')
@@ -55,7 +55,7 @@ def getStatus(bundleId):
     '''
     Return the analyse status.
     '''
-
+    global g_sharedBundleDatas
     if bundleId not in g_sharedBundleDatas:
         g_app.logger.error('the id ' + bundleId + ''' doesn't exist''')
         abort (404)
@@ -67,6 +67,7 @@ def quit():
     '''
     Close processes and quit pool at exit.
     '''
+    global g_pool
     g_pool.close()
     g_pool.terminate()
     g_pool.join()
