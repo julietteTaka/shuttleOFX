@@ -133,7 +133,7 @@ def getRenderResource(renderId, resourceId):
 def upload():
     if 'google_token' in session:
         user = google.get('userinfo')
-        return render_template("upload.html", user=user.data)
+        return render_template("upload.html", user=user.data, uploaded= None)
     return redirect(url_for('login'))
     #return render_template('upload.html', uploaded=None)
 
@@ -147,8 +147,11 @@ def getBundles() :
 @app.route('/bundle', methods=['POST'])
 def newBundle() :
     header = {'content-type' : 'application/json'}
+    print "passage par le client"
+    print json.dumps(request.form)
     req = requests.post(catalogRootUri + '/bundle', data=json.dumps(request.form), headers=header)
     if req.status_code != 200:
+        print "aborted"
         abort(req.status_code)
     return jsonify(**req.json())
 

@@ -40,6 +40,13 @@
 {% if uploaded == None  %}
     <div class="main-content">
         <div class="container-fluid">
+          <form id='metaBundle'>
+            <input type='text' id="bundleName" required placeholder="your bundle's name" >
+            <input type='text' id="bundleDescription" required placeholder="your bundle's description">
+            <input type='submit' value = 'Go' id="createBundle" class="btn btn-primary" attr-id="{{user.id}}">
+          </form>
+        </div>
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
                     <div id="droparea" class="dropzone">
@@ -68,8 +75,83 @@
 
 <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="{{ url_for('static', filename='scripts/vendor/dropzone.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/dropzone-config.js') }}"></script>
+<!--<script src="{{ url_for('static', filename='scripts/dropzone-config.js') }}"></script>-->
+<script type="text/javascript">
 
+console.log("lol");
+Dropzone.autoDiscover = false;
+
+var bundleId = undefined;
+//var bundleId;
+console.log("START : bundleId : "+bundleId);
+
+var myDropzone = undefined;
+$("#droparea").hide();
+$('#fileSubmit').hide();
+
+$(function(){
+    var wofxDropzone = new Dropzone("#droparea", {
+        url: "undefinedUrl",
+        acceptedFiles: "application/zip, application/x-tar, application/gzip, application/x-gzip", //This is a comma separated list of mime types or file extensions.Eg.: image/*,application/pdf,.psd.
+        maxFilesize: 1024, // in MB
+        paramName: "file" // The name that will be used to transfer the file
+    });
+
+    wofxDropzone.options.previewTemplate = '\
+        <div class="dz-preview dz-file-preview">\
+          <div class="dz-details">\
+          <div class="dz-filename"><span data-dz-name></span></div>\
+          <div class="dz-size" data-dz-size></div>\
+          <img data-dz-thumbnail />\
+        </div>\
+        <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>\
+        <div class="dz-error-message"><span data-dz-errormessage></span></div>\
+        </div>';
+
+    $('#fileSubmit').click(function(){
+        console.log("upload to :" + wofxDropzone.options.url);
+        console.log(wofxDropzone);
+
+        wofxDropzone.options.headers={"Content-Type": wofxDropzone.files[0].type};
+        wofxDropzone.processQueue(); //processes the queue
+    });
+
+    $('#metaBundle').submit(function(event, bundleId){
+        
+        bundleName = $("#bundleName").val();
+        bundleDescription = $("#bundleDescription").val();
+        var userId = $("#createBundle").attr("attr-id");
+
+        $.ajax({
+            type : 'POST',
+            url : '/bundle',
+            dataType: 'json',
+            data : {'bundleName' : bundleName, 'bundleDescription' : bundleDescription, 'userId' : userId}
+        }).done(function(data, bundleId){
+            
+            $("#droparea").show();
+            $('#fileSubmit').show();
+            console.log("DROPZONE IS READY, BUNDLEID IS GENERATED !");
+
+            bundleId = data.bundleId;
+            
+            console.log("MIDDLE : "+bundleId);
+
+            var bundleURI = "/bundle/"+bundleId+"/archive";
+
+            wofxDropzone.options.url = bundleURI;
+
+            
+        });
+
+        console.log("END : bundleId : "+bundleId);
+        console.log("---------------------------------");
+        event.preventDefault();
+        return false;
+    });
+});
+
+</script>
 {% endblock %}
 
 

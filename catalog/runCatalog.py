@@ -45,7 +45,8 @@ def mongodoc_jsonify(*args, **kwargs):
 
 @app.route("/bundle", methods=["POST"])
 def newBundle():
-    bundleName = request.get_json().get('name', None)
+    bundleName = request.get_json().get('bundleName', None)
+    bundleDescription = request.get_json().get('bundleDescription', None)
     userId = request.get_json().get('userId', None)
     companyId = request.get_json().get('companyId', None)
 
@@ -57,6 +58,7 @@ def newBundle():
 
     bundle = Bundle(bundleId, bundleName, userId)
     bundle.companyId = companyId
+    bundle.description = bundleDescription
 
     bundleTable.insert(bundle.__dict__)
 
