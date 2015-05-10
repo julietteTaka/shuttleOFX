@@ -15,15 +15,15 @@ $(document).ready(function () {
 });
 
 
-	$('.param-more').popover();
+$('.param-more').popover();
 
-    $("#searchForm").find("#query").focus(
+$("#searchForm").find("#searchquery").focus(
   function(){
     $(this).width("250px");
     $(this).parent("form").addClass("active");
   }
 );
-$("#searchForm").find("#query").blur(
+$("#searchForm").find("#searchquery").blur(
   function(){
     $(this).width("200px");
     $(this).parent("form").removeClass("active");
