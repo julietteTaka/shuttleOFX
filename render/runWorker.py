@@ -168,15 +168,15 @@ def addResource():
     img = request.data
     ext = request.headers.get("Content-Type").split('/')[1]
 
-    imgFile = "/resources/" + uid + "." + ext
+    imgFile = os.path.join(resourcesPath, uid + '.' + ext)
 
-    f = open("../resources/" + uid + "." + ext, 'w')
+    f = open(imgFile, 'w')
     f.write(img)
     f.close()
 
     objectId = {
         'id': uid,
-        'uri': imgFile
+        'uri': '/resources/' + uid
     }
 
     g_listImg[uid] = imgFile
@@ -189,8 +189,15 @@ def getResource(resourceId):
     '''
     Returns resource file.
     '''
-    if os.path.isfile("../resources/" + resourceId):
-        return send_file("../resources/" + resourceId)
+
+    global g_listImg
+
+    print json.dumps(g_listImg, indent=4)
+    imageName = os.path.basename(g_listImg[resourceId])
+
+    filePath = os.path.join(resourcesPath, imageName)
+    if os.path.isfile(filePath):
+        return send_file(filePath)
     abort(404)
     return
 
@@ -208,7 +215,7 @@ def getAllResources():
     global g_listImg
     for image in os.listdir(str(resourcesPath)):
         _id = str(uuid.uuid4())
-        g_listImg[_id] = str(resourcesPath) + str(image)
+        g_listImg[_id] = os.path.join(str(resourcesPath), str(image))
 
 
 @atexit.register
