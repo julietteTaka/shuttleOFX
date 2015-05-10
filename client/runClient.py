@@ -87,8 +87,10 @@ def getPlugins():
 
 @app.route("/plugin/search")
 def searchPlugins():
-    resp = requests.get(catalogRootUri+"/plugin", params=request.args)
-    return resp.content
+    req = requests.get(catalogRootUri+"/plugin", params=request.args)
+    if req.status_code != 200:
+        abort(req.status_code)
+    return jsonify(**req.json())
 
 @app.route('/plugin/<pluginId>')
 def getPlugin(pluginId):

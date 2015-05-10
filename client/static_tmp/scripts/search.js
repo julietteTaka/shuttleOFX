@@ -4,7 +4,7 @@ $("#searchtrigger").click(function(e){
     if (keyword) {
         e.preventDefault();
         $.get('/plugin/search?keyWord='+keyword, function(data) {
-            var plugins = jQuery.parseJSON(data);
+            var plugins = data;
             var grid = $("#plugins ul.surveys");
             grid.html("");
             if (plugins.plugins.length == 0) {
