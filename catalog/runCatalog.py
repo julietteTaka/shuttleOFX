@@ -56,7 +56,8 @@ def newBundle():
         abort(404)
 
     bundle = Bundle(bundleId, bundleName, userId)
-    
+    bundle.companyId = companyId
+
     bundleTable.insert(bundle.__dict__)
 
     requestResult = bundleTable.find_one({"bundleId": bundleId})
@@ -143,7 +144,7 @@ def analyseBundle(bundleId):
 
     for index, plugin in enumerate(bundleData['plugins']) :
         pluginId = pluginIdOffset + index
-        currentPlugin = Plugin(pluginId=pluginId, bundleId=bundleId)
+        currentPlugin = Plugin(pluginId, bundleId)
         currentPlugin.clips = plugin['clips']
         currentPlugin.parameters = plugin['parameters']
         currentPlugin.properties = plugin['properties']
@@ -193,7 +194,7 @@ def newPlugin(bundleId):
     if pluginId == None or pluginName == None:
         abort(404)
 
-    plugin = Plugin(pluginId=pluginId, bundleId=bundleId, pluginName=pluginName)
+    plugin = Plugin(pluginId, bundleId, pluginName)
     
     pluginTable.insert(plugin.__dict__)
 
@@ -240,7 +241,6 @@ def getAllPlugins():
 def textSearchPlugin(keyWord, count):
     #To Do Tags
     text_results = db.command('text', config.get('MONGODB', 'pluginTable'), search = keyWord, limit=count)
-    doc_matches = (res['obj'] for res in text_results['results'])
     return mongodoc_jsonify({"plugins": text_results['results']})
 
 

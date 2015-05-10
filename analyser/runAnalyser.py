@@ -1,9 +1,7 @@
 #!/usr/bin/python
 from flask import Flask, request, jsonify, abort
 import os
-import shutil
 import ConfigParser
-import tarfile
 import multiprocessing
 import atexit
 import Bundle

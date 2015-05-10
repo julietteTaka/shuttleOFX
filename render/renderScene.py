@@ -41,7 +41,7 @@ def configLocalPluginPath(ofxPluginPath):
 
 def loadGraph(scene, outputFilename):
     tuttleGraph = tuttle.Graph()
-    status = 1
+
     try:
         nodes = []
         for node in scene['nodes']:

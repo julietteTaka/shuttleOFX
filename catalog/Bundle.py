@@ -1,6 +1,6 @@
 
 
-class Bundle:
+class Bundle(object):
     def __init__(self, bundleId, name, userId):
         self.bundleId = bundleId
         self.userId = userId
