@@ -135,7 +135,7 @@ def addResource():
     '''
     Upload resource file on the server and returns id and uri.
     '''
-    global listImg
+    global g_listImg
 
     uid = str(uuid.uuid1())
     img = request.data
@@ -147,11 +147,12 @@ def addResource():
     f.write(img)
     f.close()
 
-    objectId = {'id': uid,
-                'uri': imgFile
+    objectId = {
+        'id': uid,
+        'uri': imgFile
     }
 
-    listImg[uid] = imgFile
+    g_listImg[uid] = imgFile
 
     return jsonify(**objectId)
 
