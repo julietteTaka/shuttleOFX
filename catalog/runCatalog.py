@@ -7,7 +7,7 @@ import ConfigParser
 
 from time import sleep
 from bson import json_util, ObjectId
-from flask import Flask, jsonify, Response, request, abort, send_file
+from flask import Flask, jsonify, Response, request, abort
 
 from Bundle import Bundle
 from Plugin import Plugin
@@ -21,7 +21,7 @@ config.read('catalog.cfg')
 
 resourcesPath = os.path.join(currentDir, config.get('RESOURCES', 'resourcesDirectory'))
 if not os.path.exists(resourcesPath):
-  os.makedirs(resourcesPath)
+    os.makedirs(resourcesPath)
 
 client = pymongo.MongoClient(config.get('MONGODB', 'hostname'), config.getint('MONGODB', 'port'))
 db = client.__getattr__(config.get('MONGODB', 'dbName'))
@@ -268,8 +268,8 @@ def addResource():
         abort(404)
 
     uid = resourceTable.insert({ 
-        "mimetype" : request.mimetype,
-        "size" : request.content_length,
+        "mimetype" : mimetype,
+        "size" : size,
         "name" : name})
 
     img = request.data
@@ -319,7 +319,7 @@ def getResourceData(resourceId):
     filePath = os.path.join (resourcesPath, resourceId)
 
     if not os.path.isfile(filePath):
-         abort(404)
+        abort(404)
 
     resource = open(filePath)
     return Response(resource.read(), mimetype=resourceData['mimetype'])
