@@ -241,7 +241,8 @@ def getAllPlugins():
 def textSearchPlugin(keyWord, count):
     #To Do Tags
     text_results = db.command('text', config.get('MONGODB', 'pluginTable'), search = keyWord, limit=count)
-    return mongodoc_jsonify({"plugins": text_results['results']})
+    plugins = [ result['obj'] for result in text_results['results'] ]
+    return mongodoc_jsonify({"plugins": plugins})
 
 
 @app.route("/bundle/<int:bundleId>/plugin/<int:pluginId>")
