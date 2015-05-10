@@ -93,8 +93,8 @@
         <span class="open icon">&#9776;</span>
         <div class="navbar search-bar">
             <form id="searchForm">
-                  <input type="text" placeholder="Search" id="query" />
-                  <button type="submit" value="Submit query"><i class="fa fa-search"></i></button>
+                  <input type="text" placeholder="Search" id="searchquery" />
+                  <button id="searchtrigger" type="submit" value="Submitquery"><i class="fa fa-search"></i></button>
             </form>
         </div>
         {% block title %}{% endblock %}
@@ -118,14 +118,13 @@
 <script src="{{ url_for('static', filename='scripts/vendor/jquery.nouislider.min.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/render.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/clips.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/search.js') }}"></script>
+
 
 <script type="text/javascript">
 
 $(document).ready(function() {
-
 $.material.init();
-
-//NAV
 var site = new Bamboo({
     menu: true,
     breakpoint: 768,
@@ -141,10 +140,13 @@ $("#left-nav a").click(function(){
         $(this).next().slideDown();
     }
 });
-//ENDNAV
 });
 
+
+
 </script>
+
+
 
 
 </body>
