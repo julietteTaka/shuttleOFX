@@ -93,6 +93,11 @@ def getPlugin(pluginId):
     resp = requests.get(catalogRootUri+"/plugin/"+pluginId)
     return render_template('plugin.html', plugin=resp.json(), user=user)
 
+@app.route('/plugin/<pluginId>/image/<imageId>')
+def getSampleImagesForPlugin(pluginId, imageId):
+    req = requests.get(catalogRootUri + "/resources/" + str(imageId) + "/data")
+    return Response(req.content, mimetype=req.headers["content-type"])
+
 @app.route('/editor')
 def renderPage():
     user = None

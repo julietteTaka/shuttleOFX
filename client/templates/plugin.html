@@ -83,37 +83,13 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-3">
-                <div class="preview-img panel panel-primary img-responsive">
-                    <img src="{{ url_for('static', filename='images/lol.png') }}">
+            {% for image in plugin.sampleImagesPath %}
+                <div class="col-md-3">
+                    <div class="preview-img panel panel-primary img-responsive">
+                        <img src="/plugin/{{plugin.pluginId}}/image/{{image}}">
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="preview-img panel panel-primary img-responsive">
-                    <img src="{{ url_for('static', filename='images/lol.png') }}">
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="preview-img panel panel-primary img-responsive">
-                    <img src="{{ url_for('static', filename='images/lol.png') }}">
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="preview-img panel panel-primary img-responsive">
-                    <img src="{{ url_for('static', filename='images/lol.png') }}">
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="preview-img panel panel-primary img-responsive">
-                    <img src="{{ url_for('static', filename='images/lol.png') }}">
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="preview-img panel panel-primary img-responsive">
-                    <img src="{{ url_for('static', filename='images/lol.png') }}">
-                </div>
-            </div>
-            
+            {% endfor %}
         </div>
 
         <div class="row">
