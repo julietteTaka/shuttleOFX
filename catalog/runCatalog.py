@@ -138,7 +138,7 @@ def analyseBundle(bundleId):
 
     for index, plugin in enumerate(bundleData['plugins']) :
         pluginId = pluginIdOffset + index
-        currentPlugin = Plugin(pluginId, bundleId)
+        currentPlugin = Plugin(pluginId=pluginId, bundleId=bundleId)
         currentPlugin.clips = plugin['clips']
         currentPlugin.parameters = plugin['parameters']
         currentPlugin.properties = plugin['properties']
@@ -188,7 +188,7 @@ def newPlugin(bundleId):
     if pluginId == None or pluginName == None:
         abort(404)
 
-    plugin = Plugin(pluginId, bundleId, pluginName)
+    plugin = Plugin(pluginId=pluginId, bundleId=bundleId, pluginName=pluginName)
     
     pluginTable.insert(plugin.__dict__)
 
