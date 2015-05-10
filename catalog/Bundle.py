@@ -18,7 +18,7 @@ class Bundle:
     def addPluginId(self, plugin):
         self.plugin.append(plugin)
 
-    def printBundle():
+    def printBundle(self):
         print "Bundle :"
         print "bundleId:", self.bundleId
         print "userId:", self.userId
