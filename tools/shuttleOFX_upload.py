@@ -15,13 +15,14 @@ def upload(archive, metadata, catalogURI):
     headerJson= {'Content-type': 'application/json'}
 
     resp = requests.post(catalogURI+"/bundle", data=json.dumps(metadata), headers=headerJson)
-
+    print resp.text
     resp = resp.json()
     bundleId = str(resp.get('bundleId'))
 
-    requests.post(catalogURI+"/bundle/"+bundleId+"/archive", data=open(archive, 'r').read(), headers=headerGzip)
-    requests.post(catalogURI+"/bundle/"+bundleId+"/analyse", data=metadata, headers=headerJson)
-  
+    resp = requests.post(catalogURI+"/bundle/"+bundleId+"/archive", data=open(archive, 'r').read(), headers=headerGzip)
+    print resp.text
+    resp = requests.post(catalogURI+"/bundle/"+bundleId+"/analyse", data=metadata, headers=headerJson)
+    print resp.text
 
 if __name__ == "__main__":
     '''
