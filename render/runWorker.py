@@ -97,7 +97,7 @@ def newRender():
     if g_enablePool:
         g_pool.apply(renderScene.computeGraph, args=[renderSharedInfo, newRender])
     else:
-        renderScene.computeGraph(renderSharedInfo, newRender, tmpFilepath)
+        renderScene.computeGraph(renderSharedInfo, newRender)
     
     return jsonify(render=newRender)
 
@@ -219,7 +219,7 @@ def getAllResources():
 
 
 @atexit.register
-def quit():
+def cleanPool():
     '''
     Close processes and quit pool at exit.
     '''
