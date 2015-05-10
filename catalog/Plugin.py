@@ -1,10 +1,10 @@
 
 
 class Plugin:
-    def __init__(self, pluginId, bundleId):
+    def __init__(self, pluginId, bundleId, pluginName=""):
         self.pluginId = pluginId
         self.bundleId = bundleId
-        self.name = None
+        self.name = pluginName
         self.shortName = None
         self.description = ""
         self.shortDescription = ""
