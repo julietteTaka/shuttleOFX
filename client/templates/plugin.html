@@ -78,7 +78,10 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="page-header">
-                    <h2>Preview gallery</h2>
+                    <h2>
+                        Preview gallery 
+                        <button class="btn btn-primary btn-addImage" data-toggle="modal" data-target="#addImageGallery"><i class="fa fa-plus"></i></button>
+                    </h2>
                 </div>
             </div>
         </div>
@@ -314,5 +317,29 @@
                 </table>
             </div>
         </div>
+</div>
+
+<div class="modal" id="addImageGallery">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Choose a new picture to upload</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="addGalleryImage" class="col-lg-2 control-label">Browse</label>
+                    <div class="col-lg-10">
+                        <input type="text" readonly="" class="form-control floating-label" placeholder="your file...">
+                        <input type="file" id="addGalleryImage">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id"uploadtrigger" type="button" class="btn btn-primary">Upload a new picture</button>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
