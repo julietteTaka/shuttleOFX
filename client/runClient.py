@@ -85,6 +85,11 @@ def getPlugins():
 
     return render_template('plugins.html', dico=resp.json(), user=user)
 
+@app.route("/plugin/search")
+def searchPlugins():
+    resp = requests.get(catalogRootUri+"/plugin", params=request.args)
+    return resp.content
+
 @app.route('/plugin/<pluginId>')
 def getPlugin(pluginId):
     user = None
