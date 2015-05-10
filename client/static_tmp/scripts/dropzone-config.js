@@ -51,6 +51,33 @@ $(function(){
             bundleId = data.bundleId;
             var bundleURI = "/bundle/"+bundleId+"/archive";
             wofxDropzone.options.url = bundleURI;
+            console.log(bundleId);
+
+                // wofxDropzone.on('success', function(bundleId){
+                //     console.log("success biatch");
+                
+                //     $.ajax({
+                //         type : 'POST',
+                //         url : '/bundle/'+bundleId+'/analyse',
+                //         data : {"bundleId" : bundleId}
+                //     }).done(function(data){
+                //         console.log("all done");
+                //         console.log(data);
+                //     })
+                // });
+
+            wofxDropzone.on('success', function(){
+                console.log("success biatch");
+                console.log(bundleId);
+                var bundleAnalyseURI = '/bundle/'+bundleId+'/analyse';
+                $.ajax({
+                    type : 'POST',
+                    url : bundleAnalyseURI,
+                    data : {"bundleId" : bundleId}
+                }).done(function(){
+                    console.log("lol");
+                })
+            });
         });
         event.preventDefault();
     });

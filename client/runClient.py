@@ -147,11 +147,8 @@ def getBundles() :
 @app.route('/bundle', methods=['POST'])
 def newBundle() :
     header = {'content-type' : 'application/json'}
-    print "passage par le client"
-    print json.dumps(request.form)
     req = requests.post(catalogRootUri + '/bundle', data=json.dumps(request.form), headers=header)
     if req.status_code != 200:
-        print "aborted"
         abort(req.status_code)
     return jsonify(**req.json())
 
@@ -159,6 +156,15 @@ def newBundle() :
 def uploadArchive(bundleId):
     req = requests.post(catalogRootUri + '/bundle/' + bundleId + '/archive', data=request.data, headers=request.headers)
     if req.status_code != 200:
+        abort(req.status_code)
+    return jsonify(**req.json())
+
+@app.route('/bundle/<bundleId>/analyse', methods=['POST'])
+def analyseBundle(bundleId):
+    print "in client"
+    req = requests.post(catalogRootUri + '/bundle/' + bundleId + '/analyse', data=request.data, headers=request.headers)
+    if req.status_code != 200:
+        print "aborted client"
         abort(req.status_code)
     return jsonify(**req.json())
 
