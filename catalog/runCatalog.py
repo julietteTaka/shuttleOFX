@@ -45,7 +45,8 @@ def mongodoc_jsonify(*args, **kwargs):
 
 @app.route("/bundle", methods=["POST"])
 def newBundle():
-    bundleName = request.get_json().get('name', None)
+    bundleName = request.get_json().get('bundleName', None)
+    bundleDescription = request.get_json().get('bundleDescription', None)
     userId = request.get_json().get('userId', None)
     companyId = request.get_json().get('companyId', None)
 
@@ -57,6 +58,7 @@ def newBundle():
 
     bundle = Bundle(bundleId, bundleName, userId)
     bundle.companyId = companyId
+    bundle.description = bundleDescription
 
     bundleTable.insert(bundle.__dict__)
 
@@ -92,18 +94,18 @@ def uploadArchive(bundleId):
         "application/gzip": ".tar.gz"
     }
 
-    if request.headers['content-type'] not in mappingExtension:
-        app.logger.error("Format is not supported : " + str(request.headers['content-type']))
-        abort(400)
+    # if request.headers['content-type'] not in mappingExtension:
+    #     app.logger.error("Format is not supported : " + str(request.headers['content-type']))
+    #     abort(400)
 
-    extension = mappingExtension[ request.headers['content-type'] ]
+    #extension = mappingExtension[ request.headers['content-type'] ]
+    extension = ".tar.gz"
 
     archivePath = os.path.join(bundleRootPath, str(bundleId) + extension)
 
     try:
-        f = open( archivePath, 'w')
-        f.write(request.data)
-        f.close()
+        file = request.files['file']
+        file.save(archivePath)
     except Exception, err:
         app.logger.error(err)
         abort(400)
