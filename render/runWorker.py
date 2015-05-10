@@ -34,11 +34,11 @@ currentAppDir = os.path.dirname(__file__)
 
 tmpRenderingPath = os.path.join(currentAppDir, configParser.get('RENDERED_IMAGE', 'renderedImagesDirectory'))
 if not os.path.exists(tmpRenderingPath):
-  os.makedirs(tmpRenderingPath)
+    os.makedirs(tmpRenderingPath)
 
 resourcesPath = os.path.join(currentAppDir, configParser.get('RESOURCES', 'resourcesDirectory'))
 if not os.path.exists(resourcesPath):
-  os.makedirs(resourcesPath)
+    os.makedirs(resourcesPath)
 
 # TODO: replace multiprocessing with https://github.com/celery/billiard to have timeouts in the Pool.
 
