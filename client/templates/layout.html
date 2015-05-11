@@ -148,7 +148,48 @@ $("#left-nav a").click(function(){
 
 </script>
 
+<script>
+    if($('#addThumbForm').length > 0){
+        console.log("hello");
+        $('#addThumbForm').submit(function(event){
+            event.preventDefault();
 
+            var $form = $(this);
+            var image = $form.find('#addGalleryImage').get(0).files[0];
+            console.log(image);
+
+             $.ajax({
+                type : 'POST',
+                url : '/resources',
+                contentType: false,
+                processData:false, 
+                data : {"resource" : image}
+            }).done(function(data){
+                console.log("llll");
+                
+                var imageId = data._id["$oid"] ;
+                
+                console.log(data._id["$oid"]);
+                console.log($("#addGalleryImage").attr("attr-id"));
+                
+                pluginId = $("#addGalleryImage").attr("attr-id");
+                var addImageURI = '/plugin/' + pluginId + '/images';
+
+                console.log(imageId);
+
+                $.ajax({
+                    type : 'POST',
+                    url : addImageURI,
+                    contentType: "application/json",
+                    data : { 'ressourceId' : imageId}
+                }).done(function(){
+                    console.log("youpi");
+                })
+            })
+            
+        });
+    }
+</script>
 
 </body>
 </html>

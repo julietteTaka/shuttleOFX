@@ -256,7 +256,7 @@ def getPlugin(pluginId, bundleId=None):
 
     return mongodoc_jsonify(plugin)
 
-@app.route('/resources/', methods=['POST'])
+@app.route('/resources', methods=['POST'])
 def addResource():
     '''
     Upload resource file on the database
@@ -286,7 +286,7 @@ def addResource():
     resource = resourceTable.find_one({ "_id" : ObjectId(uid)})
     return mongodoc_jsonify(resource)
 
-@app.route('/resources/', methods=['GET'])
+@app.route('/resources', methods=['GET'])
 def getResources():
     '''
     Returns resource file from db.
@@ -330,11 +330,17 @@ def getResourceData(resourceId):
 
 @app.route("/plugin/<int:pluginId>/images", methods= ['POST'])
 def addImageToPlugin(pluginId):
-    
-    if "ressourceId" not in request.get_json() :
-        abort(404)
-
+    #print request.text
+    #ressourceId=555084ba6bf4e426f2a947c6
+    #print "request.data" , request.data
+    #print "request.data" , request.headers
+    print "lol"
+    # if "ressourceId" not in request.get_json() :
+    #     print "abort ! "
+    #     abort(404)
+    print "passe"
     imageId = request.get_json()["ressourceId"]
+    print "imageId" , imageId
 
     plugin = pluginTable.find_one({"pluginId": pluginId})
     if plugin == None:
@@ -342,6 +348,7 @@ def addImageToPlugin(pluginId):
 
     pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"sampleImagesPath" : imageId} }, upsert=True)
     plugin = pluginTable.find_one({"pluginId": pluginId})
+    print type(mongodoc_jsonify(plugin))
     return mongodoc_jsonify(plugin)
 
 #TO DO : Tags
