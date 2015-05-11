@@ -77,7 +77,6 @@ $("#render.OfxImageEffectContextGenerator").click(function(){
     console.log('Generator: ' + pluginId );
     var renderParameters = formToJson();
 
-    // console.log(renderParameters);
     // $('#resultForm').text(JSON.stringify(renderParameters));
 
     $.ajax({
@@ -92,14 +91,15 @@ $("#render.OfxImageEffectContextGenerator").click(function(){
             },{
                 id: 1,
                 plugin: "tuttle.pngwriter",
-                parameters: []
+                parameters: [{
+                    id: "filename",
+                    value: "{UNIQUE_OUTPUT_FILE}" + ".png"
+                }]
             }],
-
             connections: [{
-                    src: {id: 0},
-                    dst: {id: 1}
+                src: {id: 0},
+                dst: {id: 1}
             }],
-            renderNode: {id: 1}
         }),
     })
     .done(function(data){
