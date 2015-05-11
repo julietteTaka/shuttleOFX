@@ -175,15 +175,14 @@ def newBundle() :
 def uploadArchive(bundleId):
     filename = request.files['file'].filename
     file = request.files['file']
-    file.save(filename)
 
-    multiple_files = [('file', (filename, open(filename, 'rb'), 'application/gzip'))]
+    file.save("/tmp/" + filename)
+    multiple_files = [('file', (filename, open("/tmp/" + filename, 'rb'), 'application/gzip'))]
 
     req = requests.post(catalogRootUri + '/bundle/' + bundleId + '/archive', files = multiple_files)
     if req.status_code != 200:
         abort(req.status_code)
-
-    os.remove(filename)
+    os.remove("/tmp/" + filename)
     return jsonify(**req.json())
 
 @app.route('/bundle/<bundleId>/analyse', methods=['POST'])
