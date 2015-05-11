@@ -206,7 +206,6 @@ def getResourcesDict():
     '''
      Returns a list of all resources on server.
     '''
-    return jsonify(files=g_listImg)
     return jsonify(resources=g_listImg)
 
 def retrieveResources():
