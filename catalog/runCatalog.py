@@ -138,7 +138,7 @@ def analyseBundle(bundleId):
 
     while 1:
         analyseReturn = requests.get(uriAnalyser+"/bundle/"+str(bundleId)).json()
-        # print analyseReturn
+
         if analyseReturn['status'] == "done":
             bundleData = analyseReturn['datas']
             break
@@ -279,9 +279,8 @@ def addResource():
 
 
     imgFile = os.path.join(resourcesPath, str(uid))
-    f = open(imgFile, 'w')
-    f.write(img)
-    f.close()
+    file = request.files['file']
+    file.save(imgFile)
 
     resource = resourceTable.find_one({ "_id" : ObjectId(uid)})
     return mongodoc_jsonify(resource)
@@ -330,17 +329,11 @@ def getResourceData(resourceId):
 
 @app.route("/plugin/<int:pluginId>/images", methods= ['POST'])
 def addImageToPlugin(pluginId):
-    #print request.text
-    #ressourceId=555084ba6bf4e426f2a947c6
-    #print "request.data" , request.data
-    #print "request.data" , request.headers
-    print "lol"
-    # if "ressourceId" not in request.get_json() :
-    #     print "abort ! "
-    #     abort(404)
-    print "passe"
+    if "ressourceId" not in request.get_json() :
+        abort(404)
+
     imageId = request.get_json()["ressourceId"]
-    print "imageId" , imageId
+
 
     plugin = pluginTable.find_one({"pluginId": pluginId})
     if plugin == None:
@@ -348,7 +341,7 @@ def addImageToPlugin(pluginId):
 
     pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"sampleImagesPath" : imageId} }, upsert=True)
     plugin = pluginTable.find_one({"pluginId": pluginId})
-    print type(mongodoc_jsonify(plugin))
+    
     return mongodoc_jsonify(plugin)
 
 #TO DO : Tags

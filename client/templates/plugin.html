@@ -329,24 +329,27 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h4 class="modal-title">Choose a new picture to upload</h4>
             </div>
-            <form id="addThumbForm">
-                <div class="modal-body">
+            <form id="addThumbForm" class="dropzone" action="/file-upload">
+                <input type="file" name="file" id="addGalleryImage" attr-id="{{plugin.pluginId}}">
+                <!-- <button id"uploadtrigger" type="submit" class="btn btn-primary">Upload a new picture</button> -->
+               <!--  <div class="modal-body">
                     <div class="form-group">
                         <label for="addGalleryImage" class="col-lg-2 control-label">Browse</label>
                         <div class="col-lg-10">
                             <input type="text" readonly="" class="form-control floating-label" placeholder="your file..." id="yourFile">
-                            <input type="file" id="addGalleryImage" attr-id="{{plugin.pluginId}}">
+                            <input type="file" name="file" id="addGalleryImage" attr-id="{{plugin.pluginId}}">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button id"uploadtrigger" type="submit" class="btn btn-primary">Upload a new picture</button>
-                </div>
+                </div> -->
             </form>
+            <div id="uploadtrigger" class="btn btn-primary">Upload a new picture</div>
         </div>
     </div>
 </div>
-
+<script src="{{ url_for('static', filename='scripts/vendor/dropzone.js') }}"></script>
 {% endif %}
 {% endblock %}
