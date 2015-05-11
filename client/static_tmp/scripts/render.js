@@ -196,7 +196,10 @@ function getResourcesPath(){
 }
 
 var allResources = getResourcesPath();
-var selectedResource = allResources[0];
+var selectedResource = undefined;
+if(allResources != undefined && allResources.length > 0){
+    selectedResource = allResources[0];
+}
 
 $(".sampleImage").each(function() { 
     $(this).attr("src", "/resource/" + $(this).attr("id"));
