@@ -118,7 +118,8 @@ def renderPage():
     if 'google_token' in session:
         user = google.get('userinfo').data
     resp = requests.get(catalogRootUri+"/plugin/0")
-    return render_template('editor.html', plugin=resp.json(), user=user)
+    previewGallery = requests.get(renderRootUri + '/resource/').json()
+    return render_template('editor.html', plugin=resp.json(), user=user, resources=previewGallery)
 
 @app.route('/editor/<pluginId>')
 def renderPageWithPlugin(pluginId):
@@ -126,8 +127,8 @@ def renderPageWithPlugin(pluginId):
     if 'google_token' in session:
         user = google.get('userinfo').data
     resp = requests.get(catalogRootUri+"/plugin/"+pluginId)
-    previewGallery = requests.get(renderRootUri + '/resource/')
-    return render_template('editor.html', plugin=resp.json(), user=user, **previewGallery.json())
+    previewGallery = requests.get(renderRootUri + '/resource/').json()
+    return render_template('editor.html', plugin=resp.json(), user=user, resources=previewGallery)
 
 @app.route('/render', methods=['POST'])
 def render():
@@ -201,13 +202,10 @@ def uploadArchive(bundleId):
 
 @app.route('/bundle/<bundleId>/analyse', methods=['POST'])
 def analyseBundle(bundleId):
-    print "in client"
     req = requests.post(catalogRootUri + '/bundle/' + bundleId + '/analyse', data=request.data, headers=request.headers)
-    print req.text
     if req.status_code != 200:
-        print "aborted client"
         abort(req.status_code)
-    return "ok"
+    return req.json()
 
 @app.route('/login')
 def login():

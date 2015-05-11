@@ -179,27 +179,25 @@ function renderFilter(pluginId){
     })
 }
 
-function getResourcesPath(){
-    var resources;
-    $.ajax({
-            type: "GET",
-            url: "/resource",
-            async: false, //avoid an empty data when result is returned.
-        })
-        .done(function(data){
-            resources =  data['resources'];
-        })
-        .error(function(data){
-            console.log('POST ERROR !');
-        });
-    return resources;
-}
-
-var allResources = getResourcesPath();
+var allResources = undefined;
 var selectedResource = undefined;
-if(allResources != undefined && allResources.length > 0){
-    selectedResource = allResources[0];
-}
+
+$.ajax({
+    type: "GET",
+    url: "/resource",
+    async: false, //avoid an empty data when result is returned.
+})
+.done(function(data){
+    console.log(data);
+    allResources = data['resources'];
+    if(allResources != undefined && allResources.length > 0){
+        selectedResource = allResources[0];
+    }
+    console.log("selected resource " + selectedResource);
+})
+.error(function(data){
+    console.log('POST ERROR !');
+});
 
 $(".sampleImage").each(function() { 
     $(this).attr("src", "/resource/" + $(this).attr("id"));
