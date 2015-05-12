@@ -95,15 +95,14 @@
             <ul class="surveys grid">
                 {% for plugin in dico.plugins %}
                     <li class="col-md-3">
+                        <a href="/plugin/{{plugin.pluginId}}">
                         <div class="panel panel-primary">
-                            <a href="/plugin/{{plugin.pluginId}}">
                                 <div class="plugins-titles">
                                     <img src="{{ url_for('static', filename='images/logoPad.png') }}" alt="" class="img-responsive plugin-thumbnail">
                                     <h3 class="panel-title">
                                         {{plugin.shortName}} {{plugin.version.major}}.{{plugin.version.minor}}
                                     </h3>
                                 </div>
-                            </a>
                             <div class="plugins-infos">
                                 <p>
                                     {% for p in plugin.properties %}
@@ -114,6 +113,7 @@
                                 </p>
                             </div>
                         </div>
+                        </a>
                     </li>
                 {% endfor %}
             </ul>
