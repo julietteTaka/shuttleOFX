@@ -329,24 +329,22 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h4 class="modal-title">Choose a new picture to upload</h4>
             </div>
-            <form id="addThumbForm" class="dropzone" action="/file-upload">
-                <input type="file" name="file" id="addGalleryImage" attr-id="{{plugin.pluginId}}">
-                <!-- <button id"uploadtrigger" type="submit" class="btn btn-primary">Upload a new picture</button> -->
-               <!--  <div class="modal-body">
-                    <div class="form-group">
-                        <label for="addGalleryImage" class="col-lg-2 control-label">Browse</label>
-                        <div class="col-lg-10">
-                            <input type="text" readonly="" class="form-control floating-label" placeholder="your file..." id="yourFile">
-                            <input type="file" name="file" id="addGalleryImage" attr-id="{{plugin.pluginId}}">
-                        </div>
+            
+            <div class="modal-body" style="padding: 24px">
+                <form id="addThumbForm" class="dropzone" action="/file-upload">
+                <div class="form-group">
+                    <label for="addGalleryImage" class="col-lg-2 control-label">Browse</label>
+                    <div class="col-lg-10">
+                        <input type="file" name="file" id="addGalleryImage" attr-id="{{plugin.pluginId}}" style="margin-top:6px">
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id"uploadtrigger" type="submit" class="btn btn-primary">Upload a new picture</button>
-                </div> -->
-            </form>
-            <div id="uploadtrigger" class="btn btn-primary">Upload a new picture</div>
+                </form>
+            </div>
+            
+            <div class="modal-footer" style="padding-top:0px!important">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <div id="uploadtrigger" class="btn btn-primary">Upload a new picture</div>
+            </div>
         </div>
     </div>
 </div>
