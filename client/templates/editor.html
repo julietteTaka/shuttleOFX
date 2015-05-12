@@ -122,10 +122,10 @@
                                 </div>
                             </div>
                             <div class="row">
-                                {% for resource in resources %}
+                                {% for resource in resources.resources %}
                                 <div class="col-md-3">
                                     <div class="preview-img panel panel-primary img-responsive">
-                                        <img class="sampleImage" src="" id="{{ resource }}">
+                                        <img class="sampleImage" src="/resource/{{resource}}" id="{{ resource }}">
                                     </div>
                                 </div>
                                 {% endfor %}
