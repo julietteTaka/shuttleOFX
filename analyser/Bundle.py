@@ -1,4 +1,5 @@
 import os
+import shutil
 import tarfile
 import ConfigParser
 
@@ -99,7 +100,7 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
     analysedBundle = analyse(bundlePath)
     sharedBundleDatas['analyse'] = 'done'
 
-    #shutil.rmtree(bundlePath)
+    shutil.rmtree(bundlePath)
 
     # print analysedBundle
 
