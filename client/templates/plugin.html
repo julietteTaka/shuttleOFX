@@ -330,9 +330,7 @@
                 <h4 class="modal-title">Choose a new picture to upload</h4>
             </div>
             <form id="addThumbForm" class="dropzone" action="/file-upload">
-                <input type="file" name="file" id="addGalleryImage" attr-id="{{plugin.pluginId}}">
-                <!-- <button id"uploadtrigger" type="submit" class="btn btn-primary">Upload a new picture</button> -->
-               <!--  <div class="modal-body">
+                <div class="modal-body">
                     <div class="form-group">
                         <label for="addGalleryImage" class="col-lg-2 control-label">Browse</label>
                         <div class="col-lg-10">
@@ -341,12 +339,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button id"uploadtrigger" type="submit" class="btn btn-primary">Upload a new picture</button>
-                </div> -->
             </form>
-            <div id="uploadtrigger" class="btn btn-primary">Upload a new picture</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <div id="uploadtrigger" class="btn btn-primary">Upload a new picture</div>
+            </div>
         </div>
     </div>
 </div>
