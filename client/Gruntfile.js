@@ -192,6 +192,8 @@ module.exports = function (grunt) {
             'scripts/*.js',
             'scripts/vendor/*.js',
 
+            'sub/*.vtt'
+
 
           ]
         }, {
@@ -223,7 +225,9 @@ module.exports = function (grunt) {
             'styles/vendor/*.map',
             
             'scripts/vendor/*.js',
-            'scripts/*.js'
+            'scripts/*.js',
+
+            'sub/*.vtt'
 
 
 
