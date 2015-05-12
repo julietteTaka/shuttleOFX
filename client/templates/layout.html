@@ -148,7 +148,48 @@ $("#left-nav a").click(function(){
 
 </script>
 
+<script>
+    if($('#addThumbForm').length > 0){
 
+        console.log("hello2");
+
+        var pluginId = $("#addGalleryImage").attr("attr-id");
+       
+        var thumDropzone = new Dropzone("#addThumbForm", {
+            url : '/plugin/0/resource',
+            acceptedFiles: "image/jpeg, image/png, image/gif, image/pict",
+            maxFilesize: 5*1024,
+            paramName: "file"
+        });
+
+        $("#uploadtrigger").click(function(event){
+            event.preventDefault();
+
+            thumDropzone.options.url = '/plugin/'+pluginId+'/resource';
+
+            thumDropzone.processQueue();
+            
+            thumDropzone.on('success', function(data){
+
+                data = JSON.parse(data.xhr.response);;
+                
+                var imageId = data._id["$oid"]
+                
+                var addImageURI = '/plugin/' + pluginId + '/images';
+
+                $.ajax({
+                    type : 'POST',
+                    url : addImageURI,
+                    contentType: "application/json",
+                    data : JSON.stringify({ 'ressourceId' : imageId})
+                }).done(function(){
+                    $("#addImageGallery").hide();
+                })
+            })
+            
+        });
+    }
+</script>
 
 </body>
 </html>

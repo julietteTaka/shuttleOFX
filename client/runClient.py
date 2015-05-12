@@ -239,6 +239,24 @@ def authorized():
             redirectTarget = target
     return redirect( redirectTarget )
 
+
+@app.route("/plugin/<int:pluginId>/resource", methods=['POST'])
+def addPluginResource(pluginId):
+    filename = request.files['file'].filename
+    file = request.files['file']
+    file.save(filename)
+
+    multiple_files = [('file', (filename, open(filename, 'rb'), 'application/gzip'))]
+
+    req = requests.post(catalogRootUri + "/resources", files = multiple_files)
+
+    return jsonify(**req.json())
+
+@app.route("/plugin/<int:pluginId>/images", methods=['POST'])
+def addImageToPlugin(pluginId):
+    req = requests.post(catalogRootUri + "/plugin/" + str(pluginId) + "/images", data=request.data, headers=request.headers)
+    return jsonify(**req.json())
+
 @google.tokengetter
 def get_google_oauth_token():
     return session.get('google_token')
