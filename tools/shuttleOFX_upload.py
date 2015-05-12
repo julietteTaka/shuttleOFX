@@ -6,23 +6,40 @@ import argparse
 import requests
 
 
-def upload(archive, metadata, catalogURI):
+def upload(archive, metadata, catalogRootUri):
     '''
     Upload an archived bundle on the shuttleOFX DB.
     '''
 
-    headerGzip = {'Content-type': 'application/gzip'}
     headerJson= {'Content-type': 'application/json'}
 
-    resp = requests.post(catalogURI+"/bundle", data=json.dumps(metadata), headers=headerJson)
-    print resp.text
+    resp = requests.post(catalogRootUri + "/bundle", data = json.dumps(metadata), headers = headerJson)
+    if resp.status_code != 200:
+        print "Error when creating a new bundle"
+        print resp.text
+        return
+
     resp = resp.json()
     bundleId = str(resp.get('bundleId'))
 
-    resp = requests.post(catalogURI+"/bundle/"+bundleId+"/archive", data=open(archive, 'r').read(), headers=headerGzip)
-    print resp.text
-    resp = requests.post(catalogURI+"/bundle/"+bundleId+"/analyse", data=metadata, headers=headerJson)
-    print resp.text
+    print "Bundle ID:", bundleId
+
+    multiple_files = [('file', (archive, open(archive, 'rb'), 'application/gzip'))]
+
+    resp = requests.post(catalogRootUri + '/bundle/' + bundleId + '/archive', files = multiple_files)
+    if resp.status_code != 200:
+        print "Error when uploading the archive"
+        print resp.text
+        return
+
+    print "Upload: done"
+
+    resp = requests.post(catalogRootUri + "/bundle/" + bundleId + "/analyse", data = metadata, headers = headerJson)
+    if resp.status_code != 200:
+        print "Error when analyse the bundle"
+        print resp.text
+        return
+    print "Bundle", resp.json()["name"], "loaded with", len( resp.json()["plugins"] ), "plugins"
 
 if __name__ == "__main__":
     '''
@@ -43,7 +60,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     metadata = {
-        "name": args.name,
+        "bundleName": args.name,
         "userId": args.userId,
         "companyId" : args.companyId,
     }
