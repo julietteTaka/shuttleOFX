@@ -199,27 +199,13 @@ $.ajax({
     console.log('POST ERROR !');
 });
 
-$(".sampleImage").each(function() { 
-    $(this).attr("src", "/resource/" + $(this).attr("id"));
-    $(this).mouseenter(function(){
-        $(this).parent().css("border", "solid 1px gray");
-    });
-    $(this).mouseleave(function(){
-        $(this).parent().css("border", "");
-    });
-
+$(".sampleImage").each(function() {
     $(this).click(function(){
         setResourceSelected($(this));
         var pluginId = $("#render.OfxImageEffectContextFilter").attr("pluginId");
         console.log($("#render.OfxImageEffectContextFilter"))
         renderFilter(pluginId);
-
     });
-    $(this).css("width", "100%");
-
-    $(this).parent().css("width", 200);
-    $(this).parent().css("height", 100);
-    $(this).parent().css("overflow", "hidden");
 });
 
 function setResourceSelected(obj){
@@ -227,7 +213,7 @@ function setResourceSelected(obj){
         deselect($(this));
     });
     $(obj).parent().css("border", "solid 2px gray");
-    selectedResource =  $(obj).attr('id');
+    selectedResource = $(obj).attr('id');
 }
 
 function deselect(obj){
