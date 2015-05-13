@@ -244,9 +244,9 @@ def authorized():
 def addPluginResource(pluginId):
     filename = request.files['file'].filename
     file = request.files['file']
-    file.save(filename)
+    file.save("/tmp/" + filename)
 
-    multiple_files = [('file', (filename, open(filename, 'rb'), 'application/gzip'))]
+    multiple_files = [('file', (filename, open("/tmp/"+filename, 'rb'), 'application/gzip'))]
 
     req = requests.post(catalogRootUri + "/resources", files = multiple_files)
 

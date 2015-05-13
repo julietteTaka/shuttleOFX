@@ -1,6 +1,7 @@
 
 import os
 import json
+import logging
 import pymongo
 import requests
 import ConfigParser
@@ -86,7 +87,7 @@ def uploadArchive(bundleId):
     bundle = bundleTable.find_one({"bundleId": bundleId})
 
     if bundle == None:
-        app.logger.error("No matching bundle has been found")
+        logging.error("No matching bundle has been found")
         abort(400)
 
     mappingExtension = {
@@ -107,7 +108,7 @@ def uploadArchive(bundleId):
         file = request.files['file']
         file.save(archivePath)
     except Exception, err:
-        app.logger.error(err)
+        logging.error(err)
         abort(400)
 
     bundle["archivePath"] = archivePath
