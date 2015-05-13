@@ -169,10 +169,56 @@ function renderFilter(pluginId){
     .done(function(data){
         console.log('POST DONE !');
         $("#viewer img").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
-        $("#download-view").attr("href", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
         $("#download-view").removeClass('disabled');
         $("#viewer-placeholder").css('display', 'none');
         $('.display img').css({height: "auto"});
+
+         $("#downloadtrigger").click(function(data){
+           $.ajax({
+        type: "POST",
+        url: "/render",
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify({
+            nodes: [{
+                id: 0,
+                plugin: "tuttle.pngreader",
+                parameters: [
+                    {
+                        "id" : "filename",
+                        "value" : "{RESOURCES_DIR}/"+ selectedResource
+                    }
+                ]
+            },{
+                id: 1,
+                plugin: pluginId,
+                parameters: renderParameters
+            },{
+                id: 2,
+                plugin: "tuttle.pngwriter",
+                parameters: [{
+                    id: "filename",
+                    value:  "{UNIQUE_OUTPUT_FILE}.png"
+                }]
+            }],
+
+            connections: [{
+                src: {id: 0},
+                dst: {id: 1}
+            },{
+                src: {id: 1},
+                dst: {id: 2}
+            }],
+            options:[],
+        }),
+    })
+    .done(function(data){
+                var link = document.createElement("a");
+                link.download = name;
+                link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
+                link.click();
+                $("#downloadModal").modal('hide')
+            })
+        })
     })
     .error(function(data){
         console.log('POST ERROR !');
