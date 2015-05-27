@@ -54,6 +54,9 @@ if not os.path.exists(resourcesPath):
 # g_pool.terminate()
 # g_pool.join()
 
+def mongodoc_jsonify(*args, **kwargs):
+    return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
+
 def remapPath(datas):
     '''
     Replace PATTERNS with real filepaths.
@@ -164,32 +167,31 @@ def deleteRenderById(renderID):
     del g_renders[renderID]
 
 
-@g_app.route('/resource/', methods=['POST'])
+@g_app.route('/resource', methods=['POST'])
 def addResource():
     '''
-    Upload resource file on the server and returns id and uri.
+    Upload resource file on the database
     '''
-    global g_listImg
+    
+    mimetype = request.files['file'].content_type
+    name = ""
+    size = request.content_length
 
-    uid = str(uuid.uuid1())
-    img = request.data
-    ext = request.headers.get("Content-Type").split('/')[1]
+    if not mimetype:
+        g_app.logger.error("Invalide resource.")
+        abort(404)
 
-    filename = uid + '.' + ext
-    imgFile = os.path.join(resourcesPath, filename)
+    uid = resourceTable.insert({ 
+        "mimetype" : mimetype,
+        "size" : size,
+        "name" : name})
 
-    f = open(imgFile, 'w')
-    f.write(img)
-    f.close()
-
-    objectId = {
-        'id': filename,
-        'uri': '/resources/' + uid
-    }
-
-    g_listImg.append(filename)
-
-    return jsonify(**objectId)
+    imgFile = os.path.join(resourcesPath, str(uid))
+    file = request.files['file']
+    file.save(imgFile)
+    
+    resource = resourceTable.find_one({ "_id" : ObjectId(uid)})
+    return mongodoc_jsonify(resource)
 
 
 @g_app.route('/resource/<resourceId>', methods=['GET'])
