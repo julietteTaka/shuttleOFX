@@ -171,19 +171,16 @@ def addResource():
     '''
     Upload resource file on the database
     '''
-    
     mimetype = request.files['file'].content_type
-    name = ""
-    size = request.content_length
 
     if not mimetype:
         g_app.logger.error("Invalide resource.")
         abort(404)
 
-    uid = resourceTable.insert({ 
+    uid = resourceTable.insert({
         "mimetype" : mimetype,
-        "size" : size,
-        "name" : name})
+        "size" : request.content_length,
+        "name" : ""})
 
     imgFile = os.path.join(resourcesPath, str(uid))
     file = request.files['file']
