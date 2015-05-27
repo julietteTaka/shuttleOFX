@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-from flask import Flask, request, jsonify, send_file, abort
+from flask import Flask, request, jsonify, send_file, abort, Response
+from bson import json_util, ObjectId
 import os
 import uuid
 import json
@@ -29,8 +30,6 @@ g_enablePool = False
 # Manager to share rendering information
 g_manager = multiprocessing.Manager()
 
-# list of all rendered resources
-g_listImg = []
 # mongoDB initialization
 client = pymongo.MongoClient(configParser.get('MONGODB', 'hostname'), configParser.getint('MONGODB', 'port'))
 db = client.__getattr__(configParser.get('MONGODB', 'dbName'))
@@ -210,17 +209,12 @@ def getResource(resourceId):
 @g_app.route('/resource/', methods=['GET'])
 def getResourcesDict():
     '''
-     Returns a list of all resources on server.
+    Returns all resources files from db.
     '''
-    return jsonify(resources=g_listImg)
-
-def retrieveResources():
-    '''
-    Fill the list of images with all resources path on the server.
-    '''
-    global g_listImg
-    g_listImg = [str(image) for image in os.listdir(str(resourcesPath))]
-
+    count = int(request.args.get('count', 10))
+    skip = int(request.args.get('skip', 0))
+    resources = resourceTable.find().limit(count).skip(skip)
+    return mongodoc_jsonify({"resources":[ result for result in resources ]})
 
 @atexit.register
 def cleanPool():
@@ -232,5 +226,4 @@ def cleanPool():
     g_pool.join()
 
 if __name__ == "__main__":
-    retrieveResources()
     g_app.run(host=configParser.get("APP_RENDER", "host"), port=configParser.getint("APP_RENDER", "port"), debug=True)
