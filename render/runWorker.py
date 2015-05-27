@@ -171,6 +171,9 @@ def addResource():
     '''
     Upload resource file on the database
     '''
+    if not 'file' in request.files:
+        abort(404)
+
     mimetype = request.files['file'].content_type
 
     if not mimetype:
@@ -180,7 +183,7 @@ def addResource():
     uid = resourceTable.insert({
         "mimetype" : mimetype,
         "size" : request.content_length,
-        "name" : ""})
+        "name" : request.files['file'].filename})
 
     imgFile = os.path.join(resourcesPath, str(uid))
     file = request.files['file']
