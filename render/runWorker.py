@@ -199,15 +199,13 @@ def getResource(resourceId):
     '''
     Returns resource file.
     '''
-    global g_listImg
+    resource = os.path.join(resourcesPath, resourceId)
 
-    print json.dumps(g_listImg, indent=4)
-
-    filePath = os.path.join(resourcesPath, resourceId)
-    if os.path.isfile(filePath):
-        return send_file(filePath)
-    abort(404)
-    return
+    if os.path.isfile(resource):
+        return send_file(resource)
+    else:
+        g_app.logger.error("can't find " + resource)
+        abort(404)
 
 @g_app.route('/resource/', methods=['GET'])
 def getResourcesDict():
