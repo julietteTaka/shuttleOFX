@@ -4,6 +4,7 @@ import os
 import uuid
 import json
 import atexit
+import pymongo
 import logging
 import tempfile
 import ConfigParser
@@ -30,6 +31,11 @@ g_manager = multiprocessing.Manager()
 
 # list of all rendered resources
 g_listImg = []
+# mongoDB initialization
+client = pymongo.MongoClient(configParser.get('MONGODB', 'hostname'), configParser.getint('MONGODB', 'port'))
+db = client.__getattr__(configParser.get('MONGODB', 'dbName'))
+resourceTable = db.__getattr__(configParser.get('MONGODB', 'resourceTable'))
+
 
 currentAppDir = os.path.dirname(os.path.abspath(__file__))
 
