@@ -155,6 +155,23 @@ def getResourceById(resourceId):
     req = requests.get(renderRootUri+"/resource/"+resourceId)
     return Response(req.content, mimetype="image/png")
 
+@app.route('/resources/', methods=['POST'])
+def addResourceToRender():
+    '''
+    Upload resource file for the render service
+    '''
+
+    mimetype = request.mimetype
+    name = ""
+    size = request.content_length
+
+    if not mimetype:
+        app.logger.error("Invalide resource.")
+        abort(400)
+
+    req = requests.post(renderRootUri + '/resource', data=request.data, headers=request.headers)
+    return "ok"
+
 @app.route('/resource', methods=['GET'])
 def getResources() :
     req = requests.get(renderRootUri + '/resource/')
