@@ -269,9 +269,9 @@ $.ajax({
 .done(function(data){
     allResources = []
 
-    for (var i = 0; i < data['resources'].length; i++){
-        allResources.push(data['resources'][i]['_id']['$oid'])
-    }
+    $.each( data.resources, function( index, resource){
+        allResources.push(resource['_id']['$oid']);
+    });
 
     if(allResources != undefined && allResources.length > 0){
         selectedResource = allResources[0];
