@@ -215,6 +215,29 @@ def getResourcesDict():
     resources = resourceTable.find().limit(count).skip(skip)
     return mongodoc_jsonify({"resources":[ result for result in resources ]})
 
+@g_app.route('/upload', methods=['GET'])
+def uploadPage():
+    return """<!DOCTYPE html>
+      <html lang="en">
+      <head>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h3 class="text-muted">UPLOAD A RESOURCE</h3>
+          </div>
+          <hr/>
+          <div>
+            <form action="/resource" method="POST" enctype="multipart/form-data">
+              <input type="file" name="file">
+              <br/><br/>
+              <input type="submit" value="Upload">
+            </form>
+          </div>
+        </div>
+      </body>
+      </html>"""
+
 @atexit.register
 def cleanPool():
     '''
