@@ -123,11 +123,13 @@
                             </div>
                             <div class="row">
                                 {% for resource in resources.resources %}
+                                    {% for key in resource._id %}
                                 <div class="col-md-3">
                                     <div class="preview-img preview-render panel panel-primary">
-                                        <img class="sampleImage img-responsive" src="/resource/{{resource}}" id="{{ resource }}">
+                                        <img class="sampleImage img-responsive" src="/resource/{{resource._id[key] }}" id="{{ resource._id[key] }}">
                                     </div>
-                                </div>
+                                </div> 
+                                    {% endfor %}
                                 {% endfor %}
                             </div>
 

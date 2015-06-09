@@ -267,12 +267,15 @@ $.ajax({
     async: false, //avoid an empty data when result is returned.
 })
 .done(function(data){
-    console.log(data);
-    allResources = data['resources'];
+    allResources = []
+
+    $.each( data.resources, function( index, resource){
+        allResources.push(resource['_id']['$oid']);
+    });
+
     if(allResources != undefined && allResources.length > 0){
         selectedResource = allResources[0];
     }
-    console.log("selected resource " + selectedResource);
 })
 .error(function(data){
     console.log('POST ERROR !');
