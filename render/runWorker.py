@@ -1,9 +1,11 @@
 #!/usr/bin/env python
-from flask import Flask, request, jsonify, send_file, abort
+from flask import Flask, request, jsonify, send_file, abort, Response
+from bson import json_util, ObjectId
 import os
 import uuid
 import json
 import atexit
+import pymongo
 import logging
 import tempfile
 import ConfigParser
@@ -28,8 +30,11 @@ g_enablePool = False
 # Manager to share rendering information
 g_manager = multiprocessing.Manager()
 
-# list of all rendered resources
-g_listImg = []
+# mongoDB initialization
+client = pymongo.MongoClient(configParser.get('MONGODB', 'hostname'), configParser.getint('MONGODB', 'port'))
+db = client.__getattr__(configParser.get('MONGODB', 'dbName'))
+resourceTable = db.__getattr__(configParser.get('MONGODB', 'resourceTable'))
+
 
 currentAppDir = os.path.dirname(os.path.abspath(__file__))
 
@@ -47,6 +52,9 @@ if not os.path.exists(resourcesPath):
 # TODO atexit:
 # g_pool.terminate()
 # g_pool.join()
+
+def mongodoc_jsonify(*args, **kwargs):
+    return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
 
 def remapPath(datas):
     '''
@@ -158,32 +166,31 @@ def deleteRenderById(renderID):
     del g_renders[renderID]
 
 
-@g_app.route('/resource/', methods=['POST'])
+@g_app.route('/resource', methods=['POST'])
 def addResource():
     '''
-    Upload resource file on the server and returns id and uri.
+    Upload resource file on the database
     '''
-    global g_listImg
+    if not 'file' in request.files:
+        abort(404)
 
-    uid = str(uuid.uuid1())
-    img = request.data
-    ext = request.headers.get("Content-Type").split('/')[1]
+    mimetype = request.files['file'].content_type
 
-    filename = uid + '.' + ext
-    imgFile = os.path.join(resourcesPath, filename)
+    if not mimetype:
+        g_app.logger.error("Invalide resource.")
+        abort(404)
 
-    f = open(imgFile, 'w')
-    f.write(img)
-    f.close()
+    uid = resourceTable.insert({
+        "mimetype" : mimetype,
+        "size" : request.content_length,
+        "name" : request.files['file'].filename})
 
-    objectId = {
-        'id': filename,
-        'uri': '/resources/' + uid
-    }
-
-    g_listImg.append(filename)
-
-    return jsonify(**objectId)
+    imgFile = os.path.join(resourcesPath, str(uid))
+    file = request.files['file']
+    file.save(imgFile)
+    
+    resource = resourceTable.find_one({ "_id" : ObjectId(uid)})
+    return mongodoc_jsonify(resource)
 
 
 @g_app.route('/resource/<resourceId>', methods=['GET'])
@@ -191,30 +198,23 @@ def getResource(resourceId):
     '''
     Returns resource file.
     '''
-    global g_listImg
+    resource = os.path.join(resourcesPath, resourceId)
 
-    print json.dumps(g_listImg, indent=4)
-
-    filePath = os.path.join(resourcesPath, resourceId)
-    if os.path.isfile(filePath):
-        return send_file(filePath)
-    abort(404)
-    return
+    if os.path.isfile(resource):
+        return send_file(resource)
+    else:
+        g_app.logger.error("can't find " + resource)
+        abort(404)
 
 @g_app.route('/resource/', methods=['GET'])
 def getResourcesDict():
     '''
-     Returns a list of all resources on server.
+    Returns all resources files from db.
     '''
-    return jsonify(resources=g_listImg)
-
-def retrieveResources():
-    '''
-    Fill the list of images with all resources path on the server.
-    '''
-    global g_listImg
-    g_listImg = [str(image) for image in os.listdir(str(resourcesPath))]
-
+    count = int(request.args.get('count', 10))
+    skip = int(request.args.get('skip', 0))
+    resources = resourceTable.find().limit(count).skip(skip)
+    return mongodoc_jsonify({"resources":[ result for result in resources ]})
 
 @atexit.register
 def cleanPool():
@@ -226,5 +226,4 @@ def cleanPool():
     g_pool.join()
 
 if __name__ == "__main__":
-    retrieveResources()
     g_app.run(host=configParser.get("APP_RENDER", "host"), port=configParser.getint("APP_RENDER", "port"), debug=True)
