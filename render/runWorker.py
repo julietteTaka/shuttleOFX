@@ -146,12 +146,11 @@ def resource(renderId, resourceId):
     '''
     Returns file resource by renderId and resourceId.
     '''
-    if os.path.isfile( os.path.join(renderDirectory, resourceId) ):
-        return send_file( os.path.join(renderDirectory, resourceId) )
-    else:
+    if not os.path.isfile( os.path.join(renderDirectory, resourceId) ):
         logging.error(renderDirectory + resourceId + " doesn't exists")
-        abort(404)
+        aboirt(404)
 
+    return send_file( os.path.join(renderDirectory, resourceId) )
 
 @g_app.route('/render/<renderID>', methods=['DELETE'])
 def deleteRenderById(renderID):
