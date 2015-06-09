@@ -11,3 +11,10 @@ resourcesDirectory = path/to/resources
 
 [RENDERED_IMAGE]
 renderedImagesDirectory = path/to/rendered/resources
+
+
+[MONGODB]
+hostname: localhost
+port: 27017
+dbName: shuttleofx_render
+resourceTable: resources
