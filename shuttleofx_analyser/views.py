@@ -1,18 +1,15 @@
-#!/usr/bin/python
-from flask import Flask, request, jsonify, abort
-import os
-import ConfigParser
+
+from shuttleofx_analyser import g_app
+
+from flask import (
+    request,
+    jsonify,
+    abort,
+)
+
 import multiprocessing
-import atexit
 import Bundle
-
-currentAppDir = os.path.dirname(__file__)
-
-configParser =  ConfigParser.RawConfigParser()
-configParser.read( os.path.join( currentAppDir, 'analyser.cfg' ) )
-
-g_app = Flask(__name__, static_folder='', static_url_path='')
-
+import atexit
 
 # Pool for analysing jobs 
 g_pool = multiprocessing.Pool(processes=4)
@@ -24,7 +21,7 @@ g_manager = multiprocessing.Manager()
 
 @g_app.route('/', methods=['GET'])
 def index():
-    return "Analyser service v1.0"
+    return "ShuttleOFX Analyser service"
 
 @g_app.route('/bundle/<bundleId>', methods=['POST'])
 def analyseBundle(bundleId):
@@ -71,6 +68,3 @@ def quit():
     g_pool.close()
     g_pool.terminate()
     g_pool.join()
-
-if __name__ == '__main__':
-    g_app.run(host=configParser.get('APP_ANALYSER', 'host'), port=configParser.getint('APP_ANALYSER', 'port'), debug=True)

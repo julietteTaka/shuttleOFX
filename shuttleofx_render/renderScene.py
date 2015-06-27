@@ -1,14 +1,11 @@
-from pyTuttle import tuttle
+
 import logging
 import json
 import time
-import ConfigParser
 
-configParser =  ConfigParser.RawConfigParser()
-configParser.read('render.cfg')
+from shuttleofx_render import globalOfxPluginPath
 
-globalOfxPluginPath = configParser.get("OFX_PATH", "globalOfxPluginPath")
-
+from pyTuttle import tuttle
 
 class ProgressHandle(tuttle.IProgressHandle):
     def __init__(self, renderSharedInfo):

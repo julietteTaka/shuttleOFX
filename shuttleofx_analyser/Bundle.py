@@ -12,15 +12,10 @@ import argparse
 from pyTuttle import tuttle
 import Plugin
 
-
-currentAppDir = os.path.dirname(__file__)
-
-configParser =  ConfigParser.RawConfigParser()
-configParser.read( os.path.join( currentAppDir, 'analyser.cfg' ) )
-tmpRenderingPath = configParser.get('APP_ANALYSER', 'workingTmpDir')
+from shuttleofx_analyser import tmpRenderingPath
 
 if not os.path.exists(tmpRenderingPath):
-    os.mkdir(tmpRenderingPath)
+    os.makedirs(tmpRenderingPath)
 
 def extractDatasAsTar(datas, outputPath):
     '''

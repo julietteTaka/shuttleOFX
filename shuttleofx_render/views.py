@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-from flask import Flask, request, jsonify, send_file, abort, Response
-from bson import json_util, ObjectId
+
 import os
 import uuid
 import json
@@ -11,12 +9,12 @@ import tempfile
 import ConfigParser
 import multiprocessing
 
+from flask import request, jsonify, send_file, abort, Response
+from bson import json_util, ObjectId
+
+from shuttleofx_render import g_app, resourceTable, renderDirectory, resourcesPath
+
 import renderScene
-
-configParser =  ConfigParser.RawConfigParser()
-configParser.read('render.cfg')
-
-g_app = Flask(__name__, static_folder='', static_url_path='')
 
 # list of all computing renders
 g_renders = {}
@@ -29,29 +27,6 @@ g_enablePool = False
 
 # Manager to share rendering information
 g_manager = multiprocessing.Manager()
-
-# mongoDB initialization
-client = pymongo.MongoClient(configParser.get('MONGODB', 'hostname'), configParser.getint('MONGODB', 'port'))
-db = client.__getattr__(configParser.get('MONGODB', 'dbName'))
-resourceTable = db.__getattr__(configParser.get('MONGODB', 'resourceTable'))
-
-
-currentAppDir = os.path.dirname(os.path.abspath(__file__))
-
-renderDirectory = os.path.join(currentAppDir, configParser.get('RENDERED_FILES', 'renderedFilesDirectory'))
-if not os.path.exists(renderDirectory):
-    os.makedirs(renderDirectory)
-
-resourcesPath = os.path.join(currentAppDir, configParser.get('RESOURCES', 'resourcesDirectory'))
-if not os.path.exists(resourcesPath):
-    os.makedirs(resourcesPath)
-
-
-# TODO: replace multiprocessing with https://github.com/celery/billiard to have timeouts in the Pool.
-
-# TODO atexit:
-# g_pool.terminate()
-# g_pool.join()
 
 def mongodoc_jsonify(*args, **kwargs):
     return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
@@ -77,6 +52,10 @@ def remapPath(datas):
 
     return outputResources
 
+
+@g_app.route('/')
+def index():
+    return "ShuttleOFX Render service"
 
 @g_app.route('/render', methods=['POST'])
 def newRender():
@@ -246,6 +225,3 @@ def cleanPool():
     g_pool.close()
     g_pool.terminate()
     g_pool.join()
-
-if __name__ == "__main__":
-    g_app.run(host=configParser.get("APP_RENDER", "host"), port=configParser.getint("APP_RENDER", "port"), debug=True)

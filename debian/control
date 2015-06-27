@@ -1,0 +1,18 @@
+Source: python-shuttleofx
+Maintainer: Marc-Antoine Arnaud <arnaud.marcantoine@gmail.com>
+Section: python
+Priority: extra
+Build-Depends: debhelper (>= 8),
+               python (>= 2.6),
+               python-setuptools (>= 0.6)
+XS-Python-Version: >= 2.6
+Standards-Version: 3.9.4
+
+Package: python-shuttleofx
+Architecture: all
+Depends: ${misc:Depends},
+         nginx (>= 1.4.6),
+         uwsgi (>= 1.9.17),
+         uwsgi-plugin-python (>= 1.2.3),
+Description: ShuttleOFX
+ The ShuttleOFX platform is designed to share OpenFX plugins between plugins creators (industrials, developpers, researchers, students, ...) and graphic artists. Following the TuttleOFX initiative, the ambition is to promote a standard way to create image processing algorithms usable across softwares.

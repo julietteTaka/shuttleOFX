@@ -9,9 +9,8 @@ port = 5004
 [RESOURCES]
 resourcesDirectory = path/to/resources
 
-[RENDERED_IMAGE]
-renderedImagesDirectory = path/to/rendered/resources
-
+[RENDERED_FILES]
+renderedFilesDirectory = path/to/rendered/resources
 
 [MONGODB]
 hostname: localhost
