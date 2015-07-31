@@ -7,6 +7,8 @@ from flask import (
     abort,
 )
 
+import logging
+import os
 import multiprocessing
 import Bundle
 import atexit
@@ -33,6 +35,9 @@ def analyseBundle(bundleId):
     bundleBin = request.data
     bundleExt = request.headers.get('Content-Type')
 
+    if bundleId in g_sharedBundleDatas:
+        logging.warning('Bundle {bundleId} already exists. It will be overridden.'.format(bundleId=bundleId))
+
     datas = g_sharedBundleDatas[bundleId] = g_manager.dict()
 
     datas['status'] = "waiting"
@@ -40,7 +45,9 @@ def analyseBundle(bundleId):
     datas['extraction'] = "waiting"
     datas['datas'] = None
 
-    if g_enablePool:
+    logging.warning('analyseBundle {bundleId}: {datas}'.format(bundleId=bundleId, datas=datas))
+
+    if False: #g_enablePool:
         g_pool.apply(Bundle.launchAnalyse, args=[datas, bundleExt, bundleBin, bundleId])
     else:
         Bundle.launchAnalyse(datas, bundleExt, bundleBin, bundleId)

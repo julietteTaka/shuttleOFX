@@ -8,6 +8,7 @@ import ConfigParser
 import subprocess
 import json
 import argparse
+import logging
 
 from pyTuttle import tuttle
 import Plugin
@@ -90,8 +91,8 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
     sharedBundleDatas['analyse'] = 'waiting'
     sharedBundleDatas['extraction'] = 'running'
 
-    bundlePath = os.path.join( tmpRenderingPath, str(bundleId) )
-    
+    bundlePath = os.path.join(tmpRenderingPath, str(bundleId))
+
     os.mkdir(bundlePath)
 
     if 'gzip' == bundleExt.split('/')[1]:
@@ -114,7 +115,7 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
 
         env = dict(os.environ)
         # env['OFX_PLUGIN_PATH'] = bundlePath
-        env['LD_LIBRARY_PATH'] = env['LD_LIBRARY_PATH'] + ':{bundlePath}/lib:{bundlePath}/lib64'.format(bundlePath=bundlePath)
+        env['LD_LIBRARY_PATH'] = ':'.join([env.get('LD_LIBRARY_PATH', ''), '{bundlePath}/lib:{bundlePath}/lib64'.format(bundlePath=bundlePath)])
         logging.warning('LD_LIBRARY_PATH: %s', env['LD_LIBRARY_PATH'])
 
         args = [sys.executable, os.path.abspath(__file__), bundlePath, tempFilepath]
