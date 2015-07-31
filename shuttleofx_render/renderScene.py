@@ -1,11 +1,13 @@
 
+import shuttleofx_analyser
+from shuttleofx_render import globalOfxPluginPath, pluginsStorage, catalogRootUri
+from pyTuttle import tuttle
+
+import requests
 import logging
 import json
 import time
-
-from shuttleofx_render import globalOfxPluginPath
-
-from pyTuttle import tuttle
+import os
 
 class ProgressHandle(tuttle.IProgressHandle):
     def __init__(self, renderSharedInfo):
@@ -15,6 +17,7 @@ class ProgressHandle(tuttle.IProgressHandle):
     def beginSequence(self):
         """Called before the beginning of the process
         """
+        pass
 
     def setupAtTime(self):
         """Called when setting up an image
@@ -29,16 +32,18 @@ class ProgressHandle(tuttle.IProgressHandle):
     def endSequence(self):
         """Called at the end of the process
         """
+        pass
 
-def configLocalPluginPath(ofxPluginPath):
+def configLocalPluginPath(ofxPluginPaths):
     tuttle.core().getPluginCache().addDirectoryToPath(globalOfxPluginPath)
+
+    for ofxPluginPath in ofxPluginPaths:
+        tuttle.core().getPluginCache().addDirectoryToPath(ofxPluginPath)
     pluginCache = tuttle.core().getPluginCache()
     tuttle.core().preload(False)
-    #logging.error(tuttle.core().getPluginCache())
-    logging.error(len(pluginCache.getPlugins()))
+    logging.debug('Number of Plugins:' + str(len(pluginCache.getPlugins())))
 
 def loadGraph(scene):
- 
     tuttleGraph = tuttle.Graph()
 
     nodes = []
@@ -66,12 +71,24 @@ def loadGraph(scene):
 def computeGraph(renderSharedInfo, newRender):
     try:
         renderSharedInfo['startDate'] = time.time()
+        scene = newRender['scene']
 
-        #TODO set the right plugin path
-        configLocalPluginPath(globalOfxPluginPath)
+        bundleIds = []
+        nodes = []
+        for node in scene['nodes']:
+            if 'plugin' in node:
+
+                resp = requests.get(catalogRootUri+"/bundle/" + node['plugin']+ '/bundle')
+                resp = resp.json()
+                bundleIds.append(resp['bundleId'])
+            else:
+                logging.error("Error while searching the plugin "+node['plugin'])
+
+        bundlePaths = [os.path.join(shuttleofx_analyser.tmpRenderingPath, str(bundleId)) for bundleId in bundleIds]
+        configLocalPluginPath(bundlePaths)
 
         renderSharedInfo['status'] = 1
-        tuttleGraph = loadGraph(newRender['scene'])
+        tuttleGraph = loadGraph(scene)
 
         renderSharedInfo['status'] = 2
         tuttleComputeOptions = tuttle.ComputeOptions()

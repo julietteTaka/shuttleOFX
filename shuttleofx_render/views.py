@@ -139,7 +139,7 @@ def deleteRenderById(renderID):
     TODO: kill the corresponding process?
     '''
     if renderID not in g_renders:
-        g_app.logger.error('id '+renderID+" doesn't exists")
+        logging.error('id '+renderID+" doesn't exists")
         abort(400)
     del g_renders[renderID]
 
@@ -155,7 +155,7 @@ def addResource():
     mimetype = request.files['file'].content_type
 
     if not mimetype:
-        g_app.logger.error("Invalide resource.")
+        logging.error("Invalid resource.")
         abort(404)
 
     uid = resourceTable.insert({
@@ -181,7 +181,7 @@ def getResource(resourceId):
     if os.path.isfile(resource):
         return send_file(resource)
     else:
-        g_app.logger.error("can't find " + resource)
+        logging.error("can't find " + resource)
         abort(404)
 
 @g_app.route('/resource/', methods=['GET'])
