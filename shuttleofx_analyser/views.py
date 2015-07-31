@@ -47,7 +47,7 @@ def analyseBundle(bundleId):
 
     logging.warning('analyseBundle {bundleId}: {datas}'.format(bundleId=bundleId, datas=datas))
 
-    if False: #g_enablePool:
+    if g_enablePool:
         g_pool.apply(Bundle.launchAnalyse, args=[datas, bundleExt, bundleBin, bundleId])
     else:
         Bundle.launchAnalyse(datas, bundleExt, bundleBin, bundleId)
