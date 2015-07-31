@@ -1,4 +1,4 @@
-
+import os
 import json
 import logging
 import requests
@@ -10,6 +10,7 @@ from flask import Flask, jsonify, Response, request, abort
 from Bundle import Bundle
 from Plugin import Plugin
 
+import shuttleofx_catalog
 from shuttleofx_catalog import g_app, bundleTable, pluginTable, resourceTable
 
 def mongodoc_jsonify(*args, **kwargs):
@@ -77,7 +78,7 @@ def uploadArchive(bundleId):
     #extension = mappingExtension[ request.headers['content-type'] ]
     extension = ".tar.gz"
 
-    archivePath = os.path.join(bundleRootPath, str(bundleId) + extension)
+    archivePath = os.path.join(shuttleofx_catalog.bundleRootPath, str(bundleId) + extension)
 
     try:
         file = request.files['file']
@@ -105,7 +106,9 @@ def analyseBundle(bundleId):
     
 
     headers = {'content-type': 'application/gzip'}
-    analyseReturn = requests.post(uriAnalyser+"/bundle/"+str(bundleId), data=open(bundle["archivePath"], 'r').read(), headers=headers)
+    analyseReturn = requests.post(shuttleofx_catalog.uriAnalyser+"/bundle/"+str(bundleId), data=open(bundle["archivePath"], 'r').read(), headers=headers)
+
+    # logging.error("analyzeBundle analyseReturn: " + str(analyseReturn))
 
     pluginIdOffset = pluginTable.count()
 
@@ -113,7 +116,7 @@ def analyseBundle(bundleId):
     bundleData = analyseReturn.json()['datas']
 
     while 1:
-        analyseReturn = requests.get(uriAnalyser+"/bundle/"+str(bundleId)).json()
+        analyseReturn = requests.get(shuttleofx_catalog.uriAnalyser+"/bundle/"+str(bundleId)).json()
 
         if analyseReturn['status'] == "done":
             bundleData = analyseReturn['datas']
@@ -231,6 +234,21 @@ def getPlugin(pluginId, bundleId=None):
         abort(404)
 
     return mongodoc_jsonify(plugin)
+
+
+@g_app.route("/bundle/<rawIdentifier>/bundle", methods=['GET'])
+def getBundleByPluginId(rawIdentifier):
+    '''
+    Returns the bundleid of a plugin using its pluginId.
+    '''
+    bundleId = pluginTable.find_one({'rawIdentifier':rawIdentifier}, {"bundleId":1, "_id":0})
+
+    if bundleId == None:
+        logging.error("plugin "+rawIdentifier+" doesn't exists")
+        abort(404)
+        
+    return mongodoc_jsonify(bundleId)
+
 
 @g_app.route('/resources', methods=['POST'])
 def addResource():
