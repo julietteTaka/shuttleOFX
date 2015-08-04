@@ -29,8 +29,8 @@ def newBundle():
     bundleId = catalog.bundleTable.count()
 
     if  bundleId == None or bundleName == None or userId == None:
-        catalog.g_app.logger.error("bundleName, bundleId or userId is undefined")
-        abort(404)
+        logging.error("bundleName, bundleId or userId is undefined")
+        abort(make_response("bundleName, bundleId or userId is undefined", 404))
 
     bundle = Bundle(bundleId, bundleName, userId)
     bundle.companyId = companyId
@@ -52,8 +52,8 @@ def getBundles():
 def getBundle(bundleId):
     bundle = catalog.bundleTable.find_one({"bundleId": bundleId})
     if bundle == None:
-        catalog.g_app.logger.error("No matching bundle has been found")
-        abort(404)
+        logging.error("No matching bundle has been found")
+        abort(make_response("No matching bundle has been found", 404))
     return mongodoc_jsonify(bundle)
 
 
@@ -63,7 +63,7 @@ def uploadArchive(bundleId):
 
     if bundle == None:
         logging.error("No matching bundle has been found")
-        abort(400)
+        abort(make_response("No matching bundle has been found", 400))
 
     mappingExtension = {
         "application/zip": ".zip",
@@ -96,13 +96,12 @@ def analyseBundle(bundleId):
     bundle = catalog.bundleTable.find_one({"bundleId": bundleId})
 
     if bundle == None:
-        catalog.g_app.logger.error("No matching bundle has been found")
-        abort(400)
+        logging.error("No matching bundle has been found")
+        abort(make_response("No matching bundle has been found", 400))
 
     if bundle["archivePath"] == None: 
-        catalog.g_app.logger.error("The bundle as no directory path")
-        abort(400)
-    
+        logging.error("The bundle as no directory path")
+        abort(make_response("The bundle as no directory path", 400))
 
     headers = {'content-type': 'application/gzip'}
     analyseReturn = requests.post(shuttleofx_catalog.uriAnalyser+"/bundle/"+str(bundleId), data=open(bundle["archivePath"], 'r').read(), headers=headers)
@@ -244,7 +243,7 @@ def getBundleByPluginId(rawIdentifier):
 
     if bundleId == None:
         logging.error("plugin "+rawIdentifier+" doesn't exists")
-        abort(404)
+        abort(make_response("plugin "+rawIdentifier+" doesn't exists", 404))
         
     return mongodoc_jsonify(bundleId)
 

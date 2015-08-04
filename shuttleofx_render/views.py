@@ -116,8 +116,8 @@ def getRenderById(renderID):
     for key, render in g_renders.iteritems():
         if renderID == key:
             return jsonify(render=render)
-    render.g_app.logger.error('id '+ renderID +" doesn't exists")
-    abort(404)
+    logging.error('id '+ renderID +" doesn't exists")
+    abort(make_response("id "+ renderID +" doesn't exists", 404))
 
 
 @render.g_app.route('/render/<renderId>/resource/<resourceId>', methods=['GET'])
@@ -127,7 +127,7 @@ def resource(renderId, resourceId):
     '''
     if not os.path.isfile( os.path.join(render.renderDirectory, resourceId) ):
         logging.error(render.renderDirectory + resourceId + " doesn't exists")
-        aboirt(404)
+        abort(make_response(render.renderDirectory + resourceId + " doesn't exists", 404))
 
     return send_file( os.path.join(render.renderDirectory, resourceId) )
 
@@ -139,8 +139,8 @@ def deleteRenderById(renderID):
     TODO: kill the corresponding process?
     '''
     if renderID not in g_renders:
-        logging.error('id '+renderID+" doesn't exists")
-        abort(400)
+        logging.error("id "+renderID+" doesn't exists")
+        abort(make_response("id "+renderID+" doesn't exists", 404))
     del g_renders[renderID]
 
 
@@ -150,13 +150,13 @@ def addResource():
     Upload resource file on the database
     '''
     if not 'file' in request.files:
-        abort(404)
+        abort(make_response("Empty request", 500))
 
     mimetype = request.files['file'].content_type
 
     if not mimetype:
         logging.error("Invalid resource.")
-        abort(404)
+        abort(make_response("Invalid resource.", 404))
 
     uid = render.resourceTable.insert({
         "mimetype" : mimetype,
@@ -182,7 +182,7 @@ def getResource(resourceId):
         return send_file(resource)
     else:
         logging.error("can't find " + resource)
-        abort(404)
+        abort(make_response("can't find " + resource, 404))
 
 @render.g_app.route('/resource/', methods=['GET'])
 def getResourcesDict():
