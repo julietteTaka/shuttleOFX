@@ -78,8 +78,7 @@ def computeGraph(renderSharedInfo, newRender):
         for node in scene['nodes']:
             if 'plugin' in node:
 
-                resp = requests.get(catalogRootUri+"/bundle/" + node['plugin']+ '/bundle')
-                resp = resp.json()
+                resp = requests.get(catalogRootUri+"/bundle/" + node['plugin']+ '/bundle').json()
                 bundleIds.append(resp['bundleId'])
             else:
                 logging.error("Error while searching the plugin "+node['plugin'])

@@ -63,6 +63,8 @@ def getPlugin(pluginId):
     if 'google_token' in session:
         user = client.google.get('userinfo').data
     resp = requests.get(client.catalogRootUri+"/plugin/"+pluginId)
+    if resp.status_code != 200:
+        abort(resp.status_code)
     return render_template('plugin.html', plugin=resp.json(), user=user)
 
 @client.g_app.route('/plugin/<pluginId>/image/<imageId>')
@@ -77,6 +79,8 @@ def renderPageWithPlugin(pluginId = 0):
     if 'google_token' in session:
         user = client.google.get('userinfo').data
     resp = requests.get(client.catalogRootUri+"/plugin/"+pluginId)
+    if resp.status_code != 200:
+        abort(resp.status_code)
     previewGallery = requests.get(client.renderRootUri + '/resource/').json()
     return render_template('editor.html', plugin=resp.json(), user=user, resources=previewGallery)
 
