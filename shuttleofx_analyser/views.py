@@ -1,5 +1,5 @@
 
-from shuttleofx_analyser import g_app
+import shuttleofx_analyser as analyser
 
 from flask import (
     request,
@@ -21,11 +21,11 @@ g_enablePool = True
 # Manager to share analysing information
 g_manager = multiprocessing.Manager()
 
-@g_app.route('/', methods=['GET'])
+@analyser.g_app.route('/', methods=['GET'])
 def index():
     return "ShuttleOFX Analyser service"
 
-@g_app.route('/bundle/<bundleId>', methods=['POST'])
+@analyser.g_app.route('/bundle/<bundleId>', methods=['POST'])
 def analyseBundle(bundleId):
     '''
     Apply a pool of process to analyse bundles asynchronously.
@@ -54,14 +54,14 @@ def analyseBundle(bundleId):
 
     return jsonify(**datas)
 
-@g_app.route('/bundle/<bundleId>', methods=['GET'])
+@analyser.g_app.route('/bundle/<bundleId>', methods=['GET'])
 def getStatus(bundleId):
     '''
     Return the analyse status.
     '''
     global g_sharedBundleDatas
     if bundleId not in g_sharedBundleDatas:
-        g_app.logger.error('the id ' + bundleId + ''' doesn't exist''')
+        analyser.g_app.logger.error('the id ' + bundleId + ''' doesn't exist''')
         abort (404)
 
     return jsonify(**g_sharedBundleDatas[bundleId])
