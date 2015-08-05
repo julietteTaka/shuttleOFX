@@ -2,13 +2,13 @@
 import shuttleofx_analyser as analyser
 
 from flask import (
+    make_response,
     request,
     jsonify,
-    abort,
+    abort
 )
 
 import logging
-import os
 import multiprocessing
 import Bundle
 import atexit

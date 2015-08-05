@@ -9,7 +9,7 @@ import tempfile
 import ConfigParser
 import multiprocessing
 
-from flask import request, jsonify, send_file, abort, Response
+from flask import request, jsonify, send_file, abort, Response, make_response
 from bson import json_util, ObjectId
 
 import shuttleofx_render as render

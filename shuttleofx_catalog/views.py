@@ -5,7 +5,8 @@ import requests
 
 from time import sleep
 from bson import json_util, ObjectId
-from flask import Flask, jsonify, Response, request, abort
+from flask import Flask, jsonify, Response, request, abort, make_response
+
 
 from Bundle import Bundle
 from Plugin import Plugin
@@ -61,7 +62,7 @@ def getBundle(bundleId):
 def uploadArchive(bundleId):
     bundle = catalog.bundleTable.find_one({"bundleId": bundleId})
 
-    if bundle == None:
+    if bundle is None:
         logging.error("No matching bundle has been found")
         abort(make_response("No matching bundle has been found", 400))
 
@@ -241,7 +242,7 @@ def getBundleByPluginId(rawIdentifier):
     '''
     bundleId = catalog.pluginTable.find_one({'rawIdentifier':rawIdentifier}, {"bundleId":1, "_id":0})
 
-    if bundleId == None:
+    if bundleId is None:
         logging.error("plugin "+rawIdentifier+" doesn't exists")
         abort(make_response("plugin "+rawIdentifier+" doesn't exists", 404))
         

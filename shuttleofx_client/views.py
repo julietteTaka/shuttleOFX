@@ -10,7 +10,8 @@ from flask import (
     Response,
     redirect,
     url_for,
-    session
+    session,
+    make_response
 )
 
 import shuttleofx_client as client
@@ -185,7 +186,7 @@ def authorized():
         )
 
     session['google_token'] = (resp['access_token'], '')
-    user = client.google.get('userinfo')
+    # user = client.google.get('userinfo')
 
     redirectTarget = None
     for target in request.values.get('next'), request.referrer:

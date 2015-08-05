@@ -8,7 +8,6 @@ import ConfigParser
 import subprocess
 import json
 import argparse
-import logging
 
 from pyTuttle import tuttle
 import Plugin

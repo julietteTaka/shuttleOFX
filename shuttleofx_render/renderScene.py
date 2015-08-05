@@ -5,7 +5,6 @@ from pyTuttle import tuttle
 
 import requests
 import logging
-import json
 import time
 import os
 
@@ -74,7 +73,6 @@ def computeGraph(renderSharedInfo, newRender):
         scene = newRender['scene']
 
         bundleIds = []
-        nodes = []
         for node in scene['nodes']:
             if 'plugin' in node:
 
