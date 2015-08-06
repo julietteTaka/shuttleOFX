@@ -30,13 +30,12 @@ def analyseBundle(bundleId):
     '''
     Apply a pool of process to analyse bundles asynchronously.
     '''
-    global g_sharedBundleDatas, g_pool, g_enablePool
 
     bundleBin = request.data
     bundleExt = request.headers.get('Content-Type')
 
     if bundleId in g_sharedBundleDatas:
-        logging.warning('Bundle {bundleId} already exists. It will be overridden.'.format(bundleId=bundleId))
+        logging.warning("Bundle %(bundleId)s already exists. It will be overridden." % {"bundleId":bundleId})
 
     datas = g_sharedBundleDatas[bundleId] = g_manager.dict()
 
@@ -45,7 +44,7 @@ def analyseBundle(bundleId):
     datas['extraction'] = "waiting"
     datas['datas'] = None
 
-    logging.warning('analyseBundle {bundleId}: {datas}'.format(bundleId=bundleId, datas=datas))
+    logging.warning("analyseBundle %(bundleId)s : %(datas)s." % {"bundleId":bundleId, "datas":datas})
 
     if g_enablePool:
         g_pool.apply(Bundle.launchAnalyse, args=[datas, bundleExt, bundleBin, bundleId])
@@ -59,7 +58,6 @@ def getStatus(bundleId):
     '''
     Return the analyse status.
     '''
-    global g_sharedBundleDatas
     if bundleId not in g_sharedBundleDatas:
         logging.error("the id"  + bundleId + "doesn't exist")
         abort(make_response("the id"  + bundleId + "doesn't exist", 404))
@@ -71,7 +69,6 @@ def quit():
     '''
     Close processes and quit pool at exit.
     '''
-    global g_pool
     g_pool.close()
     g_pool.terminate()
     g_pool.join()

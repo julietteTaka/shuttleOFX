@@ -3,10 +3,8 @@ import os
 import uuid
 import json
 import atexit
-import pymongo
 import logging
 import tempfile
-import ConfigParser
 import multiprocessing
 
 from flask import request, jsonify, send_file, abort, Response, make_response
@@ -62,7 +60,6 @@ def newRender():
     '''
     Create a new render and return graph informations.
     '''
-    global g_renders, g_pool
 
     datas = request.json
     renderID = str(uuid.uuid1())

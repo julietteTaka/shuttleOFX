@@ -5,7 +5,7 @@ import requests
 
 from time import sleep
 from bson import json_util, ObjectId
-from flask import Flask, jsonify, Response, request, abort, make_response
+from flask import jsonify, Response, request, abort, make_response
 
 
 from Bundle import Bundle
@@ -66,10 +66,10 @@ def uploadArchive(bundleId):
         logging.error("No matching bundle has been found")
         abort(make_response("No matching bundle has been found", 400))
 
-    mappingExtension = {
-        "application/zip": ".zip",
-        "application/gzip": ".tar.gz"
-    }
+    # mappingExtension = {
+    #    "application/zip": ".zip",
+    #    "application/gzip": ".tar.gz"
+    # }
 
     # if request.headers['content-type'] not in mappingExtension:
     #     catalog.g_app.logger.error("Format is not supported : " + str(request.headers['content-type']))
@@ -78,7 +78,7 @@ def uploadArchive(bundleId):
     #extension = mappingExtension[ request.headers['content-type'] ]
     extension = ".tar.gz"
 
-    archivePath = os.path.join(shuttleofx_catalog.bundleRootPath, str(bundleId) + extension)
+    archivePath = os.path.join(catalog.bundleRootPath, str(bundleId) + extension)
 
     try:
         file = request.files['file']
@@ -105,7 +105,7 @@ def analyseBundle(bundleId):
         abort(make_response("The bundle as no directory path", 400))
 
     headers = {'content-type': 'application/gzip'}
-    analyseReturn = requests.post(shuttleofx_catalog.uriAnalyser+"/bundle/"+str(bundleId), data=open(bundle["archivePath"], 'r').read(), headers=headers)
+    analyseReturn = requests.post(catalog.uriAnalyser+"/bundle/"+str(bundleId), data=open(bundle["archivePath"], 'r').read(), headers=headers)
 
     # logging.error("analyzeBundle analyseReturn: " + str(analyseReturn))
 
@@ -115,7 +115,7 @@ def analyseBundle(bundleId):
     bundleData = analyseReturn.json()['datas']
 
     while 1:
-        analyseReturn = requests.get(shuttleofx_catalog.uriAnalyser+"/bundle/"+str(bundleId)).json()
+        analyseReturn = requests.get(catalog.uriAnalyser+"/bundle/"+str(bundleId)).json()
 
         if analyseReturn['status'] == "done":
             bundleData = analyseReturn['datas']
@@ -220,7 +220,7 @@ def getAllPlugins():
 
 def textSearchPlugin(keyWord, count):
     #To Do Tags
-    text_results = db.command('text', catalog.pluginTable, search = keyWord, limit=count)
+    text_results = catalog.dbcommand('text', catalog.pluginTable, search = keyWord, limit=count)
     plugins = [ result['obj'] for result in text_results['results'] ]
     return mongodoc_jsonify({"plugins": plugins})
 
@@ -260,8 +260,8 @@ def addResource():
     size = request.content_length
 
     if not mimetype:
-        app.logger.error("Invalide resource.")
-        abort(404)
+        logging.error("Invalide resource.")
+        abort(make_response("Invalide resource.", 400))
 
     uid = catalog.resourceTable.insert({ 
         "mimetype" : mimetype,
@@ -271,7 +271,7 @@ def addResource():
     img = request.data
 
 
-    imgFile = os.path.join(resourcesPath, str(uid))
+    imgFile = os.path.join(catalog.resourcesPath, str(uid))
     file = request.files['file']
     file.save(imgFile)
 
@@ -311,7 +311,7 @@ def getResourceData(resourceId):
     if not resourceData:
         abort(404)
 
-    filePath = os.path.join (resourcesPath, resourceId)
+    filePath = os.path.join (catalog.resourcesPath, resourceId)
 
     if not os.path.isfile(filePath):
         abort(404)

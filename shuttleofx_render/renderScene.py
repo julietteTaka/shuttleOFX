@@ -1,5 +1,4 @@
 
-import shuttleofx_analyser
 from shuttleofx_render import globalOfxPluginPath, pluginsStorage, catalogRootUri
 from pyTuttle import tuttle
 
@@ -81,7 +80,7 @@ def computeGraph(renderSharedInfo, newRender):
             else:
                 logging.error("Error while searching the plugin "+node['plugin'])
 
-        bundlePaths = [os.path.join(shuttleofx_analyser.tmpRenderingPath, str(bundleId)) for bundleId in bundleIds]
+        bundlePaths = [os.path.join(pluginsStorage, str(bundleId)) for bundleId in bundleIds]
         configLocalPluginPath(bundlePaths)
 
         renderSharedInfo['status'] = 1
