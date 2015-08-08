@@ -220,9 +220,8 @@ def getAllPlugins():
 
 def textSearchPlugin(keyWord, count):
     #To Do Tags
-    text_results = catalog.dbcommand('text', catalog.pluginTable, search = keyWord, limit=count)
-    plugins = [ result['obj'] for result in text_results['results'] ]
-    return mongodoc_jsonify({"plugins": plugins})
+    plugin = catalog.pluginTable.find({"rawIdentifier":keyWord})
+    return mongodoc_jsonify({"plugins":[ result for result in plugin ]})
 
 
 @catalog.g_app.route("/bundle/<int:bundleId>/plugin/<int:pluginId>")
