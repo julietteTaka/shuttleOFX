@@ -22,13 +22,22 @@ class Plugin(object):
     def getDictOfProperty(self, prop):
 
         pythonType = propTypeToPythonType[prop.getType()]
+        
+        # Convert SWIG binding list in python
+        valuesCPP = prop.getValues()
+        values = []
+        if prop.getType() != tuttle.ePropTypePointer and prop.getType() != tuttle.ePropTypeNone:
+            values = [valuesCPP[i] for i in range(valuesCPP.size())]
+
+        value = values[0] if values else None
 
         return {
             "name": prop.getName(),
             "readOnly": prop.getPluginReadOnly(),
             "type": prop.getType(),
             "modifiedBy": prop.getModifiedBy(),
-            "value": [pythonType(v) for v in prop.getStringValue().split(', ')]
+            "value": value,  # TODO: rename propValue
+            "propValues": values,
         }
 
     def getDictOfProperties(self, props):
