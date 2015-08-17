@@ -42,12 +42,17 @@ def getPlugins():
 
     return render_template('plugins.html', dico=resp.json(), user=user)
 
-@client.g_app.route("/plugin/search")
+
+@client.g_app.route("/plugin/search/")
 def searchPlugins():
-    req = requests.get(client.catalogRootUri+"/plugin", params=request.args)
-    if req.status_code != 200:
-        abort(req.status_code)
-    return jsonify(**req.json())
+    user = None
+    if 'google_token' in session:
+        user = client.google.get('userinfo').data
+
+    resp = requests.get(client.catalogRootUri+"/plugin", params=request.args)
+
+    return render_template('plugins.html', dico=resp.json(), user=user)
+
 
 @client.g_app.route("/plugin/count")
 def countPlugins():

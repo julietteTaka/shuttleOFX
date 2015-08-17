@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import requests
+import re
 
 from time import sleep
 from bson import json_util, ObjectId
@@ -142,8 +143,8 @@ def analyseBundle(bundleId):
 
         bundle['plugins'].append(pluginId)
         catalog.pluginTable.insert(currentPlugin.__dict__)
-
     return mongodoc_jsonify(bundle)
+
 
 @catalog.g_app.route("/bundle/<int:bundleId>", methods=["DELETE"])
 def deleteBundle(bundleId):
@@ -189,7 +190,7 @@ def getPlugins(bundleId):
 @catalog.g_app.route("/plugin")
 def getAllPlugins():
     #Text search
-    keyWord = request.args.get('keyWord', None)
+    keyWord = request.args.get('search', None)
     
     #Alphabetical sorting
     alphaSort = request.args.get('alphaSort', None)
@@ -203,22 +204,36 @@ def getAllPlugins():
             if alphaSort == 'desc' :
                 alphaSort = -1
 
-    count = int(request.args.get('count', 20))
-    skip = int(request.args.get('skip', 0))
+    count = request.args.get('count', None)
+    if count:
+        count = int(count)
+    skip = request.args.get('skip', None)
+    if skip:
+        skip = int(skip)
 
+    if keyWord:
+        logging.info("search: " + keyWord)
+        searchRegex = re.compile(".*{search}.*".format(search=keyWord.replace("*", ".*")))
+        searchKeys = ["label", "rawIdentifier", "shortDescription", "description", "properties.OfxPropPluginDescription.value"]
+        cursor = catalog.pluginTable.find(
+            {"$or":  # Search on multiple keys
+                [{searchKey: searchRegex} for searchKey in searchKeys]
+            })
+    else:
+        cursor = catalog.pluginTable.find()
 
-    if keyWord != None :
-        return textSearchPlugin(keyWord, count)
+    sortedCursor = cursor.sort("label", alphaSort)
+    if count and skip:
+        # logging.info("pagination -- count: " + str(count) + ", skip: " + str(skip))
+        filteredCursor = sortedCursor.limit(count).skip(skip)
+    else:
+        filteredCursor = sortedCursor
 
-    else :
-        plugin = catalog.pluginTable.find().sort('name' , alphaSort).limit(count).skip(skip)
-        return mongodoc_jsonify({"plugins":[ result for result in plugin ]})
+    plugins = [ result for result in filteredCursor ]
 
+    # logging.warning("getAllPlugins: " + str([ p["rawIdentifier"] for p in plugins ]))
 
-def textSearchPlugin(keyWord, count):
-    #To Do Tags
-    plugin = catalog.pluginTable.find({"rawIdentifier":keyWord})
-    return mongodoc_jsonify({"plugins":[ result for result in plugin ]})
+    return mongodoc_jsonify({"plugins": plugins})
 
 
 @catalog.g_app.route("/bundle/<int:bundleId>/plugin/<int:pluginId>")
