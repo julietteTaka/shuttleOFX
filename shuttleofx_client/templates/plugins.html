@@ -98,7 +98,12 @@
                         <a href="/plugin/{{plugin.pluginId}}">
                         <div class="panel panel-primary">
                                 <div class="plugins-titles">
-                                    <img src="{{ url_for('static', filename='images/logoPad.png') }}" alt="" class="img-responsive plugin-thumbnail">
+                                    {% if plugin.sampleImagesPath|length != 0 %}
+                                        {% set image = plugin.sampleImagesPath[0] %}
+                                    <div class="plugin-thumbnail {{image}}"></div>
+                                    {% else %}
+                                    <img src="{{ url_for('static', filename='images/logoPad.png') }}" alt="" class="img-responsive plugin-thumbnail" />
+                                    {% endif %}
                                     <h3 class="panel-title">
                                         {{plugin.label}}
                                     </h3>
