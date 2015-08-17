@@ -6,18 +6,12 @@ $('select#pageSize').change(function(){
         grid.html("");
         $.each(plugins.plugins, function(key, val) {
             var id = val.pluginId;
-            var name = val.name;
-            var version = val.version.major+"."+val.version.minor;
+            var name = val.label;
             var description = "No plugin description";
             var prop = val.properties;
-            $.each(prop, function() {
-                var nameProp = $(this)[0].name;
-                if (nameProp == "OfxPropPluginDescription") {
-                    var descProp = $(this)[0].value[0];
-                    description = descProp;
-                };
-            });
-            grid.append('<li class="col-md-3"><div class="panel panel-primary"> <a href="/plugin/'+id+'"><div class="plugins-titles"><img src="static/images/logoPad.png" alt="" class="img-responsive plugin-thumbnail"><h3 class="panel-title">'+name+' '+version+'</h3></div></a><div class="plugins-infos"><p>'+description+'</p></div></div></li>');
+            if("OfxPropPluginDescription" in val.properties)
+                description = val.properties.OfxPropPluginDescription.value
+            grid.append('<li class="col-md-3"><div class="panel panel-primary"> <a href="/plugin/'+id+'"><div class="plugins-titles"><img src="static/images/logoPad.png" alt="" class="img-responsive plugin-thumbnail"><h3 class="panel-title">'+name+'</h3></div></a><div class="plugins-infos"><p>'+description+'</p></div></div></li>');
         });
     });
 });
@@ -37,18 +31,12 @@ $('#next a').click(function(){
         grid.html("");
         $.each(plugins.plugins, function(key, val) {
             var id = val.pluginId;
-            var name = val.name;
-            var version = val.version.major+"."+val.version.minor;
+            var name = val.label;
             var description = "No plugin description";
             var prop = val.properties;
-            $.each(prop, function() {
-                var nameProp = $(this)[0].name;
-                if (nameProp == "OfxPropPluginDescription") {
-                    var descProp = $(this)[0].value[0];
-                    description = descProp;
-                };
-            });
-            grid.append('<li class="col-md-3"><div class="panel panel-primary"> <a href="/plugin/'+id+'"><div class="plugins-titles"><img src="static/images/logoPad.png" alt="" class="img-responsive plugin-thumbnail"><h3 class="panel-title">'+name+' '+version+'</h3></div></a><div class="plugins-infos"><p>'+description+'</p></div></div></li>');
+                if("OfxPropPluginDescription" in val.properties)
+                        description = val.properties.OfxPropPluginDescription.value
+            grid.append('<li class="col-md-3"><div class="panel panel-primary"> <a href="/plugin/'+id+'"><div class="plugins-titles"><img src="static/images/logoPad.png" alt="" class="img-responsive plugin-thumbnail"><h3 class="panel-title">'+name+'</h3></div></a><div class="plugins-infos"><p>'+description+'</p></div></div></li>');
         });
     });
 });
@@ -67,18 +55,12 @@ $('#previous a').click(function(){
         grid.html("");
         $.each(plugins.plugins, function(key, val) {
             var id = val.pluginId;
-            var name = val.name;
-            var version = val.version.major+"."+val.version.minor;
+            var name = val.label;
             var description = "No plugin description";
             var prop = val.properties;
-            $.each(prop, function() {
-                var nameProp = $(this)[0].name;
-                if (nameProp == "OfxPropPluginDescription") {
-                    var descProp = $(this)[0].value[0];
-                    description = descProp;
-                };
-            });
-            grid.append('<li class="col-md-3"><div class="panel panel-primary"> <a href="/plugin/'+id+'"><div class="plugins-titles"><img src="static/images/logoPad.png" alt="" class="img-responsive plugin-thumbnail"><h3 class="panel-title">'+name+' '+version+'</h3></div></a><div class="plugins-infos"><p>'+description+'</p></div></div></li>');
+            if("OfxPropPluginDescription" in val.properties)
+                description = val.properties.OfxPropPluginDescription.value
+            grid.append('<li class="col-md-3"><div class="panel panel-primary"> <a href="/plugin/'+id+'"><div class="plugins-titles"><img src="static/images/logoPad.png" alt="" class="img-responsive plugin-thumbnail"><h3 class="panel-title">'+name+'</h3></div></a><div class="plugins-infos"><p>'+description+'</p></div></div></li>');
         });
     });
 });

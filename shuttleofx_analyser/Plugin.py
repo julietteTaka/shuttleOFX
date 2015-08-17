@@ -10,16 +10,16 @@ propTypeToPythonType = {
 }
 
 class Plugin(object):
-    def __init__(self, pluginToAnalyse):
+    def __init__(self, tuttlePlugin):
         self.rawIdentifier = None
-        self.name = None
+        self.label = None
         self.version = {}
         self.clips = []
         self.parameters = []
-        self.properties = []
-        self.initFromPlugin(pluginToAnalyse)
+        self.properties = {}
+        self.initFromPlugin(tuttlePlugin)
 
-    def getDictOfProperty(self, prop):
+    def convertTuttlePropertyToDict(self, prop):
 
         pythonType = propTypeToPythonType[prop.getType()]
         
@@ -32,7 +32,6 @@ class Plugin(object):
         value = values[0] if values else None
 
         return {
-            "name": prop.getName(),
             "readOnly": prop.getPluginReadOnly(),
             "type": prop.getType(),
             "modifiedBy": prop.getModifiedBy(),
@@ -40,39 +39,38 @@ class Plugin(object):
             "propValues": values,
         }
 
-    def getDictOfProperties(self, props):
-        properties = []
-        for p in props:
-            properties.append(self.getDictOfProperty(p))
+    def convertTuttlePropertiesToDict(self, tuttleProperties):
+        properties = {}
+        for tuttleProperty in tuttleProperties:
+            prop = self.convertTuttlePropertyToDict(tuttleProperty)
+            properties[tuttleProperty.getName()] = prop
         return properties
 
-    def initFromPlugin(self, pluginToAnalyse):
-        logging.info('Analysing plugin for ' + str(pluginToAnalyse.getRawIdentifier()))
-
-        self.uri = "/plugins/" + str(pluginToAnalyse.getIdentifier())
-        self.rawIdentifier = str(pluginToAnalyse.getIdentifier())
+    def initFromPlugin(self, tuttlePlugin):
+        logging.info('Analysing plugin for ' + str(tuttlePlugin.getRawIdentifier()))
+        self.rawIdentifier = str(tuttlePlugin.getIdentifier())
         self.version = {
-            'major': pluginToAnalyse.getVersionMajor(),
-            'minor': pluginToAnalyse.getVersionMinor()
+            'major': tuttlePlugin.getVersionMajor(),
+            'minor': tuttlePlugin.getVersionMinor()
         }
         
         try:
-            node = tuttle.createNode(pluginToAnalyse.getIdentifier())
+            node = tuttle.createNode(tuttlePlugin.getIdentifier())
         except Exception as e:
             logging.error("Error in node creation: " + str(e))
             return (self.__dict__)
 
         # plugin properties
-        self.properties = self.getDictOfProperties(node.getProperties())
+        self.properties = self.convertTuttlePropertiesToDict(node.getProperties())
 
         # list all properties on parameters of the node
         params = []
         for parameters in node.getParamSet().getParams():
-            params.append(self.getDictOfProperties(parameters.getProperties()))
+            params.append(self.convertTuttlePropertiesToDict(parameters.getProperties()))
         self.parameters = params
 
         # list all properties on Clips
         clips = []
         for clip in node.getClipImageSet().getClips():
-            clips.append(self.getDictOfProperties(clip.getProperties()))
+            clips.append(self.convertTuttlePropertiesToDict(clip.getProperties()))
         self.clips = clips

@@ -16,9 +16,8 @@ class Plugin(object):
         self.defautImagePath = None
         self.sampleImagesPath = []
         self.parameters = []
-        self.properties = []
+        self.properties = {}
         self.clip = []
-        self.uri= None
         self.rawIdentifier = None
 
     def setDescription(self, description):

@@ -100,16 +100,14 @@
                                 <div class="plugins-titles">
                                     <img src="{{ url_for('static', filename='images/logoPad.png') }}" alt="" class="img-responsive plugin-thumbnail">
                                     <h3 class="panel-title">
-                                        {{plugin.shortName}} {{plugin.version.major}}.{{plugin.version.minor}}
+                                        {{plugin.label}}
                                     </h3>
                                 </div>
                             <div class="plugins-infos">
                                 <p>
-                                    {% for p in plugin.properties %}
-                                        {% if p.name == "OfxPropPluginDescription" %}
-                                            {{p.value[0]}}
-                                        {% endif %}
-                                    {% endfor %}
+                                    {% if "OfxPropPluginDescription" in plugin.properties %}
+                                        {{plugin.properties.OfxPropPluginDescription.value}}
+                                    {% endif %}
                                 </p>
                             </div>
                         </div>
@@ -123,6 +121,3 @@
 <script src="{{ url_for('static', filename='scripts/search.js') }}"></script>
 
 {% endblock %}
-
-
-

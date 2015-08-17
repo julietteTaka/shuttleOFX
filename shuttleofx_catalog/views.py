@@ -105,14 +105,14 @@ def analyseBundle(bundleId):
         abort(make_response("The bundle as no directory path", 400))
 
     headers = {'content-type': 'application/gzip'}
-    analyseReturn = requests.post(catalog.uriAnalyser+"/bundle/"+str(bundleId), data=open(bundle["archivePath"], 'r').read(), headers=headers)
+    analyseReturn = requests.post(
+        catalog.uriAnalyser+"/bundle/"+str(bundleId),
+        data=open(bundle["archivePath"], 'r').read(),
+        headers=headers).json()
 
     # logging.error("analyzeBundle analyseReturn: " + str(analyseReturn))
 
     pluginIdOffset = catalog.pluginTable.count()
-
-    ofxPropList = {"OfxPropShortLabel", "OfxPropLongLabel"}
-    bundleData = analyseReturn.json()['datas']
 
     while 1:
         analyseReturn = requests.get(catalog.uriAnalyser+"/bundle/"+str(bundleId)).json()
@@ -124,12 +124,12 @@ def analyseBundle(bundleId):
 
     for index, plugin in enumerate(bundleData['plugins']) :
         pluginId = pluginIdOffset + index
+        
         currentPlugin = Plugin(pluginId, bundleId)
         currentPlugin.clips = plugin['clips']
         currentPlugin.parameters = plugin['parameters']
         currentPlugin.properties = plugin['properties']
         currentPlugin.rawIdentifier = plugin['rawIdentifier']
-        currentPlugin.uri = plugin['uri']
         currentPlugin.version = plugin['version']
 
         # Gets Label/ShortLabel and ensures a non-empty value.
