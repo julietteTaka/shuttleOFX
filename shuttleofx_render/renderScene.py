@@ -2,10 +2,15 @@
 from shuttleofx_render import globalOfxPluginPath, pluginsStorage, catalogRootUri
 from pyTuttle import tuttle
 
+import tempfile
+import json
 import requests
 import logging
 import time
 import os
+import sys
+import subprocess
+import argparse
 
 class ProgressHandle(tuttle.IProgressHandle):
     def __init__(self, renderSharedInfo):
@@ -36,13 +41,18 @@ def configLocalPluginPath(ofxPluginPaths):
     tuttle.core().getPluginCache().addDirectoryToPath(globalOfxPluginPath)
 
     for ofxPluginPath in ofxPluginPaths:
-        tuttle.core().getPluginCache().addDirectoryToPath(ofxPluginPath)
+        logging.info("ofxPluginPath:" + str(ofxPluginPath))
+        tuttle.core().getPluginCache().addDirectoryToPath(str(ofxPluginPath))
     pluginCache = tuttle.core().getPluginCache()
+    tuttle.core().getFormatter().setLogLevel_int(5)
     tuttle.core().preload(False)
+
     logging.debug('Number of Plugins:' + str(len(pluginCache.getPlugins())))
 
 def loadGraph(scene):
+    # logging.warning("loadGraph : " + str(scene))
     tuttleGraph = tuttle.Graph()
+
 
     nodes = []
     for node in scene['nodes']:
@@ -66,25 +76,13 @@ def loadGraph(scene):
     return tuttleGraph
 
 
-def computeGraph(renderSharedInfo, newRender):
+def computeGraph(renderSharedInfo, newRender, bundlePaths):
     try:
         renderSharedInfo['startDate'] = time.time()
-        scene = newRender['scene']
-
-        bundleIds = []
-        for node in scene['nodes']:
-            if 'plugin' in node:
-
-                resp = requests.get(catalogRootUri+"/bundle/" + node['plugin']+ '/bundle').json()
-                bundleIds.append(resp['bundleId'])
-            else:
-                logging.error("Error while searching the plugin "+node['plugin'])
-
-        bundlePaths = [os.path.join(pluginsStorage, str(bundleId)) for bundleId in bundleIds]
         configLocalPluginPath(bundlePaths)
 
         renderSharedInfo['status'] = 1
-        tuttleGraph = loadGraph(scene)
+        tuttleGraph = loadGraph(newRender['scene'])
 
         renderSharedInfo['status'] = 2
         tuttleComputeOptions = tuttle.ComputeOptions()
@@ -111,6 +109,77 @@ def computeGraph(renderSharedInfo, newRender):
 
         renderSharedInfo['status'] = 3
 
-    except:
+    except Exception as e:
+        logging.error("_"*80)
+        logging.error(" "*20 + "RENDER ERROR")
+        logging.error(str(e))
+        # logging.error("bundlePaths:", str(bundlePaths))
+        # logging.error("tuttleGraph:", str(tuttleGraph))
+        logging.error("_"*80)
         renderSharedInfo['status'] = -1
         raise
+
+
+def launchComputeGraph(renderSharedInfo, newRender):
+    scene = newRender['scene']
+    bundleIds = []
+    for node in scene['nodes']:
+        if 'plugin' in node:
+            resp = requests.get(catalogRootUri+"/bundle/" + node['plugin']+ '/bundle').json()
+            bundleIds.append(resp['bundleId'])
+        else:
+            logging.error("Error while searching the plugin "+node['plugin'])
+
+    bundlePaths = [os.path.join(pluginsStorage, str(bundleId)) for bundleId in bundleIds]
+
+    if False:
+        # Direct call to the render function
+        # Not used, just here for debug purpose.
+        computeGraph(renderSharedInfo, newRender, bundlePaths)
+    else:
+        # Use a subprocess to render.
+        # This allows to modify the LD_LIBRARY_PATH.
+        _, tempFilepath = tempfile.mkstemp()
+        renderArgs = {
+            "renderSharedInfo": dict(renderSharedInfo),
+            "newRender": dict(newRender),
+            "bundlePaths": bundlePaths
+            }
+        jsonData = json.dumps(renderArgs, sort_keys=False, indent=4)
+        open(tempFilepath, 'w').write(jsonData)
+
+        logging.info('tempFilepath: %s', tempFilepath)
+
+        env = dict(os.environ)
+        env['LD_LIBRARY_PATH'] = ':'.join([env.get('LD_LIBRARY_PATH', '')] + ['{bundlePath}/lib:{bundlePath}/lib64'.format(bundlePath=bundlePath) for bundlePath in bundlePaths])
+        logging.info('LD_LIBRARY_PATH: %s', env['LD_LIBRARY_PATH'])
+
+        args = [sys.executable, os.path.abspath(__file__), tempFilepath]
+        p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
+        stdoutdata, stderrdata = p.communicate()
+        if p.returncode:
+            renderSharedInfo['status'] = -1
+            raise RuntimeError(
+                '''Failed to render.\n
+                Return code: %s\n
+                Log:\n%s\n%s\n'''
+                % (p.returncode, stdoutdata, stderrdata))
+
+        logging.info(stdoutdata)
+        logging.info(stderrdata)
+
+        os.remove(tempFilepath)
+
+    renderSharedInfo['status'] = 3
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Launch the render.')
+    parser.add_argument('renderArgs', type=str,
+                       help='The file which contains the render arguments.')
+    args = parser.parse_args()
+
+    renderArgs = json.load(open(args.renderArgs, 'r'))
+    computeGraph(**renderArgs)
+
+    sys.exit(0)

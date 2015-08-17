@@ -63,7 +63,7 @@ def newRender():
 
     datas = request.json
     renderID = str(uuid.uuid1())
-
+    logging.info("RENDERID: " + renderID)
     outputResources = remapPath(datas)
 
     newRender = {}
@@ -80,9 +80,9 @@ def newRender():
     g_rendersSharedInfo[renderID] = renderSharedInfo
 
     if g_enablePool:
-        g_pool.apply(renderScene.computeGraph, args=[renderSharedInfo, newRender])
+        g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
     else:
-        renderScene.computeGraph(renderSharedInfo, newRender)
+        renderScene.launchComputeGraph(renderSharedInfo, newRender)
     
     return jsonify(render=newRender)
 
