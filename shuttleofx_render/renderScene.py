@@ -64,7 +64,11 @@ def loadGraph(scene):
             if isinstance(parameter["value"], unicode):
                 parameter["value"] = str(parameter["value"])
 
-            param.setValue(parameter["value"])
+            if isinstance(parameter["value"], list):
+                for i, v in enumerate(parameter["value"]):
+                    param.setValueAtIndex(i, v, tuttle.eChangeUserEdited)
+            else:
+                param.setValue(parameter["value"], tuttle.eChangeUserEdited)
         nodes.append(tuttleNode)
 
     for connection in scene['connections']:
