@@ -1,11 +1,11 @@
 
 
 class Plugin(object):
-    def __init__(self, pluginId, bundleId, pluginName=""):
+    def __init__(self, pluginId, bundleId):
         self.pluginId = pluginId
         self.bundleId = bundleId
-        self.name = pluginName
-        self.shortName = None
+        self.label = ""
+        self.shortLabel = ""
         self.description = ""
         self.shortDescription = ""
         self.version = [0, 0]
@@ -40,6 +40,17 @@ class Plugin(object):
         if isinstance(paths, list):
             for path in paths:
                 self.sampleImagesPath.append(path)
+
+    def getPropValueFromKeys(self, keys, default=None):
+        """
+        Return a non empty value with multiple fallback keys.
+        """
+        for key in keys:
+            if key in self.properties:
+                value = self.properties[key]['value']
+                if value:
+                    return value
+        return default
 
     def printBundle(self):
         print "Plugin :"

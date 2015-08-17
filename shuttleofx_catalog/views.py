@@ -132,16 +132,13 @@ def analyseBundle(bundleId):
         currentPlugin.uri = plugin['uri']
         currentPlugin.version = plugin['version']
 
-        for prop in plugin['properties']:
-            name = prop['name']
-            if name in ofxPropList :
-                value = prop['value']
-
-                if name == "OfxPropShortLabel":
-                    currentPlugin.shortName = value[0]
-
-                if name == "OfxPropLongLabel":
-                    currentPlugin.name = value[0]
+        # Gets Label/ShortLabel and ensures a non-empty value.
+        currentPlugin.label = currentPlugin.getPropValueFromKeys(
+            ('OfxPropLabel', 'OfxPropShortLabel', 'OfxPropLongLabel'),
+            currentPlugin.rawIdentifier)
+        currentPlugin.shortLabel = currentPlugin.getPropValueFromKeys(
+            ('OfxPropShortLabel', 'OfxPropLongLabel'),
+            currentPlugin.label)
 
         bundle['plugins'].append(pluginId)
         catalog.pluginTable.insert(currentPlugin.__dict__)
