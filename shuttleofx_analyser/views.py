@@ -59,8 +59,8 @@ def getStatus(bundleId):
     Return the analyse status.
     '''
     if bundleId not in g_sharedBundleDatas:
-        logging.error("the id"  + bundleId + "doesn't exist")
-        abort(make_response("the id"  + bundleId + "doesn't exist", 404))
+        logging.error("The id " + bundleId + " doesn't exist")
+        abort(make_response("The id " + bundleId + " doesn't exist", 404))
 
     return jsonify(**g_sharedBundleDatas[bundleId])
 

@@ -326,7 +326,6 @@ def addImageToPlugin(pluginId):
 
     imageId = request.get_json()["ressourceId"]
 
-
     plugin = catalog.pluginTable.find_one({"pluginId": pluginId})
     if plugin == None:
         abort(404)

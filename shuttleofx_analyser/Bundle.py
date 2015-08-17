@@ -140,7 +140,7 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser = argparse.ArgumentParser(description='Launch the analyse of a bundle.')
     parser.add_argument('bundlePath', type=str,
                        help='Path to the OFX bundle directory.')
     parser.add_argument('outputJsonFile', type=str,
