@@ -32,15 +32,15 @@
                         {% set countContext = 0 %}
                         {% if "OfxImageEffectPropSupportedContexts" in plugin.properties %}
                             {% set supportedContexts = plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
-                        {% endif %}
-                        {% if "OfxImageEffectContextFilter" in supportedContexts or
-                           "OfxImageEffectContextGenerator" in supportedContexts
-                           %}
-                            <a href="/editor/{{plugin.pluginId}}" class="btn btn-primary btn-render-navbar">
-                                <i class="fa fa-rocket" style="padding-right: 7px"></i>
-                                Live demo of 
-                                <span class="calltolive">{{ plugin.shortLabel }}</span>
-                            </a>
+                            {% if "OfxImageEffectContextFilter" in supportedContexts or
+                               "OfxImageEffectContextGenerator" in supportedContexts
+                               %}
+                                <a href="/editor/{{plugin.pluginId}}" class="btn btn-primary btn-render-navbar">
+                                    <i class="fa fa-rocket" style="padding-right: 7px"></i>
+                                    Live demo of 
+                                    <span class="calltolive">{{ plugin.shortLabel }}</span>
+                                </a>
+                            {% endif %}
                         {% endif %}
                     </div>
                 </div>
@@ -222,6 +222,53 @@
                                 </td>
                             </tr>
                         {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                <h2>Technical information</h2>
+                </div>
+                    <table class="table table-striped table-hover" id="tab-parameters">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Value</th>
+                            <th>Type</th>
+                            <th>Read only</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for propName, prop in plugin.properties.iteritems() %}
+                            <tr tabindex="0" class="param-more" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" data-html="true" 
+                            title="Details">
+                                <td>
+                                    {{ propName }}
+                                </td>
+                                <td>
+                                    {{ prop.propValues | join(', ') }}
+                                </td>
+                                <td>
+                                    {% if prop.type == -1 %}
+                                    None
+                                    {% elif prop.type == 0 %}
+                                    Int
+                                    {% elif prop.type == 1 %}
+                                    Double
+                                    {% elif prop.type == 2 %}
+                                    String
+                                    {% elif prop.type == 3 %}
+                                    Pointer
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ prop.readOnly }}
+                                </td>
+                            </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
             </div>
