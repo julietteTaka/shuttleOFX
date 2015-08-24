@@ -58,7 +58,7 @@ def index():
 @render.g_app.route('/render', methods=['POST'])
 def newRender():
     '''
-    Create a new render and return graph informations.
+    Create a new render and return graph information.
     '''
 
     datas = request.json
