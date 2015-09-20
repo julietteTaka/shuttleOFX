@@ -12,6 +12,8 @@ from flask import (
     url_for,
     session
 )
+import logging
+
 
 import shuttleofx_client as client
 
@@ -126,7 +128,7 @@ def getResources() :
 def upload():
     if 'google_token' in session:
         user = client.google.get('userinfo')
-        return render_template("upload.html", user=user.data, uploaded= None)
+        return render_template("upload.html", user=user.data, uploaded=None)
     return redirect(url_for('login'))
 
 @client.g_app.route('/bundle')
@@ -167,21 +169,22 @@ def analyseBundle(bundleId):
 
 @client.g_app.route('/login')
 def login():
-    return client.google.authorize(callback=url_for('authorized', _external=True))
+    logging.warning('login start')
+    res = client.google.authorize(callback=url_for('authorized', _external=True))
+    logging.warning('login end')
+    return res
 
 
 @client.g_app.route('/logout')
 def logout():
     session.pop('google_token', None)
-    redirectTarget = None
-    for target in request.values.get('next'), request.referrer:
-        if target != None:
-            redirectTarget = target
+    redirectTarget = request.values.get('next') or request.referrer
     return redirect( redirectTarget )
 
 
 @client.g_app.route('/login/authorized')
 def authorized():
+    logging.warning('login/authorized start')
     resp = client.google.authorized_response()
     if resp is None:
         return 'Access denied: reason=%s error=%s' % (
@@ -192,11 +195,17 @@ def authorized():
     session['google_token'] = (resp['access_token'], '')
     # user = client.google.get('userinfo')
 
-    redirectTarget = None
-    for target in request.values.get('next'), request.referrer:
-        if target != None:
-            redirectTarget = target
-    return redirect( redirectTarget )
+    aa = {(k, v) for (k, v) in request.args.iteritems()}
+    logging.warning('login/authorized request.args:', str(aa))
+
+    redirectTarget = request.values.get('next') or request.referrer or url_for('getPlugins')
+    if redirectTarget == None:
+        logging.warning('login/authorized redirectTarget is None')
+
+    logging.warning('login/authorized before redirect')
+    res = redirect( redirectTarget )
+    logging.warning('login/authorized end')
+    return res
 
 
 @client.g_app.route("/plugin/<int:pluginId>/resource", methods=['POST'])
