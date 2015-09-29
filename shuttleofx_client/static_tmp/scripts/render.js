@@ -14,8 +14,17 @@ function formToJson()
                 break;
             case 'OfxParamTypeInteger2D':
                 var tab = [];
-                tab.push(4);
-                tab.push(4);
+                tab.push(parseInt(this.value));
+                tab.push(parseInt(this.value)); // TODO: retrieve the right value
+                jsonForm["id"] = $(this).attr("id");
+                jsonForm["value"] = tab;
+                renderParameters.push(jsonForm);
+                break;
+            case 'OfxParamTypeInteger3D':
+                var tab = [];
+                tab.push(parseInt(this.value));
+                tab.push(parseInt(this.value)); // TODO: retrieve the right value
+                tab.push(parseInt(this.value));
                 jsonForm["id"] = $(this).attr("id");
                 jsonForm["value"] = tab;
                 renderParameters.push(jsonForm);
@@ -33,6 +42,23 @@ function formToJson()
             case 'OfxParamTypeDouble':
                 jsonForm["id"] = $(this).attr("id");
                 jsonForm["value"] = parseFloat(this.value);
+                renderParameters.push(jsonForm);
+                break;
+            case 'OfxParamTypeDouble2D':
+                var tab = [];
+                tab.push(parseFloat(this.value));
+                tab.push(parseFloat(this.value)); // TODO: retrieve the right value
+                jsonForm["id"] = $(this).attr("id");
+                jsonForm["value"] = tab;
+                renderParameters.push(jsonForm);
+                break;
+            case 'OfxParamTypeDouble3D':
+                var tab = [];
+                tab.push(parseFloat(this.value));
+                tab.push(parseFloat(this.value)); // TODO: retrieve the right value
+                tab.push(parseFloat(this.value));
+                jsonForm["id"] = $(this).attr("id");
+                jsonForm["value"] = tab;
                 renderParameters.push(jsonForm);
                 break;
             case 'OfxParamTypeString':
@@ -76,8 +102,6 @@ $("#render.OfxImageEffectContextGenerator").click(function(){
     var pluginId = $(this).attr("pluginId");
     console.log('Generator: ' + pluginId );
     var renderParameters = formToJson();
-
-    // $('#resultForm').text(JSON.stringify(renderParameters));
 
     $.ajax({
         type: "POST",

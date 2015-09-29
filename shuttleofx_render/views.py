@@ -3,16 +3,14 @@ import os
 import uuid
 import json
 import atexit
-import pymongo
 import logging
 import tempfile
-import ConfigParser
 import multiprocessing
 
-from flask import request, jsonify, send_file, abort, Response
+from flask import request, jsonify, send_file, abort, Response, make_response
 from bson import json_util, ObjectId
 
-from shuttleofx_render import g_app, resourceTable, renderDirectory, resourcesPath
+import shuttleofx_render as render
 
 import renderScene
 
@@ -42,31 +40,30 @@ def remapPath(datas):
             if isinstance(parameter['value'], (str, unicode)):
 
                 if '{RESOURCES_DIR}' in parameter['value']:
-                    parameter['value'] = parameter['value'].replace('{RESOURCES_DIR}', resourcesPath)
+                    parameter['value'] = parameter['value'].replace('{RESOURCES_DIR}', render.resourcesPath)
 
                 if '{UNIQUE_OUTPUT_FILE}' in parameter['value']:
                     prefix, suffix = parameter['value'].split('{UNIQUE_OUTPUT_FILE}')
-                    _, tmpFilepath = tempfile.mkstemp(prefix=prefix, suffix=suffix, dir=renderDirectory)
+                    _, tmpFilepath = tempfile.mkstemp(prefix=prefix, suffix=suffix, dir=render.renderDirectory)
                     outputResources.append(os.path.basename(tmpFilepath))
                     parameter['value'] = tmpFilepath
 
     return outputResources
 
 
-@g_app.route('/')
+@render.g_app.route('/')
 def index():
     return "ShuttleOFX Render service"
 
-@g_app.route('/render', methods=['POST'])
+@render.g_app.route('/render', methods=['POST'])
 def newRender():
     '''
-    Create a new render and return graph informations.
+    Create a new render and return graph information.
     '''
-    global g_renders, g_pool
 
     datas = request.json
     renderID = str(uuid.uuid1())
-
+    logging.info("RENDERID: " + renderID)
     outputResources = remapPath(datas)
 
     newRender = {}
@@ -76,21 +73,21 @@ def newRender():
     newRender['scene'] = datas
     g_renders[renderID] = newRender
 
-    g_app.logger.debug('new resource is ' + newRender['outputFilename'])
+    render.g_app.logger.debug('new resource is ' + newRender['outputFilename'])
 
     renderSharedInfo = g_manager.dict()
     renderSharedInfo['status'] = 0
     g_rendersSharedInfo[renderID] = renderSharedInfo
 
     if g_enablePool:
-        g_pool.apply(renderScene.computeGraph, args=[renderSharedInfo, newRender])
+        g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
     else:
-        renderScene.computeGraph(renderSharedInfo, newRender)
+        renderScene.launchComputeGraph(renderSharedInfo, newRender)
     
     return jsonify(render=newRender)
 
 
-@g_app.route('/progress/<renderID>', methods=['GET'])
+@render.g_app.route('/progress/<renderID>', methods=['GET'])
 def getProgress(renderID):
     '''
     Return render progress.
@@ -98,7 +95,7 @@ def getProgress(renderID):
     return str(g_rendersSharedInfo[renderID]['status'])
 
 
-@g_app.route('/render', methods=['GET'])
+@render.g_app.route('/render', methods=['GET'])
 def getRenders():
     '''
         Returns all renders in JSON format
@@ -107,7 +104,7 @@ def getRenders():
     return jsonify(**totalRenders)
 
 
-@g_app.route('/render/<renderID>', methods=['GET'])
+@render.g_app.route('/render/<renderID>', methods=['GET'])
 def getRenderById(renderID):
     '''
     Get a render by id in json format.
@@ -116,22 +113,22 @@ def getRenderById(renderID):
     for key, render in g_renders.iteritems():
         if renderID == key:
             return jsonify(render=render)
-    g_app.logger.error('id '+ renderID +" doesn't exists")
-    abort(404)
+    logging.error('id '+ renderID +" doesn't exists")
+    abort(make_response("id "+ renderID +" doesn't exists", 404))
 
 
-@g_app.route('/render/<renderId>/resource/<resourceId>', methods=['GET'])
+@render.g_app.route('/render/<renderId>/resource/<resourceId>', methods=['GET'])
 def resource(renderId, resourceId):
     '''
     Returns file resource by renderId and resourceId.
     '''
-    if not os.path.isfile( os.path.join(renderDirectory, resourceId) ):
-        logging.error(renderDirectory + resourceId + " doesn't exists")
-        aboirt(404)
+    if not os.path.isfile( os.path.join(render.renderDirectory, resourceId) ):
+        logging.error(render.renderDirectory + resourceId + " doesn't exists")
+        abort(make_response(render.renderDirectory + resourceId + " doesn't exists", 404))
 
-    return send_file( os.path.join(renderDirectory, resourceId) )
+    return send_file( os.path.join(render.renderDirectory, resourceId) )
 
-@g_app.route('/render/<renderID>', methods=['DELETE'])
+@render.g_app.route('/render/<renderID>', methods=['DELETE'])
 def deleteRenderById(renderID):
     '''
     Delete a render from the render array.
@@ -139,62 +136,62 @@ def deleteRenderById(renderID):
     TODO: kill the corresponding process?
     '''
     if renderID not in g_renders:
-        g_app.logger.error('id '+renderID+" doesn't exists")
-        abort(400)
+        logging.error("id "+renderID+" doesn't exists")
+        abort(make_response("id "+renderID+" doesn't exists", 404))
     del g_renders[renderID]
 
 
-@g_app.route('/resource', methods=['POST'])
+@render.g_app.route('/resource', methods=['POST'])
 def addResource():
     '''
     Upload resource file on the database
     '''
     if not 'file' in request.files:
-        abort(404)
+        abort(make_response("Empty request", 500))
 
     mimetype = request.files['file'].content_type
 
     if not mimetype:
-        g_app.logger.error("Invalide resource.")
-        abort(404)
+        logging.error("Invalid resource.")
+        abort(make_response("Invalid resource.", 404))
 
-    uid = resourceTable.insert({
+    uid = render.resourceTable.insert({
         "mimetype" : mimetype,
         "size" : request.content_length,
         "name" : request.files['file'].filename})
 
-    imgFile = os.path.join(resourcesPath, str(uid))
+    imgFile = os.path.join(render.resourcesPath, str(uid))
     file = request.files['file']
     file.save(imgFile)
     
-    resource = resourceTable.find_one({ "_id" : ObjectId(uid)})
+    resource = render.resourceTable.find_one({ "_id" : ObjectId(uid)})
     return mongodoc_jsonify(resource)
 
 
-@g_app.route('/resource/<resourceId>', methods=['GET'])
+@render.g_app.route('/resource/<resourceId>', methods=['GET'])
 def getResource(resourceId):
     '''
     Returns resource file.
     '''
-    resource = os.path.join(resourcesPath, resourceId)
+    resource = os.path.join(render.resourcesPath, resourceId)
 
     if os.path.isfile(resource):
         return send_file(resource)
     else:
-        g_app.logger.error("can't find " + resource)
-        abort(404)
+        logging.error("can't find " + resource)
+        abort(make_response("can't find " + resource, 404))
 
-@g_app.route('/resource/', methods=['GET'])
+@render.g_app.route('/resource/', methods=['GET'])
 def getResourcesDict():
     '''
     Returns all resources files from db.
     '''
     count = int(request.args.get('count', 10))
     skip = int(request.args.get('skip', 0))
-    resources = resourceTable.find().limit(count).skip(skip)
+    resources = render.resourceTable.find().limit(count).skip(skip)
     return mongodoc_jsonify({"resources":[ result for result in resources ]})
 
-@g_app.route('/upload', methods=['GET'])
+@render.g_app.route('/upload', methods=['GET'])
 def uploadPage():
     return """<!DOCTYPE html>
       <html lang="en">

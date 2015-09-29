@@ -1,10 +1,8 @@
 import os
 import sys
-import shutil
 import tarfile
 import logging
 import tempfile
-import ConfigParser
 import subprocess
 import json
 import argparse
@@ -22,7 +20,6 @@ def extractDatasAsTar(datas, outputPath):
     Extract bundle as a tar file.
     '''
     tempFilePath = outputPath + ".tar.gz"
-
     try:
         f = open(tempFilePath, 'w')
         f.write(datas)
@@ -32,8 +29,8 @@ def extractDatasAsTar(datas, outputPath):
         tar.extractall(outputPath)
 
         tar.close()
-    except:
-        print "error while extracting the tar.gz archive"
+    except IOError:
+        logging.error("error while extracting the tar.gz archive")
     else:
         os.remove(tempFilePath)
 
@@ -48,7 +45,7 @@ def extractDatasAsZip(datas, outputPath):
         f = open(tempFilePath, 'w')
         f.write(datas)
         f.close()
-    except:
+    except IOError:
         print "error while extracting the zip archive"
     else:
         os.remove(tempFilePath)
@@ -63,6 +60,7 @@ def analyse(pluginPath):
 
     pluginCache = tuttle.core().getPluginCache()
     pluginCache.addDirectoryToPath(str(pluginPath))
+    tuttle.core().getFormatter().setLogLevel_int(5)
     tuttle.core().preload(False)
     plugins = pluginCache.getPlugins()
 
@@ -90,8 +88,8 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
     sharedBundleDatas['analyse'] = 'waiting'
     sharedBundleDatas['extraction'] = 'running'
 
-    bundlePath = os.path.join( tmpRenderingPath, str(bundleId) )
-    
+    bundlePath = os.path.join(tmpRenderingPath, str(bundleId))
+
     os.mkdir(bundlePath)
 
     if 'gzip' == bundleExt.split('/')[1]:
@@ -114,7 +112,7 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
 
         env = dict(os.environ)
         # env['OFX_PLUGIN_PATH'] = bundlePath
-        env['LD_LIBRARY_PATH'] = env['LD_LIBRARY_PATH'] + ':{bundlePath}/lib:{bundlePath}/lib64'.format(bundlePath=bundlePath)
+        env['LD_LIBRARY_PATH'] = ':'.join([env.get('LD_LIBRARY_PATH', ''), '{bundlePath}/lib:{bundlePath}/lib64'.format(bundlePath=bundlePath)])
         logging.warning('LD_LIBRARY_PATH: %s', env['LD_LIBRARY_PATH'])
 
         args = [sys.executable, os.path.abspath(__file__), bundlePath, tempFilepath]
@@ -132,7 +130,6 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
         logging.warning(stderrdata)
 
         analysedBundle = json.load(open(tempFilepath, 'r'))
-        logging.warning('analysedBundle: %s' % analysedBundle)
         # os.path.remove(tempFilepath)
 
     sharedBundleDatas['analyse'] = 'done'
@@ -144,7 +141,7 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser = argparse.ArgumentParser(description='Launch the analyse of a bundle.')
     parser.add_argument('bundlePath', type=str,
                        help='Path to the OFX bundle directory.')
     parser.add_argument('outputJsonFile', type=str,

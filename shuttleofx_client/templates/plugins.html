@@ -58,7 +58,7 @@
                         <div class="col-md-4 pull-right">
                             <div id="filter-page">
                                 <p class="pager-size">
-                                    Plugins par page : 
+                                    Plugins per page: 
                                     <select name="size" class="" id="pageSize">
                                         <option value="10">10</option>
                                         <option value="20" selected>20</option>
@@ -98,18 +98,21 @@
                         <a href="/plugin/{{plugin.pluginId}}">
                         <div class="panel panel-primary">
                                 <div class="plugins-titles">
-                                    <img src="{{ url_for('static', filename='images/logoPad.png') }}" alt="" class="img-responsive plugin-thumbnail">
+                                    {% if plugin.sampleImagesPath|length != 0 %}
+                                        {% set image = plugin.sampleImagesPath[0] %}
+                                    <div class="plugin-thumbnail {{image}}"></div>
+                                    {% else %}
+                                    <img src="{{ url_for('static', filename='images/logoPad.png') }}" alt="" class="img-responsive plugin-thumbnail" />
+                                    {% endif %}
                                     <h3 class="panel-title">
-                                        {{plugin.shortName}} {{plugin.version.major}}.{{plugin.version.minor}}
+                                        {{plugin.label}}
                                     </h3>
                                 </div>
                             <div class="plugins-infos">
                                 <p>
-                                    {% for p in plugin.properties %}
-                                        {% if p.name == "OfxPropPluginDescription" %}
-                                            {{p.value[0]}}
-                                        {% endif %}
-                                    {% endfor %}
+                                    {% if "OfxPropPluginDescription" in plugin.properties %}
+                                        {{plugin.properties.OfxPropPluginDescription.value}}
+                                    {% endif %}
                                 </p>
                             </div>
                         </div>
@@ -120,10 +123,6 @@
         </div>
     </div>
 </div>
-
-
+<script src="{{ url_for('static', filename='scripts/search.js') }}"></script>
 
 {% endblock %}
-
-
-

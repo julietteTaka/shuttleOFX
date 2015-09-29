@@ -1,12 +1,14 @@
 
-from shuttleofx_analyser import g_app
+import shuttleofx_analyser as analyser
 
 from flask import (
+    make_response,
     request,
     jsonify,
-    abort,
+    abort
 )
 
+import logging
 import multiprocessing
 import Bundle
 import atexit
@@ -19,19 +21,21 @@ g_enablePool = True
 # Manager to share analysing information
 g_manager = multiprocessing.Manager()
 
-@g_app.route('/', methods=['GET'])
+@analyser.g_app.route('/', methods=['GET'])
 def index():
     return "ShuttleOFX Analyser service"
 
-@g_app.route('/bundle/<bundleId>', methods=['POST'])
+@analyser.g_app.route('/bundle/<bundleId>', methods=['POST'])
 def analyseBundle(bundleId):
     '''
     Apply a pool of process to analyse bundles asynchronously.
     '''
-    global g_sharedBundleDatas, g_pool, g_enablePool
 
     bundleBin = request.data
     bundleExt = request.headers.get('Content-Type')
+
+    if bundleId in g_sharedBundleDatas:
+        logging.warning("Bundle %(bundleId)s already exists. It will be overridden." % {"bundleId":bundleId})
 
     datas = g_sharedBundleDatas[bundleId] = g_manager.dict()
 
@@ -40,6 +44,8 @@ def analyseBundle(bundleId):
     datas['extraction'] = "waiting"
     datas['datas'] = None
 
+    logging.warning("analyseBundle %(bundleId)s : %(datas)s." % {"bundleId":bundleId, "datas":datas})
+
     if g_enablePool:
         g_pool.apply(Bundle.launchAnalyse, args=[datas, bundleExt, bundleBin, bundleId])
     else:
@@ -47,15 +53,14 @@ def analyseBundle(bundleId):
 
     return jsonify(**datas)
 
-@g_app.route('/bundle/<bundleId>', methods=['GET'])
+@analyser.g_app.route('/bundle/<bundleId>', methods=['GET'])
 def getStatus(bundleId):
     '''
     Return the analyse status.
     '''
-    global g_sharedBundleDatas
     if bundleId not in g_sharedBundleDatas:
-        g_app.logger.error('the id ' + bundleId + ''' doesn't exist''')
-        abort (404)
+        logging.error("The id " + bundleId + " doesn't exist")
+        abort(make_response("The id " + bundleId + " doesn't exist", 404))
 
     return jsonify(**g_sharedBundleDatas[bundleId])
 
@@ -64,7 +69,6 @@ def quit():
     '''
     Close processes and quit pool at exit.
     '''
-    global g_pool
     g_pool.close()
     g_pool.terminate()
     g_pool.join()

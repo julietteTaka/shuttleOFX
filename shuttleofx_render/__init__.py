@@ -23,6 +23,10 @@ resourcesPath = config.get('RESOURCES', 'resourcesDirectory')
 if not os.path.exists(resourcesPath):
     os.makedirs(resourcesPath)
 
+pluginsStorage = config.get('APP_RENDER', 'pluginsStorage')
+catalogRootUri = config.get('APP_RENDER', 'catalogRootUri')
+
+
 globalOfxPluginPath = config.get("OFX_PATH", "globalOfxPluginPath")
 
 import shuttleofx_render.views
