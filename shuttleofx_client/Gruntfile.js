@@ -316,7 +316,7 @@ module.exports = function (grunt) {
     'concurrent:static_dist',
     'useminPrepare',
     'autoprefixer',
-    'copy:static_dist',
+    'copy',
     // 'cssmin',
     'usemin'
   ]);
