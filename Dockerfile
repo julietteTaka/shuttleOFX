@@ -34,5 +34,5 @@ RUN cp -R ${SHUTTLEOFX_DEV}/etc/shuttleofx /etc && mkdir /opt/logs
 
 RUN chmod 777 ${SHUTTLEOFX_DEV}/start.sh
 
-#ENTRYPOINT ["/opt/shuttleofx_git/start.sh"]
+ENTRYPOINT ["/opt/shuttleofx_git/start.sh"]
 
