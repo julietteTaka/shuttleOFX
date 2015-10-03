@@ -148,14 +148,11 @@
                             <th>Name</th>
                             <th>Description</th>
                             <th>Value</th>
-                            <!-- <th>Min.</th>
-                            <th>Max.</th> -->
-                            
                         </tr>
                     </thead>
                     <tbody>
                         {% for paramProps in plugin.parameters %}
-                            <tr tabindex="0" class="param-more" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" data-html="true" 
+                            <tr tabindex="0" class="param-more" role="button" data-toggle="popover" data-trigger="focus" data-placement="right" data-html="true" 
                             title="Details" 
                             data-content="
                             {% if "OfxParamPropDefault" in paramProps %}
@@ -243,7 +240,7 @@
                     </thead>
                     <tbody>
                     {% for propName, prop in plugin.properties.iteritems() %}
-                            <tr tabindex="0" class="param-more" role="button" data-toggle="popover" data-trigger="focus" data-placement="top" data-html="true" 
+                            <tr tabindex="0" class="param-more" role="button" data-toggle="popover" data-trigger="focus" data-placement="right" data-html="true" 
                             title="Details">
                                 <td>
                                     {{ propName }}
