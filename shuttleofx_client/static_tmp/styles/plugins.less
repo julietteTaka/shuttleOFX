@@ -63,7 +63,6 @@ ul.surveys.grid{
 			margin: 0;
 			padding-left: 10px;
 			padding-right: 10px;
-			color: #717171;
 			line-height: 1.5;
 			font-size: 0.85em;
 			height: 5em;
@@ -72,11 +71,9 @@ ul.surveys.grid{
 			&:last-of-type{
 				padding-top: 15px;
 				padding-bottom: 15px;
-				overflow: hidden;
 				text-overflow: ellipsis;
 				border-bottom: 1px solid #ddd;
 				overflow: hidden;
-				text-overflow: ellipsis;
 				// max-height: 3.6em;
 				line-height: 1.8em;
 			}
@@ -87,10 +84,7 @@ ul.surveys.grid{
 			float: none !important;
 			padding-top: 12px;
 			padding-bottom: 12px;
-			color: @ofxColor;
-			&:first-of-type{
-				color: @ofxTxt;
-			}
+			color: @ofxTxt;
 			&:last-of-type{
 				float: right;
 				font-weight: 500;
@@ -125,7 +119,6 @@ ul.surveys.list{
 		}
 		
 		.plugins-titles{
-			float: left;
 			display: inline-block;
 			h3{
 				line-height: 70px;
@@ -148,10 +141,11 @@ ul.surveys.list{
 			}
 		}
 		.plugins-infos{
-			float: right;
+			padding : 5px;
 			p{
 				// display: none;
 				//line-height: 20px;
+				color : @ofxTxt
 			}
 			span{
 				display: inline-block;
@@ -166,10 +160,8 @@ ul.surveys.list{
 				padding: 15px;
 				margin-top: 5px;
 				padding-left: 20px;
-				color: @ofxColor;
 				&:first-of-type{
 					border-left: 1px solid #ddd;
-					color: @ofxTxt;
 				}
 				&:last-of-type{
 					font-weight: 400;
