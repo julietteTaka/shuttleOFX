@@ -10,8 +10,7 @@ import multiprocessing
 from flask import request, jsonify, send_file, abort, Response, make_response
 from bson import json_util, ObjectId
 
-import shuttleofx_render as render
-
+import config
 import renderScene
 
 # list of all computing renders
@@ -40,22 +39,22 @@ def remapPath(datas):
             if isinstance(parameter['value'], (str, unicode)):
 
                 if '{RESOURCES_DIR}' in parameter['value']:
-                    parameter['value'] = parameter['value'].replace('{RESOURCES_DIR}', render.resourcesPath)
+                    parameter['value'] = parameter['value'].replace('{RESOURCES_DIR}', config.resourcesPath)
 
                 if '{UNIQUE_OUTPUT_FILE}' in parameter['value']:
                     prefix, suffix = parameter['value'].split('{UNIQUE_OUTPUT_FILE}')
-                    _, tmpFilepath = tempfile.mkstemp(prefix=prefix, suffix=suffix, dir=render.renderDirectory)
+                    _, tmpFilepath = tempfile.mkstemp(prefix=prefix, suffix=suffix, dir=config.renderDirectory)
                     outputResources.append(os.path.basename(tmpFilepath))
                     parameter['value'] = tmpFilepath
 
     return outputResources
 
 
-@render.g_app.route('/')
+@config.g_app.route('/')
 def index():
     return "ShuttleOFX Render service"
 
-@render.g_app.route('/render', methods=['POST'])
+@config.g_app.route('/render', methods=['POST'])
 def newRender():
     '''
     Create a new render and return graph information.
@@ -73,7 +72,7 @@ def newRender():
     newRender['scene'] = datas
     g_renders[renderID] = newRender
 
-    render.g_app.logger.debug('new resource is ' + newRender['outputFilename'])
+    config.g_app.logger.debug('new resource is ' + newRender['outputFilename'])
 
     renderSharedInfo = g_manager.dict()
     renderSharedInfo['status'] = 0
@@ -87,7 +86,7 @@ def newRender():
     return jsonify(render=newRender)
 
 
-@render.g_app.route('/progress/<renderID>', methods=['GET'])
+@config.g_app.route('/progress/<renderID>', methods=['GET'])
 def getProgress(renderID):
     '''
     Return render progress.
@@ -95,7 +94,7 @@ def getProgress(renderID):
     return str(g_rendersSharedInfo[renderID]['status'])
 
 
-@render.g_app.route('/render', methods=['GET'])
+@config.g_app.route('/render', methods=['GET'])
 def getRenders():
     '''
         Returns all renders in JSON format
@@ -104,7 +103,7 @@ def getRenders():
     return jsonify(**totalRenders)
 
 
-@render.g_app.route('/render/<renderID>', methods=['GET'])
+@config.g_app.route('/render/<renderID>', methods=['GET'])
 def getRenderById(renderID):
     '''
     Get a render by id in json format.
@@ -117,18 +116,18 @@ def getRenderById(renderID):
     abort(make_response("id "+ renderID +" doesn't exists", 404))
 
 
-@render.g_app.route('/render/<renderId>/resource/<resourceId>', methods=['GET'])
+@config.g_app.route('/render/<renderId>/resource/<resourceId>', methods=['GET'])
 def resource(renderId, resourceId):
     '''
     Returns file resource by renderId and resourceId.
     '''
-    if not os.path.isfile( os.path.join(render.renderDirectory, resourceId) ):
-        logging.error(render.renderDirectory + resourceId + " doesn't exists")
-        abort(make_response(render.renderDirectory + resourceId + " doesn't exists", 404))
+    if not os.path.isfile( os.path.join(config.renderDirectory, resourceId) ):
+        logging.error(config.renderDirectory + resourceId + " doesn't exists")
+        abort(make_response(config.renderDirectory + resourceId + " doesn't exists", 404))
 
-    return send_file( os.path.join(render.renderDirectory, resourceId) )
+    return send_file( os.path.join(config.renderDirectory, resourceId) )
 
-@render.g_app.route('/render/<renderID>', methods=['DELETE'])
+@config.g_app.route('/render/<renderID>', methods=['DELETE'])
 def deleteRenderById(renderID):
     '''
     Delete a render from the render array.
@@ -141,7 +140,7 @@ def deleteRenderById(renderID):
     del g_renders[renderID]
 
 
-@render.g_app.route('/resource', methods=['POST'])
+@config.g_app.route('/resource', methods=['POST'])
 def addResource():
     '''
     Upload resource file on the database
@@ -155,25 +154,25 @@ def addResource():
         logging.error("Invalid resource.")
         abort(make_response("Invalid resource.", 404))
 
-    uid = render.resourceTable.insert({
+    uid = config.resourceTable.insert({
         "mimetype" : mimetype,
         "size" : request.content_length,
         "name" : request.files['file'].filename})
 
-    imgFile = os.path.join(render.resourcesPath, str(uid))
+    imgFile = os.path.join(config.resourcesPath, str(uid))
     file = request.files['file']
     file.save(imgFile)
     
-    resource = render.resourceTable.find_one({ "_id" : ObjectId(uid)})
+    resource = config.resourceTable.find_one({ "_id" : ObjectId(uid)})
     return mongodoc_jsonify(resource)
 
 
-@render.g_app.route('/resource/<resourceId>', methods=['GET'])
+@config.g_app.route('/resource/<resourceId>', methods=['GET'])
 def getResource(resourceId):
     '''
     Returns resource file.
     '''
-    resource = os.path.join(render.resourcesPath, resourceId)
+    resource = os.path.join(config.resourcesPath, resourceId)
 
     if os.path.isfile(resource):
         return send_file(resource)
@@ -181,17 +180,17 @@ def getResource(resourceId):
         logging.error("can't find " + resource)
         abort(make_response("can't find " + resource, 404))
 
-@render.g_app.route('/resource/', methods=['GET'])
+@config.g_app.route('/resource/', methods=['GET'])
 def getResourcesDict():
     '''
     Returns all resources files from db.
     '''
     count = int(request.args.get('count', 10))
     skip = int(request.args.get('skip', 0))
-    resources = render.resourceTable.find().limit(count).skip(skip)
+    resources = config.resourceTable.find().limit(count).skip(skip)
     return mongodoc_jsonify({"resources":[ result for result in resources ]})
 
-@render.g_app.route('/upload', methods=['GET'])
+@config.g_app.route('/upload', methods=['GET'])
 def uploadPage():
     return """<!DOCTYPE html>
       <html lang="en">
@@ -222,3 +221,6 @@ def cleanPool():
     g_pool.close()
     g_pool.terminate()
     g_pool.join()
+
+if __name__ == '__main__':
+    config.g_app.run(host="0.0.0.0",port=5005,debug=True)

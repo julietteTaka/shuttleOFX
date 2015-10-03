@@ -1,6 +1,4 @@
 
-import shuttleofx_analyser as analyser
-
 from flask import (
     make_response,
     request,
@@ -8,24 +6,25 @@ from flask import (
     abort
 )
 
+import config
 import logging
 import multiprocessing
 import Bundle
 import atexit
 
 # Pool for analysing jobs 
-g_pool = multiprocessing.Pool(processes=4)
+config.g_pool = multiprocessing.Pool(processes=4)
 g_sharedBundleDatas = {}
 g_enablePool = True
 
 # Manager to share analysing information
 g_manager = multiprocessing.Manager()
 
-@analyser.g_app.route('/', methods=['GET'])
+@config.g_app.route('/', methods=['GET'])
 def index():
     return "ShuttleOFX Analyser service"
 
-@analyser.g_app.route('/bundle/<bundleId>', methods=['POST'])
+@config.g_app.route('/bundle/<bundleId>', methods=['POST'])
 def analyseBundle(bundleId):
     '''
     Apply a pool of process to analyse bundles asynchronously.
@@ -47,13 +46,13 @@ def analyseBundle(bundleId):
     logging.warning("analyseBundle %(bundleId)s : %(datas)s." % {"bundleId":bundleId, "datas":datas})
 
     if g_enablePool:
-        g_pool.apply(Bundle.launchAnalyse, args=[datas, bundleExt, bundleBin, bundleId])
+        config.g_pool.apply(Bundle.launchAnalyse, args=[datas, bundleExt, bundleBin, bundleId])
     else:
         Bundle.launchAnalyse(datas, bundleExt, bundleBin, bundleId)
 
     return jsonify(**datas)
 
-@analyser.g_app.route('/bundle/<bundleId>', methods=['GET'])
+@config.g_app.route('/bundle/<bundleId>', methods=['GET'])
 def getStatus(bundleId):
     '''
     Return the analyse status.
@@ -69,6 +68,9 @@ def quit():
     '''
     Close processes and quit pool at exit.
     '''
-    g_pool.close()
-    g_pool.terminate()
-    g_pool.join()
+    config.g_pool.close()
+    config.g_pool.terminate()
+    config.g_pool.join()
+
+if __name__ == '__main__':
+    config.g_app.run(host="0.0.0.0",port=5004, debug=True)

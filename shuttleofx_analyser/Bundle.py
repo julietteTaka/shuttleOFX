@@ -8,12 +8,11 @@ import json
 import argparse
 
 from pyTuttle import tuttle
+import config
 import Plugin
 
-from shuttleofx_analyser import tmpRenderingPath
-
-if not os.path.exists(tmpRenderingPath):
-    os.makedirs(tmpRenderingPath)
+if not os.path.exists(config.tmpRenderingPath):
+    os.makedirs(config.tmpRenderingPath)
 
 def extractDatasAsTar(datas, outputPath):
     '''
@@ -88,7 +87,7 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
     sharedBundleDatas['analyse'] = 'waiting'
     sharedBundleDatas['extraction'] = 'running'
 
-    bundlePath = os.path.join(tmpRenderingPath, str(bundleId))
+    bundlePath = os.path.join(config.tmpRenderingPath, str(bundleId))
 
     os.mkdir(bundlePath)
 

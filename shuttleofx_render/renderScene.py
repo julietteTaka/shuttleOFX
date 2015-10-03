@@ -1,5 +1,5 @@
 
-from shuttleofx_render import globalOfxPluginPath, pluginsStorage, catalogRootUri
+from config import globalOfxPluginPath, pluginsStorage, catalogRootUri
 from pyTuttle import tuttle
 
 import tempfile

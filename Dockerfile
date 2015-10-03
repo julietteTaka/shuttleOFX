@@ -30,7 +30,7 @@ ENV PATH=${PATH}:/opt/mongodb/bin
 
 COPY . ${SHUTTLEOFX_DEV}
 RUN cd ${SHUTTLEOFX_DEV}/shuttleofx_client/ && npm install && npm install -g grunt-cli && grunt build
-RUN cp -R ${SHUTTLEOFX_DEV}/etc/shuttleofx /etc && mkdir /opt/logs
+RUN mkdir /opt/logs
 
 RUN chmod 777 ${SHUTTLEOFX_DEV}/start.sh
 

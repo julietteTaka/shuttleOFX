@@ -8,27 +8,27 @@ from time import sleep
 from bson import json_util, ObjectId
 from flask import jsonify, Response, request, abort, make_response
 
+import config
 
 from Bundle import Bundle
 from Plugin import Plugin
 
-import shuttleofx_catalog as catalog
 
 def mongodoc_jsonify(*args, **kwargs):
     return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
 
-@catalog.g_app.route("/")
+@config.g_app.route("/")
 def index():
     return "ShuttleOFX Catalog service"
 
-@catalog.g_app.route("/bundle", methods=["POST"])
+@config.g_app.route("/bundle", methods=["POST"])
 def newBundle():
     bundleName = request.get_json().get('bundleName', None)
     bundleDescription = request.get_json().get('bundleDescription', None)
     userId = request.get_json().get('userId', None)
     companyId = request.get_json().get('companyId', None)
 
-    bundleId = catalog.bundleTable.count()
+    bundleId = config.bundleTable.count()
 
     if  bundleId == None or bundleName == None or userId == None:
         logging.error("bundleName, bundleId or userId is undefined")
@@ -38,30 +38,30 @@ def newBundle():
     bundle.companyId = companyId
     bundle.description = bundleDescription
 
-    catalog.bundleTable.insert(bundle.__dict__)
+    config.bundleTable.insert(bundle.__dict__)
 
-    requestResult = catalog.bundleTable.find_one({"bundleId": bundleId})
+    requestResult = config.bundleTable.find_one({"bundleId": bundleId})
     return mongodoc_jsonify(requestResult)
 
-@catalog.g_app.route("/bundle")
+@config.g_app.route("/bundle")
 def getBundles():
     count = int(request.args.get('count', 20))
     skip = int(request.args.get('skip', 0))
-    bundle = catalog.bundleTable.find().limit(count).skip(skip)
+    bundle = config.bundleTable.find().limit(count).skip(skip)
     return mongodoc_jsonify({"bundles":[ result for result in bundle ]})
 
-@catalog.g_app.route("/bundle/<int:bundleId>")
+@config.g_app.route("/bundle/<int:bundleId>")
 def getBundle(bundleId):
-    bundle = catalog.bundleTable.find_one({"bundleId": bundleId})
+    bundle = config.bundleTable.find_one({"bundleId": bundleId})
     if bundle == None:
         logging.error("No matching bundle has been found")
         abort(make_response("No matching bundle has been found", 404))
     return mongodoc_jsonify(bundle)
 
 
-@catalog.g_app.route('/bundle/<int:bundleId>/archive', methods=['POST', 'PUT'])
+@config.g_app.route('/bundle/<int:bundleId>/archive', methods=['POST', 'PUT'])
 def uploadArchive(bundleId):
-    bundle = catalog.bundleTable.find_one({"bundleId": bundleId})
+    bundle = config.bundleTable.find_one({"bundleId": bundleId})
 
     if bundle is None:
         logging.error("No matching bundle has been found")
@@ -73,13 +73,13 @@ def uploadArchive(bundleId):
     # }
 
     # if request.headers['content-type'] not in mappingExtension:
-    #     catalog.g_app.logger.error("Format is not supported : " + str(request.headers['content-type']))
+    #     config.g_app.logger.error("Format is not supported : " + str(request.headers['content-type']))
     #     abort(400)
 
     #extension = mappingExtension[ request.headers['content-type'] ]
     extension = ".tar.gz"
 
-    archivePath = os.path.join(catalog.bundleRootPath, str(bundleId) + extension)
+    archivePath = os.path.join(config.bundleRootPath, str(bundleId) + extension)
 
     try:
         file = request.files['file']
@@ -89,13 +89,13 @@ def uploadArchive(bundleId):
         abort(400)
 
     bundle["archivePath"] = archivePath
-    catalog.bundleTable.update({'_id': bundle['_id']}, bundle)
+    config.bundleTable.update({'_id': bundle['_id']}, bundle)
     return mongodoc_jsonify(bundle)
 
 
-@catalog.g_app.route('/bundle/<int:bundleId>/analyse', methods=['POST'])
+@config.g_app.route('/bundle/<int:bundleId>/analyse', methods=['POST'])
 def analyseBundle(bundleId):
-    bundle = catalog.bundleTable.find_one({"bundleId": bundleId})
+    bundle = config.bundleTable.find_one({"bundleId": bundleId})
 
     if bundle == None:
         logging.error("No matching bundle has been found")
@@ -107,16 +107,16 @@ def analyseBundle(bundleId):
 
     headers = {'content-type': 'application/gzip'}
     analyseReturn = requests.post(
-        catalog.uriAnalyser+"/bundle/"+str(bundleId),
+        config.uriAnalyser+"/bundle/"+str(bundleId),
         data=open(bundle["archivePath"], 'r').read(),
         headers=headers).json()
 
     # logging.error("analyzeBundle analyseReturn: " + str(analyseReturn))
 
-    pluginIdOffset = catalog.pluginTable.count()
+    pluginIdOffset = config.pluginTable.count()
 
     while 1:
-        analyseReturn = requests.get(catalog.uriAnalyser+"/bundle/"+str(bundleId)).json()
+        analyseReturn = requests.get(config.uriAnalyser+"/bundle/"+str(bundleId)).json()
 
         if analyseReturn['status'] == "done":
             bundleData = analyseReturn['datas']
@@ -142,29 +142,29 @@ def analyseBundle(bundleId):
             currentPlugin.label)
 
         bundle['plugins'].append(pluginId)
-        catalog.pluginTable.insert(currentPlugin.__dict__)
+        config.pluginTable.insert(currentPlugin.__dict__)
     return mongodoc_jsonify(bundle)
 
 
-@catalog.g_app.route("/bundle/<int:bundleId>", methods=["DELETE"])
+@config.g_app.route("/bundle/<int:bundleId>", methods=["DELETE"])
 def deleteBundle(bundleId):
-    bundle = catalog.bundleTable.find_one({"bundleId": bundleId})
+    bundle = config.bundleTable.find_one({"bundleId": bundleId})
     if bundle == None:
         abort(404)
 
     for pluginId in bundle.plugins:
-        deleteStatus = catalog.pluginTable.remove({"pluginId":pluginId})
+        deleteStatus = config.pluginTable.remove({"pluginId":pluginId})
         if deleteStatus['n'] == 0:
             abort(404)
 
-    deleteStatus = catalog.bundleTable.remove({"bundleId":bundleId})
+    deleteStatus = config.bundleTable.remove({"bundleId":bundleId})
 
     if deleteStatus['n'] == 0:
         abort(404)
 
     return jsonify(**deleteStatus)
 
-@catalog.g_app.route("/bundle/<int:bundleId>/plugin", methods=['POST'])
+@config.g_app.route("/bundle/<int:bundleId>/plugin", methods=['POST'])
 def newPlugin(bundleId):
     pluginId = request.get_json().get('pluginId', None)
     pluginName = request.get_json().get('name', None)
@@ -174,20 +174,20 @@ def newPlugin(bundleId):
 
     plugin = Plugin(pluginId, bundleId, pluginName)
     
-    catalog.pluginTable.insert(plugin.__dict__)
+    config.pluginTable.insert(plugin.__dict__)
 
-    requestResult = catalog.pluginTable.find_one({"pluginId": pluginId})
+    requestResult = config.pluginTable.find_one({"pluginId": pluginId})
     return mongodoc_jsonify(requestResult)
 
 
-@catalog.g_app.route("/bundle/<int:bundleId>/plugin")
+@config.g_app.route("/bundle/<int:bundleId>/plugin")
 def getPlugins(bundleId):
     count = int(request.args.get('count', 20))
     skip = int(request.args.get('skip', 0))
-    plugin = catalog.pluginTable.find({"bundleId":bundleId}).limit(count).skip(skip)
+    plugin = config.pluginTable.find({"bundleId":bundleId}).limit(count).skip(skip)
     return mongodoc_jsonify({"plugins":[ result for result in plugin ]})
 
-@catalog.g_app.route("/plugin")
+@config.g_app.route("/plugin")
 def getAllPlugins():
     #Text search
     keyWord = request.args.get('search', None)
@@ -215,12 +215,12 @@ def getAllPlugins():
         logging.info("search: " + keyWord)
         searchRegex = re.compile(".*{search}.*".format(search=keyWord.replace("*", ".*")))
         searchKeys = ["label", "rawIdentifier", "shortDescription", "description", "properties.OfxPropPluginDescription.value"]
-        cursor = catalog.pluginTable.find(
+        cursor = config.pluginTable.find(
             {"$or":  # Search on multiple keys
                 [{searchKey: searchRegex} for searchKey in searchKeys]
             })
     else:
-        cursor = catalog.pluginTable.find()
+        cursor = config.pluginTable.find()
 
     sortedCursor = cursor.sort("label", alphaSort)
     if count and skip:
@@ -236,22 +236,22 @@ def getAllPlugins():
     return mongodoc_jsonify({"plugins": plugins})
 
 
-@catalog.g_app.route("/bundle/<int:bundleId>/plugin/<int:pluginId>")
-@catalog.g_app.route("/plugin/<int:pluginId>")
+@config.g_app.route("/bundle/<int:bundleId>/plugin/<int:pluginId>")
+@config.g_app.route("/plugin/<int:pluginId>")
 def getPlugin(pluginId, bundleId=None):
-    plugin = catalog.pluginTable.find_one({"pluginId": pluginId})
+    plugin = config.pluginTable.find_one({"pluginId": pluginId})
     if plugin == None:
         abort(404)
 
     return mongodoc_jsonify(plugin)
 
 
-@catalog.g_app.route("/bundle/<rawIdentifier>/bundle", methods=['GET'])
+@config.g_app.route("/bundle/<rawIdentifier>/bundle", methods=['GET'])
 def getBundleByPluginId(rawIdentifier):
     '''
     Returns the bundleid of a plugin using its pluginId.
     '''
-    bundleId = catalog.pluginTable.find_one({'rawIdentifier':rawIdentifier}, {"bundleId":1, "_id":0})
+    bundleId = config.pluginTable.find_one({'rawIdentifier':rawIdentifier}, {"bundleId":1, "_id":0})
 
     if bundleId is None:
         logging.error("plugin "+rawIdentifier+" doesn't exists")
@@ -260,7 +260,7 @@ def getBundleByPluginId(rawIdentifier):
     return mongodoc_jsonify(bundleId)
 
 
-@catalog.g_app.route('/resources', methods=['POST'])
+@config.g_app.route('/resources', methods=['POST'])
 def addResource():
     '''
     Upload resource file on the database
@@ -274,7 +274,7 @@ def addResource():
         logging.error("Invalide resource.")
         abort(make_response("Invalide resource.", 400))
 
-    uid = catalog.resourceTable.insert({ 
+    uid = config.resourceTable.insert({ 
         "mimetype" : mimetype,
         "size" : size,
         "name" : name})
@@ -282,14 +282,14 @@ def addResource():
     img = request.data
 
 
-    imgFile = os.path.join(catalog.resourcesPath, str(uid))
+    imgFile = os.path.join(config.resourcesPath, str(uid))
     file = request.files['file']
     file.save(imgFile)
 
-    resource = catalog.resourceTable.find_one({ "_id" : ObjectId(uid)})
+    resource = config.resourceTable.find_one({ "_id" : ObjectId(uid)})
     return mongodoc_jsonify(resource)
 
-@catalog.g_app.route('/resources', methods=['GET'])
+@config.g_app.route('/resources', methods=['GET'])
 def getResources():
     '''
     Returns resource file from db.
@@ -297,32 +297,32 @@ def getResources():
 
     count = int(request.args.get('count', 10))
     skip = int(request.args.get('skip', 0))
-    resources = catalog.resourceTable.find().limit(count).skip(skip)
+    resources = config.resourceTable.find().limit(count).skip(skip)
     return mongodoc_jsonify({"resources":[ result for result in resources ]})
 
-@catalog.g_app.route('/resources/<resourceId>', methods=['GET'])
+@config.g_app.route('/resources/<resourceId>', methods=['GET'])
 def getResourceById(resourceId):
     '''
     Returns resource datas from db.
     '''
-    resourceData = catalog.resourceTable.find_one({ "_id" : ObjectId(resourceId)})
+    resourceData = config.resourceTable.find_one({ "_id" : ObjectId(resourceId)})
 
     if resourceData == None:
         abort(404)
     return mongodoc_jsonify(resourceData)
 
 
-@catalog.g_app.route('/resources/<resourceId>/data', methods=['GET'])
+@config.g_app.route('/resources/<resourceId>/data', methods=['GET'])
 def getResourceData(resourceId):
     '''
      Returns the resource.
     '''
 
-    resourceData = catalog.resourceTable.find_one({ "_id" : ObjectId(resourceId)})
+    resourceData = config.resourceTable.find_one({ "_id" : ObjectId(resourceId)})
     if not resourceData:
         abort(404)
 
-    filePath = os.path.join (catalog.resourcesPath, resourceId)
+    filePath = os.path.join (config.resourcesPath, resourceId)
 
     if not os.path.isfile(filePath):
         abort(404)
@@ -331,24 +331,24 @@ def getResourceData(resourceId):
     return Response(resource.read(), mimetype=resourceData['mimetype'])
 
 
-@catalog.g_app.route("/plugin/<int:pluginId>/images", methods= ['POST'])
+@config.g_app.route("/plugin/<int:pluginId>/images", methods= ['POST'])
 def addImageToPlugin(pluginId):
     if "ressourceId" not in request.get_json() :
         abort(404)
 
     imageId = request.get_json()["ressourceId"]
 
-    plugin = catalog.pluginTable.find_one({"pluginId": pluginId})
+    plugin = config.pluginTable.find_one({"pluginId": pluginId})
     if plugin == None:
         abort(404)
 
-    catalog.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"sampleImagesPath" : imageId} }, upsert=True)
-    plugin = catalog.pluginTable.find_one({"pluginId": pluginId})
+    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"sampleImagesPath" : imageId} }, upsert=True)
+    plugin = config.pluginTable.find_one({"pluginId": pluginId})
     
     return mongodoc_jsonify(plugin)
 
 #TO DO : Tags
-catalog.pluginTable.ensure_index([
+config.pluginTable.ensure_index([
         ('name', 'text'),
         ('description', 'text'),
         ('shortDescription', 'text'),
@@ -360,3 +360,6 @@ catalog.pluginTable.ensure_index([
         'shortDescription':60
     }
 )
+
+if __name__ == '__main__':
+    config.g_app.run(host="0.0.0.0",port=5002,debug=True)
