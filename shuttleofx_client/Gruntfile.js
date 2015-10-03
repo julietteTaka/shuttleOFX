@@ -291,7 +291,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('serve', function (target) {
     if (target === 'static_dist') {
-      return grunt.task.run(['build', 'env:all', 'env:prod', 'wait', 'open']);
+      return grunt.task.run(['build', 'env:all', 'env:prod', 'wait']);
     }
 
     grunt.task.run([
@@ -300,7 +300,6 @@ module.exports = function (grunt) {
       'autoprefixer',
       'copy:static_tmp',
       'wait',
-      'open',
       'watch'
     ]);
   });
@@ -316,8 +315,7 @@ module.exports = function (grunt) {
     'concurrent:static_dist',
     'useminPrepare',
     'autoprefixer',
-    'copy',
-    // 'cssmin',
+    'copy:static_tmp',
     'usemin'
   ]);
 
