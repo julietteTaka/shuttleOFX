@@ -29,6 +29,8 @@ docker run -t --name shuttleofx_cnt -p 80:5000 -p 5004:5004 -p 5002:5002 -p 5005
 Server
 ======
 
+Upload config files into `/etc/shuttleofx` and run the latest docker image.
+
 ```
-docker run -t --name shuttleofx_cnt -p 80:5000 -p 5004:5004 -p 5002:5002 -p 5005:5005 -p 27017:27017 -v /var/log/shuttleofx:/opt/logs -v /opt/shuttleofx_git:/opt/shuttleofx_git -v /opt/mongo-data:/opt/mongo-data -v /opt/shuttleofx/render/resources:/opt/shuttleofx/render/resources --rm=True shuttleofx
+docker run -t --name shuttleofx_cnt -p 80:5000 -p 5004:5004 -p 5002:5002 -p 5005:5005 -p 27017:27017 -v /var/log/shuttleofx:/opt/logs -v /opt/mongo-data:/opt/mongo-data -v /opt/shuttleofx/render/resources:/opt/shuttleofx/render/resources -d shuttleofx/shuttleofx
 ```

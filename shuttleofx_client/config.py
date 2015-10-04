@@ -19,11 +19,8 @@ from flask import (
     session
 )
 
-currentFileDir = os.path.dirname(os.path.abspath(__file__))
-
-
 config =  ConfigParser.ConfigParser()
-config.read(os.path.join(currentFileDir, 'client.cfg'))
+config.read('/etc/shuttleofx/client.cfg')
 
 g_app = Flask(__name__)
 

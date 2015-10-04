@@ -13,10 +13,8 @@ from flask import (
 import multiprocessing
 
 
-currentFileDir = os.path.dirname(os.path.abspath(__file__))
-
 config =  ConfigParser.RawConfigParser()
-config.read(os.path.join(currentFileDir, 'analyser.cfg'))
+config.read('/etc/shuttleofx/analyser.cfg')
 
 tmpRenderingPath = config.get('APP_ANALYSER', 'workingTmpDir')
 

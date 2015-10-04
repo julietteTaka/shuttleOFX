@@ -4,10 +4,8 @@ import ConfigParser
 from flask import Flask, jsonify, Response, request, abort, make_response
 
 
-currentFileDir = os.path.dirname(os.path.abspath(__file__))
-
 config = ConfigParser.ConfigParser()
-config.read(os.path.join(currentFileDir, 'catalog.cfg'))
+config.read('/etc/shuttleofx/catalog.cfg')
 
 client = pymongo.MongoClient(config.get('MONGODB', 'hostname'), config.getint('MONGODB', 'port'))
 db = client.__getattr__(config.get('MONGODB', 'dbName'))

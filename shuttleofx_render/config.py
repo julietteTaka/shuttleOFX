@@ -9,10 +9,8 @@ from bson import json_util, ObjectId
 
 g_app = Flask(__name__)
 
-currentFileDir = os.path.dirname(os.path.abspath(__file__))
 config =  ConfigParser.RawConfigParser()
-configFilePath = os.path.join(currentFileDir, 'render.cfg')
-config.read(configFilePath)
+config.read('/etc/shuttleofx/render.cfg')
 
 # mongoDB initialization
 client = pymongo.MongoClient(config.get('MONGODB', 'hostname'), config.getint('MONGODB', 'port'))
