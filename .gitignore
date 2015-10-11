@@ -2,12 +2,15 @@
 # used in front to generate js and css files
 node_modules
 
+# auto generated css files
+/shuttleofx_client/static_dist
+/shuttleofx_client/static
+
 # temporary upload directory
 upload
-static
+
 *.pyc
-
 *.conf
-
+*.cfg
 *.json
 
