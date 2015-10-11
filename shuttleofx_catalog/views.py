@@ -146,21 +146,26 @@ def analyseBundle(bundleId):
     return mongodoc_jsonify(bundle)
 
 
-@config.g_app.route("/bundle/<int:bundleId>", methods=["DELETE"])
+@config.g_app.route("/bundle/<int:bundleId>", methods=['DELETE'])
 def deleteBundle(bundleId):
+    '''
+    Delete a bundle to the bundleId
+    '''
     bundle = config.bundleTable.find_one({"bundleId": bundleId})
     if bundle == None:
-        abort(404)
+        abort(make_response("Bundle not found.", 404))
 
-    for pluginId in bundle.plugins:
+    plugins = config.pluginTable.find({"bundleId": bundleId})
+    for plugin in plugins:
+        pluginId = plugin["pluginId"]
         deleteStatus = config.pluginTable.remove({"pluginId":pluginId})
         if deleteStatus['n'] == 0:
-            abort(404)
+            abort(make_response("unable to delete plugin with id "+ str(pluginId), 400))
 
     deleteStatus = config.bundleTable.remove({"bundleId":bundleId})
 
     if deleteStatus['n'] == 0:
-        abort(404)
+        abort(make_response("unable to delete bundle with id "+str(bundleId), 400))
 
     return jsonify(**deleteStatus)
 
