@@ -63,19 +63,15 @@
             {% endif %}
 
             <li class="title-nav" style="margin-top:2em;"><h4>NAVIGATION</h4></li>
+
+            <li class="active">
+                <a href='/plugin'><i class="fa fa-crop"></i>Explore plugins</a>
+            </li>
             {% if user %}
             <li>
                 <a href='/upload'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
             </li>
             {% endif %}
-
-
-            <li class="active">
-                <a href='/plugin'><i class="fa fa-crop"></i>Explore plugins</a>
-            </li>
-            <li>
-                <a href='/editor'><i class="fa fa-photo"></i>Online image editor</a>
-            </li>
             <li class="title-nav"><h4>MORE</h4></li>
             <!--
             <li>
@@ -153,8 +149,6 @@ $("#left-nav a").click(function(){
 <script>
     if($('#addThumbForm').length > 0){
 
-        console.log("hello2");
-
         var pluginId = $("#addGalleryImage").attr("attr-id");
        
         var thumDropzone = new Dropzone("#addThumbForm", {
@@ -183,9 +177,13 @@ $("#left-nav a").click(function(){
                     type : 'POST',
                     url : addImageURI,
                     contentType: "application/json",
-                    data : JSON.stringify({ 'ressourceId' : imageId})
+                    data : JSON.stringify({ 'ressourceId' : imageId}),
+                    success: function(){    
+                        location.reload();   
+                    }
                 }).done(function(){
                     $("#addImageGallery").hide();
+                    $('.modal-backdrop').remove(); 
                 })
             })
             
