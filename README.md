@@ -6,7 +6,7 @@ Following the [TuttleOFX](http://www.tuttleofx.org) initiative, the ambition is 
 
 
 **ShuttleOFX**
->- website: [http://shuttleofx.no-ip.org](http://shuttleofx.no-ip.org)
+>- website: [http://shuttleofx.org](http://shuttleofx.org)
 >- github: [https://github.com/shuttleofx/ShuttleOFX](https://github.com/shuttleofx/ShuttleOFX)
 
 **TuttleOFX**
