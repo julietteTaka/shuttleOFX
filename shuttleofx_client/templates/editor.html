@@ -11,7 +11,7 @@
                         <small>
                             <a style="color:rgba(255,255,255,0.7);font-weight:300;" href="/plugin/{{plugin.pluginId}}">
                                 {{plugin.properties.OfxPropShortLabel.value}}
-                                <i style="color:rgba(255,255,255,0.4);font-size:0.5em;" class="fa fa-link"></i>
+                                <i style="color:rgba(255,255,255,0.4);font-size:0.5em;"></i>
                             </a>
                         </small>
                     </h1>
@@ -56,9 +56,6 @@
                                         {% endif %}
                                     {% endfor%}
                                 >
-                                <a id="download-view" type="button" class=" btn btn-success" data-toggle="modal" data-target="#downloadModal">
-                                  Download
-                                </a>
                         </div>
                     </div>
                     <div class="row-fluid">
@@ -176,7 +173,6 @@
                             </div>
                             <div class="changeParameters-result">
                                 <div class="form-group submit-form">
-                                    <input type="button" value="Reset" class="btn btn-default">
                                         <input type="button" value="Render" id="render" pluginId="{{plugin.rawIdentifier}}"
                                             {% for context in plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
                                                 {% if context != "OfxImageEffectContextGeneral" %}
