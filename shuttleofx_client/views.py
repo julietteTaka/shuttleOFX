@@ -62,12 +62,12 @@ def countPlugins():
     return jsonify(**req.json())
 
 
-@config.g_app.route('/plugin/<pluginId>')
-def getPlugin(pluginId):
+@config.g_app.route('/plugin/<pluginRawIdentifier>')
+def getPlugin(pluginRawIdentifier):
     user = None
     if 'google_token' in session:
         user = config.google.get('userinfo').data
-    resp = requests.get(config.catalogRootUri+"/plugin/"+pluginId)
+    resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
     if resp.status_code != 200:
         abort(resp.status_code)
     return render_template('plugin.html', plugin=resp.json(), user=user)

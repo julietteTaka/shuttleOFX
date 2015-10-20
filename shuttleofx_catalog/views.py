@@ -241,10 +241,10 @@ def getAllPlugins():
     return mongodoc_jsonify({"plugins": plugins})
 
 
-@config.g_app.route("/bundle/<int:bundleId>/plugin/<int:pluginId>")
-@config.g_app.route("/plugin/<int:pluginId>")
-def getPlugin(pluginId, bundleId=None):
-    plugin = config.pluginTable.find_one({"pluginId": pluginId})
+@config.g_app.route("/bundle/<int:bundleId>/plugin/<pluginRawIdentifier>")
+@config.g_app.route("/plugin/<pluginRawIdentifier>")
+def getPlugin(pluginRawIdentifier, bundleId=None):
+    plugin = config.pluginTable.find_one({"rawIdentifier": pluginRawIdentifier})
     if plugin == None:
         abort(404)
 
