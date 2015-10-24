@@ -78,12 +78,12 @@ def getSampleImagesForPlugin(pluginId, imageId):
     return Response(req.content, mimetype=req.headers["content-type"])
 
 @config.g_app.route('/editor')
-@config.g_app.route('/editor/<pluginId>')
-def renderPageWithPlugin(pluginId = 0):
+@config.g_app.route('/editor/<pluginRawIdentifier>')
+def renderPageWithPlugin(pluginRawIdentifier):
     user = None
     if 'google_token' in session:
         user = config.google.get('userinfo').data
-    resp = requests.get(config.catalogRootUri+"/plugin/"+str(pluginId))
+    resp = requests.get(config.catalogRootUri+"/plugin/"+str(pluginRawIdentifier))
     if resp.status_code != 200:
         abort(resp.status_code)
     previewGallery = requests.get(config.renderRootUri + '/resource/').json()
