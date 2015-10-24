@@ -248,16 +248,29 @@ def getAllPlugins():
 
 @config.g_app.route("/bundle/<int:bundleId>/plugin/<pluginRawIdentifier>")
 @config.g_app.route("/plugin/<pluginRawIdentifier>")
-def getPlugin(pluginRawIdentifier, bundleId=None):
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>", methods=['GET'])
+def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
     '''
     Returns the latest version of a plugin by its rawIdentifier
     '''
+
+    match = { "rawIdentifier": str(pluginRawIdentifier)}
+
+    if pluginVersion is not "latest":
+        try:
+            version = pluginVersion.split(".")
+            match["version.major"] = int(version[0])
+            if len(version) > 1:
+                match["version.minor"] = int(version[1])
+        except:
+            abort(404)
+
     pipeline = [
-        {"$match": { "rawIdentifier": pluginRawIdentifier}},
+        {"$match": match},
         {"$sort": SON([("version.major",1), ("version.minor",1)])},
         {"$group": {
-            "_id": "$_id",
-            "rawIdentifier": {"$first": "$rawIdentifier"},
+            "_id": "$rawIdentifier",
+            "plugin": {"$first": "$$ROOT"}, # retrieve the first plugin
             }
         }]
 
@@ -266,7 +279,7 @@ def getPlugin(pluginRawIdentifier, bundleId=None):
     if not plugins:
         abort(404)
 
-    plugin = config.pluginTable.find_one({"_id":plugins[0]["_id"]})
+    plugin = plugins[0]["plugin"]
 
     return mongodoc_jsonify(plugin)
 
