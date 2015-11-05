@@ -48,7 +48,7 @@ $('[data-toggle]').on('click', function() {
       // In list mode, move h3 to the next div in order to isolate the img 
       // so we can have the image on the left and the title and description on the right
   	  title.detach().prependTo($(this).find(".plugins-infos"));
-  	  pluginsDiv.css({"display": "table-cell", "vertical-align": "top"}).redrawForWebkit();
+  	  pluginsDiv.css({"display": "table-cell", "vertical-align": "middle"}).redrawForWebkit();
   	} else {
   	  // In grid view, go back to the original layout
   	  title.detach().appendTo($(this).find(".plugins-titles"));
