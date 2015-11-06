@@ -85,7 +85,7 @@ def uploadArchive(bundleId):
         file = request.files['file']
         file.save(archivePath)
     except Exception, err:
-        logging.error(err)
+        logging.error("unable to save file "+err)
         abort(400)
 
     bundle["archivePath"] = archivePath
