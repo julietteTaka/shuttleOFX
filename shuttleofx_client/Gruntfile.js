@@ -40,7 +40,6 @@ module.exports = function (grunt) {
           '<%=  project.static %>/scripts/**/*.js',
 
         ],
-        tasks: ['newer:jshint:all', 'concat:scripts']
       },
 
       less: {
@@ -103,8 +102,8 @@ module.exports = function (grunt) {
       },
       
       all: [
-        '<%= project.static %>/scripts/**/*.js',
         '<%= project.static %>/scripts/*.js',
+        '! <%= project.static %>/scripts/scripts.js'
       ]
     },
 
@@ -299,6 +298,7 @@ module.exports = function (grunt) {
       'concurrent:server',
       'autoprefixer',
       'copy:static_tmp',
+      'jshint:all',
       'wait',
       'watch'
     ]);
@@ -317,11 +317,5 @@ module.exports = function (grunt) {
     'autoprefixer',
     'copy:static_tmp',
     'usemin'
-  ]);
-
-  grunt.registerTask('default', [
-    'newer:jshint',
-    'test',
-    'build'
   ]);
 };
