@@ -33,7 +33,7 @@ $(function(){
         if (wofxDropzone.getQueuedFiles().length > 0) {
             wofxDropzone.processQueue();
         }else{
-            $('#message').html('Oops, you may have forgotten to attach your file !')
+            $('#message').html('You have forgotten to attach your file !')
             $('#upload_feedback').show();
         }
     });
@@ -76,7 +76,7 @@ $(function(){
                         $("#droparea").hide();
                         $('#fileSubmit').hide();
                         $("#createBundle").hide();
-                        $('#message').html('Debug info : '+errorThrown)
+                        $('#message').html('Your bundle is invalid.')
                         $('#upload_feedback').show();
                     }
                 }).done(function(){
