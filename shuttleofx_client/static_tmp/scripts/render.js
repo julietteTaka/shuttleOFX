@@ -5,7 +5,6 @@ $(document).ready(function() {
         var renderParameters = [];
         $("input", $('#renderForm')).each(function(index){
             var jsonForm={};
-            // console.log(this.type);
             switch($(this).attr("ofxType")) {
                 case 'OfxParamTypeInteger':
                     jsonForm["id"] = $(this).attr("id");
@@ -75,7 +74,7 @@ $(document).ready(function() {
                         jsonForm["id"] = $(this).attr("id");
                         jsonForm["value"] = false;
                         renderParameters.push(jsonForm);
-                    };
+                    }
                     break;
                 default:
                     jsonForm["id"] = $(this).attr("id");
@@ -123,7 +122,6 @@ $(document).ready(function() {
             }),
         })
         .done(function(data){
-            console.log('POST DONE !');
             $("#viewer img").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
             $("#download-view").removeClass('disabled');
             $("#viewer-placeholder").css('display', 'none');
@@ -159,14 +157,14 @@ $(document).ready(function() {
                     link.download = name;
                     link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
                     link.click();
-                    $("#downloadModal").modal('hide')
-                })
-            })
+                    $("#downloadModal").modal('hide');
+                });
+            });
         })
         .error(function(data){
             console.log('POST ERROR !');
-        })
-    };
+        });
+    }
 
     function renderFilter(pluginId){
         var renderParameters = formToJson();
@@ -209,7 +207,6 @@ $(document).ready(function() {
             }),
         })
         .done(function(data){
-            console.log('POST DONE !');
             $("#viewer img").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
             $("#download-view").removeClass('disabled');
             $("#viewer-placeholder").css('display', 'none');
@@ -258,13 +255,13 @@ $(document).ready(function() {
                     link.download = name;
                     link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
                     link.click();
-                    $("#downloadModal").modal('hide')
-                })
-            })
+                    $("#downloadModal").modal('hide');
+                });
+            });
         })
         .error(function(data){
             console.log('POST ERROR !');
-        })
+        });
     }
 
     var allResources = undefined;
@@ -276,13 +273,13 @@ $(document).ready(function() {
         async: false, //avoid an empty data when result is returned.
     })
     .done(function(data){
-        allResources = []
+        allResources = [];
 
         $.each( data.resources, function( index, resource){
             allResources.push(resource['_id']['$oid']);
         });
 
-        if(allResources != undefined && allResources.length > 0){
+        if(allResources !== undefined && allResources.length > 0){
             selectedResource = allResources[0];
         }
     })
@@ -294,7 +291,6 @@ $(document).ready(function() {
         $(this).click(function(){
             setResourceSelected($(this));
             var pluginId = $("#render.OfxImageEffectContextFilter").attr("pluginId");
-            console.log($("#render.OfxImageEffectContextFilter"))
             renderFilter(pluginId);
         });
     });
