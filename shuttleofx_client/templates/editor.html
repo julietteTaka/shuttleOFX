@@ -62,15 +62,17 @@
                         <div id="viewer" class="display">
                             <img src="" alt="" class="panel panel-primary img-responsive">
                             <div id="viewer-placeholder">
-                                <h2>Click
-                                    <input type="button" value="Render" id="render" pluginId="{{plugin.rawIdentifier}}" 
-                                        {% for context in plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
-                                            {% if context != "OfxImageEffectContextGeneral" %}
-                                                class="btn btn-primary {{context}}"
-                                            {% endif %}
-                                        {% endfor%}
-                                    >
-                                 to try the plugin</h2>
+                                <div class="preloader-wrapper big active">
+                                    <div class="spinner-layer">
+                                        <div class="circle-clipper left">
+                                            <div class="circle"></div>
+                                        </div><div class="gap-patch">
+                                            <div class="circle"></div>
+                                        </div><div class="circle-clipper right">
+                                            <div class="circle"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
