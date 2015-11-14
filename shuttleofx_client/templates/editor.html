@@ -227,26 +227,28 @@
     </div>
 </div>
 
-<script type="text/javascript">
-$(document).ready(function() {
-    $slider = $(".shor").noUiSlider({
-        start: 40,
-        connect: "lower",
-        range: {
-            min: 0,
-            max: 100
-        },
-        step: 1,
-        handles : 1,
-        format: wNumb({
-            decimals: false
-        })
-    });
-    $value = $slider.val();
-    $slider.Link('lower').to($('.input-number'));
-    $slider.Link('lower').to($('#input-number'));
-});
+{% endblock %}
 
-</script>
-
+{% block scripts %}
+    <script src="{{ url_for('static', filename='scripts/render.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $slider = $(".shor").noUiSlider({
+                start: 40,
+                connect: "lower",
+                range: {
+                    min: 0,
+                    max: 100
+                },
+                step: 1,
+                handles : 1,
+                format: wNumb({
+                    decimals: false
+                })
+            });
+            $value = $slider.val();
+            $slider.Link('lower').to($('.input-number'));
+            $slider.Link('lower').to($('#input-number'));
+        });
+    </script>
 {% endblock %}
