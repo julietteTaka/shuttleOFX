@@ -163,7 +163,7 @@ def analyseBundle(bundleId):
     req = requests.post(config.catalogRootUri + '/bundle/' + bundleId + '/analyse', data=request.data, headers=request.headers)
     if req.status_code != 200:
         abort(req.status_code)
-    return req.json()
+    return jsonify(**req.json())
 
 @config.g_app.route('/login')
 def login():
