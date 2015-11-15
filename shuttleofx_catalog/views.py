@@ -28,7 +28,7 @@ def newBundle():
     userId = request.get_json().get('userId', None)
     companyId = request.get_json().get('companyId', None)
 
-    bundleId = config.bundleTable.count()
+    bundleId = str(ObjectId())
 
     if  bundleId == None or bundleName == None or userId == None:
         logging.error("bundleName, bundleId or userId is undefined")
@@ -50,7 +50,7 @@ def getBundles():
     bundle = config.bundleTable.find().limit(count).skip(skip)
     return mongodoc_jsonify({"bundles":[ result for result in bundle ]})
 
-@config.g_app.route("/bundle/<int:bundleId>")
+@config.g_app.route("/bundle/<bundleId>")
 def getBundle(bundleId):
     bundle = config.bundleTable.find_one({"bundleId": bundleId})
     if bundle == None:
@@ -59,7 +59,7 @@ def getBundle(bundleId):
     return mongodoc_jsonify(bundle)
 
 
-@config.g_app.route('/bundle/<int:bundleId>/archive', methods=['POST', 'PUT'])
+@config.g_app.route('/bundle/<bundleId>/archive', methods=['POST', 'PUT'])
 def uploadArchive(bundleId):
     bundle = config.bundleTable.find_one({"bundleId": bundleId})
 
@@ -85,7 +85,7 @@ def uploadArchive(bundleId):
         file = request.files['file']
         file.save(archivePath)
     except Exception, err:
-        logging.error(err)
+        logging.error("unable to save file "+err)
         abort(400)
 
     bundle["archivePath"] = archivePath
@@ -93,7 +93,7 @@ def uploadArchive(bundleId):
     return mongodoc_jsonify(bundle)
 
 
-@config.g_app.route('/bundle/<int:bundleId>/analyse', methods=['POST'])
+@config.g_app.route('/bundle/<bundleId>/analyse', methods=['POST'])
 def analyseBundle(bundleId):
     bundle = config.bundleTable.find_one({"bundleId": bundleId})
 
@@ -146,7 +146,7 @@ def analyseBundle(bundleId):
     return mongodoc_jsonify(bundle)
 
 
-@config.g_app.route("/bundle/<int:bundleId>", methods=['DELETE'])
+@config.g_app.route("/bundle/<bundleId>", methods=['DELETE'])
 def deleteBundle(bundleId):
     '''
     Delete a bundle to the bundleId
@@ -169,7 +169,7 @@ def deleteBundle(bundleId):
 
     return jsonify(**deleteStatus)
 
-@config.g_app.route("/bundle/<int:bundleId>/plugin", methods=['POST'])
+@config.g_app.route("/bundle/<bundleId>/plugin", methods=['POST'])
 def newPlugin(bundleId):
     pluginId = request.get_json().get('pluginId', None)
     pluginName = request.get_json().get('name', None)
@@ -185,7 +185,7 @@ def newPlugin(bundleId):
     return mongodoc_jsonify(requestResult)
 
 
-@config.g_app.route("/bundle/<int:bundleId>/plugin")
+@config.g_app.route("/bundle/<bundleId>/plugin")
 def getPlugins(bundleId):
     count = int(request.args.get('count', 20))
     skip = int(request.args.get('skip', 0))
@@ -241,7 +241,7 @@ def getAllPlugins():
     return mongodoc_jsonify({"plugins": plugins})
 
 
-@config.g_app.route("/bundle/<int:bundleId>/plugin/<int:pluginId>")
+@config.g_app.route("/bundle/<bundleId>/plugin/<int:pluginId>")
 @config.g_app.route("/plugin/<int:pluginId>")
 def getPlugin(pluginId, bundleId=None):
     plugin = config.pluginTable.find_one({"pluginId": pluginId})
