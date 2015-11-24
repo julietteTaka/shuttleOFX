@@ -69,7 +69,9 @@ def getPlugin(pluginId):
         user = config.google.get('userinfo').data
     resp = requests.get(config.catalogRootUri+"/plugin/"+pluginId)
     if resp.status_code != 200:
-        abort(resp.status_code)
+        if resp.status_code == 404:
+            return render_template('notFound.html')
+        abort(resp.status_code)       
     return render_template('plugin.html', plugin=resp.json(), user=user)
 
 @config.g_app.route('/plugin/<pluginId>/image/<imageId>')
