@@ -319,6 +319,25 @@ $(document).ready(function() {
         $("#viewer-placeholder").css('display', 'none');
     }
 
+    function resetParameters () {
+        // Reset basic inputs : text and number
+        $('#renderForm input text, #renderForm input number').each(function() {
+            $(this).val($(this).data('default'));
+        });
+
+        // Reset dropdown lists (select)
+        $('#renderForm select').each(function() {
+            // Loop through each option
+            $(this).find('option').each(function() {
+                $(this).removeAttr('selected');
+                // If it's the default one
+                if ($(this).data('default') === "selected") {
+                    $(this).prop('selected', true);
+                }
+            });
+        });
+    }
+
     // Automatic render on load
     // Filter plugin (blur...)
     if ($('#render').hasClass('OfxImageEffectContextFilter')) {
