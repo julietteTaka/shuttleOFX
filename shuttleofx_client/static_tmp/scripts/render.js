@@ -321,7 +321,7 @@ $(document).ready(function() {
 
     function resetParameters () {
         // Reset basic inputs : text and number
-        $('#renderForm input text, #renderForm input number').each(function() {
+        $('#renderForm input[type="text"], #renderForm input[type="number"]').each(function() {
             $(this).val($(this).data('default'));
         });
 
@@ -335,6 +335,16 @@ $(document).ready(function() {
                     $(this).prop('selected', true);
                 }
             });
+        });
+
+        $('#renderForm input[type="checkbox"]').each(function() {
+            if ($(this).data('default') === "checked") {
+                // Not checked but should be
+                $(this).prop('checked', true);
+            } else {
+                // Checked but shouldn't be
+                $(this).prop('checked', false);
+            }
         });
     }
 
