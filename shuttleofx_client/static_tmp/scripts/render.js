@@ -335,4 +335,10 @@ $(document).ready(function() {
     $("#render.OfxImageEffectContextGenerator").click(function(){
         renderGenerator($(this).attr("pluginId"));
     });
+
+    // Reset button
+    $('button#reset').click(function() {
+        resetParameters();
+    });
+
 });

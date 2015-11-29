@@ -122,6 +122,7 @@
                     <div class="changeParameters">
                         <div class="changeParameters-title">
                             <h3>Parameters</h3>
+                            <button class="btn btn-primary" id="reset">Reset</button>
                         </div>
                         <div class="changeParameters-content">
                             <form id="renderForm" name="renderForm">
@@ -136,36 +137,37 @@
                                             {% set name = paramProps.OfxPropName.value %}
                                             {% set paramType = paramProps.OfxParamPropType.value %}
                                             {% if paramType == "OfxParamTypeInteger" %}
-                                                <input type="number" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                <input type="number" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}" >
                                             {% elif paramType == "OfxParamTypeInteger2D" %}
-                                                <input type="text" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                <input type="text" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}">
                                             {% elif paramType == "OfxParamTypeInteger3D" %}
-                                                <input type="text" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                <input type="text" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}">
                                             {% elif paramType == "OfxParamTypeRange" %}
                                                 <div class="slider shor"></div>
+                                                <!-- TODO See range -->
                                                 <input name="{{name}}" ofxType="{{paramType}}"  id="{{name}}" class="input-number" type="number" value="{{default}}">
                                             {% elif paramType == "OfxParamTypeText" %}
-                                                <input type="text" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                <input type="text" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}">
                                             {% elif paramType == "OfxParamTypeDouble" %}
-                                                <input type="number" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                <input type="number" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}">
                                             {% elif paramType == "OfxParamTypeDouble2D" %}
-                                                <input type="number" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                <input type="number" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}">
                                             {% elif paramType == "OfxParamTypeDouble3D" %}
-                                                <input type="number" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                <input type="number" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}">
                                             {% elif paramType == "OfxParamTypeString" %}
-                                                <input type="text" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                                <input type="text" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}">
                                             {% elif paramType == "OfxParamTypeChoice" %}
                                                 <select ofxType="{{paramType}}" name="{{name}}" id="{{name}}" style="display:block">
                                                     {% set paramIndex = 0 %}
                                                     {% for val in paramProps.OfxParamPropChoiceOption.propValues %}
-                                                        <option value="{{val}}" {%if paramIndex == default%}selected{%endif%}>{{val}}</option>
+                                                        <option value="{{val}}" {%if paramIndex == default%}selected data-default="selected"{%endif%}>{{val}}</option>
                                                         {% set paramIndex = paramIndex + 1 %}
                                                     {% endfor %}
                                                 </select>
                                             {% elif paramType == "OfxParamTypeBoolean" %}
                                                 <div class="togglebutton form-control">
                                                     <label>
-                                                        <input ofxType="{{paramType}}" name="{{name}}" id="{{name}}" type="checkbox" {% if default == 1%} checked {% endif %}>
+                                                        <input ofxType="{{paramType}}" name="{{name}}" id="{{name}}" type="checkbox" {% if default == 1%} checked data-default="checked" {% endif %}>
                                                     </label>
                                                 </div>
                                             {% endif %}
