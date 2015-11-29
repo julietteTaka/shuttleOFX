@@ -95,6 +95,7 @@ $(document).ready(function() {
     }
 
     function renderGenerator(pluginId){
+        displayLoader();
         var renderParameters = formToJson();
 
         $.ajax({
@@ -124,8 +125,7 @@ $(document).ready(function() {
         .done(function(data){
             $("#viewer img").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
             $("#download-view").removeClass('disabled');
-            $('#viewer .preloader-wrapper').removeClass('active');
-            $("#viewer-placeholder").css('display', 'none');
+            hideLoader();
             $('.display img').css({height: "auto"});
 
              $("#downloadtrigger").click(function(data){
@@ -168,6 +168,7 @@ $(document).ready(function() {
     }
 
     function renderFilter(pluginId){
+        displayLoader();
         var renderParameters = formToJson();
 
         $.ajax({
@@ -210,8 +211,7 @@ $(document).ready(function() {
         .done(function(data){
             $("#viewer img").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
             $("#download-view").removeClass('disabled');
-            $('#viewer .preloader-wrapper').removeClass('active');
-            $("#viewer-placeholder").css('display', 'none');
+            hideLoader();
             $('.display img').css({height: "auto"});
 
              $("#downloadtrigger").click(function(data){
@@ -309,6 +309,16 @@ $(document).ready(function() {
         $(obj).parent().css("border", "");
     }
 
+    function displayLoader(){
+        $('#viewer .preloader-wrapper').addClass('active');
+        $("#viewer-placeholder").css('display', 'block');
+    }
+
+    function hideLoader(){
+        $('#viewer .preloader-wrapper').removeClass('active');
+        $("#viewer-placeholder").css('display', 'none');
+    }
+
     // Automatic render on load
     // Filter plugin (blur...)
     if ($('#render').hasClass('OfxImageEffectContextFilter')) {
@@ -320,13 +330,9 @@ $(document).ready(function() {
 
     // Manual render on button click
     $("#render.OfxImageEffectContextFilter").click(function(){
-        $('#viewer .preloader-wrapper').addClass('active');
-        $("#viewer-placeholder").css('display', 'block');
         renderFilter($(this).attr("pluginId"));
     });
     $("#render.OfxImageEffectContextGenerator").click(function(){
-        $('#viewer .preloader-wrapper').addClass('active');
-        $("#viewer-placeholder").css('display', 'block');
         renderGenerator($(this).attr("pluginId"));
     });
 });
