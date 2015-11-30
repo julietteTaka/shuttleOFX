@@ -169,17 +169,6 @@
                                     </div>
                                 </fieldset>
                             </div>
-                            <div class="changeParameters-result">
-                                <div class="form-group submit-form">
-                                        <input type="button" value="Render" id="render" pluginId="{{plugin.rawIdentifier}}"
-                                            {% for context in plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
-                                                {% if context != "OfxImageEffectContextGeneral" %}
-                                                    class="btn btn-primary {{context}}"
-                                                {% endif %}
-                                            {% endfor%}
-                                        >
-                                </div>
-                            </div>
                         </form>
                     </div>
                 </div>
