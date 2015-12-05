@@ -95,7 +95,7 @@
             <ul class="surveys grid">
                 {% for plugin in dico.plugins %}
                     <li class="col-md-3">
-                        <a href="/plugin/{{plugin.pluginId}}">
+                        <a href="/plugin/{{plugin.rawIdentifier}}">
                         <div class="panel panel-primary">
                                 <div class="plugins-titles">
                                     {% if plugin.sampleImagesPath|length != 0 %}

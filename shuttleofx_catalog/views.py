@@ -6,6 +6,7 @@ import re
 
 from time import sleep
 from bson import json_util, ObjectId
+from bson.son import SON
 from flask import jsonify, Response, request, abort, make_response
 
 import config
@@ -198,16 +199,14 @@ def getAllPlugins():
     keyWord = request.args.get('search', None)
     
     #Alphabetical sorting
-    alphaSort = request.args.get('alphaSort', None)
+    alphaSort = request.args.get('alphaSort', 1)
 
-    if alphaSort != None :
-        if alphaSort != 'asc' and alphaSort != 'desc' :
-            alphaSort = None
-        else : 
-            if alphaSort == 'asc' :
-                alphaSort = 1
-            if alphaSort == 'desc' :
-                alphaSort = -1
+    if alphaSort == 'asc':
+        alphaSort = 1
+    elif alphaSort == 'desc':
+        alphaSort = -1
+    elif alphaSort not in [1, -1]:
+        alphaSort = 1
 
     count = request.args.get('count', None)
     if count:
@@ -225,28 +224,62 @@ def getAllPlugins():
                 [{searchKey: searchRegex} for searchKey in searchKeys]
             })
     else:
-        cursor = config.pluginTable.find()
+        # cursor = config.pluginTable.find()
+        pipeline = [
+            {"$sort": SON([("version.major",-1), ("version.minor",-1)])},
+            {"$group": {
+                "_id": "$rawIdentifier",
+                "plugin": {"$first": "$$ROOT"}, # retrieve the first plugin
+                }
+            },
+            {"$sort": {"plugin.label":alphaSort}}
+            ]
+        cursor = list(config.pluginTable.aggregate(pipeline))
 
-    sortedCursor = cursor.sort("label", alphaSort)
     if count and skip:
-        # logging.info("pagination -- count: " + str(count) + ", skip: " + str(skip))
-        filteredCursor = sortedCursor.limit(count).skip(skip)
+        filteredCursor = cursor.limit(count).skip(skip)
     else:
-        filteredCursor = sortedCursor
+        filteredCursor = cursor
 
-    plugins = [ result for result in filteredCursor ]
-
-    # logging.warning("getAllPlugins: " + str([ p["rawIdentifier"] for p in plugins ]))
+    plugins = [result["plugin"] for result in filteredCursor]
 
     return mongodoc_jsonify({"plugins": plugins})
 
 
-@config.g_app.route("/bundle/<bundleId>/plugin/<int:pluginId>")
-@config.g_app.route("/plugin/<int:pluginId>")
-def getPlugin(pluginId, bundleId=None):
-    plugin = config.pluginTable.find_one({"pluginId": pluginId})
-    if plugin == None:
+@config.g_app.route("/bundle/<int:bundleId>/plugin/<pluginRawIdentifier>")
+@config.g_app.route("/plugin/<pluginRawIdentifier>")
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>", methods=['GET'])
+def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
+    '''
+    Returns the latest version of a plugin by its rawIdentifier
+    '''
+
+    match = { "rawIdentifier": str(pluginRawIdentifier)}
+
+    if pluginVersion is not "latest":
+        try:
+            version = pluginVersion.split(".")
+            match["version.major"] = int(version[0])
+            if len(version) > 1:
+                match["version.minor"] = int(version[1])
+        except:
+            abort(404)
+
+    pipeline = [
+        {"$match": match},
+        {"$sort": SON([("version.major",1), ("version.minor",1)])},
+        {"$group": {
+            "_id": "$rawIdentifier",
+            "plugin": {"$first": "$$ROOT"}, # retrieve the first plugin
+            }
+        }]
+
+    plugins = list(config.pluginTable.aggregate(pipeline))
+
+    if not plugins:
         abort(404)
+
+    plugin = plugins[0]["plugin"]
 
     return mongodoc_jsonify(plugin)
 

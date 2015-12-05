@@ -61,13 +61,21 @@ def countPlugins():
         abort(req.status_code)
     return jsonify(**req.json())
 
-
-@config.g_app.route('/plugin/<pluginId>')
-def getPlugin(pluginId):
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>")
+@config.g_app.route("/plugin/<pluginRawIdentifier>")
+def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
     user = None
     if 'google_token' in session:
         user = config.google.get('userinfo').data
-    resp = requests.get(config.catalogRootUri+"/plugin/"+pluginId)
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+       #if resp.status_code == 404:
+            #return redirect(url_for('notFoundPage', pluginRawIdentifier=pluginRawIdentifier))
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+
     if resp.status_code != 200:
         abort(resp.status_code)
     return render_template('plugin.html', plugin=resp.json(), user=user)
@@ -78,12 +86,12 @@ def getSampleImagesForPlugin(pluginId, imageId):
     return Response(req.content, mimetype=req.headers["content-type"])
 
 @config.g_app.route('/editor')
-@config.g_app.route('/editor/<pluginId>')
-def renderPageWithPlugin(pluginId = 0):
+@config.g_app.route('/editor/<pluginRawIdentifier>')
+def renderPageWithPlugin(pluginRawIdentifier):
     user = None
     if 'google_token' in session:
         user = config.google.get('userinfo').data
-    resp = requests.get(config.catalogRootUri+"/plugin/"+str(pluginId))
+    resp = requests.get(config.catalogRootUri+"/plugin/"+str(pluginRawIdentifier))
     if resp.status_code != 200:
         abort(resp.status_code)
     previewGallery = requests.get(config.renderRootUri + '/resource/').json()
