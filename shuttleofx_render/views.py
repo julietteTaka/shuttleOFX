@@ -6,12 +6,15 @@ import atexit
 import logging
 import tempfile
 import multiprocessing
+import mimetypes
 
 from flask import request, jsonify, send_file, abort, Response, make_response
 from bson import json_util, ObjectId
 
 import config
 import renderScene
+
+mimetypes.init()
 
 # list of all computing renders
 g_renders = {}
@@ -24,6 +27,8 @@ g_enablePool = False
 
 # Manager to share rendering information
 g_manager = multiprocessing.Manager()
+
+
 
 def mongodoc_jsonify(*args, **kwargs):
     return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
@@ -159,7 +164,9 @@ def addResource():
         "size" : request.content_length,
         "name" : request.files['file'].filename})
 
-    imgFile = os.path.join(config.resourcesPath, str(uid))
+    imgFile = str(uid) + mimetypes.guess_extension(mimetype, false)
+    imgFile = os.path.join(config.resourcesPath, imgFile)
+    
     file = request.files['file']
     file.save(imgFile)
 
