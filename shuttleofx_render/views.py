@@ -165,10 +165,13 @@ def addResource():
     uid = config.resourceTable.insert({
         "mimetype" : mimetype,
         "size" : request.content_length,
-        "name" : request.files['file'].filename})
+        "name" : request.files['file'].filename,
+        "registeredName" : ""})
 
     imgFile = str(uid) + mimetypes.guess_extension(mimetype)
+    config.resourceTable.update({"_id" : uid}, {"registeredName" : imgFile})
     imgFile = os.path.join(config.resourcesPath, imgFile)
+    
     
     file = request.files['file']
     file.save(imgFile)
