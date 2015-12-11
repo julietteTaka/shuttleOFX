@@ -15,6 +15,8 @@ import config
 import renderScene
 
 mimetypes.init()
+mimetypes.add_type('image/bmp','.bmp')
+mimetypes.add_type('image/x-panasonic-raw', '.raw')
 
 # list of all computing renders
 g_renders = {}
@@ -154,6 +156,7 @@ def addResource():
         abort(make_response("Empty request", 500))
 
     mimetype = request.files['file'].content_type
+    logging.debug("mimetype = " + mimetype)
 
     if not mimetype:
         logging.error("Invalid resource.")
@@ -164,7 +167,7 @@ def addResource():
         "size" : request.content_length,
         "name" : request.files['file'].filename})
 
-    imgFile = str(uid) + mimetypes.guess_extension(mimetype, false)
+    imgFile = str(uid) + mimetypes.guess_extension(mimetype)
     imgFile = os.path.join(config.resourcesPath, imgFile)
     
     file = request.files['file']
