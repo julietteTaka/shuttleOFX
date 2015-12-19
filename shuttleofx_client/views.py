@@ -23,6 +23,10 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+@config.g_app.errorhandler(404)
+def page_not_found(e):
+    return render_template("notFound.html"), 404
+
 @config.g_app.route('/')
 def index():
     if 'google_token' in session:
@@ -78,8 +82,8 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
 
     if resp.status_code != 200:
         if resp.status_code == 404:
-            return render_template('notFound.html')
-        abort(resp.status_code)       
+            return render_template('pluginNotFound.html')
+        abort(resp.status_code)
     return render_template('plugin.html', plugin=resp.json(), user=user)
 
 @config.g_app.route('/plugin/<pluginId>/image/<imageId>')
