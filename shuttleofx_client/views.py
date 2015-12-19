@@ -25,7 +25,11 @@ def login_required(f):
 
 @config.g_app.errorhandler(404)
 def page_not_found(e):
+    if 'google_token' in session:
+        user = config.google.get('userinfo').data
+        return render_template("notFound.html", user=user), 404
     return render_template("notFound.html"), 404
+
 
 @config.g_app.route('/')
 def index():
