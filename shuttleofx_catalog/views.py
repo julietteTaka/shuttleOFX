@@ -102,7 +102,7 @@ def analyseBundle(bundleId):
         logging.error("No matching bundle has been found")
         abort(make_response("No matching bundle has been found", 400))
 
-    if bundle["archivePath"] == None: 
+    if bundle["archivePath"] == None:
         logging.error("The bundle as no directory path")
         abort(make_response("The bundle as no directory path", 400))
 
@@ -126,7 +126,7 @@ def analyseBundle(bundleId):
 
     for index, plugin in enumerate(bundleData['plugins']) :
         pluginId = pluginIdOffset + index
-        
+
         currentPlugin = Plugin(pluginId, bundleId)
         currentPlugin.clips = plugin['clips']
         currentPlugin.parameters = plugin['parameters']
@@ -179,7 +179,7 @@ def newPlugin(bundleId):
         abort(404)
 
     plugin = Plugin(pluginId, bundleId, pluginName)
-    
+
     config.pluginTable.insert(plugin.__dict__)
 
     requestResult = config.pluginTable.find_one({"pluginId": pluginId})
@@ -197,7 +197,7 @@ def getPlugins(bundleId):
 def getAllPlugins():
     #Text search
     keyWord = request.args.get('search', None)
-    
+
     #Alphabetical sorting
     alphaSort = request.args.get('alphaSort', 1)
 
@@ -208,10 +208,12 @@ def getAllPlugins():
     elif alphaSort not in [1, -1]:
         alphaSort = 1
 
-    count = request.args.get('count', None)
+    count = request.args.get('count', 10)
     if count:
         count = int(count)
-    skip = request.args.get('skip', None)
+        logging.error(count)
+
+    skip = request.args.get('skip', 1)
     if skip:
         skip = int(skip)
 
@@ -237,13 +239,14 @@ def getAllPlugins():
         cursor = list(config.pluginTable.aggregate(pipeline))
 
     if count and skip:
-        filteredCursor = cursor.limit(count).skip(skip)
+        filteredCursor = cursor[(skip-1)*count : skip*count]
     else:
         filteredCursor = cursor
 
+    totalPlugins = len(cursor);
     plugins = [result["plugin"] for result in filteredCursor]
 
-    return mongodoc_jsonify({"plugins": plugins})
+    return mongodoc_jsonify({"plugins": plugins, "totalPlugins" : totalPlugins})
 
 
 @config.g_app.route("/bundle/<int:bundleId>/plugin/<pluginRawIdentifier>")
@@ -294,7 +297,7 @@ def getBundleByPluginId(rawIdentifier):
     if bundleId is None:
         logging.error("plugin "+rawIdentifier+" doesn't exists")
         abort(make_response("plugin "+rawIdentifier+" doesn't exists", 404))
-        
+
     return mongodoc_jsonify(bundleId)
 
 
@@ -312,7 +315,7 @@ def addResource():
         logging.error("Invalide resource.")
         abort(make_response("Invalide resource.", 400))
 
-    uid = config.resourceTable.insert({ 
+    uid = config.resourceTable.insert({
         "mimetype" : mimetype,
         "size" : size,
         "name" : name})
@@ -382,7 +385,7 @@ def addImageToPlugin(pluginId):
 
     config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"sampleImagesPath" : imageId} }, upsert=True)
     plugin = config.pluginTable.find_one({"pluginId": pluginId})
-    
+
     return mongodoc_jsonify(plugin)
 
 #TO DO : Tags
