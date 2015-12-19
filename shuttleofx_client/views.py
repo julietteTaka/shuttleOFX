@@ -86,7 +86,7 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
 
     if resp.status_code != 200:
         if resp.status_code == 404:
-            return render_template('pluginNotFound.html')
+            return render_template('pluginNotFound.html', user=user)
         abort(resp.status_code)
     return render_template('plugin.html', plugin=resp.json(), user=user)
 
