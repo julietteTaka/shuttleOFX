@@ -1,6 +1,7 @@
 import config
 from config import globalOfxPluginPath, pluginsStorage, catalogRootUri
 from pyTuttle import tuttle
+from processify import processify
 
 import tempfile
 import json
@@ -11,6 +12,7 @@ import os
 import sys
 import subprocess
 import argparse
+import copy
 
 class ProgressHandle(tuttle.IProgressHandle):
     def __init__(self, renderSharedInfo):
@@ -57,6 +59,7 @@ def loadGraph(scene):
     nodes = []
     for node in scene['nodes']:
         tuttleNode = tuttleGraph.createNode(str(node['plugin']))
+        node['name'] = tuttleNode.getName()
         for parameter in node['parameters']:
             param = tuttleNode.getParam(str(parameter["id"]))
 
@@ -79,14 +82,19 @@ def loadGraph(scene):
             ])
     return tuttleGraph
 
-
-def remapPath(datas):
+@processify
+def convertScenePatterns(scene):
     '''
     Replace PATTERNS with real filepaths.
+    :param scene: dict with nodes, params and connections.
+    :return: (scene, outputFilepaths)
     '''
-    configLocalPluginPath([])
+    outputScene = copy.deepcopy(scene)
+    tuttle.core().getPluginCache().addDirectoryToPath(globalOfxPluginPath)
+    tuttle.core().preload(False)
+
     outputResources = []
-    for node in datas['nodes']:
+    for node in outputScene['nodes']:
         for parameter in node['parameters']:
             logging.warning('param: %s %s', parameter['id'], parameter['value'])
             if isinstance(parameter['value'], (str, unicode)):
@@ -95,13 +103,26 @@ def remapPath(datas):
                     parameter['value'] = parameter['value'].replace('{RESOURCES_DIR}', config.resourcesPath)
                     node['plugin'] = tuttle.getBestReader(str(parameter['value']))
 
+    # Create a Tuttle Graph to generate the UID for each node
+    tuttleGraphTmp = loadGraph(outputScene)
+    nodesHashMap = tuttle.NodeHashContainer()
+    tuttleGraphTmp.computeGlobalHashAtTime(nodesHashMap, 0.0)
+    
+    for node in outputScene['nodes']:
+        for parameter in node['parameters']:
+            logging.warning('param: %s %s', parameter['id'], parameter['value'])
+            if isinstance(parameter['value'], (str, unicode)):
+
                 if '{UNIQUE_OUTPUT_FILE}' in parameter['value']:
                     prefix, suffix = parameter['value'].split('{UNIQUE_OUTPUT_FILE}')
-                    _, tmpFilepath = tempfile.mkstemp(prefix=prefix, suffix=suffix, dir=config.renderDirectory)
-                    outputResources.append(os.path.basename(tmpFilepath))
-                    parameter['value'] = tmpFilepath
+                    nodeHash = str(nodesHashMap.getHash(node['name'], 0.0))
+                    node['hash'] = nodeHash
+                    filename = nodeHash + suffix
+                    filepath = os.path.join(config.renderDirectory, filename)
+                    outputResources.append(filename)
+                    parameter['value'] = filepath
 
-    return outputResources
+    return (outputScene, outputResources)
 
 
 def computeGraph(renderSharedInfo, newRender, bundlePaths):
@@ -156,7 +177,7 @@ def launchComputeGraph(renderSharedInfo, newRender):
             resp = requests.get(catalogRootUri+"/bundle/" + node['plugin']+ '/bundle').json()
             bundleIds.append(resp['bundleId'])
         else:
-            logging.error("Error while searching the plugin "+node['plugin'])
+            logging.error("No plugin defined for node: "+str(node))
 
     bundlePaths = [os.path.join(pluginsStorage, str(bundleId)) for bundleId in bundleIds]
 

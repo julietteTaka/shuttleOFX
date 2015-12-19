@@ -45,18 +45,16 @@ def newRender():
     '''
     Create a new render and return graph information.
     '''
-
-    datas = request.json
-    config.g_app.logger.debug(str(datas))
+    inputScene = request.json
     renderID = str(uuid.uuid1())
     logging.info("RENDERID: " + renderID)
-    outputResources = renderScene.remapPath(datas)
+    scene, outputResources = renderScene.convertScenePatterns(inputScene)
 
     newRender = {}
     newRender['id'] = renderID
     # TODO: return a list of output resources in case of several writers.
     newRender['outputFilename'] = outputResources[0]
-    newRender['scene'] = datas
+    newRender['scene'] = scene
     g_renders[renderID] = newRender
 
     config.g_app.logger.debug('new resource is ' + newRender['outputFilename'])
@@ -65,10 +63,15 @@ def newRender():
     renderSharedInfo['status'] = 0
     g_rendersSharedInfo[renderID] = renderSharedInfo
 
-    if g_enablePool:
-        g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
+    outputFilesExist = all([os.path.exists(os.path.join(config.renderDirectory, f)) for f in outputResources])
+    if not outputFilesExist:
+        if g_enablePool:
+            g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
+        else:
+            renderScene.launchComputeGraph(renderSharedInfo, newRender)
     else:
-        renderScene.launchComputeGraph(renderSharedInfo, newRender)
+        # Already computed
+        renderSharedInfo['status'] = 3
 
     return jsonify(render=newRender)
 
