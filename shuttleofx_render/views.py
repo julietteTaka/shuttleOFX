@@ -35,27 +35,6 @@ g_manager = multiprocessing.Manager()
 def mongodoc_jsonify(*args, **kwargs):
     return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
 
-def remapPath(datas):
-    '''
-    Replace PATTERNS with real filepaths.
-    '''
-    outputResources = []
-    for node in datas['nodes']:
-        for parameter in node['parameters']:
-            logging.warning('param: %s %s', parameter['id'], parameter['value'])
-            if isinstance(parameter['value'], (str, unicode)):
-
-                if '{RESOURCES_DIR}' in parameter['value']:
-                    parameter['value'] = parameter['value'].replace('{RESOURCES_DIR}', config.resourcesPath)
-
-                if '{UNIQUE_OUTPUT_FILE}' in parameter['value']:
-                    prefix, suffix = parameter['value'].split('{UNIQUE_OUTPUT_FILE}')
-                    _, tmpFilepath = tempfile.mkstemp(prefix=prefix, suffix=suffix, dir=config.renderDirectory)
-                    outputResources.append(os.path.basename(tmpFilepath))
-                    parameter['value'] = tmpFilepath
-
-    return outputResources
-
 
 @config.g_app.route('/')
 def index():
@@ -68,9 +47,10 @@ def newRender():
     '''
 
     datas = request.json
+    config.g_app.logger.debug(str(datas))
     renderID = str(uuid.uuid1())
     logging.info("RENDERID: " + renderID)
-    outputResources = remapPath(datas)
+    outputResources = renderScene.remapPath(datas)
 
     newRender = {}
     newRender['id'] = renderID
@@ -168,10 +148,12 @@ def addResource():
         "name" : request.files['file'].filename,
         "registeredName" : ""})
 
-    imgFile = str(uid) + mimetypes.guess_extension(mimetype)
+    _, extension = os.path.splitext(request.files['file'].filename)
+    if not extension:
+        extension = mimetypes.guess_extension(mimetype)
+    imgFile = str(uid) + extension
     config.resourceTable.update({"_id" : uid}, {"registeredName" : imgFile})
     imgFile = os.path.join(config.resourcesPath, imgFile)
-    
     
     file = request.files['file']
     file.save(imgFile)

@@ -1,4 +1,4 @@
-
+import config
 from config import globalOfxPluginPath, pluginsStorage, catalogRootUri
 from pyTuttle import tuttle
 
@@ -78,6 +78,30 @@ def loadGraph(scene):
             nodes[connection['dst']['id']],
             ])
     return tuttleGraph
+
+
+def remapPath(datas):
+    '''
+    Replace PATTERNS with real filepaths.
+    '''
+    configLocalPluginPath([])
+    outputResources = []
+    for node in datas['nodes']:
+        for parameter in node['parameters']:
+            logging.warning('param: %s %s', parameter['id'], parameter['value'])
+            if isinstance(parameter['value'], (str, unicode)):
+
+                if '{RESOURCES_DIR}' in parameter['value']:
+                    parameter['value'] = parameter['value'].replace('{RESOURCES_DIR}', config.resourcesPath)
+                    node['plugin'] = tuttle.getBestReader(str(parameter['value']))
+
+                if '{UNIQUE_OUTPUT_FILE}' in parameter['value']:
+                    prefix, suffix = parameter['value'].split('{UNIQUE_OUTPUT_FILE}')
+                    _, tmpFilepath = tempfile.mkstemp(prefix=prefix, suffix=suffix, dir=config.renderDirectory)
+                    outputResources.append(os.path.basename(tmpFilepath))
+                    parameter['value'] = tmpFilepath
+
+    return outputResources
 
 
 def computeGraph(renderSharedInfo, newRender, bundlePaths):
