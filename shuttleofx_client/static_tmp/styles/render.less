@@ -28,7 +28,7 @@
 			span{
 				top: 6px;
 			}
-		} 
+		}
 	}
 }
 .modal-footer{
@@ -56,6 +56,38 @@ input.input-number{
 		height: 300px;
 		background-color: #555;
 	}
+
+	img#originalPic {
+		display: none;
+		position: absolute;
+		z-index: 1;
+		height: auto;
+		width: calc(~"100% - 29px");
+	}
+
+#BeforeAfterSlider {
+	display: none;
+}
+
+#BeforeAfterSlider .noUi-base {
+    background: #cccccc;
+}
+#BeforeAfterSlider .noUi-origin {
+    background: #cccccc;
+}
+#BeforeAfterSlider .noUi-background {
+	background: #cccccc;
+}
+#BeforeAfterSlider .noUi-connect {
+	background: #cccccc;
+}
+#BeforeAfterSlider .noUi-handle {
+	background: #eee;
+	::after {
+		content: "After";
+	}
+}
+
 	#viewer-placeholder{
 		height: 300px;
 		width: 100%;
@@ -255,6 +287,7 @@ input.input-number{
 .preloader-wrapper {
   	display: inline-block;
   	position: relative;
+  	z-index: 1;
   	top: 50%;
   	width: 48px;
   	height: 48px; 
