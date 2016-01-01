@@ -239,7 +239,7 @@ def getAllPlugins():
     else:
         filteredCursor = cursor
 
-        plugins = [result["plugin"] for result in filteredCursor]
+    plugins = [result["plugin"] for result in filteredCursor]
 
     return mongodoc_jsonify({"plugins": plugins})
 
