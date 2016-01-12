@@ -90,6 +90,11 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
         abort(resp.status_code)
     return render_template('plugin.html', plugin=resp.json(), user=user)
 
+@config.g_app.route("/plugin/<pluginRawIdentifier>/infos")
+def getPluginInfos(pluginRawIdentifier):
+    resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+    return render_template('pluginInfos.html', plugin=resp.json())
+
 @config.g_app.route('/plugin/<pluginId>/image/<imageId>')
 def getSampleImagesForPlugin(pluginId, imageId):
     req = requests.get(config.catalogRootUri + "/resources/" + str(imageId) + "/data")
