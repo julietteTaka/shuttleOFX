@@ -90,8 +90,8 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
         abort(resp.status_code)
     return render_template('plugin.html', plugin=resp.json(), user=user)
 
-@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/wikiedit")
-@config.g_app.route("/plugin/<pluginRawIdentifier>/wikiedit")
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/wiki/edit")
+@config.g_app.route("/plugin/<pluginRawIdentifier>/wiki/edit")
 def getPluginWikiEdit(pluginRawIdentifier, pluginVersion="latest"):
     user = None
     if 'google_token' in session:
