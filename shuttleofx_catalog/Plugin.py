@@ -19,12 +19,19 @@ class Plugin(object):
         self.properties = {}
         self.clip = []
         self.rawIdentifier = None
+        self.wiki = ""
 
     def setDescription(self, description):
         self.description = description
 
     def addPluginDetails(self, details):
         self.details = details
+
+    def setWiki(self, wiki):
+        self.wiki = wiki
+
+    def getWiki(self):
+        return self.wiki
 
     def setRating(self, val):
         self.rate = val
@@ -64,3 +71,4 @@ class Plugin(object):
         print "rate:", self.rate
         print "defautImagePath:", self.defautImagePath
         print "sampleImagesPath:", self.sampleImagesPath
+        print "wiki:", self.wiki
