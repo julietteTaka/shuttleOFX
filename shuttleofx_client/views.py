@@ -90,6 +90,24 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
         abort(resp.status_code)
     return render_template('plugin.html', plugin=resp.json(), user=user)
 
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/wikiedit")
+@config.g_app.route("/plugin/<pluginRawIdentifier>/wikiedit")
+def getPluginWikiEdit(pluginRawIdentifier, pluginVersion="latest"):
+    user = None
+    if 'google_token' in session:
+        user = config.google.get('userinfo').data
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+    if resp.status_code != 200:
+        if resp.status_code == 404:
+            return render_template('pluginNotFound.html', user=user)
+        abort(resp.status_code)
+    return render_template('wikiedit.html', plugin=resp.json(), user=user)
+
 @config.g_app.route('/plugin/<pluginId>/image/<imageId>')
 def getSampleImagesForPlugin(pluginId, imageId):
     req = requests.get(config.catalogRootUri + "/resources/" + str(imageId) + "/data")
