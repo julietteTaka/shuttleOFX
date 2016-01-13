@@ -58,11 +58,6 @@
                 <div class="page-header">
                 <h2>Edit {{plugin.label}} wiki</h2>
                 </div>
-                <p>
-                    {% if "OfxPropPluginDescription" in plugin.properties %}
-                        {{plugin.properties.OfxPropPluginDescription.value}}
-                    {% endif %}
-                </p>
             </div>
         </div>
 
@@ -90,6 +85,27 @@
 
 {% block scripts %}
 <script type="text/javascript">
+$(document).ready(function() {
 
+    function wikiJson()
+    {
+        $.ajax({
+            type: "POST",
+            url: "/wiki/update",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                'wikicontent': $("#wiki").val()
+            }),
+        })
+        .done(function(data){
+            alert(data);
+        });
+    }
+
+    $("#setWiki").click(function(){
+        wikiJson();
+    });
+
+});
 </script>
 {% endblock %}

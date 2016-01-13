@@ -22,7 +22,7 @@ class Plugin(object):
     def convertTuttlePropertyToDict(self, prop):
 
         pythonType = propTypeToPythonType[prop.getType()]
-        
+
         # Convert SWIG binding list in python
         valuesCPP = prop.getValues()
         values = []
@@ -53,7 +53,7 @@ class Plugin(object):
             'major': tuttlePlugin.getVersionMajor(),
             'minor': tuttlePlugin.getVersionMinor()
         }
-        
+
         try:
             node = tuttle.createNode(tuttlePlugin.getIdentifier())
         except Exception as e:
