@@ -182,6 +182,7 @@
 {% endblock %}
 
 {% block scripts %}
+    {{ super() }}
     <script src="{{ url_for('static', filename='scripts/render.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {

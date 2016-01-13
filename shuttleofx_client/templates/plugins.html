@@ -128,3 +128,8 @@
 </div>
 
 {% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='scripts/vendor/js.cookie.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/counter.js') }}"></script>
+{% endblock %}

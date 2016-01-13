@@ -117,3 +117,19 @@
 </div>
 {% endif %}
 {% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='scripts/vendor/js.cookie.js') }}"></script>
+    <script type="text/javascript">    
+        // Read cookies content and update the back link
+        // to redirect to the plugins page with the right preferences :
+        // nbr of plugins and page
+        $(document).ready(function() {
+            var href = $("#back-to-plugins").attr("href");
+            var prefs = Cookies.getJSON("user_sorting_prefs");
+            if(prefs.count && prefs.skip){
+                $("#back-to-plugins").attr("href", href + "?count=" + prefs.count + "&skip=" + prefs.skip );    
+            }
+        });
+    </script>
+{% endblock %}
