@@ -70,7 +70,9 @@ def newRender():
         else:
             renderScene.launchComputeGraph(renderSharedInfo, newRender)
     else:
-        # Already computed
+        # Already computed, update the file timestamp
+        # TODO : update multiple files in case of multiple output resources
+        os.utime(os.path.join(config.renderDirectory, outputResources[0]), None)
         renderSharedInfo['status'] = 3
 
     return jsonify(render=newRender)
