@@ -10,10 +10,12 @@ if (decomposedUrl.length < 2) {
   count = 10;
   skip = 1;
 }
-else {
-  decomposedUrl = decomposedUrl[1].split("&");
-  count = decomposedUrl[0].split("=")[1];
-  skip = decomposedUrl[1].split("=")[1];
+else if (decomposedUrl[1].indexOf("&") > -1) {
+    // Only if the url contains the character &
+    // Avoid a bug on the search page
+    decomposedUrl = decomposedUrl[1].split("&");
+    count = decomposedUrl[0].split("=")[1];
+    skip = decomposedUrl[1].split("=")[1];
 }
 
 $('select#pageSize').val(count);
