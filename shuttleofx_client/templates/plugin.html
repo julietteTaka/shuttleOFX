@@ -127,7 +127,7 @@
         $(document).ready(function() {
             var href = $("#back-to-plugins").attr("href");
             var prefs = Cookies.getJSON("user_sorting_prefs");
-            if(prefs.count && prefs.skip){
+            if(prefs && prefs.count && prefs.skip){
                 $("#back-to-plugins").attr("href", href + "?count=" + prefs.count + "&skip=" + prefs.skip );    
             }
         });
