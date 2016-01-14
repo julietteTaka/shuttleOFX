@@ -7,6 +7,8 @@ import logging
 import tempfile
 import multiprocessing
 import mimetypes
+import urllib
+import imghdr
 
 from flask import request, jsonify, send_file, abort, Response, make_response
 from bson import json_util, ObjectId
@@ -210,6 +212,26 @@ def uploadPage():
         </div>
       </body>
       </html>"""
+
+@config.g_app.route('/download', methods=['POST'])
+def download():
+    '''
+    download an image from an url
+    '''
+    imgUrl = request.json['url']
+    imgId = "tmp/" + str(uuid.uuid4())
+
+    imgPath = os.path.join(config.resourcesPath, imgId)
+
+    urllib.urlretrieve(imgUrl, imgPath)
+
+    ext = imghdr.what(imgPath)
+
+    newImgPath = imgPath + "." + ext
+
+    os.rename(imgPath, newImgPath)
+
+    return imgId + "." + ext
 
 @atexit.register
 def cleanPool():

@@ -241,6 +241,12 @@ def addImageToPlugin(pluginId):
     req = requests.post(config.catalogRootUri + "/plugin/" + str(pluginId) + "/images", data=request.data, headers=request.headers)
     return jsonify(**req.json())
 
+@config.g_app.route('/download', methods=['POST'])
+def download():
+    header = {'content-type' : 'application/json'}
+    req = requests.post(config.renderRootUri + "/download", data=request.data, headers=header)
+    return req.content
+
 @config.google.tokengetter
 def get_google_oauth_token():
     return session.get('google_token')

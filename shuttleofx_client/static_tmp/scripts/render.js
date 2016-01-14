@@ -267,6 +267,118 @@ $(document).ready(function() {
         });
     }
 
+    function dlRenderFilter(pluginId) {
+      displayLoader();
+      var renderParameters = formToJson();
+
+      $.ajax({
+        type: "POST",
+        url: "/download",
+        contentType: 'application/json; charset=utf-8',
+        data : JSON.stringify({
+          'url': $("#imgUrl").val()
+        }),
+      })
+      .done(function(data){
+        selectedResource = data;
+
+        $.ajax({
+            type: "POST",
+            url: "/render",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                nodes: [{
+                    id: 0,
+                    parameters: [
+                        {
+                            "id" : "filename",
+                            "value" : "{RESOURCES_DIR}/"+ selectedResource
+                        }
+                    ]
+                },{
+                    id: 1,
+                    plugin: pluginId,
+                    parameters: renderParameters
+                },{
+                    id: 2,
+                    plugin: "tuttle.pngwriter",
+                    parameters: [{
+                        id: "filename",
+                        value:  "{UNIQUE_OUTPUT_FILE}.png"
+                    }]
+                }],
+
+                connections: [{
+                    src: {id: 0},
+                    dst: {id: 1}
+                },{
+                    src: {id: 1},
+                    dst: {id: 2}
+                }],
+                options:[],
+            }),
+        })
+        .done(function(data){
+             $("#viewer img#originalPic").attr("src", "/resource/" + selectedResource);
+          $("#viewer img#originalPic").show();
+          $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
+            $("#download-view").removeClass('disabled');
+            hideLoader();
+            $('.display img').css({height: "auto"});
+          init_beforeAfterSlider();
+
+             $("#downloadtrigger").click(function(data){
+               $.ajax({
+            type: "POST",
+            url: "/render",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                nodes: [{
+                    id: 0,
+                    parameters: [
+                        {
+                            "id" : "filename",
+                            "value" : "{RESOURCES_DIR}/"+ selectedResource
+                        }
+                    ]
+                },{
+                    id: 1,
+                    plugin: pluginId,
+                    parameters: renderParameters
+                },{
+                    id: 2,
+                    plugin: "tuttle.pngwriter",
+                    parameters: [{
+                        id: "filename",
+                        value:  "{UNIQUE_OUTPUT_FILE}.png"
+                    }]
+                }],
+
+                connections: [{
+                    src: {id: 0},
+                    dst: {id: 1}
+                },{
+                    src: {id: 1},
+                    dst: {id: 2}
+                }],
+                options:[],
+            }),
+        })
+        .done(function(data){
+                    var link = document.createElement("a");
+                    link.download = name;
+                    link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
+                    link.click();
+                    $("#downloadModal").modal('hide');
+                });
+            });
+        })
+        .error(function(data){
+            console.log('POST ERROR !');
+        });
+      });
+    }
+
     var allResources = undefined;
     var selectedResource = undefined;
 
@@ -364,6 +476,10 @@ $(document).ready(function() {
     });
     $("#render.OfxImageEffectContextGenerator").click(function(){
         renderGenerator($(this).attr("pluginId"));
+    });
+
+    $("#renderUrl.OfxImageEffectContextFilter").click(function(){
+        dlRenderFilter($(this).attr("pluginId"));
     });
 
     // Reset button

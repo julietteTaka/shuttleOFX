@@ -89,6 +89,18 @@
                             </div>
                         </div>
                         <div class="row">
+                          <div class="col-md-12">
+                            <input id="imgUrl" type="text" name="imgUrl" value="" placeholder="type an image url here ...">
+                            <input type="button" value="Send" id="renderUrl" pluginId="{{plugin.rawIdentifier}}"
+                                {% for context in plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
+                                    {% if context != "OfxImageEffectContextGeneral" %}
+                                        class="btn btn-primary {{context}}"
+                                    {% endif %}
+                                {% endfor%}
+                            >
+                          </div>
+                        </div>
+                        <div class="row">
                             {% for resource in resources.resources %}
                                 {% for key in resource._id %}
                                     <div class="col-md-3">
