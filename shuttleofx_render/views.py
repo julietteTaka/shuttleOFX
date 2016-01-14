@@ -7,12 +7,14 @@ import logging
 import tempfile
 import multiprocessing
 import mimetypes
+import datetime
 
 from flask import request, jsonify, send_file, abort, Response, make_response
 from bson import json_util, ObjectId
 
 import config
 import renderScene
+import cache
 
 mimetypes.init()
 mimetypes.add_type('image/bmp','.bmp')
@@ -30,6 +32,8 @@ g_enablePool = False
 # Manager to share rendering information
 g_manager = multiprocessing.Manager()
 
+g_lastClean = datetime.datetime.min
+
 
 
 def mongodoc_jsonify(*args, **kwargs):
@@ -45,6 +49,14 @@ def newRender():
     '''
     Create a new render and return graph information.
     '''
+    global g_lastClean
+
+    # Clean the cache every interval set in the config
+    if g_lastClean < datetime.datetime.now() - datetime.timedelta(hours=config.cleanCacheInterval):
+        cache.cleanCache()
+        # update clean date
+        g_lastClean = datetime.datetime.now()
+
     inputScene = request.json
     renderID = str(uuid.uuid1())
     logging.info("RENDERID: " + renderID)
