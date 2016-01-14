@@ -124,6 +124,16 @@ def getPluginWikiEdit(pluginRawIdentifier, pluginVersion="latest"):
             return render_template('notFound.html', user=user)
         abort(resp.status_code)
     return render_template('wikiedit.html', plugin=resp.json(), user=user)
+
+@config.g_app.route('/wiki/update/<pluginId>/version/<pluginVersion>', methods=['POST'])
+@config.g_app.route('/wiki/update/<pluginId>', methods=['POST'])
+def setWiki(pluginId, pluginVersion="latest"):
+    user = None
+    if 'google_token' in session:
+        user = config.google.get('userinfo').data
+    header = {'content-type' : 'application/json'}
+    req = requests.post(config.catalogRootUri + "/wiki/update/" + pluginId)
+    return render_template('plugin.html', plugin=resp.json(), user=user)
 ### Wiki End ___________________________________________________________________
 
 @config.g_app.route('/render', methods=['POST'])
