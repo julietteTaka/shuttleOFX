@@ -132,6 +132,11 @@ def getResourceById(resourceId):
     req = requests.get(config.renderRootUri+"/resource/"+resourceId)
     return Response(req.content, mimetype="image/png")
 
+@config.g_app.route('/resource/tmp/<resourceId>', methods=['GET'])
+def getTmpResourceById(resourceId):
+    req = requests.get(config.renderRootUri+"/resource/tmp/"+resourceId)
+    return Response(req.content, mimetype="image/png")
+
 @config.g_app.route('/resource', methods=['GET'])
 def getResources() :
     req = requests.get(config.renderRootUri + '/resource/')

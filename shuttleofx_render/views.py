@@ -180,6 +180,19 @@ def getResource(resourceId):
         logging.error("can't find " + resource)
         abort(make_response("can't find " + resource, 404))
 
+@config.g_app.route('/resource/tmp/<resourceId>', methods=['GET'])
+def getTmpResource(resourceId):
+    '''
+    Returns tmp resource file.
+    '''
+    resource = os.path.join(config.resourcesPath, 'tmp', resourceId)
+
+    if os.path.isfile(resource):
+        return send_file(resource)
+    else:
+        logging.error("can't find " + resource)
+        abort(make_response("can't find " + resource, 404))
+
 @config.g_app.route('/resource/', methods=['GET'])
 def getResourcesDict():
     '''
