@@ -264,6 +264,7 @@ $(document).ready(function() {
         })
         .error(function(data){
             console.log('POST ERROR !');
+            hideLoader();
         });
     }
 
@@ -280,7 +281,24 @@ $(document).ready(function() {
         }),
       })
       .done(function(data){
-        selectedResource = data;
+        if (data == "Empty request") {
+          hideLoader();
+          alert("URL input is empty, please type an URL before to click on send button.")
+        }
+        else if (data == "Not an image") {
+          hideLoader();
+          alert("The URL that you have sent was not an image. Please try again.")
+        }
+        else if (data == "Not found") {
+          hideLoader();
+          alert("The URL that you have sent was not found. Please try again.")
+        }
+        else if (data == "Not exist") {
+          hideLoader();
+          alert("The URL that you have sent doesn't exist. Please try again.")
+        }
+        else {
+          selectedResource = data;
 
         $.ajax({
             type: "POST",

@@ -8,6 +8,7 @@ import tempfile
 import multiprocessing
 import mimetypes
 import urllib
+import requests
 import imghdr
 
 from flask import request, jsonify, send_file, abort, Response, make_response
@@ -231,12 +232,35 @@ def download():
     '''
     download an image from an url
     '''
+
     imgUrl = request.json['url']
+    if imgUrl.isspace() or not imgUrl:
+        abort(make_response("Empty request", 500))
+
+    if not imgUrl.startswith('http://') and not imgUrl.startswith('https://'):
+        imgUrl = 'http://' + imgUrl
+
     imgId = "tmp/" + str(uuid.uuid4())
 
     imgPath = os.path.join(config.resourcesPath, imgId)
 
-    urllib.urlretrieve(imgUrl, imgPath)
+    #urllib.urlretrieve(imgUrl, imgPath)
+
+    try:
+        imgData = requests.get(imgUrl)
+
+    except requests.exceptions.ConnectionError as e:
+        abort(make_response("Not exist", 404))
+
+    if not imgData.status_code == requests.codes.ok:
+        abort(make_response("Not found", imgData.status_code))
+
+    if not imgData.headers['content-type'].startswith('image'):
+        abort(make_response("Not an image", 404))
+
+    imgFile = open(imgPath,'w+')
+    imgFile.write(imgData.content)
+    imgFile.close()
 
     ext = imghdr.what(imgPath)
 
