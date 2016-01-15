@@ -25,17 +25,17 @@ def cleanCache():
             filePath = os.path.join(path, file)
             fileSize = os.stat(filePath).st_size
             # List all file : timestamp | size | filename
-            allFiles.append((os.path.getmtime(filePath), fileSize, file))
+            allFiles.append((os.path.getmtime(filePath), fileSize, filePath))
             cacheSize += fileSize
 
     allFiles.sort()
 
     while cacheSize >= config.cacheMaxSize:
         for file in allFiles:
-            # TODO Remove folder if empty ?
             os.remove(os.path.join(config.renderDirectory, os.path.join(config.renderDirectory, file[2])))
             cacheSize -= file[1]
 
+    removeEmptyFolders(config.renderDirectory)
 
 def cachePathFromFile(filename):
     '''
@@ -51,3 +51,24 @@ def cachePathFromFile(filename):
     charactersList[len(charactersList)-1] += extension
 
     return os.path.join(*charactersList)
+
+def removeEmptyFolders(path, removeRoot=True):
+    '''
+        Function to remove empty folders
+        https://gist.github.com/jacobtomlinson/9031697
+    '''
+    if not os.path.isdir(path):
+        return
+
+    # remove empty subfolders
+    files = os.listdir(path)
+    if len(files):
+        for f in files:
+            fullpath = os.path.join(path, f)
+            if os.path.isdir(fullpath):
+                removeEmptyFolders(fullpath)
+
+    # if folder empty, delete it
+    files = os.listdir(path)
+    if len(files) == 0 and removeRoot:
+        os.rmdir(path)
