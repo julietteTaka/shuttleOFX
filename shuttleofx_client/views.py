@@ -107,6 +107,26 @@ def renderPageWithPlugin(pluginRawIdentifier):
     previewGallery = requests.get(config.renderRootUri + '/resource/').json()
     return render_template('editor.html', plugin=resp.json(), user=user, resources=previewGallery)
 
+@config.g_app.route("/comments/<pluginRawIdentifier>/version/<pluginVersion>")
+@config.g_app.route("/comments/<pluginRawIdentifier>")
+def getComments(pluginRawIdentifier, pluginVersion="latest"):
+    user = None
+    if 'google_token' in session:
+        user = config.google.get('userinfo').data
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+
+    if resp.status_code != 200:
+        if resp.status_code == 404:
+            return render_template('pluginNotFound.html', user=user)
+        abort(resp.status_code)
+    return render_template('comments.html', plugin=resp.json(), user=user)
+
+
 @config.g_app.route('/render', methods=['POST'])
 def render():
     headers = {
