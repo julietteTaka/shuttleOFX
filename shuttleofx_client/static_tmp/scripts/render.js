@@ -268,6 +268,7 @@ $(document).ready(function() {
         });
     }
 
+    // download an image from an url and apply a filter
     function dlRenderFilter(pluginId) {
       displayLoader();
       var renderParameters = formToJson();
@@ -390,7 +391,8 @@ $(document).ready(function() {
     // Automatic render on load
     // Filter plugin (blur...)
     if ($('#render').hasClass('OfxImageEffectContextFilter')) {
-        renderFilter($("#render.OfxImageEffectContextFilter").attr("pluginId"));
+        $("#imgUrl").val("http://lorempixel.com/600/400/");
+        dlRenderFilter($("#render.OfxImageEffectContextFilter").attr("pluginId"));
     } else if($('#render').hasClass('OfxImageEffectContextGenerator')) {
         // Generator plugin (color wheel...)
         renderGenerator($("#render.OfxImageEffectContextGenerator").attr("pluginId"));
@@ -404,6 +406,7 @@ $(document).ready(function() {
         renderGenerator($(this).attr("pluginId"));
     });
 
+    // Send an image from an external URL
     $("#renderUrl.OfxImageEffectContextFilter").click(function(){
         dlRenderFilter($(this).attr("pluginId"));
     });
