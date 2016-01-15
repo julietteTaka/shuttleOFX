@@ -85,18 +85,19 @@ h2.title-plugin{
     taken from materialize.css
 --------------------------------*/
 .tabs {
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  position: relative;
-  overflow-x: auto;
-  overflow-y: hidden;
-  height: 48px;
-  margin: 0 auto;
-  padding: 0;
-  width: 100%;
-  white-space: nowrap;
-  .tab {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+    height: 48px;
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+    min-width: 350px;
+    white-space: nowrap;
+    .tab {
         -webkit-box-flex: 1;
         -webkit-flex-grow: 1;
         -ms-flex-positive: 1;
@@ -112,7 +113,7 @@ h2.title-plugin{
         overflow: hidden;
         letter-spacing: .8px;
         width: 15%;
-        min-width: 80px;
+        min-width: 70px;
 
         a {
             color: #fff;
@@ -135,6 +136,15 @@ h2.title-plugin{
         &.disabled a {
             color: #B3B3B3;
             cursor: default;
+        }
+    }
+}
+
+@media only screen and (max-width: 768px){
+    .tabs{
+        height: 55px;
+        .tab{
+            height: 55px;
         }
     }
 }

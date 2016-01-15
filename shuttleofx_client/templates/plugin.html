@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block back_button %}
-<a href="/plugin" id="back-to-plugins"><i class="fa fa-angle-left"></i> Back to all plugins</a>
+<a href="/plugin" id="back-to-plugins" data-0="line-height:80px" data-150="line-height:30px"><i class="fa fa-angle-left"></i> Back to all plugins</a>
 {% endblock %}
 
 {% block title %}
@@ -26,7 +26,6 @@
                             {% set supportedContexts = plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
                             {% if "OfxImageEffectContextFilter" in supportedContexts or "OfxImageEffectContextGenerator" in supportedContexts %}
                                 <li class="tab"><a {% if active == "demo" %}class="active"{% endif %} href="/editor/{{plugin.rawIdentifier}}">Demo</a></li>
-                                <!-- TODO : make else disable ? -->
                             {% endif %}
                         {% endif %}
                         <li class="tab"><a {% if active == "infos" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/infos">Technical infos</a></li>
@@ -131,5 +130,6 @@
                 $("#back-to-plugins").attr("href", href + "?count=" + prefs.count + "&skip=" + prefs.skip );    
             }
         });
+        
     </script>
 {% endblock %}
