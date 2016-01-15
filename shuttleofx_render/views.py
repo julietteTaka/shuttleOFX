@@ -53,7 +53,7 @@ def newRender():
 
     # Clean the cache every interval set in the config
     if g_lastClean < datetime.datetime.now() - datetime.timedelta(hours=config.cleanCacheInterval):
-        cache.cleanCache()
+        cache.cleanCache(config.renderDirectory)
         # update clean date
         g_lastClean = datetime.datetime.now()
 
