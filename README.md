@@ -5,15 +5,15 @@ The ShuttleOFX platform is designed to share [OpenFX](http://openeffects.org) pl
 Following the [TuttleOFX](http://www.tuttleofx.org) initiative, the ambition is to promote a standard way to create image processing algorithms usable across softwares.
 
 
-**ShuttleOFX**
+##### ShuttleOFX
 >- website: [http://shuttleofx.org](http://shuttleofx.org)
 >- github: [https://github.com/shuttleofx/ShuttleOFX](https://github.com/shuttleofx/ShuttleOFX)
 
-**TuttleOFX**
+##### TuttleOFX
 >- website: [http://tuttleofx.org](http://tuttleofx.org)
 >- github: [https://github.com/tuttleofx/TuttleOFX](https://github.com/tuttleofx/TuttleOFX)
 
-**OpenFX**
+##### OpenFX
 >- website: [http://openeffects.org](http://openeffects.org)
 >- github: [http://github.com/ofxa/openfx](http://github.com/ofxa/openfx)
 
@@ -29,3 +29,31 @@ Contact
 Use github issues for suggestions or bug report
 > [http://github.com/shuttleofx/ShuttleOFX/issues](http://github.com/shuttleofx/ShuttleOFX/issues)
 
+
+Development
+-----------
+
+Upload config files into `/etc/shuttleofx` and run the latest docker image.
+
+##### Download the latest image
+
+```
+docker pull shuttleofx/shuttleofx
+```
+
+##### Local image build
+
+Useful if you need to modify the Dockerfile.
+
+```
+docker build -t shuttleofx <source folder>
+```
+
+##### Run services
+
+See [run_docker_dev.sh](run_docker_dev.sh) or [run_docker_server.sh](run_docker_server.sh)
+
+##### Useful Docker options
+
+ - **Interactive**: You can enter into the image with the option: ```-i --entrypoint /bin/bash```
+ - **Clean image**: You can autoclean the image between runs: ```--rm=True```
