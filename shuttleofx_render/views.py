@@ -7,12 +7,14 @@ import logging
 import tempfile
 import multiprocessing
 import mimetypes
+import datetime
 
 from flask import request, jsonify, send_file, abort, Response, make_response
 from bson import json_util, ObjectId
 
 import config
 import renderScene
+import cache
 
 mimetypes.init()
 mimetypes.add_type('image/bmp','.bmp')
@@ -30,6 +32,8 @@ g_enablePool = False
 # Manager to share rendering information
 g_manager = multiprocessing.Manager()
 
+g_lastClean = datetime.datetime.min
+
 
 
 def mongodoc_jsonify(*args, **kwargs):
@@ -45,6 +49,14 @@ def newRender():
     '''
     Create a new render and return graph information.
     '''
+    global g_lastClean
+
+    # Clean the cache every interval set in the config
+    if g_lastClean < datetime.datetime.now() - datetime.timedelta(hours=config.cleanCacheInterval):
+        cache.cleanCache(config.renderDirectory)
+        # update clean date
+        g_lastClean = datetime.datetime.now()
+
     inputScene = request.json
     renderID = str(uuid.uuid1())
     logging.info("RENDERID: " + renderID)
@@ -62,15 +74,19 @@ def newRender():
     renderSharedInfo = g_manager.dict()
     renderSharedInfo['status'] = 0
     g_rendersSharedInfo[renderID] = renderSharedInfo
-
-    outputFilesExist = all([os.path.exists(os.path.join(config.renderDirectory, f)) for f in outputResources])
+    
+    # TODO : Generate multiple file paths and test on all files in case of multiple output resources
+    filepath = cache.cachePathFromFile(outputResources[0])
+    outputFilesExist = os.path.exists(os.path.join(config.renderDirectory, filepath))
+    
     if not outputFilesExist:
         if g_enablePool:
             g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
         else:
             renderScene.launchComputeGraph(renderSharedInfo, newRender)
     else:
-        # Already computed
+        # Already computed, update the file timestamp
+        os.utime(os.path.join(config.renderDirectory, filepath), None)
         renderSharedInfo['status'] = 3
 
     return jsonify(render=newRender)
@@ -111,11 +127,12 @@ def resource(renderId, resourceId):
     '''
     Returns file resource by renderId and resourceId.
     '''
-    if not os.path.isfile( os.path.join(config.renderDirectory, resourceId) ):
-        logging.error(config.renderDirectory + resourceId + " doesn't exists")
-        abort(make_response(config.renderDirectory + resourceId + " doesn't exists", 404))
+    filepath = cache.cachePathFromFile(resourceId)
+    if not os.path.isfile( os.path.join(config.renderDirectory, filepath) ):
+        logging.error(config.renderDirectory + filepath + " doesn't exists")
+        abort(make_response(config.renderDirectory + filepath + " doesn't exists", 404))
 
-    return send_file( os.path.join(config.renderDirectory, resourceId) )
+    return send_file( os.path.join(config.renderDirectory, filepath) )
 
 @config.g_app.route('/render/<renderID>', methods=['DELETE'])
 def deleteRenderById(renderID):
