@@ -229,7 +229,10 @@ def addResource():
 		logging.error("Invalid resource.")
 		abort(make_response("Invalid resource.", 404))
 
-	if mimetype == "application/zip":
+	if mimetype == "application/zip" \
+	or mimetype == "application/x-zip"\
+	or mimetype == "application/octet-stream"\
+	or mimetype == "application/x-zip-compressed":
 		resources = addArchive_Zipfile(file)
 	else:
 		resources = addFile(file)
