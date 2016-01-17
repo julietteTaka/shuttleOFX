@@ -27,6 +27,12 @@ html,body{
     padding-top: 50px;
 }
 
+@media only screen and (max-width: 550px){
+    .main-content.no-bottom-header{
+        padding-top: 70px;
+    }
+}
+
 .page-header h2{
     font-family: "Roboto-Light";
     color: @ofxColor;
@@ -239,6 +245,14 @@ header{
     header #back-to-plugins { display: none; }
 }
 
+@media only screen and (max-width: 550px){
+    header form#searchForm{
+       display: none;
+    }
+    .navbar.navbar{
+        height: 75px;
+    }
+}
 
 /*----------------------------------------------------------------
     SubHeader
@@ -310,7 +324,11 @@ header{
     }
 }
 
-
+@media only screen and (max-width: 768px){
+    .header-content h1{
+        margin-left: 25px;
+    }
+}
 /*----------------------------------------------------------------
     Navigation
 ----------------------------------------------------------------*/
