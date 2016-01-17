@@ -140,8 +140,8 @@ def addFile(file):
 		mimetype = mimetypes.guess_type(file._fileobj.name)
 	'''
 
-	mimetype = file.content_type
-	#mimetype = mimetypes.guess_type(file.filename)
+	#mimetype = file.content_type
+	mimetype = mimetypes.guess_type(file.filename)
 
 	fileLength = file.content_length
 
@@ -174,16 +174,16 @@ def addArchive_Zipfile(archiveFile):
 	for fileName in archive.namelist():
 		extractPath = archive.extract(fileName, "/tmp/")
 
-		logging.warning("extractPath = " + extractPath)
+		#logging.warning("extractPath = " + extractPath)
 		file = open(extractPath, "rw")
 
-		logging.warning("filename = " + fileName)
+		#logging.warning("filename = " + fileName)
 		file.seek(0, os.SEEK_END)
 		fileLength = file.tell()
-		logging.warning("fileLength = " + fileLength.__str__())
+		#logging.warning("fileLength = " + fileLength.__str__())
 
 		mimetype, _ = mimetypes.guess_type(extractPath)
-		logging.warning("mimetype = " + mimetype)
+		#logging.warning("mimetype = " + mimetype)
 
 		uid = config.resourceTable.insert({
 			"mimetype": mimetype,
@@ -222,12 +222,15 @@ def addResource():
 		abort(make_response("Empty request", 500))
 
 	file = request.files['file']
-	mimetype = file.content_type
+	#mimetype = file.content_type
+	mimetype = mimetypes.guess_type(file.filename)
 	logging.debug("mimetype = " + mimetype)
 
 	if not mimetype:
 		logging.error("Invalid resource.")
 		abort(make_response("Invalid resource.", 404))
+
+	logging.warning("mimetype = " + mimetype)
 
 	if mimetype == "application/zip" \
 	or mimetype == "application/x-zip"\
