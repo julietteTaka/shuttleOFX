@@ -141,7 +141,7 @@ def addFile(file):
 	'''
 
 	#mimetype = file.content_type
-	mimetype = mimetypes.guess_type(file.filename)
+	mimetype = mimetypes.guess_type(file.filename)[0]
 
 	fileLength = file.content_length
 
@@ -223,7 +223,7 @@ def addResource():
 
 	file = request.files['file']
 	#mimetype = file.content_type
-	mimetype = mimetypes.guess_type(file.filename)
+	mimetype = mimetypes.guess_type(file.filename)[0]
 	logging.debug("mimetype = " + mimetype)
 
 	if not mimetype:
