@@ -32,7 +32,7 @@ catalogRootUri = config.get('APP_RENDER', 'catalogRootUri')
 globalOfxPluginPath = config.get("OFX_PATH", "globalOfxPluginPath")
 
 cacheMaxSize = config.getint('CACHE', 'maxSize')
-cleanCacheInterval = config.getint('CACHE', 'interval')
+cleanCacheInterval = config.getfloat('CACHE', 'interval')
 
 # list of all computing renders
 g_renders = {}
