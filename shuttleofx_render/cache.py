@@ -24,11 +24,12 @@ def cleanCache(cachePath):
 
     allFiles.sort()
 
-    # TODO : Maybe pass the max size as an argument
-    while cacheSize >= config.cacheMaxSize:
-        for file in allFiles:
-            os.remove(os.path.join(cachePath, os.path.join(cachePath, file[2])))
-            cacheSize -= file[1]
+    for file in allFiles:
+        # TODO : Maybe pass the max size as an argument
+        if cacheSize <= config.cacheMaxSize:
+            break
+        os.remove(os.path.join(cachePath, os.path.join(cachePath, file[2])))
+        cacheSize -= file[1]
 
     removeEmptyFolders(cachePath)
 
