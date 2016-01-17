@@ -60,10 +60,12 @@ def loadGraph(scene):
 
 	nodes = []
 	for node in scene['nodes']:
-		nodePlugin = str(node['plugin'])
-		if nodePlugin == "reader":
+		if 'plugin' in node:
+			nodePlugin = str(node['plugin'])
+		else:
 			filename = next(p["value"] for p in node['parameters'] if p["id"] == "filename")
 			nodePlugin = tuttle.getBestReader(str(filename))
+
 		tuttleNode = tuttleGraph.createNode(nodePlugin)
 
 		node['name'] = tuttleNode.getName()
@@ -107,14 +109,14 @@ def convertScenePatterns(scene):
 			logging.warning('param: %s %s', parameter['id'], parameter['value'])
 			if isinstance(parameter['value'], (str, unicode)):
 
-				if '{RESOURCES_DIR}' in parameter['value']:
+				if 'plugin' not in node and '{RESOURCES_DIR}' in parameter['value']:
 					parameter['value'] = parameter['value'].replace('{RESOURCES_DIR}', config.resourcesPath)
 					node['plugin'] = tuttle.getBestReader(str(parameter['value']))
 
 	# Create a Tuttle Graph to generate the UID for each node
 	tuttleGraphTmp = loadGraph(outputScene)
 	nodesHashMap = tuttle.NodeHashContainer()
-	tuttleGraphTmp.computeGlobalHashAtTime(nodesHashMap, 0.0)
+	#tuttleGraphTmp.computeGlobalHashAtTime(nodesHashMap, 0.0)
 
 	for node in outputScene['nodes']:
 		for parameter in node['parameters']:
@@ -189,7 +191,8 @@ def launchComputeGraph(renderSharedInfo, newRender):
 
 	bundlePaths = [os.path.join(pluginsStorage, str(bundleId)) for bundleId in bundleIds]
 
-	if False:
+	#if False:
+	if True:
 		# Direct call to the render function
 		# Not used, just here for debug purpose.
 		computeGraph(renderSharedInfo, newRender, bundlePaths)

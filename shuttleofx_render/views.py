@@ -16,7 +16,7 @@ import config
 import renderScene
 
 mimetypes.init()
-mimetypes.add_type('image/bmp','.bmp')
+mimetypes.add_type('image/bmp', '.bmp')
 mimetypes.add_type('image/x-panasonic-raw', '.raw')
 
 # list of all computing renders
@@ -39,6 +39,7 @@ def mongodoc_jsonify(*args, **kwargs):
 @config.g_app.route('/')
 def index():
 	return "ShuttleOFX Render service"
+
 
 @config.g_app.route('/render', methods=['POST'])
 def newRender():
@@ -103,8 +104,8 @@ def getRenderById(renderID):
 	for key, render in g_renders.iteritems():
 		if renderID == key:
 			return jsonify(render=render)
-	logging.error('id '+ renderID +" doesn't exists")
-	abort(make_response("id "+ renderID +" doesn't exists", 404))
+	logging.error('id ' + renderID + " doesn't exists")
+	abort(make_response("id " + renderID + " doesn't exists", 404))
 
 
 @config.g_app.route('/render/<renderId>/resource/<resourceId>', methods=['GET'])
@@ -112,11 +113,12 @@ def resource(renderId, resourceId):
 	'''
 	Returns file resource by renderId and resourceId.
 	'''
-	if not os.path.isfile( os.path.join(config.renderDirectory, resourceId) ):
+	if not os.path.isfile(os.path.join(config.renderDirectory, resourceId)):
 		logging.error(config.renderDirectory + resourceId + " doesn't exists")
 		abort(make_response(config.renderDirectory + resourceId + " doesn't exists", 404))
 
-	return send_file( os.path.join(config.renderDirectory, resourceId) )
+	return send_file(os.path.join(config.renderDirectory, resourceId))
+
 
 @config.g_app.route('/render/<renderID>', methods=['DELETE'])
 def deleteRenderById(renderID):
@@ -126,8 +128,8 @@ def deleteRenderById(renderID):
 	TODO: kill the corresponding process?
 	'''
 	if renderID not in g_renders:
-		logging.error("id "+renderID+" doesn't exists")
-		abort(make_response("id "+renderID+" doesn't exists", 404))
+		logging.error("id " + renderID + " doesn't exists")
+		abort(make_response("id " + renderID + " doesn't exists", 404))
 	del g_renders[renderID]
 
 
@@ -138,46 +140,45 @@ def generateGraph(fileName):
 	name, extension = os.path.splitext(fileName)
 
 	graph = {
-		'nodes': [
+		u'nodes': [
 			{
-				'id': 0,
-				'plugin': 'reader',
-				'parameters': [
-					{'id': 'filename', 'value': '/' + name + extension}
+				u'id': 0,
+				u'parameters': [
+					{u'id': u'filename', u'value': '{RESOURCES_DIR}/' + name + extension}
 				]
 			},
 			{
-				'id': 1,
-				'plugin': 'tuttle.pngwriter',
-				'parameters': [
-					{'id': 'filename', 'value': config.resourcesPath + '/proxy/' + name + '.png'}
+				u'id': 1,
+				u'plugin': u'tuttle.pngwriter',
+				u'parameters': [
+					{u'id': u'filename', u'value': '{RESOURCES_DIR}/proxy/' + name + '.png'}
 				]
 			},
 			{
-				'id': 2,
-				'plugin': 'tuttle.resize',
-				'parameters': [
-					{'id': 'width', 'value': 256},
-					{'id': 'keepRatio', 'value': 1}
+				u'id': 2,
+				u'plugin': u'tuttle.resize',
+				u'parameters': [
+					{u'id': u'width', u'value': 256},
+					{u'id': u'keepRatio', u'value': 1}
 				]
 			},
 			{
-				'id': 3,
-				'plugin': 'tuttle.pngwriter',
-				'parameters': [
-					{'id': 'filename', 'value': config.resourcesPath + '/thumbnail/' + name + '.png'}
+				u'id': 3,
+				u'plugin': u'tuttle.pngwriter',
+				u'parameters': [
+					{u'id': u'filename', u'value': '{RESOURCES_DIR}/thumbnail/' + name + '.png'}
 				]
 			}
 		],
-		'connections': [
-			{'src': {'id': 0}, 'dst': {'id': 1}},
-			{'src': {'id': 0}, 'dst': {'id': 2}},
-			{'src': {'id': 2}, 'dst': {'id': 3}},
+		u'connections': [
+			{u'src': {u'id': 0}, u'dst': {u'id': 1}},
+			{u'src': {u'id': 0}, u'dst': {u'id': 2}},
+			{u'src': {u'id': 2}, u'dst': {u'id': 3}},
 		],
-		'options': [],
+		u'options': []
 	}
 
-	#return json.dumps(graph)
+	# return json.dumps(graph)
 	return graph
 
 
@@ -185,7 +186,7 @@ def generateProxies(graph):
 	inputScene = graph
 	renderID = str(uuid.uuid1())
 	logging.info("RENDERID: " + renderID)
-	#scene, outputResources = renderScene.convertScenePatterns(inputScene)
+	scene, outputResources = renderScene.convertScenePatterns(inputScene)
 	scene = inputScene
 
 	newRender = {}
@@ -195,7 +196,7 @@ def generateProxies(graph):
 	newRender['scene'] = scene
 	g_renders[renderID] = newRender
 
-	#config.g_app.logger.debug('new resource is ' + newRender['outputFilename'])
+	# config.g_app.logger.debug('new resource is ' + newRender['outputFilename'])
 
 	renderSharedInfo = g_manager.dict()
 	renderSharedInfo['status'] = 0
@@ -203,7 +204,6 @@ def generateProxies(graph):
 
 	# outputFilesExist = all([os.path.exists(os.path.join(config.renderDirectory, f)) for f in outputResources])
 	# if not outputFilesExist:
-	# 	if g_enablePool:
 	# 	if g_enablePool:
 	# 		g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
 	# 	else:
@@ -230,7 +230,7 @@ def addFile(file):
 	'''
 
 	mimetype = file.content_type
-	#mimetype = mimetypes.guess_type(file.filename)
+	# mimetype = mimetypes.guess_type(file.filename)
 
 	fileLength = file.content_length
 
@@ -250,7 +250,7 @@ def addFile(file):
 
 	file.save(imgFile)
 	graph = generateGraph(file.filename)
-	#logging.warning("graph = " + graph)
+	logging.warning("graph = " + str(graph))
 	generateProxies(graph)
 
 	resource = config.resourceTable.find_one({"_id": ObjectId(uid)})
@@ -297,10 +297,10 @@ def addArchive_Zipfile(archiveFile):
 		imgFile.close()
 
 		graph = generateGraph(fileName)
-		logging.warning("graph = " + graph)
+		logging.warning("graph = " + str(graph))
 		generateProxies(graph)
 
-		resource = config.resourceTable.find_one({ "_id" : ObjectId(uid)})
+		resource = config.resourceTable.find_one({"_id": ObjectId(uid)})
 		resources.append(resource)
 
 		file.close()
@@ -346,6 +346,7 @@ def getResource(resourceId):
 		logging.error("can't find " + resource)
 		abort(make_response("can't find " + resource, 404))
 
+
 @config.g_app.route('/resource/', methods=['GET'])
 def getResourcesDict():
 	'''
@@ -354,7 +355,8 @@ def getResourcesDict():
 	count = int(request.args.get('count', 10))
 	skip = int(request.args.get('skip', 0))
 	resources = config.resourceTable.find().limit(count).skip(skip)
-	return mongodoc_jsonify({"resources":[ result for result in resources ]})
+	return mongodoc_jsonify({"resources": [result for result in resources]})
+
 
 @config.g_app.route('/upload', methods=['GET'])
 def uploadPage():
@@ -389,5 +391,6 @@ def cleanPool():
 	g_pool.terminate()
 	g_pool.join()
 
+
 if __name__ == '__main__':
-	config.g_app.run(host="0.0.0.0",port=5005,debug=True)
+	config.g_app.run(host="0.0.0.0", port=5005, debug=True)
