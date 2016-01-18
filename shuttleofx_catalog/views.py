@@ -299,9 +299,12 @@ def getBundleByPluginId(rawIdentifier):
     return mongodoc_jsonify(bundleId)
 
 ### Wiki Start _________________________________________________________________
+
 @config.g_app.route('/wiki/update/<int:pluginId>/version/<pluginVersion>', methods=['POST'])
 @config.g_app.route('/wiki/update/<int:pluginId>', methods=['POST'])
 def setWiki(pluginId):
+    wikiCtnt = request.json['wikicontent']
+
     match = { "pluginId": pluginId }
 
     if pluginVersion is not "latest":
@@ -329,7 +332,10 @@ def setWiki(pluginId):
 
     plugin = plugins[0]["plugin"]
 
+    plugin.wiki = wikiCtnt;
+
     return mongodoc_jsonify(plugin)
+
 ### Wiki End ___________________________________________________________________
 
 @config.g_app.route('/resources', methods=['POST'])

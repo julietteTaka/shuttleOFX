@@ -106,7 +106,9 @@ def renderPageWithPlugin(pluginRawIdentifier):
         abort(resp.status_code)
     previewGallery = requests.get(config.renderRootUri + '/resource/').json()
     return render_template('editor.html', plugin=resp.json(), user=user, resources=previewGallery)
+
 ### Wiki Start _________________________________________________________________
+
 @config.g_app.route("/wiki/edit/<pluginRawIdentifier>/version/<pluginVersion>")
 @config.g_app.route("/wiki/edit/<pluginRawIdentifier>")
 def getPluginWikiEdit(pluginRawIdentifier, pluginVersion="latest"):
@@ -132,8 +134,9 @@ def setWiki(pluginId, pluginVersion="latest"):
     if 'google_token' in session:
         user = config.google.get('userinfo').data
     header = {'content-type' : 'application/json'}
-    req = requests.post(config.catalogRootUri + "/wiki/update/" + pluginId)
-    return render_template('plugin.html', plugin=resp.json(), user=user)
+    req = requests.post(config.catalogRootUri + "/wiki/update/" + pluginId, data=request.data, headers=header)
+    #return render_template('plugin.html', plugin=resp.json(), user=user)
+    return req.content
 ### Wiki End ___________________________________________________________________
 
 @config.g_app.route('/render', methods=['POST'])
