@@ -60,11 +60,12 @@ def loadGraph(scene):
 
 	nodes = []
 	for node in scene['nodes']:
-		if 'plugin' in node:
-			nodePlugin = str(node['plugin'])
-		else:
+		if node['plugin'] == 'reader':
 			filename = next(p["value"] for p in node['parameters'] if p["id"] == "filename")
 			nodePlugin = tuttle.getBestReader(str(filename))
+			logging.warning("Auto reader choice: " + nodePlugin)
+		else:
+			nodePlugin = str(node['plugin'])
 
 		tuttleNode = tuttleGraph.createNode(nodePlugin)
 
@@ -82,6 +83,7 @@ def loadGraph(scene):
 			else:
 				param.setValue(parameter["value"], tuttle.eChangeUserEdited)
 		nodes.append(tuttleNode)
+		logging.warning("tuttleNode: " + str(tuttleNode))
 
 	for connection in scene['connections']:
 		# TODO: replace src/dst with from/to.
@@ -89,6 +91,7 @@ def loadGraph(scene):
 			nodes[connection['src']['id']],
 			nodes[connection['dst']['id']],
 		])
+
 	return tuttleGraph
 
 
@@ -103,6 +106,8 @@ def convertScenePatterns(scene):
 	tuttle.core().getPluginCache().addDirectoryToPath(globalOfxPluginPath)
 	tuttle.core().preload(False)
 
+	logging.warning("outputScene" + str(outputScene))
+
 	outputResources = []
 	for node in outputScene['nodes']:
 		for parameter in node['parameters']:
@@ -115,8 +120,10 @@ def convertScenePatterns(scene):
 
 	# Create a Tuttle Graph to generate the UID for each node
 	tuttleGraphTmp = loadGraph(outputScene)
+	logging.warning("tuttleGraphTemp" + str(tuttleGraphTmp))
+	logging.warning("outputScene" + str(outputScene))
 	nodesHashMap = tuttle.NodeHashContainer()
-	#tuttleGraphTmp.computeGlobalHashAtTime(nodesHashMap, 0.0)
+	tuttleGraphTmp.computeGlobalHashAtTime(nodesHashMap, 0.0)
 
 	for node in outputScene['nodes']:
 		for parameter in node['parameters']:
@@ -142,6 +149,9 @@ def computeGraph(renderSharedInfo, newRender, bundlePaths):
 
 		renderSharedInfo['status'] = 1
 		tuttleGraph = loadGraph(newRender['scene'])
+
+		logging.error('tuttle graph:' + str(tuttleGraph))
+		print('tuttle graph:' + str(tuttleGraph))
 
 		renderSharedInfo['status'] = 2
 		tuttleComputeOptions = tuttle.ComputeOptions()
@@ -191,8 +201,8 @@ def launchComputeGraph(renderSharedInfo, newRender):
 
 	bundlePaths = [os.path.join(pluginsStorage, str(bundleId)) for bundleId in bundleIds]
 
-	#if False:
-	if True:
+	if False:
+	#if True:
 		# Direct call to the render function
 		# Not used, just here for debug purpose.
 		computeGraph(renderSharedInfo, newRender, bundlePaths)

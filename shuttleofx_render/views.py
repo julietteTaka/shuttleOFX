@@ -143,15 +143,16 @@ def generateGraph(fileName):
 		u'nodes': [
 			{
 				u'id': 0,
+				u'plugin': u'reader',
 				u'parameters': [
-					{u'id': u'filename', u'value': '{RESOURCES_DIR}/' + name + extension}
+					{u'id': u'filename', u'value': os.path.join(config.resourcesPath, name + extension)}
 				]
 			},
 			{
 				u'id': 1,
 				u'plugin': u'tuttle.pngwriter',
 				u'parameters': [
-					{u'id': u'filename', u'value': '{RESOURCES_DIR}/proxy/' + name + '.png'}
+					{u'id': u'filename', u'value': os.path.join(config.resourcesPath, 'proxy', name + '.png')}
 				]
 			},
 			{
@@ -166,7 +167,7 @@ def generateGraph(fileName):
 				u'id': 3,
 				u'plugin': u'tuttle.pngwriter',
 				u'parameters': [
-					{u'id': u'filename', u'value': '{RESOURCES_DIR}/thumbnail/' + name + '.png'}
+					{u'id': u'filename', u'value': os.path.join(config.resourcesPath, 'thumbnail', name + '.png')}
 				]
 			}
 		],
@@ -186,13 +187,13 @@ def generateProxies(graph):
 	inputScene = graph
 	renderID = str(uuid.uuid1())
 	logging.info("RENDERID: " + renderID)
-	scene, outputResources = renderScene.convertScenePatterns(inputScene)
+	# scene, outputResources = renderScene.convertScenePatterns(inputScene)
 	scene = inputScene
 
 	newRender = {}
 	newRender['id'] = renderID
 	# TODO: return a list of output resources in case of several writers.
-	#newRender['outputFilename'] = outputResources[0]
+	# newRender['outputFilename'] = outputResources[0]
 	newRender['scene'] = scene
 	g_renders[renderID] = newRender
 
