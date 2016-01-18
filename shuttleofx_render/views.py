@@ -37,6 +37,8 @@ g_manager = multiprocessing.Manager()
 
 g_lastClean = datetime.datetime.min
 
+g_tmpLastClean = datetime.datetime.min
+
 
 
 def mongodoc_jsonify(*args, **kwargs):
@@ -56,7 +58,7 @@ def newRender():
 
     # Clean the cache every interval set in the config
     if g_lastClean < datetime.datetime.now() - datetime.timedelta(hours=config.cleanCacheInterval):
-        cache.cleanCache(config.renderDirectory)
+        cache.cleanCache(config.renderDirectory, config.cacheMaxSize)
         # update clean date
         g_lastClean = datetime.datetime.now()
 
@@ -249,6 +251,15 @@ def download():
     '''
     download an image from an url
     '''
+
+    # clean 
+    global g_tmpLastClean
+
+    # Clean the cache every interval set in the config
+    if g_tmpLastClean < datetime.datetime.now() - datetime.timedelta(hours=config.cleanTmpInterval):
+        cache.cleanCache(os.path.join(config.resourcesPath, "tmp"), config.tmpMaxSize)
+        # update clean date
+        g_tmpLastClean = datetime.datetime.now()
 
     imgUrl = request.json['url']
     if imgUrl.isspace() or not imgUrl:
