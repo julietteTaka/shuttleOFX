@@ -411,13 +411,31 @@ ul.right-nav li .fa{
     }
 
     li.userunloged{
-        p.userName{
+        p.userName, div{
             margin-top: 40px;
             padding-left: 30px;
             margin-left: 0;
             font-size: 0.9em;
             line-height: 2;
             color: #555;
+        }
+        p.userName{
+             a::after{
+                font-family: 'FontAwesome';
+                content: " \f0d7";
+            }
+            a.active::after{
+                font-family: 'FontAwesome';
+                content: " \f0d8";
+            }
+        }
+        div{
+            display: none;
+            margin-top: 0;
+            a{
+                display: inline-block;
+                width: 45%;
+            }
         }
     }
 

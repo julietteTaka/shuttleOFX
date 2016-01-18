@@ -14,35 +14,35 @@ from flask import (
 )
 import logging
 import config
+import userManager
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not 'google_token' in session:
+        user = userManager.getUser()
+        if user is None:
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
     return decorated_function
 
 @config.g_app.errorhandler(404)
 def page_not_found(e):
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
+    if user is not None:
         return render_template("notFound.html", user=user), 404
     return render_template("notFound.html"), 404
 
 
 @config.g_app.route('/')
 def index():
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
+    if user is not None:
         return render_template("index.html", user=user)
     return render_template("index.html")
 
 @config.g_app.route('/plugin')
 def getPlugins():
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
     try:
         resp = requests.get(config.catalogRootUri+"/plugin", params=request.args)
     except:
@@ -53,9 +53,7 @@ def getPlugins():
 
 @config.g_app.route("/plugin/search/")
 def searchPlugins():
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
 
     resp = requests.get(config.catalogRootUri+"/plugin", params=request.args)
 
@@ -72,9 +70,7 @@ def countPlugins():
 @config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>")
 @config.g_app.route("/plugin/<pluginRawIdentifier>")
 def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
     if pluginVersion is "latest":
         resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
        #if resp.status_code == 404:
@@ -98,9 +94,7 @@ def getSampleImagesForPlugin(pluginId, imageId):
 @config.g_app.route('/editor')
 @config.g_app.route('/editor/<pluginRawIdentifier>')
 def renderPageWithPlugin(pluginRawIdentifier):
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
     resp = requests.get(config.catalogRootUri+"/plugin/"+str(pluginRawIdentifier))
     if resp.status_code != 200:
         abort(resp.status_code)
@@ -142,9 +136,9 @@ def getResources() :
 @config.g_app.route('/upload')
 @login_required
 def upload():
-    if 'google_token' in session:
-        user = config.google.get('userinfo')
-        return render_template("upload.html", user=user.data, uploaded=None)
+    user = userManager.getUser()
+    if user is not None:
+        return render_template("upload.html", user=user, uploaded=None)
     return redirect(url_for('login'))
 
 @config.g_app.route('/bundle')
@@ -183,23 +177,29 @@ def analyseBundle(bundleId):
         abort(req.status_code)
     return jsonify(**req.json())
 
+# TODO Change to /login/google when the callback url in google config is fixed
 @config.g_app.route('/login')
-def login():
+def loginGoogle():
     logging.warning('login start')
-    res = config.google.authorize(callback=url_for('authorized', _external=True))
+    res = config.google.authorize(callback=url_for('authorizedGoogle', _external=True))
     logging.warning('login end')
     return res
 
+@config.g_app.route('/login/github')
+def loginGithub():
+    res = config.github.authorize(callback=url_for('authorizedGithub', _external=True))
+    return res
 
 @config.g_app.route('/logout')
 def logout():
     session.pop('google_token', None)
+    session.pop('github_token', None)
     redirectTarget = request.values.get('next') or request.referrer
     return redirect( redirectTarget )
 
-
+# TODO Change to /login/authorized/google when the callback url in google config is fixed
 @config.g_app.route('/login/authorized')
-def authorized():
+def authorizedGoogle():
     logging.warning('login/authorized start')
     resp = config.google.authorized_response()
     if resp is None:
@@ -223,6 +223,25 @@ def authorized():
     logging.warning('login/authorized end')
     return res
 
+@config.g_app.route('/login/authorized/github')
+def authorizedGithub():
+    resp = config.github.authorized_response()
+
+    # TODO Handler errors
+    if resp is None:
+        return 'Access denied: reason=%s error=%s' % (
+            request.args['error_reason'],
+            request.args['error_description']
+        )
+
+    session['github_token'] = (resp['access_token'], '')
+
+    redirectTarget = url_for('getPlugins')
+    if redirectTarget == None:
+        logging.warning('login/authorized redirectTarget is None')
+
+    res = redirect( redirectTarget )
+    return res
 
 @config.g_app.route("/plugin/<int:pluginId>/resource", methods=['POST'])
 def addPluginResource(pluginId):
@@ -244,6 +263,10 @@ def addImageToPlugin(pluginId):
 @config.google.tokengetter
 def get_google_oauth_token():
     return session.get('google_token')
+
+@config.github.tokengetter
+def get_github_oauth_token():
+    return session.get('github_token')
 
 if __name__ == '__main__':
     config.g_app.run(host="0.0.0.0",port=5000,debug=True)
