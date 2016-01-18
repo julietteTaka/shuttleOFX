@@ -140,8 +140,7 @@ def addFile(file):
 		mimetype = mimetypes.guess_type(file._fileobj.name)
 	'''
 
-	#mimetype = file.content_type
-	mimetype = mimetypes.guess_type(file.filename)[0]
+	mimetype, _ = mimetypes.guess_type(file.filename)
 
 	fileLength = file.content_length
 
@@ -174,15 +173,14 @@ def addArchive_Zipfile(archiveFile):
 	for fileName in archive.namelist():
 		extractPath = archive.extract(fileName, "/tmp/")
 
-		#logging.warning("extractPath = " + extractPath)
 		file = open(extractPath, "rw")
-
-		#logging.warning("filename = " + fileName)
 		file.seek(0, os.SEEK_END)
 		fileLength = file.tell()
-		#logging.warning("fileLength = " + fileLength.__str__())
-
 		mimetype, _ = mimetypes.guess_type(extractPath)
+
+		#logging.warning("filename = " + fileName)
+		#logging.warning("extractPath = " + extractPath)
+		#logging.warning("fileLength = " + fileLength.__str__())
 		#logging.warning("mimetype = " + mimetype)
 
 		uid = config.resourceTable.insert({
@@ -222,8 +220,7 @@ def addResource():
 		abort(make_response("Empty request", 500))
 
 	file = request.files['file']
-	#mimetype = file.content_type
-	mimetype = mimetypes.guess_type(file.filename)[0]
+	mimetype, _ = mimetypes.guess_type(file.filename)
 	logging.debug("mimetype = " + mimetype)
 
 	if not mimetype:
