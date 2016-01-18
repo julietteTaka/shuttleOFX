@@ -3,6 +3,7 @@ import json
 import logging
 import requests
 import re
+import math
 
 from time import sleep
 from bson import json_util, ObjectId
@@ -241,10 +242,12 @@ def getAllPlugins():
     else:
         filteredCursor = cursor
 
-    totalPlugins = len(cursor);
+    totalPlugins = len(cursor)
     plugins = [result["plugin"] for result in filteredCursor]
 
-    return mongodoc_jsonify({"plugins": plugins, "totalPlugins" : totalPlugins})
+    maxPage = int(math.ceil(totalPlugins / count)+1)
+
+    return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "maxPage": maxPage, "count": count, "skip": skip})
 
 
 @config.g_app.route("/bundle/<int:bundleId>/plugin/<pluginRawIdentifier>")

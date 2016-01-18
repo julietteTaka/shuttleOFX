@@ -33,7 +33,7 @@ $('select#pageSize').change(function(){
   window.location.href = "/plugin?count=" + count + "&skip=" + skip;
 });
 
-$('#next a').click(function(event){
+/*$('#next a').click(function(event){
   event.preventDefault();
   if (!$("#next").hasClass("disabled")) {
     skip ++;
@@ -47,4 +47,4 @@ $('#previous a').click(function(event){
     skip --;
     window.location.href = "/plugin?count=" + count + "&skip=" + skip;
   }
-});
+});*/
