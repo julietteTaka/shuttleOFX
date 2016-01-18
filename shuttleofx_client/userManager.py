@@ -9,7 +9,13 @@ def getUser():
 		return user
 	elif 'github_token' in session:
 		githubUser = config.github.get( '?access_token=' + str(session['github_token'][0]) ).data
-		user = {'name': githubUser.get('name'), 'picture': githubUser.get('avatar_url')}
+
+		if githubUser.get('name') is None:
+			name = githubUser.get('login')
+		else:
+			name = githubUser.get('name')
+
+		user = {'name': name, 'picture': githubUser.get('avatar_url')}
 		return user
 	else:
 		return None
