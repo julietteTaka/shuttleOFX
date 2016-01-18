@@ -92,8 +92,12 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
 
 @config.g_app.route("/plugin/<pluginRawIdentifier>/infos")
 def getPluginInfos(pluginRawIdentifier):
+    user = None
+    if 'google_token' in session:
+        user = config.google.get('userinfo').data
+
     resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
-    return render_template('pluginInfos.html', plugin=resp.json())
+    return render_template('pluginInfos.html', plugin=resp.json(), user=user)
 
 @config.g_app.route('/plugin/<pluginId>/image/<imageId>')
 def getSampleImagesForPlugin(pluginId, imageId):
