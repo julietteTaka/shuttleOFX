@@ -245,12 +245,16 @@ def addFile(file):
 	if not extension:
 		extension = mimetypes.guess_extension(mimetype)
 
-	imgFile = str(uid) + extension
-	config.resourceTable.update({"_id": uid}, {"registeredName": imgFile})
-	imgFile = os.path.join(config.resourcesPath, imgFile)
+	imgName = str(uid) + extension
+	config.resourceTable.update({"_id": uid}, {"registeredName": imgName})
+	imgPath = os.path.join(config.resourcesPath, imgName)
 
-	file.save(imgFile)
-	graph = generateGraph(file.filename)
+	logging.warning("imgName = " + imgName)
+	logging.warning("imgPath = " + imgPath)
+	logging.warning("file.filename = " + file.filename)
+
+	file.save(imgPath)
+	graph = generateGraph(imgName)
 	logging.warning("graph = " + str(graph))
 	generateProxies(graph)
 
@@ -288,16 +292,16 @@ def addArchive_Zipfile(archiveFile):
 		if not extension:
 			extension = mimetypes.guess_extension(mimetype)
 
-		imgPath = str(uid) + extension
-		config.resourceTable.update({"_id": uid}, {"registeredName": imgPath})
-		imgPath = os.path.join(config.resourcesPath, imgPath)
+		imgName = str(uid) + extension
+		config.resourceTable.update({"_id": uid}, {"registeredName": imgName})
+		imgPath = os.path.join(config.resourcesPath, imgName)
 
 		imgFile = open(imgPath, "w")
 		file.seek(0, 0)
 		imgFile.write(file.read(fileLength))
 		imgFile.close()
 
-		graph = generateGraph(fileName)
+		graph = generateGraph(imgName)
 		logging.warning("graph = " + str(graph))
 		generateProxies(graph)
 
