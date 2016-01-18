@@ -208,7 +208,8 @@ $(document).ready(function() {
             }),
         })
         .done(function(data){
-			$("#viewer img#originalPic").attr("src", "/proxy/" + selectedResource);
+            var selectedResourceName = selectedResource.split(".")[0];
+			$("#viewer img#originalPic").attr("src", "/proxy/" + selectedResourceName + ".png");
         	$("#viewer img#originalPic").show();
         	$("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
             $("#download-view").removeClass('disabled');
@@ -227,7 +228,7 @@ $(document).ready(function() {
                     parameters: [
                         {
                             "id" : "filename",
-                            "value" : "{RESOURCES_DIR}/"+ selectedResource
+                            "value" : "{RESOURCES_DIR}/" + selectedResource
                         }
                     ]
                 },{
