@@ -352,6 +352,36 @@ def getResource(resourceId):
 		abort(make_response("can't find " + resource, 404))
 
 
+@config.g_app.route('/proxy/<resourceId>', methods=['GET'])
+def getProxy(resourceId):
+	'''
+	Returns resource file.
+	'''
+	resourceName, _ = os.path.splitext(resourceId)
+	resource = os.path.join(config.resourcesPath, 'proxy', resourceName + '.png')
+
+	if os.path.isfile(resource):
+		return send_file(resource)
+	else:
+		logging.error("can't find " + resource)
+		abort(make_response("can't find " + resource, 404))
+
+
+@config.g_app.route('/thumbnail/<resourceId>', methods=['GET'])
+def getThumbnail(resourceId):
+	'''
+	Returns resource file.
+	'''
+	resourceName, _ = os.path.splitext(resourceId)
+	resource = os.path.join(config.resourcesPath, 'thumbnail', resourceName + '.png')
+
+	if os.path.isfile(resource):
+		return send_file(resource)
+	else:
+		logging.error("can't find " + resource)
+		abort(make_response("can't find " + resource, 404))
+
+
 @config.g_app.route('/resource/', methods=['GET'])
 def getResourcesDict():
 	'''

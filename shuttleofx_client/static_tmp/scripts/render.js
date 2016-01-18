@@ -208,7 +208,7 @@ $(document).ready(function() {
             }),
         })
         .done(function(data){
-			$("#viewer img#originalPic").attr("src", "/resource/" + selectedResource);
+			$("#viewer img#originalPic").attr("src", "/proxy/" + selectedResource);
         	$("#viewer img#originalPic").show();
         	$("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
             $("#download-view").removeClass('disabled');
