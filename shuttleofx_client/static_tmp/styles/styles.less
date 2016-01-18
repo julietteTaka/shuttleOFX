@@ -13,14 +13,18 @@ html,body{
 
 .main{
     min-height: 100%;
-    padding-bottom: 300px;
+    padding-bottom: 7%;
     background: @bkGrey;
     border-left: 1px solid #ddd;
 }
 
 .main-content{
-    padding-top: 120px;
+    padding-top: 40px;
     z-index: 2;
+}
+
+.main-content.no-bottom-header{
+    padding-top: 10px;
 }
 
 .page-header h2{
@@ -45,12 +49,23 @@ html,body{
 
 #container {
     position: relative;
+    min-height: 100%;
+     /* Fix a bug in Firefox where the child
+      cannot have its min-height set to 100%
+      if the parent is also set to min-height: 100% */
+    height: 1px;
 }
 .no-plugins{
     h3{
         padding: 30px;
         font-family: "Roboto-Light-Italic";
     }
+}
+
+section#scroller{
+    min-height: 100%;
+    /* Fix a bug in Firefox, see above */
+    height: 1px;
 }
 
 /*----------------------------------------------------------------
@@ -104,7 +119,6 @@ header{
         position:relative;
         padding-left: 30px;
         padding-right: 22px;
-        display:none;
         &::before{
             display:block;
             content:"";
@@ -206,7 +220,6 @@ header{
 
 }
 
-
 @media only screen and (min-width: 768px) {
     .navigation { width: 265px }
     #container {left: 265px; overflow: auto; -webkit-overflow-scrolling: touch; }
@@ -232,9 +245,19 @@ header{
     }
     .header-content{
         padding-right: 15px;
+        padding-right: 0!important;
     }
+    header #back-to-plugins { display: none; }
 }
 
+@media only screen and (max-width: 550px){
+    header form#searchForm{
+       display: none;
+    }
+    .navbar.navbar{
+        height: 75px;
+    }
+}
 
 /*----------------------------------------------------------------
     SubHeader
@@ -306,7 +329,11 @@ header{
     }
 }
 
-
+@media only screen and (max-width: 768px){
+    .header-content h1{
+        margin-left: 25px;
+    }
+}
 /*----------------------------------------------------------------
     Navigation
 ----------------------------------------------------------------*/

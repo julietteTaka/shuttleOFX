@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 
-
 {% block title %}
 <div class="header-content" data-0="height:100px" data-150="height:0px">
     <div class="top-header">
@@ -127,6 +126,10 @@
         </div>
     </div>
 </div>
-<script src="{{ url_for('static', filename='scripts/search.js') }}"></script>
 
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='scripts/vendor/js.cookie.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/counter.js') }}"></script>
 {% endblock %}
