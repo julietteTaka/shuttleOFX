@@ -82,34 +82,7 @@
 {% block content %}
 <div class="main-content" id="plugins">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div id="filter-page">
-                    <ul class="pagination pagination-sm pager-check">
-                      {% if dico.skip == 0 %}
-                        <li id="previous" class="disabled"><a href="">«</a></li>
-                      {% else %}
-                        <li id="previous"><a href="/plugin?count={{dico.count}}&skip={{dico.skip+1}}">«</a></li>
-                      {% endif %}
-
-                        {% set pageCounter = 1  %}
-                        {% for pageCounter in range(1, dico.maxPage+1) %}
-                          {% if pageCounter == dico.skip %}
-                            <li class="disabled"><a href="/plugin?count={{dico.count}}&skip={{dico.skip}}">{{pageCounter}}</a></li>
-                          {% else %}
-                            <li><a href="/plugin?count={{dico.count}}&skip={{pageCounter}}">{{pageCounter}}</a></li>
-                          {% endif %}
-                        {% endfor %}
-
-                        {% if dico.skip == dico.maxPage %}
-                          <li id="next" class="disabled"><a href="">»</a></li>
-                        {% else %}
-                          <li id="next"><a href="/plugin?count={{dico.count}}&skip={{dico.skip+1}}">»</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </div>
+        {{ dico.pagination|safe }}
         <div class="row">
             <ul class="surveys grid">
                 {% for plugin in dico.plugins %}
@@ -143,34 +116,7 @@
                 {% endfor %}
             </ul>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div id="filter-page">
-                    <ul class="pagination pagination-sm pager-check">
-                      {% if dico.skip == 0 %}
-                        <li id="previous" class="disabled"><a href="">«</a></li>
-                      {% else %}
-                        <li id="previous"><a href="/plugin?count={{dico.count}}&skip={{dico.skip+1}}">«</a></li>
-                      {% endif %}
-
-                        {% set pageCounter = 1  %}
-                        {% for pageCounter in range(1, dico.maxPage+1) %}
-                          {% if pageCounter == dico.skip %}
-                            <li class="disabled"><a href="/plugin?count={{dico.count}}&skip={{dico.skip}}">{{pageCounter}}</a></li>
-                          {% else %}
-                            <li><a href="/plugin?count={{dico.count}}&skip={{pageCounter}}">{{pageCounter}}</a></li>
-                          {% endif %}
-                        {% endfor %}
-
-                        {% if dico.skip == dico.maxPage %}
-                          <li id="next" class="disabled"><a href="">»</a></li>
-                        {% else %}
-                          <li id="next"><a href="/plugin?count={{dico.count}}&skip={{dico.skip+1}}">»</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-            </div>
-        </div>
+        {{ dico.pagination|safe }}
     </div>
 </div>
 <script src="{{ url_for('static', filename='scripts/search.js') }}"></script>
