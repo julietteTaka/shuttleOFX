@@ -135,7 +135,6 @@ def setWiki(pluginId, pluginVersion="latest"):
         user = config.google.get('userinfo').data
     header = {'content-type' : 'application/json'}
     req = requests.post(config.catalogRootUri + "/wiki/update/" + pluginId, data=request.data, headers=header)
-    #return render_template('plugin.html', plugin=resp.json(), user=user)
     return req.content
 ### Wiki End ___________________________________________________________________
 

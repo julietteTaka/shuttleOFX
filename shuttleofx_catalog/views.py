@@ -156,7 +156,7 @@ def deleteBundle(bundleId):
     if bundle == None:
         abort(make_response("Bundle not found.", 404))
 
-    plugins = config.pluginTable.find({"bundleId": bundleId})
+
     for plugin in plugins:
         pluginId = plugin["pluginId"]
         deleteStatus = config.pluginTable.remove({"pluginId":pluginId})
@@ -302,39 +302,9 @@ def getBundleByPluginId(rawIdentifier):
 
 @config.g_app.route('/wiki/update/<int:pluginId>/version/<pluginVersion>', methods=['POST'])
 @config.g_app.route('/wiki/update/<int:pluginId>', methods=['POST'])
-def setWiki(pluginId):
-    wikiCtnt = request.json['wikicontent']
-
-    match = { "pluginId": pluginId }
-
-    if pluginVersion is not "latest":
-        try:
-            version = pluginVersion.split(".")
-            match["version.major"] = int(version[0])
-            if len(version) > 1:
-                match["version.minor"] = int(version[1])
-        except:
-            abort(404)
-
-    pipeline = [
-        {"$match": match},
-        {"$sort": SON([("version.major",1), ("version.minor",1)])},
-        {"$group": {
-            "_id": "$pluginId",
-            "plugin": {"$first": "$$ROOT"}, # retrieve the first plugin
-            }
-        }]
-
-    plugins = list(config.pluginTable.aggregate(pipeline))
-
-    if not plugins:
-        abort(404)
-
-    plugin = plugins[0]["plugin"]
-
-    plugin.wiki = wikiCtnt;
-
-    return mongodoc_jsonify(plugin)
+def setWiki(pluginId, pluginVersion="latest"):
+    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"wiki" : request.json['wikicontent']} })
+    return mongodoc_jsonify(True)
 
 ### Wiki End ___________________________________________________________________
 

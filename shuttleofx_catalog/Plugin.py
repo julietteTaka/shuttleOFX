@@ -27,12 +27,6 @@ class Plugin(object):
     def addPluginDetails(self, details):
         self.details = details
 
-    def setWiki(self, wiki):
-        self.wiki = wiki
-
-    def getWiki(self):
-        return self.wiki
-
     def setRating(self, val):
         self.rate = val
 

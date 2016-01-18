@@ -63,19 +63,19 @@
 
         <div class="row">
             <div class="col-md-12">
-                <form id='metaWiki'>
-                    <fieldset>
-                       <textarea id="wiki" class="form-control panel panel-primary" data-provide="markdown" data-iconlibrary="fa" rows="10"></textarea>
+                <form>
+                       <textarea id="wiki" class="panel panel-primary" data-provide="markdown" data-iconlibrary="fa" rows="10">{{plugin.wiki | last}}</textarea>
                        <input type='submit' value='Save' id="setWiki" class="btn btn-primary" attr-id="{{plugin.id}}">
-                   </fieldset>
-               </form>
+                </form>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="page-header">
-                    <h3>Wiki Content :</h3>
-                    {{plugin.wiki}}
+                    <h3>Preview :</h3>
+                    <span id="mkdwn">
+                        {{ plugin.wiki | last }}
+                    </span>
                 </div>
             </div>
         </div>
@@ -94,18 +94,30 @@ $(document).ready(function() {
             url: "/wiki/update/"+{{plugin.pluginId}},
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify({
-                'wikicontent': $("#wiki").val()
+                'wikicontent': '\n' + $("#wiki").val()
             }),
         })
-        .done(function(data){
-            alert(data);
-        });
     }
 
     $("#setWiki").click(function(){
         wikiJson();
     });
-
 });
+</script>
+<script type="text/javascript">
+/*
+$('#wiki').markdown({
+    hiddenButtons:'cmdPreview',
+    footer:'<div id="twitter-footer" class="well" style="display:none"></div>',
+    onChange:function(e){
+        var content = e.parseContent();
+        $('#twitter-footer').show().html(content);
+    }
+})*/
+var s = $("#mkdwn").html();
+    s = "\n\n\n" + s + "\n\n\n";
+var rend = markdown.toHTML(s);
+//$("#mkdwn").html(s);
+$("#mkdwn").html(rend);
 </script>
 {% endblock %}
