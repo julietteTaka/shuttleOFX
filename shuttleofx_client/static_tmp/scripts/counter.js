@@ -33,18 +33,7 @@ $('select#pageSize').change(function(){
   window.location.href = "/plugin?count=" + count + "&skip=" + skip;
 });
 
-/*$('#next a').click(function(event){
-  event.preventDefault();
-  if (!$("#next").hasClass("disabled")) {
-    skip ++;
-    window.location.href = "/plugin?count=" + count + "&skip=" + skip;
-  }
-});
-
-$('#previous a').click(function(event){
-  event.preventDefault();
-  if (!$("#previous").hasClass("disabled")) {
-    skip --;
-    window.location.href = "/plugin?count=" + count + "&skip=" + skip;
-  }
-});*/
+$("li.disabled a").click(function(e){
+  e.preventDefault();
+  return;
+})
