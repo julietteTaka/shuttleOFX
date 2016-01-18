@@ -110,6 +110,11 @@ def convertScenePatterns(scene):
 
 	outputResources = []
 	for node in outputScene['nodes']:
+
+		if 'plugin' in node and node['plugin'] is not 'reader':
+			resp = requests.get(catalogRootUri + "/bundle/" + node['plugin'] + '/bundle').json()
+			node["bundleId"] = resp['bundleId']
+
 		for parameter in node['parameters']:
 			logging.warning('param: %s %s', parameter['id'], parameter['value'])
 			if isinstance(parameter['value'], (str, unicode)):
@@ -120,8 +125,8 @@ def convertScenePatterns(scene):
 
 	# Create a Tuttle Graph to generate the UID for each node
 	tuttleGraphTmp = loadGraph(outputScene)
-	logging.warning("tuttleGraphTemp" + str(tuttleGraphTmp))
-	logging.warning("outputScene" + str(outputScene))
+	# logging.warning("tuttleGraphTemp" + str(tuttleGraphTmp))
+	# logging.warning("outputScene" + str(outputScene))
 	nodesHashMap = tuttle.NodeHashContainer()
 	tuttleGraphTmp.computeGlobalHashAtTime(nodesHashMap, 0.0)
 
@@ -193,16 +198,14 @@ def launchComputeGraph(renderSharedInfo, newRender):
 	scene = newRender['scene']
 	bundleIds = []
 	for node in scene['nodes']:
-		if 'plugin' in node and node['plugin'] is not 'reader':
-			resp = requests.get(catalogRootUri + "/bundle/" + node['plugin'] + '/bundle').json()
-			bundleIds.append(resp['bundleId'])
+		if 'bundleId' in node:
+			bundleIds.append(node['bundleId'])
 		else:
 			logging.error("No plugin defined for node: " + str(node))
 
 	bundlePaths = [os.path.join(pluginsStorage, str(bundleId)) for bundleId in bundleIds]
 
 	if False:
-	#if True:
 		# Direct call to the render function
 		# Not used, just here for debug purpose.
 		computeGraph(renderSharedInfo, newRender, bundlePaths)
