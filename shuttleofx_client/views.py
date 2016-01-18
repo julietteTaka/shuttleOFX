@@ -227,7 +227,6 @@ def authorizedGoogle():
 def authorizedGithub():
     resp = config.github.authorized_response()
 
-    # TODO Handler errors
     if resp is None:
         return 'Access denied: reason=%s error=%s' % (
             request.args['error_reason'],
@@ -236,7 +235,7 @@ def authorizedGithub():
 
     session['github_token'] = (resp['access_token'], '')
 
-    redirectTarget = url_for('getPlugins')
+    redirectTarget = request.values.get('next') or request.referrer  or url_for('getPlugins')
     if redirectTarget == None:
         logging.warning('login/authorized redirectTarget is None')
 
