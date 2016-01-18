@@ -182,6 +182,14 @@ $(document).ready(function() {
                         {
                             "id" : "filename",
                             "value" : "{RESOURCES_DIR}/"+ selectedResource
+                        },
+                        {
+                            "id" : "channel",
+                            "value" : "rgba"
+                        },
+                        {
+                            "id" : "bitDepth",
+                            "value" : "32f"
                         }
                     ]
                 },{
