@@ -222,6 +222,7 @@ $(document).ready(function() {
             $("#download-view").removeClass('disabled');
             hideLoader();
             $('.display img').css({height: "auto"});
+            $('#viewer img#renderedPic').css({right: "-0.8px"});
         	init_beforeAfterSlider();
 
              $("#downloadtrigger").click(function(data){
