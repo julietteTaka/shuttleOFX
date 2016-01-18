@@ -13,7 +13,7 @@ html,body{
 
 .main{
     min-height: 100%;
-    padding-bottom: 300px;
+    padding-bottom: 7%;
     background: @bkGrey;
     border-left: 1px solid #ddd;
 }
@@ -49,12 +49,23 @@ html,body{
 
 #container {
     position: relative;
+    min-height: 100%;
+     /* Fix a bug in Firefox where the child
+      cannot have its min-height set to 100%
+      if the parent is also set to min-height: 100% */
+    height: 1px;
 }
 .no-plugins{
     h3{
         padding: 30px;
         font-family: "Roboto-Light-Italic";
     }
+}
+
+section#scroller{
+    min-height: 100%;
+    /* Fix a bug in Firefox, see above */
+    height: 1px;
 }
 
 /*----------------------------------------------------------------
