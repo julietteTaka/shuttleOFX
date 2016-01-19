@@ -33,369 +33,357 @@ g_manager = multiprocessing.Manager()
 
 
 def mongodoc_jsonify(*args, **kwargs):
-	return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
+    return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
 
 
 @config.g_app.route('/')
 def index():
-	return "ShuttleOFX Render service"
+    return "ShuttleOFX Render service"
 
 
 @config.g_app.route('/render', methods=['POST'])
 def newRender():
-	'''
-	Create a new render and return graph information.
-	'''
-	inputScene = request.json
-	logging.warning(inputScene)
-	renderID = str(uuid.uuid1())
-	logging.info("RENDERID: " + renderID)
-	scene, outputResources = renderScene.convertScenePatterns(inputScene)
+    '''
+    Create a new render and return graph information.
+    '''
+    inputScene = request.json
+    logging.warning(inputScene)
+    renderID = str(uuid.uuid1())
+    logging.info("RENDERID: " + renderID)
+    scene, outputResources = renderScene.convertScenePatterns(inputScene)
 
-	newRender = {}
-	newRender['id'] = renderID
-	# TODO: return a list of output resources in case of several writers.
-	newRender['outputFilename'] = outputResources[0]
-	newRender['scene'] = scene
-	g_renders[renderID] = newRender
+    newRender = {}
+    newRender['id'] = renderID
+    # TODO: return a list of output resources in case of several writers.
+    newRender['outputFilename'] = outputResources[0]
+    newRender['scene'] = scene
+    g_renders[renderID] = newRender
 
-	config.g_app.logger.debug('new resource is ' + newRender['outputFilename'])
+    config.g_app.logger.debug('new resource is ' + newRender['outputFilename'])
 
-	renderSharedInfo = g_manager.dict()
-	renderSharedInfo['status'] = 0
-	g_rendersSharedInfo[renderID] = renderSharedInfo
+    renderSharedInfo = g_manager.dict()
+    renderSharedInfo['status'] = 0
+    g_rendersSharedInfo[renderID] = renderSharedInfo
 
-	outputFilesExist = all([os.path.exists(os.path.join(config.renderDirectory, f)) for f in outputResources])
-	if not outputFilesExist:
-		if g_enablePool:
-			g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
-		else:
-			renderScene.launchComputeGraph(renderSharedInfo, newRender)
-	else:
-		# Already computed
-		renderSharedInfo['status'] = 3
+    outputFilesExist = all([os.path.exists(os.path.join(config.renderDirectory, f)) for f in outputResources])
+    if not outputFilesExist:
+        if g_enablePool:
+            g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
+        else:
+            renderScene.launchComputeGraph(renderSharedInfo, newRender)
+    else:
+        # Already computed
+        renderSharedInfo['status'] = 3
 
-	return jsonify(render=newRender)
+    return jsonify(render=newRender)
 
 
 @config.g_app.route('/progress/<renderID>', methods=['GET'])
 def getProgress(renderID):
-	'''
-	Return render progress.
-	'''
-	return str(g_rendersSharedInfo[renderID]['status'])
+    '''
+    Return render progress.
+    '''
+    return str(g_rendersSharedInfo[renderID]['status'])
 
 
 @config.g_app.route('/render', methods=['GET'])
 def getRenders():
-	'''
-		Returns all renders in JSON format
-	'''
-	totalRenders = {"renders": g_rendersSharedInfo}
-	return jsonify(**totalRenders)
+    '''
+        Returns all renders in JSON format
+    '''
+    totalRenders = {"renders": g_rendersSharedInfo}
+    return jsonify(**totalRenders)
 
 
 @config.g_app.route('/render/<renderID>', methods=['GET'])
 def getRenderById(renderID):
-	'''
-	Get a render by id in json format.
-	'''
+    '''
+    Get a render by id in json format.
+    '''
 
-	for key, render in g_renders.iteritems():
-		if renderID == key:
-			return jsonify(render=render)
-	logging.error('id ' + renderID + " doesn't exists")
-	abort(make_response("id " + renderID + " doesn't exists", 404))
+    for key, render in g_renders.iteritems():
+        if renderID == key:
+            return jsonify(render=render)
+    logging.error('id ' + renderID + " doesn't exists")
+    abort(make_response("id " + renderID + " doesn't exists", 404))
 
 
 @config.g_app.route('/render/<renderId>/resource/<resourceId>', methods=['GET'])
 def resource(renderId, resourceId):
-	'''
-	Returns file resource by renderId and resourceId.
-	'''
-	if not os.path.isfile(os.path.join(config.renderDirectory, resourceId)):
-		logging.error(config.renderDirectory + resourceId + " doesn't exists")
-		abort(make_response(config.renderDirectory + resourceId + " doesn't exists", 404))
+    '''
+    Returns file resource by renderId and resourceId.
+    '''
+    if not os.path.isfile(os.path.join(config.renderDirectory, resourceId)):
+        logging.error(config.renderDirectory + resourceId + " doesn't exists")
+        abort(make_response(config.renderDirectory + resourceId + " doesn't exists", 404))
 
-	return send_file(os.path.join(config.renderDirectory, resourceId))
+    return send_file(os.path.join(config.renderDirectory, resourceId))
 
 
 @config.g_app.route('/render/<renderID>', methods=['DELETE'])
 def deleteRenderById(renderID):
-	'''
-	Delete a render from the render array.
-	TODO: needed?
-	TODO: kill the corresponding process?
-	'''
-	if renderID not in g_renders:
-		logging.error("id " + renderID + " doesn't exists")
-		abort(make_response("id " + renderID + " doesn't exists", 404))
-	del g_renders[renderID]
+    '''
+    Delete a render from the render array.
+    TODO: needed?
+    TODO: kill the corresponding process?
+    '''
+    if renderID not in g_renders:
+        logging.error("id " + renderID + " doesn't exists")
+        abort(make_response("id " + renderID + " doesn't exists", 404))
+    del g_renders[renderID]
 
 
 def generateGraph(fileName):
-	'''
-	'''
+    '''
+    '''
 
-	name, extension = os.path.splitext(fileName)
+    name, extension = os.path.splitext(fileName)
 
-	graph = {
-		u'nodes': [
-			{
-				u'id': 0,
-				u'plugin': u'reader',
-				u'parameters': [
-					{u'id': u'filename', u'value': os.path.join(config.resourcesPath, name + extension)}
-				]
-			},
-			{
-				u'id': 1,
-				u'plugin': u'tuttle.pngwriter',
-				u'parameters': [
-					{u'id': u'filename', u'value': os.path.join(config.resourcesPath, 'proxy', name + '.png')}
-				]
-			},
-			{
-				u'id': 2,
-				u'plugin': u'tuttle.resize',
-				u'parameters': [
-					{u'id': u'width', u'value': 256},
-					{u'id': u'keepRatio', u'value': 1}
-				]
-			},
-			{
-				u'id': 3,
-				u'plugin': u'tuttle.pngwriter',
-				u'parameters': [
-					{u'id': u'filename', u'value': os.path.join(config.resourcesPath, 'thumbnail', name + '.png')}
-				]
-			}
-		],
-		u'connections': [
-			{u'src': {u'id': 0}, u'dst': {u'id': 1}},
-			{u'src': {u'id': 0}, u'dst': {u'id': 2}},
-			{u'src': {u'id': 2}, u'dst': {u'id': 3}},
-		],
-		u'options': []
-	}
+    graph = {
+        u'nodes': [
+            {
+                u'id': 0,
+                u'plugin': u'reader',
+                u'parameters': [
+                    {u'id': u'filename', u'value': os.path.join(config.resourcesPath, name + extension)}
+                ]
+            },
+            {
+                u'id': 1,
+                u'plugin': u'tuttle.pngwriter',
+                u'parameters': [
+                    {u'id': u'filename', u'value': os.path.join(config.resourcesPath, 'proxy', name + '.png')}
+                ]
+            },
+            {
+                u'id': 2,
+                u'plugin': u'tuttle.resize',
+                u'parameters': [
+                    {u'id': u'width', u'value': 256},
+                    {u'id': u'keepRatio', u'value': 1}
+                ]
+            },
+            {
+                u'id': 3,
+                u'plugin': u'tuttle.pngwriter',
+                u'parameters': [
+                    {u'id': u'filename', u'value': os.path.join(config.resourcesPath, 'thumbnail', name + '.png')}
+                ]
+            }
+        ],
+        u'connections': [
+            {u'src': {u'id': 0}, u'dst': {u'id': 1}},
+            {u'src': {u'id': 0}, u'dst': {u'id': 2}},
+            {u'src': {u'id': 2}, u'dst': {u'id': 3}},
+        ],
+        u'options': []
+    }
 
-	# return json.dumps(graph)
-	return graph
+    # return json.dumps(graph)
+    return graph
 
 
 def generateProxies(graph):
-	inputScene = graph
-	renderID = str(uuid.uuid1())
-	logging.info("RENDERID: " + renderID)
-	# scene, outputResources = renderScene.convertScenePatterns(inputScene)
-	scene = inputScene
+    inputScene = graph
+    renderID = str(uuid.uuid1())
+    logging.info("RENDERID: " + renderID)
+    scene = inputScene
 
-	newRender = {}
-	newRender['id'] = renderID
-	# TODO: return a list of output resources in case of several writers.
-	# newRender['outputFilename'] = outputResources[0]
-	newRender['scene'] = scene
-	g_renders[renderID] = newRender
+    newRender = {}
+    newRender['id'] = renderID
+    # TODO: return a list of output resources in case of several writers.
+    newRender['scene'] = scene
+    g_renders[renderID] = newRender
 
-	# config.g_app.logger.debug('new resource is ' + newRender['outputFilename'])
+    # config.g_app.logger.debug('new resource is ' + newRender['outputFilename'])
 
-	renderSharedInfo = g_manager.dict()
-	renderSharedInfo['status'] = 0
-	g_rendersSharedInfo[renderID] = renderSharedInfo
+    renderSharedInfo = g_manager.dict()
+    renderSharedInfo['status'] = 0
+    g_rendersSharedInfo[renderID] = renderSharedInfo
 
-	# outputFilesExist = all([os.path.exists(os.path.join(config.renderDirectory, f)) for f in outputResources])
-	# if not outputFilesExist:
-	# 	if g_enablePool:
-	# 		g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
-	# 	else:
-	# 		renderScene.launchComputeGraph(renderSharedInfo, newRender)
-	# else:
-	# 	#Already computed
-	# 	renderSharedInfo['status'] = 3
+    if g_enablePool:
+        g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
+    else:
+        renderScene.launchComputeGraph(renderSharedInfo, newRender)
 
-	if False:
-		g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
-	else:
-		renderScene.launchComputeGraph(renderSharedInfo, newRender)
-
-	return jsonify(render=newRender)
+    return jsonify(render=newRender)
 
 
 def addFile(file):
-	'''
-	'''
+    '''
+    '''
 
-	'''
-	if isinstance(file, zipfile.ZipExtFile):
-		mimetype = mimetypes.guess_type(file._fileobj.name)
-	'''
+    '''
+    if isinstance(file, zipfile.ZipExtFile):
+        mimetype = mimetypes.guess_type(file._fileobj.name)
+    '''
 
-	mimetype = file.content_type
-	# mimetype = mimetypes.guess_type(file.filename)
+    mimetype = file.content_type
+    # mimetype = mimetypes.guess_type(file.filename)
 
-	fileLength = file.content_length
+    fileLength = file.content_length
 
-	uid = config.resourceTable.insert({
-		"mimetype": mimetype,
-		"size": fileLength,
-		"name": file.filename,
-		"registeredName": ""})
+    uid = config.resourceTable.insert({
+        "mimetype": mimetype,
+        "size": fileLength,
+        "name": file.filename,
+        "registeredName": ""})
 
-	_, extension = os.path.splitext(file.filename)
-	if not extension:
-		extension = mimetypes.guess_extension(mimetype)
+    _, extension = os.path.splitext(file.filename)
+    if not extension:
+        extension = mimetypes.guess_extension(mimetype)
 
-	imgName = str(uid) + extension
-	config.resourceTable.update({"_id": uid}, {"registeredName": imgName})
-	imgPath = os.path.join(config.resourcesPath, imgName)
+    imgName = str(uid) + extension
+    config.resourceTable.update({"_id": uid}, {"registeredName": imgName})
+    imgPath = os.path.join(config.resourcesPath, imgName)
 
-	logging.warning("imgName = " + imgName)
-	logging.warning("imgPath = " + imgPath)
-	logging.warning("file.filename = " + file.filename)
+    logging.warning("imgName = " + imgName)
+    logging.warning("imgPath = " + imgPath)
+    logging.warning("file.filename = " + file.filename)
 
-	file.save(imgPath)
-	graph = generateGraph(imgName)
-	logging.warning("graph = " + str(graph))
-	generateProxies(graph)
+    file.save(imgPath)
+    graph = generateGraph(imgName)
+    logging.warning("graph = " + str(graph))
+    generateProxies(graph)
 
-	resource = config.resourceTable.find_one({"_id": ObjectId(uid)})
-	return resource
+    resource = config.resourceTable.find_one({"_id": ObjectId(uid)})
+    return resource
 
 
 def addArchive_Zipfile(archiveFile):
-	'''
-	'''
-	archive = zipfile.ZipFile(archiveFile, "r")
-	resources = []
+    '''
+    '''
+    archive = zipfile.ZipFile(archiveFile, "r")
+    resources = []
 
-	for fileName in archive.namelist():
-		extractPath = archive.extract(fileName, "/tmp/")
+    for fileName in archive.namelist():
+        extractPath = archive.extract(fileName, "/tmp/")
 
-		logging.warning("extractPath = " + extractPath)
-		file = open(extractPath, "rw")
+        logging.warning("extractPath = " + extractPath)
+        file = open(extractPath, "rw")
 
-		logging.warning("filename = " + fileName)
-		file.seek(0, os.SEEK_END)
-		fileLength = file.tell()
-		logging.warning("fileLength = " + fileLength.__str__())
+        logging.warning("filename = " + fileName)
+        file.seek(0, os.SEEK_END)
+        fileLength = file.tell()
+        logging.warning("fileLength = " + fileLength.__str__())
 
-		mimetype, _ = mimetypes.guess_type(extractPath)
-		logging.warning("mimetype = " + mimetype)
+        mimetype, _ = mimetypes.guess_type(extractPath)
+        logging.warning("mimetype = " + mimetype)
 
-		uid = config.resourceTable.insert({
-			"mimetype": mimetype,
-			"size": fileLength,
-			"name": fileName,
-			"registeredName": ""})
+        uid = config.resourceTable.insert({
+            "mimetype": mimetype,
+            "size": fileLength,
+            "name": fileName,
+            "registeredName": ""})
 
-		_, extension = os.path.splitext(fileName)
-		if not extension:
-			extension = mimetypes.guess_extension(mimetype)
+        _, extension = os.path.splitext(fileName)
+        if not extension:
+            extension = mimetypes.guess_extension(mimetype)
 
-		imgName = str(uid) + extension
-		config.resourceTable.update({"_id": uid}, {"registeredName": imgName})
-		imgPath = os.path.join(config.resourcesPath, imgName)
+        imgName = str(uid) + extension
+        config.resourceTable.update({"_id": uid}, {"registeredName": imgName})
+        imgPath = os.path.join(config.resourcesPath, imgName)
 
-		imgFile = open(imgPath, "w")
-		file.seek(0, 0)
-		imgFile.write(file.read(fileLength))
-		imgFile.close()
+        imgFile = open(imgPath, "w")
+        file.seek(0, 0)
+        imgFile.write(file.read(fileLength))
+        imgFile.close()
 
-		graph = generateGraph(imgName)
-		logging.warning("graph = " + str(graph))
-		generateProxies(graph)
+        graph = generateGraph(imgName)
+        logging.warning("graph = " + str(graph))
+        generateProxies(graph)
 
-		resource = config.resourceTable.find_one({"_id": ObjectId(uid)})
-		resources.append(resource)
+        resource = config.resourceTable.find_one({"_id": ObjectId(uid)})
+        resources.append(resource)
 
-		file.close()
-		os.remove(extractPath)
+        file.close()
+        os.remove(extractPath)
 
-	return resources
+    return resources
 
 
 @config.g_app.route('/resource', methods=['POST'])
 def addResource():
-	'''
-	Upload resource file on the database
-	'''
-	if not 'file' in request.files:
-		abort(make_response("Empty request", 500))
+    '''
+    Upload resource file on the database
+    '''
+    if not 'file' in request.files:
+        abort(make_response("Empty request", 500))
 
-	file = request.files['file']
-	mimetype = file.content_type
-	logging.debug("mimetype = " + mimetype)
+    file = request.files['file']
+    mimetype = file.content_type
+    logging.debug("mimetype = " + mimetype)
 
-	if not mimetype:
-		logging.error("Invalid resource.")
-		abort(make_response("Invalid resource.", 404))
+    if not mimetype:
+        logging.error("Invalid resource.")
+        abort(make_response("Invalid resource.", 404))
 
-	if mimetype == "application/zip":
-		resources = addArchive_Zipfile(file)
-	else:
-		resources = addFile(file)
+    if mimetype == "application/zip":
+        resources = addArchive_Zipfile(file)
+    else:
+        resources = addFile(file)
 
-	return mongodoc_jsonify(resources)
+    return mongodoc_jsonify(resources)
 
 
 @config.g_app.route('/resource/<resourceId>', methods=['GET'])
 def getResource(resourceId):
-	'''
-	Returns resource file.
-	'''
-	resource = os.path.join(config.resourcesPath, resourceId)
+    '''
+    Returns resource file.
+    '''
+    resource = os.path.join(config.resourcesPath, resourceId)
 
-	if os.path.isfile(resource):
-		return send_file(resource)
-	else:
-		logging.error("can't find " + resource)
-		abort(make_response("can't find " + resource, 404))
+    if os.path.isfile(resource):
+        return send_file(resource)
+    else:
+        logging.error("can't find " + resource)
+        abort(make_response("can't find " + resource, 404))
 
 
 @config.g_app.route('/proxy/<resourceId>', methods=['GET'])
 def getProxy(resourceId):
-	'''
-	Returns resource file.
-	'''
-	resourceName, _ = os.path.splitext(resourceId)
-	resource = os.path.join(config.resourcesPath, 'proxy', resourceName + '.png')
+    '''
+    Returns resource file.
+    '''
+    resourceName, _ = os.path.splitext(resourceId)
+    resource = os.path.join(config.resourcesPath, 'proxy', resourceName + '.png')
 
-	if os.path.isfile(resource):
-		return send_file(resource)
-	else:
-		logging.error("can't find " + resource)
-		abort(make_response("can't find " + resource, 404))
+    if os.path.isfile(resource):
+        return send_file(resource)
+    else:
+        logging.error("can't find " + resource)
+        abort(make_response("can't find " + resource, 404))
 
 
 @config.g_app.route('/thumbnail/<resourceId>', methods=['GET'])
 def getThumbnail(resourceId):
-	'''
-	Returns resource file.
-	'''
-	resourceName, _ = os.path.splitext(resourceId)
-	resource = os.path.join(config.resourcesPath, 'thumbnail', resourceName + '.png')
+    '''
+    Returns resource file.
+    '''
+    resourceName, _ = os.path.splitext(resourceId)
+    resource = os.path.join(config.resourcesPath, 'thumbnail', resourceName + '.png')
 
-	if os.path.isfile(resource):
-		return send_file(resource)
-	else:
-		logging.error("can't find " + resource)
-		abort(make_response("can't find " + resource, 404))
+    if os.path.isfile(resource):
+        return send_file(resource)
+    else:
+        logging.error("can't find " + resource)
+        abort(make_response("can't find " + resource, 404))
 
 
 @config.g_app.route('/resource/', methods=['GET'])
 def getResourcesDict():
-	'''
-	Returns all resources files from db.
-	'''
-	count = int(request.args.get('count', 10))
-	skip = int(request.args.get('skip', 0))
-	resources = config.resourceTable.find().limit(count).skip(skip)
-	return mongodoc_jsonify({"resources": [result for result in resources]})
+    '''
+    Returns all resources files from db.
+    '''
+    count = int(request.args.get('count', 10))
+    skip = int(request.args.get('skip', 0))
+    resources = config.resourceTable.find().limit(count).skip(skip)
+    return mongodoc_jsonify({"resources": [result for result in resources]})
 
 
 @config.g_app.route('/upload', methods=['GET'])
 def uploadPage():
-	return """<!DOCTYPE html>
+    return """<!DOCTYPE html>
 	<html lang="en">
 	<head>
 	</head>
@@ -419,13 +407,13 @@ def uploadPage():
 
 @atexit.register
 def cleanPool():
-	'''
-	Close processes and quit pool at exit.
-	'''
-	g_pool.close()
-	g_pool.terminate()
-	g_pool.join()
+    '''
+    Close processes and quit pool at exit.
+    '''
+    g_pool.close()
+    g_pool.terminate()
+    g_pool.join()
 
 
 if __name__ == '__main__':
-	config.g_app.run(host="0.0.0.0", port=5005, debug=True)
+    config.g_app.run(host="0.0.0.0", port=5005, debug=True)
