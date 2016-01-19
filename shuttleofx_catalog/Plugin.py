@@ -21,6 +21,7 @@ class Plugin(object):
         self.rawIdentifier = None
         self.comments.user = ""
         self.comments.content = ""
+        self.wiki = ""
 
     def setDescription(self, description):
         self.description = description
@@ -67,3 +68,4 @@ class Plugin(object):
         print "defautImagePath:", self.defautImagePath
         print "sampleImagesPath:", self.sampleImagesPath
         print "comments", self.comments
+        print "wiki:", self.wiki

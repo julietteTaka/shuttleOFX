@@ -156,7 +156,7 @@ def deleteBundle(bundleId):
     if bundle == None:
         abort(make_response("Bundle not found.", 404))
 
-    plugins = config.pluginTable.find({"bundleId": bundleId})
+
     for plugin in plugins:
         pluginId = plugin["pluginId"]
         deleteStatus = config.pluginTable.remove({"pluginId":pluginId})
@@ -287,7 +287,7 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
 ### Comments Start _____________________________________________________________
 @config.g_app.route('/plugin/<int:pluginId>/version/<pluginVersion>/comments/updates', methods=['POST'])
 @config.g_app.route('/plugin/<int:pluginId>/comments/update', methods=['POST'])
-def setWiki(pluginId, pluginVersion="latest"):
+def addComment(pluginId, pluginVersion="latest"):
     config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"comments.user" : request.json['commentsuser']}})
     config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"comments.content" : request.json['commentscontent']}})
     return mongodoc_jsonify(True)
@@ -307,6 +307,15 @@ def getBundleByPluginId(rawIdentifier):
 
     return mongodoc_jsonify(bundleId)
 
+### Wiki Start _________________________________________________________________
+
+@config.g_app.route('/wiki/update/<int:pluginId>/version/<pluginVersion>', methods=['POST'])
+@config.g_app.route('/wiki/update/<int:pluginId>', methods=['POST'])
+def setWiki(pluginId, pluginVersion="latest"):
+    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"wiki" : request.json['wikicontent']} })
+    return mongodoc_jsonify(True)
+
+### Wiki End ___________________________________________________________________
 
 @config.g_app.route('/resources', methods=['POST'])
 def addResource():
