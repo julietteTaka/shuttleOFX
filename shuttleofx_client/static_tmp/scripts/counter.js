@@ -32,7 +32,13 @@ $('select#pageSize').change(function(){
   }
   cookieManager({"count": count, "skip": skip});
   url = window.location.href.split("?")[1].split("=");
-  window.location.href = "/plugin?" + url[0] + "=" + url[1] + "=" + count + url[2].substring(2)+"="+skip;
+  if (url[0] == "search") {
+      window.location.href = "/plugin?" + url[0] + "=" + url[1] + "=" + count + url[2].substring(2)+"="+skip;
+  }
+  else if (url[0] == "count") {
+      window.location.href = "/plugin?" + url[0] + "=" + count + url[1].substring(2)+"="+skip;
+  };
+
 });
 
 $('#next a').click(function(event){
