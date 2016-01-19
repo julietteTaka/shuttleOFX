@@ -107,8 +107,8 @@ def renderPageWithPlugin(pluginRawIdentifier):
     previewGallery = requests.get(config.renderRootUri + '/resource/').json()
     return render_template('editor.html', plugin=resp.json(), user=user, resources=previewGallery)
 
-@config.g_app.route("/comments/<pluginRawIdentifier>/version/<pluginVersion>")
-@config.g_app.route("/comments/<pluginRawIdentifier>")
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/comments")
+@config.g_app.route("/plugin/<pluginRawIdentifier>/comments")
 def getComments(pluginRawIdentifier, pluginVersion="latest"):
     user = None
     if 'google_token' in session:
