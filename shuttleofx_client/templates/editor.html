@@ -88,10 +88,11 @@
                                 </div>
                             </div>
                         </div>
+                        <h4>Image from an URL</h4>
                         <div class="row">
                           <div class="col-md-12">
-                            <input id="imgUrl" type="text" name="imgUrl" value="" placeholder="type an image url here ...">
-                            <input type="button" value="Send" id="renderUrl" pluginId="{{plugin.rawIdentifier}}"
+                            <input id="imgUrl"  type="text" name="imgUrl" value="" placeholder="type an image url here ...">
+                            <input type="button" value="Send" id="renderUrl" style="float: right;" pluginId="{{plugin.rawIdentifier}}"
                                 {% for context in plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
                                     {% if context != "OfxImageEffectContextGeneral" %}
                                         class="btn btn-primary {{context}}"
@@ -100,6 +101,7 @@
                             >
                           </div>
                         </div>
+                        <h4>Image from ShuttleOFX resources</h4>
                         <div class="row">
                             {% for resource in resources.resources %}
                                 {% for key in resource._id %}
