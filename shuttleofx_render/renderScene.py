@@ -13,6 +13,7 @@ import sys
 import subprocess
 import argparse
 import copy
+import cache
 
 
 class ProgressHandle(tuttle.IProgressHandle):
@@ -140,7 +141,7 @@ def convertScenePatterns(scene):
                     nodeHash = str(nodesHashMap.getHash(node['name'], 0.0))
                     node['hash'] = nodeHash
                     filename = nodeHash + suffix
-                    filepath = os.path.join(config.renderDirectory, filename)
+                    filepath = os.path.join(config.renderDirectory, cache.cachePathFromFile(filename))
                     outputResources.append(filename)
                     parameter['value'] = filepath
 
