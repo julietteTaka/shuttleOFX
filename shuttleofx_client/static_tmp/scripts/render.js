@@ -293,21 +293,23 @@ $(document).ready(function() {
       .done(function(data){
         if (data == "Empty request") {
           hideLoader();
-          alert("URL input is empty, please type an URL before to click on send button.")
+          $("#imgUrl").before(addMessage("<p> URL input is empty, please type an URL before to click on send button.</p>", "error"));
         }
         else if (data == "Not an image") {
           hideLoader();
-          alert("The URL that you have sent was not an image. Please try again.")
+          $("#imgUrl").before(addMessage("<p>The URL that you have sent was not an image.<br/> Please try again.</p>", "error"));
         }
         else if (data == "Not found") {
           hideLoader();
-          alert("The URL that you have sent was not found. Please try again.")
+          $("#imgUrl").before(addMessage("<p>The URL that you have sent was not found.<br/> Please try again.</p>", "error"));
         }
         else if (data == "Not exist") {
           hideLoader();
-          alert("The URL that you have sent doesn't exist. Please try again.")
+          $("#imgUrl").before(addMessage("<p>The URL that you have sent doesn't exist.<br/> Please try again.</p>", "error"));
         }
         else {
+            removeMessage();
+
           selectedResource = data;
 
           renderFilter(pluginId);
