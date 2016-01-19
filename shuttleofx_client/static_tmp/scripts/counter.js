@@ -18,8 +18,6 @@ else if (decomposedUrl[1].indexOf("&") > -1) {
     skip = decomposedUrl[1].split("=")[1];
 }
 
-$('select#pageSize').val(count);
-
 if (skip <= 1) {
     $('#previous').addClass('disabled');
 }
@@ -33,7 +31,8 @@ $('select#pageSize').change(function(){
     skip = Math.ceil(totalPlugins/$('select#pageSize').val());
   }
   cookieManager({"count": count, "skip": skip});
-  window.location.href = "/plugin?count=" + count + "&skip=" + skip;
+  url = window.location.href.split("?")[1].split("=");
+  window.location.href = "/plugin?" + url[0] + "=" + url[1] + "=" + count + url[2].substring(2)+"="+skip;
 });
 
 $('#next a').click(function(event){
