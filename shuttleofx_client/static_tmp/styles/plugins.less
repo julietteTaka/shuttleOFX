@@ -28,8 +28,13 @@ ul.surveys{
 }
 
 ul.surveys.grid{
-	li{
-		list-style: none;
+	li.plugin{
+		width: calc(~'(100% / 5) - 10px');
+		margin: 0 5px 0 5px;
+		float: left;
+		transition: all 2s ease-in-out;
+		transition-delay : 0;
+    		list-style: none;
 		.plugins-titles{
 			width: 100%;
 			background-color: @ofxColor;
@@ -104,6 +109,17 @@ ul.surveys.grid{
 		}
 	}
 }
+
+@iterations: 10;
+
+.mixin-loop (@i) when (@i > 1) {
+  ul.surveys.grid li.plugin:nth-child(@{i}) {
+    transition-delay: calc(0.05s * @i);
+  }
+  .mixin-loop(@i - 1);
+}
+
+.mixin-loop(@iterations);
 
 ul.surveys.list{
 	list-style: none;
@@ -224,6 +240,12 @@ ul.pager-check{
 }
 
 
+@media screen and (max-width: 1275px) {
+ 	ul.surveys.grid li.plugin{
+		width: calc(~'(100% / 2) - 10px');
+	}
+}
+
 // #plugins ul.pager-check li a.disabled{
 // 	cursor: not-allowed;
 // 	color: #ccc!important;
@@ -237,4 +259,3 @@ ul.pager-check{
 // 	color: @ofxTxt;
 // 	font-size: 2em;
 // }
-

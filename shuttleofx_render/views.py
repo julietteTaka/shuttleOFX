@@ -75,11 +75,11 @@ def newRender():
     renderSharedInfo = g_manager.dict()
     renderSharedInfo['status'] = 0
     g_rendersSharedInfo[renderID] = renderSharedInfo
-    
+
     # TODO : Generate multiple file paths and test on all files in case of multiple output resources
     filepath = cache.cachePathFromFile(outputResources[0])
     outputFilesExist = os.path.exists(os.path.join(config.renderDirectory, filepath))
-    
+
     if not outputFilesExist:
         if g_enablePool:
             g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
@@ -234,9 +234,7 @@ def addFile(file):
     if isinstance(file, zipfile.ZipExtFile):
         mimetype = mimetypes.guess_type(file._fileobj.name)
     '''
-
-    mimetype = file.content_type
-    # mimetype = mimetypes.guess_type(file.filename)
+    mimetype = mimetypes.guess_type(file.filename)
 
     fileLength = file.content_length
 
@@ -276,16 +274,15 @@ def addArchive_Zipfile(archiveFile):
     for fileName in archive.namelist():
         extractPath = archive.extract(fileName, "/tmp/")
 
-        logging.warning("extractPath = " + extractPath)
         file = open(extractPath, "rw")
-
-        logging.warning("filename = " + fileName)
         file.seek(0, os.SEEK_END)
         fileLength = file.tell()
-        logging.warning("fileLength = " + fileLength.__str__())
-
         mimetype, _ = mimetypes.guess_type(extractPath)
-        logging.warning("mimetype = " + mimetype)
+
+        # logging.warning("filename = " + fileName)
+        # logging.warning("extractPath = " + extractPath)
+        # logging.warning("fileLength = " + fileLength.__str__())
+        # logging.warning("mimetype = " + mimetype)
 
         uid = config.resourceTable.insert({
             "mimetype": mimetype,
@@ -306,15 +303,17 @@ def addArchive_Zipfile(archiveFile):
         imgFile.write(file.read(fileLength))
         imgFile.close()
 
+
         graph = generateGraph(imgName)
         logging.warning("graph = " + str(graph))
         generateProxies(graph)
 
-        resource = config.resourceTable.find_one({"_id": ObjectId(uid)})
-        resources.append(resource)
-
         file.close()
         os.remove(extractPath)
+
+
+        resource = config.resourceTable.find_one({"_id": ObjectId(uid)})
+        resources.append(resource)
 
     return resources
 
@@ -328,14 +327,20 @@ def addResource():
         abort(make_response("Empty request", 500))
 
     file = request.files['file']
-    mimetype = file.content_type
+
+    mimetype, _ = mimetypes.guess_type(file.filename)
     logging.debug("mimetype = " + mimetype)
 
     if not mimetype:
         logging.error("Invalid resource.")
         abort(make_response("Invalid resource.", 404))
 
-    if mimetype == "application/zip":
+    logging.warning("mimetype = " + mimetype)
+
+    if mimetype == "application/zip" \
+    or mimetype == "application/x-zip" \
+    or mimetype == "application/octet-stream" \
+    or mimetype == "application/x-zip-compressed":
         resources = addArchive_Zipfile(file)
     else:
         resources = addFile(file)

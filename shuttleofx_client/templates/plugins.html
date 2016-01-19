@@ -31,7 +31,7 @@
             <form class="navbar-form">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-md-2">
+                        <div class="col-md-4 col-sm-4">
                             <div class='filter-title'><span>Display : </span>
                                 <div class="toggler-group">
                                     <span class="toggler active" data-toggle="grid">
@@ -45,7 +45,7 @@
                         </div>
 
 
-                        <div class="col-md-2 filter-item order-catag">
+                        <div class="col-md-3 col-sm-3 filter-item order-catag">
                             <div class="radio radio-primary">
                                 <label class="ascendant">
                                     <i class="fa fa-sort-alpha-asc"></i>Ascending
@@ -54,7 +54,7 @@
                         </div>
 
 
-                        <div class="col-md-4 pull-right">
+                        <div class="col-md-5 col-sm-5 pull-right">
                             <div id="filter-page">
                                 <p class="pager-size">
                                     Plugins per page:
@@ -81,20 +81,11 @@
 {% block content %}
 <div class="main-content" id="plugins">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div id="filter-page">
-                    <ul class="pagination pagination-sm pager-check">
-                        <li id="previous"><a href="">«</a></li>
-                        <li id="next"><a href="">»</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        {{ dico.pagination|safe }}
         <div class="row">
             <ul class="surveys grid">
                 {% for plugin in dico.plugins %}
-                    <li class="col-md-3">
+                    <li class="plugin">
                         <a href="/plugin/{{plugin.rawIdentifier}}">
                         <div class="panel panel-primary">
                                 <div class="plugins-titles">
@@ -124,6 +115,7 @@
                 {% endfor %}
             </ul>
         </div>
+        {{ dico.pagination|safe }}
     </div>
 </div>
 
