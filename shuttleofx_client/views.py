@@ -111,7 +111,7 @@ def renderPageWithPlugin(pluginRawIdentifier):
 
 @config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/comments")
 @config.g_app.route("/plugin/<pluginRawIdentifier>/comments")
-def getComments(pluginRawIdentifier, pluginVersion="latest"):
+def getPluginWikiEdit(pluginRawIdentifier, pluginVersion="latest"):
     user = None
     if 'google_token' in session:
         user = config.google.get('userinfo').data
@@ -121,10 +121,9 @@ def getComments(pluginRawIdentifier, pluginVersion="latest"):
         resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
         if resp.status_code == 404:
             return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
-
     if resp.status_code != 200:
         if resp.status_code == 404:
-            return render_template('pluginNotFound.html', user=user)
+            return render_template('notFound.html', user=user)
         abort(resp.status_code)
     return render_template('comments.html', plugin=resp.json(), user=user)
 
@@ -135,10 +134,9 @@ def setWiki(pluginId, pluginVersion="latest"):
     if 'google_token' in session:
         user = config.google.get('userinfo').data
     header = {'content-type' : 'application/json'}
-    req = requests.post(config.catalogRootUri + "/plugin/" + pluginId + '/comments/update', data=request.data, headers=header)
+    req = requests.post(config.catalogRootUri + "/plugin/" + pluginId + "/comments/update", data=request.data, headers=header)
     return req.content
-
-### Comments End _______________________________________________________________
+### Comments End _______________________________________________________________
 
 @config.g_app.route('/render', methods=['POST'])
 def render():

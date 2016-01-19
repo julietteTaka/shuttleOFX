@@ -49,3 +49,26 @@
 </div>
 
 {% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+$(document).ready(function() {
+
+    function commentJson()
+    {
+        $.ajax({
+            type: "POST",
+            url: "/plugin/"+{{plugin.pluginId}}+"/comments/update",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                'commentscontent': $("#comment").val()
+            }),
+        })
+    }
+
+    $("#addComment").click(function(){
+        commentJson();
+    });
+});
+</script>
+{% endblock %}
