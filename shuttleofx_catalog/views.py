@@ -284,6 +284,14 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
 
     return mongodoc_jsonify(plugin)
 
+### Comments Start _____________________________________________________________
+@config.g_app.route('/plugin/<int:pluginId>/version/<pluginVersion>/comments/updates', methods=['POST'])
+@config.g_app.route('/plugin/<int:pluginId>/comments/update', methods=['POST'])
+def setWiki(pluginId, pluginVersion="latest"):
+    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"comments" : request.json['commentcontent']} })
+    return mongodoc_jsonify(True)
+### Comments End _______________________________________________________________
+
 
 @config.g_app.route("/bundle/<rawIdentifier>/bundle", methods=['GET'])
 def getBundleByPluginId(rawIdentifier):

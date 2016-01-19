@@ -107,6 +107,8 @@ def renderPageWithPlugin(pluginRawIdentifier):
     previewGallery = requests.get(config.renderRootUri + '/resource/').json()
     return render_template('editor.html', plugin=resp.json(), user=user, resources=previewGallery)
 
+### Comments Start _____________________________________________________________
+
 @config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/comments")
 @config.g_app.route("/plugin/<pluginRawIdentifier>/comments")
 def getComments(pluginRawIdentifier, pluginVersion="latest"):
@@ -126,6 +128,17 @@ def getComments(pluginRawIdentifier, pluginVersion="latest"):
         abort(resp.status_code)
     return render_template('comments.html', plugin=resp.json(), user=user)
 
+@config.g_app.route('/plugin/<pluginId>/version/<pluginVersion>/comments/update', methods=['POST'])
+@config.g_app.route('/plugin/<pluginId>/comments/update', methods=['POST'])
+def setWiki(pluginId, pluginVersion="latest"):
+    user = None
+    if 'google_token' in session:
+        user = config.google.get('userinfo').data
+    header = {'content-type' : 'application/json'}
+    req = requests.post(config.catalogRootUri + "/plugin/" + pluginId + '/comments/update', data=request.data, headers=header)
+    return req.content
+
+### Comments End _______________________________________________________________
 
 @config.g_app.route('/render', methods=['POST'])
 def render():
