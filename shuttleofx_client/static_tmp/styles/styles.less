@@ -13,13 +13,13 @@ html,body{
 
 .main{
     min-height: 100%;
-    padding-bottom: 7%;
+    padding-bottom: 300px;
     background: @bkGrey;
     border-left: 1px solid #ddd;
 }
 
 .main-content{
-    padding-top: 40px;
+    padding-top: 120px;
     z-index: 2;
 }
 
@@ -119,6 +119,7 @@ header{
         position:relative;
         padding-left: 30px;
         padding-right: 22px;
+        display:none;
         &::before{
             display:block;
             content:"";
@@ -220,7 +221,8 @@ header{
 
 }
 
-@media only screen and (min-width: 768px) {
+
+@media only screen and (min-width: 875px) {
     .navigation { width: 265px }
     #container {left: 265px; overflow: auto; -webkit-overflow-scrolling: touch; }
     header .icon { display: none }
@@ -228,7 +230,7 @@ header{
 }
 
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 875px) {
     .navbar-form{
         margin-left: 60px;
         padding-top: 0px;

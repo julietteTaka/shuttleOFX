@@ -64,3 +64,8 @@ function cookieManager(value){
     Cookies.set("user_sorting_prefs", value);
   }
 }
+
+$("li.disabled a").click(function(e){
+  e.preventDefault();
+  return;
+})
