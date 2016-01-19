@@ -19,6 +19,8 @@ class Plugin(object):
         self.properties = {}
         self.clip = []
         self.rawIdentifier = None
+        self.comments = ""
+        self.commentsuser = ""
 
     def setDescription(self, description):
         self.description = description
@@ -64,3 +66,4 @@ class Plugin(object):
         print "rate:", self.rate
         print "defautImagePath:", self.defautImagePath
         print "sampleImagesPath:", self.sampleImagesPath
+        print "comments", self.comments

@@ -41,9 +41,22 @@
 {% block content %}
 <div class="main-content">
     <div class="container-fluid">
-        <form class="comment" method="post">
-            <input class="form-control" type="text" name="comment" placeholder="Leave a comment">
-            <button class="btn btn-default" type="submit" name="submit">Go</button>
+        <div class="row">
+            <div class="col-md-10">
+                <h3>Comments : </h3>
+                <ul>
+                    {% for comment in plugin.comments %}
+                        <li>{{comment}}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <form>
+            <!--<label for="name">Your name</label>
+            <input id="user" type="text" class="form-control" name="name">-->
+            <label for="comment">Your Comment</label>
+            <textarea id="comment" class="form-control" type="text" name="comment" placeholder="Leave a comment"></textarea>
+            <button id="addComment" class="btn btn-default" type="submit" name="submit">Go</button>
         </form>
     </div>
 </div>
