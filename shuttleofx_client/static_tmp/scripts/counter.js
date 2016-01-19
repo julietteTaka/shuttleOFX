@@ -18,6 +18,13 @@ else if (decomposedUrl[1].indexOf("&") > -1) {
     skip = decomposedUrl[1].split("=")[1];
 }
 
+if (typeof skip == "undefined") {
+   skip = 1;
+};
+if (typeof count == "undefined") {
+   count = 10;
+};
+
 if (skip <= 1) {
     $('#previous').addClass('disabled');
 }
@@ -31,12 +38,22 @@ $('select#pageSize').change(function(){
     skip = Math.ceil(totalPlugins/$('select#pageSize').val());
   }
   cookieManager({"count": count, "skip": skip});
-  url = window.location.href.split("?")[1].split("=");
-  if (url[0] == "search") {
-      window.location.href = "/plugin?" + url[0] + "=" + url[1] + "=" + count + url[2].substring(2)+"="+skip;
+
+     if (typeof window.location.href.split("?")[1] != "undefined"){
+      url = window.location.href.split("?")[1].split("=")
+      if (url[0] == "search") {
+      if (typeof url[2] == "undefined") {
+         url[1] += "&count";
+         url[2] = "10&skip";
+      };
+         window.location.href = "/plugin?" + url[0] + "=" + url[1] + "=" + count + url[2].substring(2)+"="+skip;
+     }
+     else if (url[0] == "count") {
+         window.location.href = "/plugin?" + url[0] + "=" + count + url[1].substring(2)+"="+skip;
+     }
   }
-  else if (url[0] == "count") {
-      window.location.href = "/plugin?" + url[0] + "=" + count + url[1].substring(2)+"="+skip;
+  else  {
+      window.location.href = "/plugin?count=" + count + "&skip="+skip;
   };
 
 });
