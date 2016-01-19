@@ -1,4 +1,3 @@
-
 import os
 import uuid
 import json
@@ -7,6 +6,7 @@ import logging
 import tempfile
 import multiprocessing
 import mimetypes
+import zipfile
 import datetime
 
 from flask import request, jsonify, send_file, abort, Response, make_response
@@ -17,7 +17,7 @@ import renderScene
 import cache
 
 mimetypes.init()
-mimetypes.add_type('image/bmp','.bmp')
+mimetypes.add_type('image/bmp', '.bmp')
 mimetypes.add_type('image/x-panasonic-raw', '.raw')
 
 # list of all computing renders
@@ -35,7 +35,6 @@ g_manager = multiprocessing.Manager()
 g_lastClean = datetime.datetime.min
 
 
-
 def mongodoc_jsonify(*args, **kwargs):
     return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
 
@@ -43,6 +42,7 @@ def mongodoc_jsonify(*args, **kwargs):
 @config.g_app.route('/')
 def index():
     return "ShuttleOFX Render service"
+
 
 @config.g_app.route('/render', methods=['POST'])
 def newRender():
@@ -74,11 +74,11 @@ def newRender():
     renderSharedInfo = g_manager.dict()
     renderSharedInfo['status'] = 0
     g_rendersSharedInfo[renderID] = renderSharedInfo
-    
+
     # TODO : Generate multiple file paths and test on all files in case of multiple output resources
     filepath = cache.cachePathFromFile(outputResources[0])
     outputFilesExist = os.path.exists(os.path.join(config.renderDirectory, filepath))
-    
+
     if not outputFilesExist:
         if g_enablePool:
             g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
@@ -118,8 +118,8 @@ def getRenderById(renderID):
     for key, render in g_renders.iteritems():
         if renderID == key:
             return jsonify(render=render)
-    logging.error('id '+ renderID +" doesn't exists")
-    abort(make_response("id "+ renderID +" doesn't exists", 404))
+    logging.error('id ' + renderID + " doesn't exists")
+    abort(make_response("id " + renderID + " doesn't exists", 404))
 
 
 @config.g_app.route('/render/<renderId>/resource/<resourceId>', methods=['GET'])
@@ -128,11 +128,12 @@ def resource(renderId, resourceId):
     Returns file resource by renderId and resourceId.
     '''
     filepath = cache.cachePathFromFile(resourceId)
-    if not os.path.isfile( os.path.join(config.renderDirectory, filepath) ):
+    if not os.path.isfile(os.path.join(config.renderDirectory, filepath)):
         logging.error(config.renderDirectory + filepath + " doesn't exists")
         abort(make_response(config.renderDirectory + filepath + " doesn't exists", 404))
 
-    return send_file( os.path.join(config.renderDirectory, filepath) )
+    return send_file(os.path.join(config.renderDirectory, filepath))
+
 
 @config.g_app.route('/render/<renderID>', methods=['DELETE'])
 def deleteRenderById(renderID):
@@ -142,9 +143,89 @@ def deleteRenderById(renderID):
     TODO: kill the corresponding process?
     '''
     if renderID not in g_renders:
-        logging.error("id "+renderID+" doesn't exists")
-        abort(make_response("id "+renderID+" doesn't exists", 404))
+        logging.error("id " + renderID + " doesn't exists")
+        abort(make_response("id " + renderID + " doesn't exists", 404))
     del g_renders[renderID]
+
+
+def addFile(file):
+    '''
+    '''
+
+    '''
+    if isinstance(file, zipfile.ZipExtFile):
+        mimetype = mimetypes.guess_type(file._fileobj.name)
+    '''
+
+    mimetype, _ = mimetypes.guess_type(file.filename)
+
+    fileLength = file.content_length
+
+    uid = config.resourceTable.insert({
+        "mimetype": mimetype,
+        "size": fileLength,
+        "name": file.filename,
+        "registeredName": ""})
+
+    _, extension = os.path.splitext(file.filename)
+    if not extension:
+        extension = mimetypes.guess_extension(mimetype)
+
+    imgFile = str(uid) + extension
+    config.resourceTable.update({"_id": uid}, {"registeredName": imgFile})
+    imgFile = os.path.join(config.resourcesPath, imgFile)
+
+    file.save(imgFile)
+
+    resource = config.resourceTable.find_one({"_id": ObjectId(uid)})
+    return resource
+
+
+def addArchive_Zipfile(archiveFile):
+    '''
+    '''
+    archive = zipfile.ZipFile(archiveFile, "r")
+    resources = []
+
+    for fileName in archive.namelist():
+        extractPath = archive.extract(fileName, "/tmp/")
+
+        file = open(extractPath, "rw")
+        file.seek(0, os.SEEK_END)
+        fileLength = file.tell()
+        mimetype, _ = mimetypes.guess_type(extractPath)
+
+        # logging.warning("filename = " + fileName)
+        # logging.warning("extractPath = " + extractPath)
+        # logging.warning("fileLength = " + fileLength.__str__())
+        # logging.warning("mimetype = " + mimetype)
+
+        uid = config.resourceTable.insert({
+            "mimetype": mimetype,
+            "size": fileLength,
+            "name": fileName,
+            "registeredName": ""})
+
+        _, extension = os.path.splitext(fileName)
+        if not extension:
+            extension = mimetypes.guess_extension(mimetype)
+
+        imgPath = str(uid) + extension
+        config.resourceTable.update({"_id": uid}, {"registeredName": imgPath})
+        imgPath = os.path.join(config.resourcesPath, imgPath)
+
+        imgFile = open(imgPath, "w")
+        file.seek(0, 0)
+        imgFile.write(file.read(fileLength))
+        imgFile.close()
+
+        file.close()
+        os.remove(extractPath)
+
+        resource = config.resourceTable.find_one({"_id": ObjectId(uid)})
+        resources.append(resource)
+
+    return resources
 
 
 @config.g_app.route('/resource', methods=['POST'])
@@ -155,31 +236,25 @@ def addResource():
     if not 'file' in request.files:
         abort(make_response("Empty request", 500))
 
-    mimetype = request.files['file'].content_type
+    file = request.files['file']
+    mimetype, _ = mimetypes.guess_type(file.filename)
     logging.debug("mimetype = " + mimetype)
 
     if not mimetype:
         logging.error("Invalid resource.")
         abort(make_response("Invalid resource.", 404))
 
-    uid = config.resourceTable.insert({
-        "mimetype" : mimetype,
-        "size" : request.content_length,
-        "name" : request.files['file'].filename,
-        "registeredName" : ""})
+    logging.warning("mimetype = " + mimetype)
 
-    _, extension = os.path.splitext(request.files['file'].filename)
-    if not extension:
-        extension = mimetypes.guess_extension(mimetype)
-    imgFile = str(uid) + extension
-    config.resourceTable.update({"_id" : uid}, {"registeredName" : imgFile})
-    imgFile = os.path.join(config.resourcesPath, imgFile)
-    
-    file = request.files['file']
-    file.save(imgFile)
+    if mimetype == "application/zip" \
+            or mimetype == "application/x-zip" \
+            or mimetype == "application/octet-stream" \
+            or mimetype == "application/x-zip-compressed":
+        resources = addArchive_Zipfile(file)
+    else:
+        resources = addFile(file)
 
-    resource = config.resourceTable.find_one({ "_id" : ObjectId(uid)})
-    return mongodoc_jsonify(resource)
+    return mongodoc_jsonify(resources)
 
 
 @config.g_app.route('/resource/<resourceId>', methods=['GET'])
@@ -195,6 +270,7 @@ def getResource(resourceId):
         logging.error("can't find " + resource)
         abort(make_response("can't find " + resource, 404))
 
+
 @config.g_app.route('/resource/', methods=['GET'])
 def getResourcesDict():
     '''
@@ -203,30 +279,32 @@ def getResourcesDict():
     count = int(request.args.get('count', 10))
     skip = int(request.args.get('skip', 0))
     resources = config.resourceTable.find().limit(count).skip(skip)
-    return mongodoc_jsonify({"resources":[ result for result in resources ]})
+    return mongodoc_jsonify({"resources": [result for result in resources]})
+
 
 @config.g_app.route('/upload', methods=['GET'])
 def uploadPage():
     return """<!DOCTYPE html>
-      <html lang="en">
-      <head>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h3 class="text-muted">UPLOAD A RESOURCE</h3>
-          </div>
-          <hr/>
-          <div>
-            <form action="/resource" method="POST" enctype="multipart/form-data">
-              <input type="file" name="file">
-              <br/><br/>
-              <input type="submit" value="Upload">
-            </form>
-          </div>
-        </div>
-      </body>
-      </html>"""
+	<html lang="en">
+	<head>
+	</head>
+	<body>
+		<div class="container">
+			<div class="header">
+				<h3 class="text-muted">UPLOAD A RESOURCE</h3>
+			</div>
+			<hr/>
+			<div>
+			<form action="/resource" method="POST" enctype="multipart/form-data">
+				<input type="file" name="file">
+				<br/><br/>
+				<input type="submit" value="Upload">
+			</form>
+			</div>
+		</div>
+	</body>
+	</html>"""
+
 
 @atexit.register
 def cleanPool():
@@ -237,5 +315,6 @@ def cleanPool():
     g_pool.terminate()
     g_pool.join()
 
+
 if __name__ == '__main__':
-    config.g_app.run(host="0.0.0.0",port=5005,debug=True)
+    config.g_app.run(host="0.0.0.0", port=5005, debug=True)
