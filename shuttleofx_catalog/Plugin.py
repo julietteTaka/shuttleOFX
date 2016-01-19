@@ -67,5 +67,5 @@ class Plugin(object):
         print "rate:", self.rate
         print "defautImagePath:", self.defautImagePath
         print "sampleImagesPath:", self.sampleImagesPath
-        print "comments", self.comments
+        print "comments:", self.comments
         print "wiki:", self.wiki

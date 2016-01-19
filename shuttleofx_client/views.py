@@ -108,7 +108,6 @@ def renderPageWithPlugin(pluginRawIdentifier):
     return render_template('editor.html', plugin=resp.json(), user=user, resources=previewGallery)
 
 ### Wiki Start _________________________________________________________________
-
 @config.g_app.route("/wiki/edit/<pluginRawIdentifier>/version/<pluginVersion>")
 @config.g_app.route("/wiki/edit/<pluginRawIdentifier>")
 def getPluginWikiEdit(pluginRawIdentifier, pluginVersion="latest"):
@@ -170,7 +169,6 @@ def addComment(pluginId, pluginVersion="latest"):
     return req.content
 
 ### Comments End _______________________________________________________________
-
 
 @config.g_app.route('/render', methods=['POST'])
 def render():
