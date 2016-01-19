@@ -208,6 +208,9 @@ $(document).ready(function() {
             }),
         })
         .done(function(data){
+            // Change the extension of the proxy file path to .png
+            // Since the displayed proxy is always a generated PNG and not of the type of the original ressource
+            // We want to make sure the proxy is sent with the proper extension
             var selectedResourceName = selectedResource.split(".")[0];
 			$("#viewer img#originalPic").attr("src", "/proxy/" + selectedResourceName + ".png");
         	$("#viewer img#originalPic").show();
