@@ -18,6 +18,9 @@ else if (decomposedUrl[1].indexOf("&") > -1) {
     skip = decomposedUrl[1].split("=")[1];
 }
 
+// Update cookie with new parameters
+cookieManager({"count": count, "skip":skip});
+
 $('select#pageSize').val(count);
 
 if (skip <= 1) {
@@ -32,27 +35,9 @@ $('select#pageSize').change(function(){
   if (skip > Math.ceil(totalPlugins/$('select#pageSize').val())) {
     skip = Math.ceil(totalPlugins/$('select#pageSize').val());
   }
-  cookieManager({"count": count, "skip": skip});
   window.location.href = "/plugin?count=" + count + "&skip=" + skip;
 });
 
-$('#next a').click(function(event){
-  event.preventDefault();
-  if (!$("#next").hasClass("disabled")) {
-    skip ++;
-    cookieManager({"count": count, "skip": skip});
-    window.location.href = "/plugin?count=" + count + "&skip=" + skip;
-  }
-});
-
-$('#previous a').click(function(event){
-  event.preventDefault();
-  if (!$("#previous").hasClass("disabled")) {
-    skip --;
-    cookieManager({"count": count, "skip": skip});
-    window.location.href = "/plugin?count=" + count + "&skip=" + skip;
-  }
-});
 
 // Manage User sorting preferences inside cookies 
 // count --> number of plugins to be displayed
@@ -64,8 +49,3 @@ function cookieManager(value){
     Cookies.set("user_sorting_prefs", value);
   }
 }
-
-$("li.disabled a").click(function(e){
-  e.preventDefault();
-  return;
-})
