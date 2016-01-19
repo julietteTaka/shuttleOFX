@@ -44,16 +44,38 @@
         <div class="row">
             <div class="col-md-10">
                 <h3>Comments : </h3>
-                <ul>
-                    {% for comment in plugin.comments %}
-                        <li>{{comment}}</li>
-                    {% endfor %}
-                </ul>
+                <div class="row">
+                    {% if plugin.comments %}
+                    <div class="col-md-6">
+                        <ul class="comment user">
+                                {% for user in plugin.comments.user %}
+                                    <li>{{user}} : </li>
+                                {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class = "comment content">
+                                {% for content in plugin.comments.content %}
+                                    <li>{{content}}</li>
+                                {% endfor %}
+                        </ul>
+                    </div>
+                    {% else %}
+                    <div class="col-md-12">
+                        <p>
+                            No comments have been posted yet
+                        </p>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+
             </div>
         </div>
         <form>
-            <!--<label for="name">Your name</label>
-            <input id="user" type="text" class="form-control" name="name">-->
+            <label for="name">Your name</label>
+            <input id="user" type="text" class="form-control" name="name">
             <label for="comment">Your Comment</label>
             <textarea id="comment" class="form-control" type="text" name="comment" placeholder="Leave a comment"></textarea>
             <button id="addComment" class="btn btn-default" type="submit" name="submit">Go</button>
@@ -74,7 +96,8 @@ $(document).ready(function() {
             url: "/plugin/"+{{plugin.pluginId}}+"/comments/update",
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify({
-                'commentscontent': $("#comment").val()
+                'commentscontent': $("#comment").val(),
+                'commentsuser' : $("#user").val()
             }),
         })
     }

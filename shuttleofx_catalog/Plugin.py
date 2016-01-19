@@ -19,8 +19,8 @@ class Plugin(object):
         self.properties = {}
         self.clip = []
         self.rawIdentifier = None
-        self.comments = ""
-        self.commentsuser = ""
+        self.comments.user = ""
+        self.comments.content = ""
 
     def setDescription(self, description):
         self.description = description
