@@ -1,47 +1,10 @@
-{% extends "layout.html" %}
+{% extends "plugin.html" %}
 
-{% block title %}
-<div class="header-content" data-0="height:100px" data-150="height:0px">
-    <div class="top-header">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-12">
-                     <h1 data-0="margin-top:25px;font-size:3em;" data-150="margin-top:-55px;font-size:2em;">
-                        Online image editor
-                        <small>
-                            <a style="color:rgba(255,255,255,0.7);font-weight:300;" href="/plugin/{{plugin.pluginId}}">
-                                {{plugin.properties.OfxPropShortLabel.value}}
-                                <i style="color:rgba(255,255,255,0.4);font-size:0.5em;"></i>
-                            </a>
-                        </small>
-                    </h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block subtitle %}
-<div class="bottom-header">
-    <div class="navbar navbar-default">
-        <div class="navbar-collapse collapse navbar-responsive-collapse-filter">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <a href="/plugin/{{plugin.rawIdentifier}}"><i class="fa fa-angle-left"></i>
-                            Back to {{plugin.shortLabel}} description
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+{# Set the active item in the menu #}
+{% set active = "demo" %}
 
 {% block content %}
-<div class="main-content">
+<div class="main-content no-bottom-header">
     <div id="demo">
         <div class="container-fluid">
             <div class="row-fluid">
@@ -93,7 +56,7 @@
                                 {% for key in resource._id %}
                                     <div class="col-md-3">
                                         <div class="preview-img preview-render panel panel-primary">
-                                            <img class="sampleImage img-responsive" src="/resource/{{resource.registeredName }}" id="{{ resource.registeredName }}">
+                                            <img class="sampleImage img-responsive" src="/thumbnail/{{resource.registeredName}}" id="{{ resource.registeredName}}">
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -219,6 +182,7 @@
 {% endblock %}
 
 {% block scripts %}
+    {{ super() }}
     <script src="{{ url_for('static', filename='scripts/render.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function() {

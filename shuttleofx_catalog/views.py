@@ -3,6 +3,7 @@ import json
 import logging
 import requests
 import re
+import math
 
 from time import sleep
 from bson import json_util, ObjectId
@@ -17,6 +18,47 @@ from Plugin import Plugin
 
 def mongodoc_jsonify(*args, **kwargs):
     return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
+
+def createPagination(count, skip, maxPage):
+
+    '''
+    ' Create the HTML code for the pagination bar
+    '''
+
+    pagination = []
+
+    pagination.append( """ <div class="row">
+                <div class="col-md-12">
+                    <div id="filter-page">
+                        <ul class="pagination pagination-sm pager-check">""")
+
+    if skip == 1 :
+        pagination .append('     <li id="previous" class="disabled"><a href=""> < </a></li>')
+    else :
+        pagination.append('     <li id="previous"><a href="/plugin?count=' + str(count)+'&skip=' + str(skip-1) + '"> < </a></li>')
+
+    pageCounter = 1
+
+    for pageCounter in range(1, maxPage+1) :
+        if pageCounter == skip:
+            pagination.append('                            <li class="disabled"><a href="">' + str(pageCounter) + '</a></li>')
+        else:
+            pagination.append('                            <li><a href="/plugin?count=' + str(count) + '&skip=' + str(pageCounter) +'">' + str(pageCounter) + '</a></li>')
+
+    if skip == maxPage:
+        pagination.append('                          <li id="next" class="disabled"><a href=""> > </a></li>')
+    else:
+        pagination.append('                          <li id="next"><a href="/plugin?count=' + str(count) + '&skip=' + str(skip+1) + '"> > </a></li>')
+
+    pagination.append("""                    </ul>
+                    </div>
+                </div>
+            </div>
+        """)
+
+    pagination = ''.join(pagination)
+
+    return pagination
 
 @config.g_app.route("/")
 def index():
@@ -242,10 +284,14 @@ def getAllPlugins():
     else:
         filteredCursor = cursor
 
-    totalPlugins = len(cursor);
+    totalPlugins = len(cursor)
     plugins = [result["plugin"] for result in filteredCursor]
 
-    return mongodoc_jsonify({"plugins": plugins, "totalPlugins" : totalPlugins})
+    maxPage = int(math.ceil(totalPlugins / count)+1)
+
+    pagination = createPagination(count, skip, maxPage)
+
+    return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "pagination": pagination})
 
 
 @config.g_app.route("/bundle/<int:bundleId>/plugin/<pluginRawIdentifier>")
