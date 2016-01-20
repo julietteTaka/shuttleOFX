@@ -156,6 +156,7 @@ def deleteBundle(bundleId):
     if bundle == None:
         abort(make_response("Bundle not found.", 404))
 
+    plugins = config.pluginTable.find({"bundleId": bundleId})
 
     for plugin in plugins:
         pluginId = plugin["pluginId"]
