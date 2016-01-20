@@ -58,6 +58,7 @@ def newRender():
         g_lastClean = datetime.datetime.now()
 
     inputScene = request.json
+    logging.warning(inputScene)
     renderID = str(uuid.uuid1())
     logging.info("RENDERID: " + renderID)
     scene, outputResources = renderScene.convertScenePatterns(inputScene)
@@ -127,6 +128,7 @@ def resource(renderId, resourceId):
     '''
     Returns file resource by renderId and resourceId.
     '''
+
     filepath = cache.cachePathFromFile(resourceId)
     if not os.path.isfile(os.path.join(config.renderDirectory, filepath)):
         logging.error(config.renderDirectory + filepath + " doesn't exists")
@@ -148,6 +150,82 @@ def deleteRenderById(renderID):
     del g_renders[renderID]
 
 
+def generateGraph(fileName):
+    '''
+    '''
+
+    name, extension = os.path.splitext(fileName)
+
+    graph = {
+        u'nodes': [
+            {
+                u'id': 0,
+                u'plugin': u'reader',
+                u'parameters': [
+                    {u'id': u'filename', u'value': os.path.join(config.resourcesPath, name + extension)}
+                ]
+            },
+            {
+                u'id': 1,
+                u'plugin': u'tuttle.pngwriter',
+                u'parameters': [
+                    {u'id': u'filename', u'value': os.path.join(config.resourcesPath, 'proxy', name + '.png')}
+                ]
+            },
+            {
+                u'id': 2,
+                u'plugin': u'tuttle.resize',
+                u'parameters': [
+                    {u'id': u'width', u'value': 256},
+                    {u'id': u'keepRatio', u'value': 1}
+                ]
+            },
+            {
+                u'id': 3,
+                u'plugin': u'tuttle.pngwriter',
+                u'parameters': [
+                    {u'id': u'filename', u'value': os.path.join(config.resourcesPath, 'thumbnail', name + '.png')}
+                ]
+            }
+        ],
+        u'connections': [
+            {u'src': {u'id': 0}, u'dst': {u'id': 1}},
+            {u'src': {u'id': 0}, u'dst': {u'id': 2}},
+            {u'src': {u'id': 2}, u'dst': {u'id': 3}},
+        ],
+        u'options': []
+    }
+
+    # return json.dumps(graph)
+    return graph
+
+
+def generateProxies(graph):
+    inputScene = graph
+    renderID = str(uuid.uuid1())
+    logging.info("RENDERID: " + renderID)
+    scene = inputScene
+
+    newRender = {}
+    newRender['id'] = renderID
+    # TODO: return a list of output resources in case of several writers.
+    newRender['scene'] = scene
+    g_renders[renderID] = newRender
+
+    # config.g_app.logger.debug('new resource is ' + newRender['outputFilename'])
+
+    renderSharedInfo = g_manager.dict()
+    renderSharedInfo['status'] = 0
+    g_rendersSharedInfo[renderID] = renderSharedInfo
+
+    if g_enablePool:
+        g_pool.apply(renderScene.launchComputeGraph, args=[renderSharedInfo, newRender])
+    else:
+        renderScene.launchComputeGraph(renderSharedInfo, newRender)
+
+    return jsonify(render=newRender)
+
+
 def addFile(file):
     '''
     '''
@@ -156,8 +234,7 @@ def addFile(file):
     if isinstance(file, zipfile.ZipExtFile):
         mimetype = mimetypes.guess_type(file._fileobj.name)
     '''
-
-    mimetype, _ = mimetypes.guess_type(file.filename)
+    mimetype = mimetypes.guess_type(file.filename)
 
     fileLength = file.content_length
 
@@ -171,11 +248,18 @@ def addFile(file):
     if not extension:
         extension = mimetypes.guess_extension(mimetype)
 
-    imgFile = str(uid) + extension
-    config.resourceTable.update({"_id": uid}, {"registeredName": imgFile})
-    imgFile = os.path.join(config.resourcesPath, imgFile)
+    imgName = str(uid) + extension
+    config.resourceTable.update({"_id": uid}, {"registeredName": imgName})
+    imgPath = os.path.join(config.resourcesPath, imgName)
 
-    file.save(imgFile)
+    logging.warning("imgName = " + imgName)
+    logging.warning("imgPath = " + imgPath)
+    logging.warning("file.filename = " + file.filename)
+
+    file.save(imgPath)
+    graph = generateGraph(imgName)
+    logging.warning("graph = " + str(graph))
+    generateProxies(graph)
 
     resource = config.resourceTable.find_one({"_id": ObjectId(uid)})
     return resource
@@ -210,17 +294,23 @@ def addArchive_Zipfile(archiveFile):
         if not extension:
             extension = mimetypes.guess_extension(mimetype)
 
-        imgPath = str(uid) + extension
-        config.resourceTable.update({"_id": uid}, {"registeredName": imgPath})
-        imgPath = os.path.join(config.resourcesPath, imgPath)
+        imgName = str(uid) + extension
+        config.resourceTable.update({"_id": uid}, {"registeredName": imgName})
+        imgPath = os.path.join(config.resourcesPath, imgName)
 
         imgFile = open(imgPath, "w")
         file.seek(0, 0)
         imgFile.write(file.read(fileLength))
         imgFile.close()
 
+
+        graph = generateGraph(imgName)
+        logging.warning("graph = " + str(graph))
+        generateProxies(graph)
+
         file.close()
         os.remove(extractPath)
+
 
         resource = config.resourceTable.find_one({"_id": ObjectId(uid)})
         resources.append(resource)
@@ -237,6 +327,7 @@ def addResource():
         abort(make_response("Empty request", 500))
 
     file = request.files['file']
+
     mimetype, _ = mimetypes.guess_type(file.filename)
     logging.debug("mimetype = " + mimetype)
 
@@ -247,9 +338,9 @@ def addResource():
     logging.warning("mimetype = " + mimetype)
 
     if mimetype == "application/zip" \
-            or mimetype == "application/x-zip" \
-            or mimetype == "application/octet-stream" \
-            or mimetype == "application/x-zip-compressed":
+    or mimetype == "application/x-zip" \
+    or mimetype == "application/octet-stream" \
+    or mimetype == "application/x-zip-compressed":
         resources = addArchive_Zipfile(file)
     else:
         resources = addFile(file)
@@ -263,6 +354,36 @@ def getResource(resourceId):
     Returns resource file.
     '''
     resource = os.path.join(config.resourcesPath, resourceId)
+
+    if os.path.isfile(resource):
+        return send_file(resource)
+    else:
+        logging.error("can't find " + resource)
+        abort(make_response("can't find " + resource, 404))
+
+
+@config.g_app.route('/proxy/<resourceId>', methods=['GET'])
+def getProxy(resourceId):
+    '''
+    Returns resource file.
+    '''
+    resourceName, _ = os.path.splitext(resourceId)
+    resource = os.path.join(config.resourcesPath, 'proxy', resourceName + '.png')
+
+    if os.path.isfile(resource):
+        return send_file(resource)
+    else:
+        logging.error("can't find " + resource)
+        abort(make_response("can't find " + resource, 404))
+
+
+@config.g_app.route('/thumbnail/<resourceId>', methods=['GET'])
+def getThumbnail(resourceId):
+    '''
+    Returns resource file.
+    '''
+    resourceName, _ = os.path.splitext(resourceId)
+    resource = os.path.join(config.resourcesPath, 'thumbnail', resourceName + '.png')
 
     if os.path.isfile(resource):
         return send_file(resource)
