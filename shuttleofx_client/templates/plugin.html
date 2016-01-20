@@ -31,12 +31,7 @@
                         <li class="tab"><a {% if active == "infos" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/infos">Technical info</a></li>
                         <!-- FIXME enable these tabs when wiki and/or comments are active -->
                         <li class="tab"><a {% if active == "wiki" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/wiki">Wiki</a></li>
-                        {% if "OfxImageEffectPropSupportedContexts" in plugin.properties %}
-                            {% set supportedContexts = plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
-                            {% if "OfxImageEffectContextFilter" in supportedContexts or "OfxImageEffectContextGenerator" in supportedContexts %}
-                                <li class="tab"><a {% if active == "comments" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/comments">Comments</a></li>
-                            {% endif %}
-                        {% endif %}
+                        <li class="tab"><a {% if active == "comments" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/comments">Comments</a></li>
                     </ul>
                 </div>
             </div>

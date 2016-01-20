@@ -10,17 +10,17 @@
             <div class="col-md-10">
                 <h3>Comments : </h3>
                 <div class="row">
-                    {% if plugin.comments %}
+                    {% if plugin.comuser and plugin.comcontent %}
                     <div class="col-md-6 col-sm-6 col-xs-6">
                         <ul class="comment user">
-                                {% for user in plugin.comments.user %}
+                                {% for user in plugin.comuser %}
                                     <li>{{user}} :</li>
                                 {% endfor %}
                         </ul>
                     </div>
                     <div class="col-md-6 col-sm-6 col-xs-6">
                         <ul class = "comment content">
-                                {% for content in plugin.comments.content %}
+                                {% for content in plugin.comcontent %}
                                     <li>{{content}}</li>
                                 {% endfor %}
                         </ul>
