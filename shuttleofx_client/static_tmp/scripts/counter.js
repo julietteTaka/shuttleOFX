@@ -1,45 +1,52 @@
 var currentUrl = window.location.href;
 var decomposedUrl = currentUrl.split("?");
 
-var skip;
-var count;
-
+var count = 10;
+var skip = 1;
 var totalPlugins = $("#totalPlugins").val();
 
-if (decomposedUrl.length < 2) {
-  count = 10;
-  skip = 1;
-}
-else if (decomposedUrl[1].indexOf("&") > -1) {
-    // Only if the url contains the character &
-    // Avoid a bug on the search page
-    decomposedUrl = decomposedUrl[1].split("&");
-    count = decomposedUrl[0].split("=")[1];
-    skip = decomposedUrl[1].split("=")[1];
-}
+if (typeof decomposedUrl[1] != "undefined") {
+  decomposedUrl = decomposedUrl[1].split("&");
+  var params = [];
 
-if (typeof skip == "undefined") {
-   skip = 1;
-};
-if (typeof count == "undefined") {
-   count = 10;
+  for (var i = 0; i < decomposedUrl.length; i++) {
+    tmp = decomposedUrl[i].split("=");
+    key = tmp[0];
+    val = tmp[1];
+    params[key] = val;
+  };
+
+  if (typeof params["search"] != "undefined") search = params["search"];
+  if (typeof params["skip"] != "undefined") skip = params["skip"];
+  if (typeof params["count"] != "undefined") count = params["count"];
 };
 
-if (skip <= 1) {
+/*if (skip <= 1) {
     $('#previous').addClass('disabled');
 }
 else if (skip == Math.ceil(totalPlugins/count)) {
   $('#next').addClass('disabled');
-}
+}*/
 
 $('select#pageSize').change(function(){
   count = $('select#pageSize').val();
-  if (skip > Math.ceil(totalPlugins/$('select#pageSize').val())) {
-    skip = Math.ceil(totalPlugins/$('select#pageSize').val());
+  maxPage = Math.ceil(totalPlugins/$('select#pageSize').val());
+  if (skip > maxPage) {
+    skip = maxPage;
   }
+
+  alert(totalPlugins+"; "+maxPage+"; "+skip);
+
   cookieManager({"count": count, "skip": skip});
 
-     if (typeof window.location.href.split("?")[1] != "undefined"){
+  if (typeof search == "undefined") {
+    window.location.href = "http://localhost/plugin?count=" + count + "&skip=" + skip;
+  }
+  else {
+    window.location.href = "http://localhost/plugin?search=" + search + "&count=" + count + "&skip=" + skip;
+  }
+
+/*    if (typeof window.location.href.split("?")[1] != "undefined"){
       url = window.location.href.split("?")[1].split("=")
       if (url[0] == "search") {
       if (typeof url[2] == "undefined") {
@@ -54,11 +61,11 @@ $('select#pageSize').change(function(){
   }
   else  {
       window.location.href = "/plugin?count=" + count + "&skip="+skip;
-  };
+  };*/
 
 });
 
-$('#next a').click(function(event){
+/*$('#next a').click(function(event){
   event.preventDefault();
   if (!$("#next").hasClass("disabled")) {
     skip ++;
@@ -75,6 +82,7 @@ $('#previous a').click(function(event){
     window.location.href = "/plugin?count=" + count + "&skip=" + skip;
   }
 });
+*/
 
 // Manage User sorting preferences inside cookies 
 // count --> number of plugins to be displayed
