@@ -23,6 +23,9 @@ if (typeof decomposedUrl[1] != "undefined") {
   if (typeof params["count"] != "undefined") count = params["count"];
 };
 
+// Update cookie with new parameters
+cookieManager({"search": search, "count": count, "skip":skip});
+
 // Change number of plugin per page
 $('select#pageSize').change(function(){
   count = $('select#pageSize').val();
