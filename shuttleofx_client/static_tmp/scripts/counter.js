@@ -1,10 +1,12 @@
 var currentUrl = window.location.href;
 var decomposedUrl = currentUrl.split("?");
 
-var count = 10;
-var skip = 1;
-var totalPlugins = $("#totalPlugins").val();
+var search ; // keyword in search field
+var count = 10; // number of plugin per page default = 10
+var skip = 1; // number of current page default = 1
+var totalPlugins = $("#totalPlugins").val(); // number of plugins return by the search 
 
+// get parameters in url and put them in count, skip and search
 if (typeof decomposedUrl[1] != "undefined") {
   decomposedUrl = decomposedUrl[1].split("&");
   var params = [];
@@ -21,21 +23,13 @@ if (typeof decomposedUrl[1] != "undefined") {
   if (typeof params["count"] != "undefined") count = params["count"];
 };
 
-/*if (skip <= 1) {
-    $('#previous').addClass('disabled');
-}
-else if (skip == Math.ceil(totalPlugins/count)) {
-  $('#next').addClass('disabled');
-}*/
-
+// Change number of plugin per page
 $('select#pageSize').change(function(){
   count = $('select#pageSize').val();
   maxPage = Math.ceil(totalPlugins/$('select#pageSize').val());
   if (skip > maxPage) {
     skip = maxPage;
   }
-
-  alert(totalPlugins+"; "+maxPage+"; "+skip);
 
   cookieManager({"count": count, "skip": skip});
 
@@ -45,44 +39,7 @@ $('select#pageSize').change(function(){
   else {
     window.location.href = "http://localhost/plugin?search=" + search + "&count=" + count + "&skip=" + skip;
   }
-
-/*    if (typeof window.location.href.split("?")[1] != "undefined"){
-      url = window.location.href.split("?")[1].split("=")
-      if (url[0] == "search") {
-      if (typeof url[2] == "undefined") {
-         url[1] += "&count";
-         url[2] = "10&skip";
-      };
-         window.location.href = "/plugin?" + url[0] + "=" + url[1] + "=" + count + url[2].substring(2)+"="+skip;
-     }
-     else if (url[0] == "count") {
-         window.location.href = "/plugin?" + url[0] + "=" + count + url[1].substring(2)+"="+skip;
-     }
-  }
-  else  {
-      window.location.href = "/plugin?count=" + count + "&skip="+skip;
-  };*/
-
 });
-
-/*$('#next a').click(function(event){
-  event.preventDefault();
-  if (!$("#next").hasClass("disabled")) {
-    skip ++;
-    cookieManager({"count": count, "skip": skip});
-    window.location.href = "/plugin?count=" + count + "&skip=" + skip;
-  }
-});
-
-$('#previous a').click(function(event){
-  event.preventDefault();
-  if (!$("#previous").hasClass("disabled")) {
-    skip --;
-    cookieManager({"count": count, "skip": skip});
-    window.location.href = "/plugin?count=" + count + "&skip=" + skip;
-  }
-});
-*/
 
 // Manage User sorting preferences inside cookies 
 // count --> number of plugins to be displayed
@@ -95,6 +52,7 @@ function cookieManager(value){
   }
 }
 
+// disable clic on object with class disabled
 $("li.disabled a").click(function(e){
   e.preventDefault();
   return;
