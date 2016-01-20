@@ -1,0 +1,35 @@
+{% extends "plugin.html" %}
+
+{# Set the active item in the menu #}
+{% set active = "wiki" %}
+
+{% block content %}
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10">
+                {% if plugin.wiki %}
+                <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">Edit wiki</a>
+                <span id="mkdwn">
+                    {{ plugin.wiki | last }}
+                </span>
+                <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">Edit wiki</a>
+                {% else %}
+                    <p>
+                        No wiki had been created, go on and add a <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">new wiki</a>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    var s = $("#mkdwn").html();
+        s = "\n\n\n" + s + "\n\n\n";
+    var rend = markdown.toHTML(s);
+    $("#mkdwn").html(rend);
+</script>
+{% endblock %}

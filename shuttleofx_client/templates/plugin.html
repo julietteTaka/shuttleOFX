@@ -30,8 +30,13 @@
                         {% endif %}
                         <li class="tab"><a {% if active == "infos" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/infos">Technical info</a></li>
                         <!-- FIXME enable these tabs when wiki and/or comments are active -->
-                        <li class="tab disabled"><a {% if active == "wiki" %}class="active"{% endif %} href="#">Wiki</a></li>
-                        <li class="tab disabled"><a {% if active == "comments" %}class="active"{% endif %} href="#">Comments</a></li>
+                        <li class="tab"><a {% if active == "wiki" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/wiki">Wiki</a></li>
+                        {% if "OfxImageEffectPropSupportedContexts" in plugin.properties %}
+                            {% set supportedContexts = plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
+                            {% if "OfxImageEffectContextFilter" in supportedContexts or "OfxImageEffectContextGenerator" in supportedContexts %}
+                                <li class="tab"><a {% if active == "comments" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/comments">Comments</a></li>
+                            {% endif %}
+                        {% endif %}
                     </ul>
                 </div>
             </div>
@@ -85,7 +90,7 @@
             {% endif %}
         {% endif %}
 
-        
+
 
 {% if user %}
 <div class="modal" id="addImageGallery">
@@ -95,7 +100,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h4 class="modal-title">Choose a new picture to upload</h4>
             </div>
-            
+
             <div class="modal-body" style="padding: 24px">
                 <form id="addThumbForm" class="dropzone" action="/file-upload">
                 <div class="form-group">
@@ -106,7 +111,7 @@
                 </div>
                 </form>
             </div>
-            
+
             <div class="modal-footer" style="padding-top:0px!important">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 <div id="uploadtrigger" class="btn btn-primary">Upload a new picture</div>
@@ -119,7 +124,7 @@
 
 {% block scripts %}
     <script src="{{ url_for('static', filename='scripts/vendor/js.cookie.js') }}"></script>
-    <script type="text/javascript">    
+    <script type="text/javascript">
         // Read cookies content and update the back link
         // to redirect to the plugins page with the right preferences :
         // nbr of plugins and page
@@ -127,9 +132,9 @@
             var href = $("#back-to-plugins").attr("href");
             var prefs = Cookies.getJSON("user_sorting_prefs");
             if(prefs && prefs.count && prefs.skip){
-                $("#back-to-plugins").attr("href", href + "?count=" + prefs.count + "&skip=" + prefs.skip );    
+                $("#back-to-plugins").attr("href", href + "?count=" + prefs.count + "&skip=" + prefs.skip );
             }
         });
-        
+
     </script>
 {% endblock %}

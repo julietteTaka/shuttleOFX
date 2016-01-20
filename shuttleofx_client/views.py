@@ -125,6 +125,24 @@ def renderPageWithPlugin(pluginRawIdentifier):
 
 
 ### Wiki Start _________________________________________________________________
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/wiki")
+@config.g_app.route("/plugin/<pluginRawIdentifier>/wiki")
+def getPluginWiki(pluginRawIdentifier, pluginVersion="latest"):
+    user = None
+    if 'google_token' in session:
+        user = config.google.get('userinfo').data
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+    if resp.status_code != 200:
+        if resp.status_code == 404:
+            return render_template('notFound.html', user=user)
+        abort(resp.status_code)
+    return render_template('wiki.html', plugin=resp.json(), user=user)
+
 @config.g_app.route("/wiki/edit/<pluginRawIdentifier>/version/<pluginVersion>")
 @config.g_app.route("/wiki/edit/<pluginRawIdentifier>")
 def getPluginWikiEdit(pluginRawIdentifier, pluginVersion="latest"):
