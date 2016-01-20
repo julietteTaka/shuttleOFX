@@ -1,11 +1,10 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
-    function formToJson()
-    {
+    function formToJson() {
         var renderParameters = [];
-        $("input", $('#renderForm')).each(function(index){
-            var jsonForm={};
-            switch($(this).attr("ofxType")) {
+        $("input", $('#renderForm')).each(function (index) {
+            var jsonForm = {};
+            switch ($(this).attr("ofxType")) {
                 case 'OfxParamTypeInteger':
                     jsonForm["id"] = $(this).attr("id");
                     jsonForm["value"] = parseInt(this.value);
@@ -70,7 +69,7 @@ $(document).ready(function() {
                         jsonForm["id"] = $(this).attr("id");
                         jsonForm["value"] = true;
                         renderParameters.push(jsonForm);
-                    }else{
+                    } else {
                         jsonForm["id"] = $(this).attr("id");
                         jsonForm["value"] = false;
                         renderParameters.push(jsonForm);
@@ -84,8 +83,8 @@ $(document).ready(function() {
             }
         });
 
-        $("select", $('#renderForm')).each(function(index){
-            var jsonForm={};
+        $("select", $('#renderForm')).each(function (index) {
+            var jsonForm = {};
             jsonForm["id"] = $(this).attr("id");
             jsonForm["value"] = this.value;
             renderParameters.push(jsonForm);
@@ -94,246 +93,257 @@ $(document).ready(function() {
         return renderParameters;
     }
 
-    function renderGenerator(pluginId){
+    function renderGenerator(pluginId) {
         displayLoader();
         var renderParameters = formToJson();
 
         $.ajax({
-            type: "POST",
-            url: "/render",
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify({
-                nodes: [{
-                    id: 0,
-                    plugin: pluginId,
-                    parameters: renderParameters
-                },{
-                    id: 1,
-                    plugin: "tuttle.pngwriter",
-                    parameters: [{
-                        id: "filename",
-                        value: "{UNIQUE_OUTPUT_FILE}.png"
-                    }]
-                }],
-                connections: [{
-                    src: {id: 0},
-                    dst: {id: 1}
-                }],
-                options:[],
-            }),
-        })
-        .done(function(data){
-            $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
-            $("#download-view").removeClass('disabled');
-            hideLoader();
-            $('.display img').css({height: "auto"});
+                type: "POST",
+                url: "/render",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({
+                    nodes: [{
+                        id: 0,
+                        plugin: pluginId,
+                        parameters: renderParameters
+                    }, {
+                        id: 1,
+                        plugin: "tuttle.pngwriter",
+                        parameters: [{
+                            id: "filename",
+                            value: "{UNIQUE_OUTPUT_FILE}.png"
+                        }]
+                    }],
+                    connections: [{
+                        src: {id: 0},
+                        dst: {id: 1}
+                    }],
+                    options: [],
+                }),
+            })
+            .done(function (data) {
+                $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
+                $("#download-view").removeClass('disabled');
+                hideLoader();
+                $('.display img').css({height: "auto"});
 
-             $("#downloadtrigger").click(function(data){
-               $.ajax({
-                    type: "POST",
-                    url: "/render",
-                    contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify({
-                        nodes: [{
-                            id: 0,
-                            plugin: pluginId,
-                            parameters: renderParameters
-                        },{
-                            id: 1,
-                            plugin: "tuttle.pngwriter",
-                            parameters: [{
-                                id: "filename",
-                                value: "{UNIQUE_OUTPUT_FILE}.png"
-                            }]
-                        }],
-                        connections: [{
-                            src: {id: 0},
-                            dst: {id: 1}
-                        }],
-                        options:[],
-                    }),
-        })
-        .done(function(data){
-                    var link = document.createElement("a");
-                    link.download = name;
-                    link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
-                    link.click();
-                    $("#downloadModal").modal('hide');
+                $("#downloadtrigger").off("click").click(function (data) {
+                    // Find the appropriate extension for the file to be generated
+                    var extension = '.' + $('input[name=format]:checked', '#formatSelect').val();
+
+                    $.ajax({
+                            type: "POST",
+                            url: "/render",
+                            contentType: 'application/json; charset=utf-8',
+                            data: JSON.stringify({
+                                nodes: [{
+                                    id: 0,
+                                    plugin: pluginId,
+                                    parameters: renderParameters
+                                }, {
+                                    id: 1,
+                                    parameters: [{
+                                        id: "filename",
+                                        value: "{UNIQUE_OUTPUT_FILE}" + extension
+                                    }]
+                                }],
+                                connections: [{
+                                    src: {id: 0},
+                                    dst: {id: 1}
+                                }],
+                                options: [],
+                            }),
+                        })
+                        .done(function (data) {
+                            var link = document.createElement("a");
+                            link.download = name;
+                            link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
+                            link.click();
+                            $("#downloadModal").modal('hide');
+                        });
                 });
+            })
+            .error(function (data) {
+                console.log('POST ERROR !');
             });
-        })
-        .error(function(data){
-            console.log('POST ERROR !');
-        });
     }
 
-    function renderFilter(pluginId){
+    function renderFilter(pluginId) {
         displayLoader();
         var renderParameters = formToJson();
 
         $.ajax({
-            type: "POST",
-            url: "/render",
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify({
-                nodes: [{
-                    id: 0,
-                    parameters: [
-                        {
-                            "id" : "filename",
-                            "value" : "{RESOURCES_DIR}/"+ selectedResource
-                        }
-                    ]
-                },{
-                    id: 1,
-                    plugin: pluginId,
-                    parameters: renderParameters
-                },{
-                    id: 2,
-                    plugin: "tuttle.pngwriter",
-                    parameters: [{
-                        id: "filename",
-                        value:  "{UNIQUE_OUTPUT_FILE}.png"
-                    }]
-                }],
+                type: "POST",
+                url: "/render",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({
+                    nodes: [{
+                        id: 0,
+                        parameters: [
+                            {
+                                "id": "filename",
+                                "value": "{RESOURCES_DIR}/" + selectedResource
+                            }
+                        ]
+                    }, {
+                        id: 1,
+                        plugin: pluginId,
+                        parameters: renderParameters
+                    }, {
+                        id: 2,
+                        plugin: "tuttle.pngwriter",
+                        parameters: [{
+                            id: "filename",
+                            value: "{UNIQUE_OUTPUT_FILE}.png"
+                        }]
+                    }],
 
-                connections: [{
-                    src: {id: 0},
-                    dst: {id: 1}
-                },{
-                    src: {id: 1},
-                    dst: {id: 2}
-                }],
-                options:[],
-            }),
-        })
-        .done(function(data){
-            // Change the extension of the proxy file path to .png
-            // Since the displayed proxy is always a generated PNG and not of the type of the original ressource
-            // We want to make sure the proxy is sent with the proper extension
-            var selectedResourceName = selectedResource.split(".")[0];
-			$("#viewer img#originalPic").attr("src", "/proxy/" + selectedResourceName + ".png");
-        	$("#viewer img#originalPic").show();
-        	$("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
-            $("#download-view").removeClass('disabled');
-            hideLoader();
-            $('.display img').css({height: "auto"});
-        	init_beforeAfterSlider();
+                    connections: [{
+                        src: {id: 0},
+                        dst: {id: 1}
+                    }, {
+                        src: {id: 1},
+                        dst: {id: 2}
+                    }],
+                    options: [],
+                }),
+            })
+            .done(function (data) {
+                // Change the extension of the proxy file path to .png
+                // Since the displayed proxy is always a generated PNG and not of the type of the original ressource
+                // We want to make sure the proxy is sent with the proper extension
+                var selectedResourceName = selectedResource.split(".")[0];
+                $("#viewer img#originalPic").attr("src", "/proxy/" + selectedResourceName + ".png");
+                $("#viewer img#originalPic").show();
+                $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
+                $("#download-view").removeClass('disabled');
+                hideLoader();
+                $('.display img').css({height: "auto"});
+                init_beforeAfterSlider();
 
-             $("#downloadtrigger").click(function(data){
-               $.ajax({
-            type: "POST",
-            url: "/render",
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify({
-                nodes: [{
-                    id: 0,
-                    parameters: [
-                        {
-                            "id" : "filename",
-                            "value" : "{RESOURCES_DIR}/" + selectedResource
-                        }
-                    ]
-                },{
-                    id: 1,
-                    plugin: pluginId,
-                    parameters: renderParameters
-                },{
-                    id: 2,
-                    plugin: "tuttle.pngwriter",
-                    parameters: [{
-                        id: "filename",
-                        value:  "{UNIQUE_OUTPUT_FILE}.png"
-                    }]
-                }],
+                $("#downloadtrigger").off("click").click(function (data) {
+                    // Find the appropriate extension for the file to be generated
+                    var extension = '.png'
+                    if($('input[value=original]', '#formatSelect').is(":checked")) {
+                        extension = '.' + selectedResource.split(".")[1];
+                    }
+                    else {
+                        extension = '.' + $('input[name=format]:checked', '#formatSelect').val();
+                    }
 
-                connections: [{
-                    src: {id: 0},
-                    dst: {id: 1}
-                },{
-                    src: {id: 1},
-                    dst: {id: 2}
-                }],
-                options:[],
-            }),
-        })
-        .done(function(data){
-                    var link = document.createElement("a");
-                    link.download = name;
-                    link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
-                    link.click();
-                    $("#downloadModal").modal('hide');
+                    $.ajax({
+                            type: "POST",
+                            url: "/render",
+                            contentType: 'application/json; charset=utf-8',
+                            data: JSON.stringify({
+                                nodes: [{
+                                    id: 0,
+                                    parameters: [
+                                        {
+                                            "id": "filename",
+                                            "value": "{RESOURCES_DIR}/" + selectedResource
+                                        }
+                                    ]
+                                }, {
+                                    id: 1,
+                                    plugin: pluginId,
+                                    parameters: renderParameters
+                                }, {
+                                    id: 2,
+                                    parameters: [{
+                                        id: "filename",
+                                        value: "{UNIQUE_OUTPUT_FILE}" + extension
+                                    }]
+                                }],
+
+                                connections: [{
+                                    src: {id: 0},
+                                    dst: {id: 1}
+                                }, {
+                                    src: {id: 1},
+                                    dst: {id: 2}
+                                }],
+                                options: [],
+                            }),
+                        })
+                        .done(function (data) {
+                            var link = document.createElement("a");
+                            link.download = data.render.outputFilename;
+                            link.target = "_blank";
+                            link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
+                            link.click();
+                            $("#downloadModal").modal('hide');
+                        });
                 });
+            })
+            .error(function (data) {
+                console.log('POST ERROR !');
             });
-        })
-        .error(function(data){
-            console.log('POST ERROR !');
-        });
     }
 
     var allResources = undefined;
     var selectedResource = undefined;
 
     $.ajax({
-        type: "GET",
-        url: "/resource",
-        async: false, //avoid an empty data when result is returned.
-    })
-    .done(function(data){
-        allResources = [];
+            type: "GET",
+            url: "/resource",
+            async: false, //avoid an empty data when result is returned.
+        })
+        .done(function (data) {
+            allResources = [];
 
-        $.each( data.resources, function( index, resource){
-            allResources.push(resource['registeredName']);
+            $.each(data.resources, function (index, resource) {
+                allResources.push(resource['registeredName']);
+            });
+
+            if (allResources !== undefined && allResources.length > 0) {
+                selectedResource = allResources[0];
+            }
+        })
+        .error(function (data) {
+            console.log('POST ERROR !');
         });
 
-        if(allResources !== undefined && allResources.length > 0){
-            selectedResource = allResources[0];
-        }
-    })
-    .error(function(data){
-        console.log('POST ERROR !');
-    });
-
-    $(".sampleImage").each(function() {
-        $(this).click(function(){
+    $(".sampleImage").each(function () {
+        $(this).click(function () {
             setResourceSelected($(this));
             var pluginId = $("#render.OfxImageEffectContextFilter").attr("pluginId");
             renderFilter(pluginId);
         });
     });
 
-    function setResourceSelected(obj){
-        $(".sampleImage").each(function() {
+    function setResourceSelected(obj) {
+        $(".sampleImage").each(function () {
             deselect($(this));
         });
         $(obj).parent().css("border", "solid 2px gray");
         selectedResource = $(obj).attr('id');
     }
 
-    function deselect(obj){
+    function deselect(obj) {
         $(obj).parent().css("border", "");
     }
 
-    function displayLoader(){
+    function displayLoader() {
         $('#viewer .preloader-wrapper').addClass('active');
         $("#viewer-placeholder").css('display', 'block');
     }
 
-    function hideLoader(){
+    function hideLoader() {
         $('#viewer .preloader-wrapper').removeClass('active');
         $("#viewer-placeholder").css('display', 'none');
     }
 
-    function resetParameters () {
+    function resetParameters() {
         // Reset basic inputs : text and number
-        $('#renderForm input[type="text"], #renderForm input[type="number"]').each(function() {
+        $('#renderForm input[type="text"], #renderForm input[type="number"]').each(function () {
             $(this).val($(this).data('default'));
         });
 
         // Reset dropdown lists (select)
-        $('#renderForm select').each(function() {
+        $('#renderForm select').each(function () {
             // Loop through each option
-            $(this).find('option').each(function() {
+            $(this).find('option').each(function () {
                 $(this).removeAttr('selected');
                 // If it's the default one
                 if ($(this).data('default') === "selected") {
@@ -342,7 +352,7 @@ $(document).ready(function() {
             });
         });
 
-        $('#renderForm input[type="checkbox"]').each(function() {
+        $('#renderForm input[type="checkbox"]').each(function () {
             if ($(this).data('default') === "checked") {
                 // Not checked but should be
                 $(this).prop('checked', true);
@@ -357,79 +367,79 @@ $(document).ready(function() {
     // Filter plugin (blur...)
     if ($('#render').hasClass('OfxImageEffectContextFilter')) {
         renderFilter($("#render.OfxImageEffectContextFilter").attr("pluginId"));
-    } else if($('#render').hasClass('OfxImageEffectContextGenerator')) {
+    } else if ($('#render').hasClass('OfxImageEffectContextGenerator')) {
         // Generator plugin (color wheel...)
         renderGenerator($("#render.OfxImageEffectContextGenerator").attr("pluginId"));
     }
 
     // Manual render on button click
-    $("#render.OfxImageEffectContextFilter").click(function(){
+    $("#render.OfxImageEffectContextFilter").click(function () {
         renderFilter($(this).attr("pluginId"));
     });
-    $("#render.OfxImageEffectContextGenerator").click(function(){
+    $("#render.OfxImageEffectContextGenerator").click(function () {
         renderGenerator($(this).attr("pluginId"));
     });
 
     // Reset button
-    $('button#reset').click(function() {
+    $('button#reset').click(function () {
         resetParameters();
     });
 
-/* Before / After slider */
+    /* Before / After slider */
 
-function init_beforeAfterSlider() {
-  if (!$('#BeforeAfterSlider').is(":visible")) {
-    $('#BeforeAfterSlider').noUiSlider({
-      start : 50,
-      step: 1,
-      direction: 'ltr',
-      orientation: 'horizontal',
-      behaviour: 'tap-drag',
-      range : {
-        'min' : 0,
-        'max' : 100
-      }
-    }).fadeIn(500);
-  }
-  reload_beforeAfterRender();
-  $(".noUi-handle").after("<div id=\"original-label\">Original picture</div>");
-  $(".noUi-handle").after("<div id=\"render-label\">Rendered picture</div>");
-  $("#original-label").css({
-    "margin-left": "-130px",
-    "margin-top": "-35px",
-    "position": "absolute"
-  });
-  $("#render-label").css({
-    "margin-top": "-35px",
-    "position": "absolute",
-    "margin-left": "10px"
-  });
+    function init_beforeAfterSlider() {
+        if (!$('#BeforeAfterSlider').is(":visible")) {
+            $('#BeforeAfterSlider').noUiSlider({
+                start: 50,
+                step: 1,
+                direction: 'ltr',
+                orientation: 'horizontal',
+                behaviour: 'tap-drag',
+                range: {
+                    'min': 0,
+                    'max': 100
+                }
+            }).fadeIn(500);
+        }
+        reload_beforeAfterRender();
+        $(".noUi-handle").after("<div id=\"original-label\">Original picture</div>");
+        $(".noUi-handle").after("<div id=\"render-label\">Rendered picture</div>");
+        $("#original-label").css({
+            "margin-left": "-130px",
+            "margin-top": "-35px",
+            "position": "absolute"
+        });
+        $("#render-label").css({
+            "margin-top": "-35px",
+            "position": "absolute",
+            "margin-left": "10px"
+        });
 
-  $('#BeforeAfterSlider div.noUi-handle').mousedown(function() {
-    $(document).mousemove(function(event) {
-      if ($('#BeforeAfterSlider').val() >= 75) {
-        $("#render-label").fadeOut(200);
-      }
-      else if ($('#BeforeAfterSlider').val() <= 25) {
-        $("#original-label").fadeOut(200);
-      }
-      else {
-        $("#render-label").fadeIn(200);
-        $("#original-label").fadeIn(200);
-      }
-      change_beforeAfterRender($('#BeforeAfterSlider').val());
-    });
-  });
-}
+        $('#BeforeAfterSlider div.noUi-handle').mousedown(function () {
+            $(document).mousemove(function (event) {
+                if ($('#BeforeAfterSlider').val() >= 75) {
+                    $("#render-label").fadeOut(200);
+                }
+                else if ($('#BeforeAfterSlider').val() <= 25) {
+                    $("#original-label").fadeOut(200);
+                }
+                else {
+                    $("#render-label").fadeIn(200);
+                    $("#original-label").fadeIn(200);
+                }
+                change_beforeAfterRender($('#BeforeAfterSlider').val());
+            });
+        });
+    }
 
-function change_beforeAfterRender(value) {
-  originalPicW = (value/100) * $("#viewer img#renderedPic").width();
-  $("#viewer img#originalPic").css("clip", "rect(0 " + originalPicW + "px auto 0)");
-}
+    function change_beforeAfterRender(value) {
+        originalPicW = (value / 100) * $("#viewer img#renderedPic").width();
+        $("#viewer img#originalPic").css("clip", "rect(0 " + originalPicW + "px auto 0)");
+    }
 
-function reload_beforeAfterRender() {
-  $('#BeforeAfterSlider').val(50, { set: true });
-  change_beforeAfterRender(50);
-}
+    function reload_beforeAfterRender() {
+        $('#BeforeAfterSlider').val(50, {set: true});
+        change_beforeAfterRender(50);
+    }
 
 });
