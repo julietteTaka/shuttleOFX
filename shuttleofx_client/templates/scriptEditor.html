@@ -235,6 +235,8 @@
         var editor = ace.edit("editor");
         editor.setTheme("ace/theme/solarized_dark");
         editor.getSession().setMode("ace/mode/c_cpp");
+        document.getElementById('editor').style.fontSize='11pt';
+        $(".ace_scrollbar").css("z-index", 1);
         $("#code").val(editor.getValue());
 
         editor.getSession().on('change', function(e) {
