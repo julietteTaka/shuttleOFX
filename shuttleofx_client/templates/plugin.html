@@ -129,6 +129,9 @@
             if(prefs && prefs.count && prefs.skip){
                 $("#back-to-plugins").attr("href", href + "?count=" + prefs.count + "&skip=" + prefs.skip );
             }
+            else if(prefs && prefs.count && prefs.skip && prefs.search) {
+                $("#back-to-plugins").attr("href", href + "?search=" + prefs.search + "count=" + prefs.count + "&skip=" + prefs.skip );
+            }
         });
 
     </script>
