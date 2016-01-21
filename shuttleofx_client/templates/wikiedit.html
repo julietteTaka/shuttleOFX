@@ -54,6 +54,33 @@ $(document).ready(function() {
 $('#wiki').markdown({
     hiddenButtons:'cmdPreview',
     footer:'<div id="twitter-footer" class="well" style="display:none;"></div>',
+    additionalButtons: [
+        [{
+            name: "groupCustom",
+            data: [{
+            name: "cmdIndent",
+                toggle: true, // this param only take effect if you load bootstrap.js
+                title: "Indent",
+                icon: "fa fa-indent",
+                callback: function(e){
+                  // Replace selection with some drinks
+                  var string, cursor,
+                      selected = e.getSelection(), content = e.getContent(),
+
+
+                  // Give random drink
+                  string = "    "
+
+                  // transform selection and set the cursor into chunked text
+                  e.replaceSelection(string)
+                  cursor = selected.start
+
+                  // Set the cursor
+                  e.setSelection(cursor,cursor+string.length)
+                }
+              }]
+        }]
+    ],
     onChange:function(e){
         var content = e.parseContent()
 
