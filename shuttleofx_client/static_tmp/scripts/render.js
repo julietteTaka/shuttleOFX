@@ -97,6 +97,9 @@ $(document).ready(function () {
         displayLoader();
         var renderParameters = formToJson();
 
+        $("#download-view").addClass('disabled');
+        $("#render").addClass('disabled');
+
         $.ajax({
                 type: "POST",
                 url: "/render",
@@ -128,8 +131,12 @@ $(document).ready(function () {
                 $('.display img').css({height: "auto"});
 
                 $("#downloadtrigger").off("click").click(function (data) {
+                    $("#download-view").addClass('disabled');
+                    $("#render").addClass('disabled');
                     // Find the appropriate extension for the file to be generated
                     var extension = '.' + $('input[name=format]:checked', '#formatSelect').val();
+
+                    $("#downloadModal").modal('hide');
 
                     $.ajax({
                             type: "POST",
@@ -162,7 +169,9 @@ $(document).ready(function () {
                             document.body.appendChild(link);
                             link.click();
                             link.parentNode.removeChild(link);
-                            $("#downloadModal").modal('hide');
+
+                            $("#download-view").removeClass('disabled');
+                            $("#render").removeClass('disabled');
                         });
                 });
             })
@@ -174,6 +183,9 @@ $(document).ready(function () {
     function renderFilter(pluginId) {
         displayLoader();
         var renderParameters = formToJson();
+
+        $("#download-view").addClass('disabled');
+        $("#render").addClass('disabled');
 
         $.ajax({
                 type: "POST",
@@ -220,11 +232,14 @@ $(document).ready(function () {
                 $("#viewer img#originalPic").show();
                 $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
                 $("#download-view").removeClass('disabled');
+                $("#render").removeClass('disabled');
                 hideLoader();
                 $('.display img').css({height: "auto"});
                 init_beforeAfterSlider();
 
                 $("#downloadtrigger").off("click").click(function (data) {
+                    $("#download-view").addClass('disabled');
+                    $("#render").addClass('disabled');
                     // Find the appropriate extension for the file to be generated
                     var extension = '.png'
                     if($('input[value=original]', '#formatSelect').is(":checked")) {
@@ -233,6 +248,8 @@ $(document).ready(function () {
                     else {
                         extension = '.' + $('input[name=format]:checked', '#formatSelect').val();
                     }
+
+                    $("#downloadModal").modal('hide');
 
                     $.ajax({
                             type: "POST",
@@ -277,7 +294,9 @@ $(document).ready(function () {
                             document.body.appendChild(link);
                             link.click();
                             link.parentNode.removeChild(link);
-                            $("#downloadModal").modal('hide');
+
+                            $("#download-view").removeClass('disabled');
+                            $("#render").removeClass('disabled');
                         });
                 });
             })
