@@ -156,9 +156,12 @@ $(document).ready(function () {
                         })
                         .done(function (data) {
                             var link = document.createElement("a");
+                            link.style.display = "none";
                             link.download = name;
                             link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
+                            document.body.appendChild(link);
                             link.click();
+                            link.parentNode.removeChild(link);
                             $("#downloadModal").modal('hide');
                         });
                 });
@@ -268,10 +271,12 @@ $(document).ready(function () {
                         })
                         .done(function (data) {
                             var link = document.createElement("a");
-                            link.download = data.render.outputFilename;
-                            link.target = "_blank";
+                            link.style.display = "none";
+                            link.download = name;
                             link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
+                            document.body.appendChild(link);
                             link.click();
+                            link.parentNode.removeChild(link);
                             $("#downloadModal").modal('hide');
                         });
                 });
