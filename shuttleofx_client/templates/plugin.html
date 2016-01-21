@@ -77,7 +77,13 @@
             {% if not plugin.sampleImagesPath %}
                 <div class="col-md-12">
                     <p>No example found.... <i class="fa fa-meh-o"></i></p>
-                    <p style="font-size: 16pt;"> <a class="signedIn" href="/login">Login</a> to upload yours ! <i class="fa fa-rocket"></i></p>
+                    <p style="font-size: 16pt;"> 
+                        {% if  user %}
+                        Upload yours ! <i class="fa fa-rocket"></i>
+                        {% else %}
+                        <a class="signedIn" href="/login">Login</a> to upload yours ! <i class="fa fa-rocket"></i>
+                        {% endif %}
+                    </p>
                 </div>
             {% else %}
                 {% for image in plugin.sampleImagesPath %}
