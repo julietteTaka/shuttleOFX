@@ -7,7 +7,6 @@ import logging
 import tempfile
 import multiprocessing
 import mimetypes
-import urllib
 import requests
 import imghdr
 import datetime
@@ -246,8 +245,8 @@ def uploadPage():
       </body>
       </html>"""
 
-@config.g_app.route('/download', methods=['POST'])
-def download():
+@config.g_app.route('/downloadImgFromUrl', methods=['POST'])
+def downloadImgFromUrl():
     '''
     download an image from an url
     '''
@@ -271,8 +270,6 @@ def download():
     imgId = "tmp/" + str(uuid.uuid4())
 
     imgPath = os.path.join(config.resourcesPath, imgId)
-
-    #urllib.urlretrieve(imgUrl, imgPath)
 
     try:
         imgData = requests.get(imgUrl)

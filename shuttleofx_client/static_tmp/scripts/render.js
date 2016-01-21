@@ -278,13 +278,13 @@ $(document).ready(function() {
     }
 
     // download an image from an url and apply a filter
-    function dlRenderFilter(pluginId) {
+    function fromUrlRender(pluginId) {
       displayLoader();
       var renderParameters = formToJson();
 
       $.ajax({
         type: "POST",
-        url: "/download",
+        url: "/downloadImgFromUrl",
         contentType: 'application/json; charset=utf-8',
         data : JSON.stringify({
           'url': $("#imgUrl").val()
@@ -305,7 +305,7 @@ $(document).ready(function() {
         }
         else if (data == "Not exist") {
           hideLoader();
-          $("#imgUrl").before(addMessage("<p>The URL that you have sent doesn't exist.<br/> Please try again.</p>", "error"));
+          $("#imgUrl").before(addMessage("<p>The URL that you have sent is not accessible.<br/> Please try again.</p>", "error"));
         }
         else {
             removeMessage();
@@ -403,7 +403,7 @@ $(document).ready(function() {
     // Filter plugin (blur...)
     if ($('#render').hasClass('OfxImageEffectContextFilter')) {
         $("#imgUrl").val("http://lorempixel.com/600/400/");
-        dlRenderFilter($("#render.OfxImageEffectContextFilter").attr("pluginId"));
+        fromUrlRender($("#render.OfxImageEffectContextFilter").attr("pluginId"));
     } else if($('#render').hasClass('OfxImageEffectContextGenerator')) {
         // Generator plugin (color wheel...)
         renderGenerator($("#render.OfxImageEffectContextGenerator").attr("pluginId"));
@@ -419,7 +419,7 @@ $(document).ready(function() {
 
     // Send an image from an external URL
     $("#renderUrl.OfxImageEffectContextFilter").click(function(){
-        dlRenderFilter($(this).attr("pluginId"));
+        fromUrlRender($(this).attr("pluginId"));
     });
 
     // Reset button
