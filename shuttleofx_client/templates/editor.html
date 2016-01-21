@@ -10,7 +10,7 @@
             <div class="row-fluid">
                 <div class="col-md-9">
                     <div class="row-fluid">
-                        <div class="demo-links">
+                        <div id="buttons" class="demo-links">
                             <h3>Settings</h3>
                                 <input type="button" value="Render" id="render" pluginId="{{plugin.rawIdentifier}}"
                                     {% for context in plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
@@ -21,7 +21,19 @@
                                 >
 
 								<a id="download-view" type="button" class=" btn btn-success" data-toggle="modal" data-target="#downloadModal">
-                                  Download</a>
+                                  	Download
+								</a>
+									<div class="preloader-wrapper extra-small">
+										<div class="spinner-layer">
+											<div class="circle-clipper left">
+												<div class="circle"></div>
+											</div><div class="gap-patch">
+												<div class="circle"></div>
+											</div><div class="circle-clipper right">
+												<div class="circle"></div>
+											</div>
+										</div>
+								</div>
                         </div>
                     </div>
                     <div class="row-fluid">

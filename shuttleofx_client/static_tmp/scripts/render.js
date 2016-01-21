@@ -94,7 +94,7 @@ $(document).ready(function () {
     }
 
     function renderGenerator(pluginId) {
-        displayLoader();
+        displayRenderLoader();
         var renderParameters = formToJson();
 
         $("#download-view").addClass('disabled');
@@ -127,16 +127,17 @@ $(document).ready(function () {
             .done(function (data) {
                 $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
                 $("#download-view").removeClass('disabled');
-                hideLoader();
+                hideRenderLoader();
                 $('.display img').css({height: "auto"});
 
                 $("#downloadtrigger").off("click").click(function (data) {
                     $("#download-view").addClass('disabled');
                     $("#render").addClass('disabled');
+                    $("#downloadModal").modal('hide');
+                    displayDownloadLoader();
+
                     // Find the appropriate extension for the file to be generated
                     var extension = '.' + $('input[name=format]:checked', '#formatSelect').val();
-
-                    $("#downloadModal").modal('hide');
 
                     $.ajax({
                             type: "POST",
@@ -170,6 +171,7 @@ $(document).ready(function () {
                             link.click();
                             link.parentNode.removeChild(link);
 
+                            hideDownloadLoader();
                             $("#download-view").removeClass('disabled');
                             $("#render").removeClass('disabled');
                         });
@@ -181,7 +183,7 @@ $(document).ready(function () {
     }
 
     function renderFilter(pluginId) {
-        displayLoader();
+        displayRenderLoader();
         var renderParameters = formToJson();
 
         $("#download-view").addClass('disabled');
@@ -233,13 +235,16 @@ $(document).ready(function () {
                 $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
                 $("#download-view").removeClass('disabled');
                 $("#render").removeClass('disabled');
-                hideLoader();
+                hideRenderLoader();
                 $('.display img').css({height: "auto"});
                 init_beforeAfterSlider();
 
                 $("#downloadtrigger").off("click").click(function (data) {
                     $("#download-view").addClass('disabled');
                     $("#render").addClass('disabled');
+                    $("#downloadModal").modal('hide');
+                    displayDownloadLoader();
+
                     // Find the appropriate extension for the file to be generated
                     var extension = '.png'
                     if($('input[value=original]', '#formatSelect').is(":checked")) {
@@ -248,8 +253,6 @@ $(document).ready(function () {
                     else {
                         extension = '.' + $('input[name=format]:checked', '#formatSelect').val();
                     }
-
-                    $("#downloadModal").modal('hide');
 
                     $.ajax({
                             type: "POST",
@@ -295,6 +298,7 @@ $(document).ready(function () {
                             link.click();
                             link.parentNode.removeChild(link);
 
+                            hideDownloadLoader();
                             $("#download-view").removeClass('disabled');
                             $("#render").removeClass('disabled');
                         });
@@ -348,14 +352,22 @@ $(document).ready(function () {
         $(obj).parent().css("border", "");
     }
 
-    function displayLoader() {
+    function displayRenderLoader() {
         $('#viewer .preloader-wrapper').addClass('active');
         $("#viewer-placeholder").css('display', 'block');
     }
 
-    function hideLoader() {
+    function hideRenderLoader() {
         $('#viewer .preloader-wrapper').removeClass('active');
         $("#viewer-placeholder").css('display', 'none');
+    }
+
+    function displayDownloadLoader() {
+        $('#buttons .preloader-wrapper').addClass('active');
+    }
+
+    function hideDownloadLoader() {
+        $('#buttons .preloader-wrapper').removeClass('active');
     }
 
     function resetParameters() {
