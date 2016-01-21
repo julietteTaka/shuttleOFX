@@ -19,21 +19,10 @@
 
         <div class="row">
             <div class="col-md-12">
-                <form>
+                <form id="form-wiki">
                        <textarea id="wiki" class="panel panel-primary" data-provide="markdown" data-iconlibrary="fa" rows="10">{{plugin.wiki | last}}</textarea>
                        <input type='submit' value='Save' id="setWiki" class="btn btn-primary" attr-id="{{plugin.id}}">
                 </form>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <div class="page-header">
-                    <h3>Preview :</h3>
-                    <span id="mkdwn">
-                        {{ plugin.wiki | last }}
-                    </span>
-                </div>
             </div>
         </div>
     </div>
@@ -62,10 +51,22 @@ $(document).ready(function() {
 });
 </script>
 <script type="text/javascript">
+$('#wiki').markdown({
+    hiddenButtons:'cmdPreview',
+    footer:'<div id="twitter-footer" class="well" style="display:none;"></div>',
+    onChange:function(e){
+        var content = e.parseContent()
+
+        if (content == '') {
+            $('#twitter-footer').hide()
+        } else {
+            $('#twitter-footer').show().html(content)
+        }
+    }
+})
     var s = $("#mkdwn").html();
         s = "\n\n\n" + s + "\n\n\n";
     var rend = markdown.toHTML(s);
-    //$("#mkdwn").html(s);
     $("#mkdwn").html(rend);
 </script>
 {% endblock %}
