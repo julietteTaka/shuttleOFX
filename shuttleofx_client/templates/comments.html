@@ -7,23 +7,17 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-10">
-                <h3>Comments : </h3>
+            <div class="col-md-12">
+                <h2>Comments</h2>
                 <div class="row">
-                    {% if plugin.comuser and plugin.comcontent %}
-                    <div class="col-md-6 col-sm-6 col-xs-6">
-                        <ul class="comment user">
-                                {% for user in plugin.comuser %}
-                                    <li>{{user}} :</li>
-                                {% endfor %}
-                        </ul>
-                    </div>
-                    <div class="col-md-6 col-sm-6 col-xs-6">
-                        <ul class = "comment content">
-                                {% for content in plugin.comcontent %}
-                                    <li>{{content}}</li>
-                                {% endfor %}
-                        </ul>
+                    {% if plugin.comments %}
+                    <div class="col-md-11 col-md-offset-1">
+                        {% for comment in plugin.comments %}
+                        <div class="comment-container row">
+                                <div class="col-md-2 user">{{comment.user}}</div>
+                                <div class="col-md-10 comment">{{comment.content}}</div>
+                        </div>
+                        {% endfor %}
                     </div>
                     {% else %}
                     <div class="col-md-12">
@@ -35,13 +29,22 @@
                 </div>
             </div>
         </div>
-        <form>
-            <label for="name">Your name</label>
-            <input id="user" type="text" class="form-control" name="name">
-            <label for="comment">Your Comment</label>
-            <textarea id="comment" class="form-control" type="text" name="comment" placeholder="Leave a comment"></textarea>
-            <button id="addComment" class="btn btn-default" type="submit" name="submit">Go</button>
-        </form>
+        <div class="row">
+            <div class="col-md-12">
+                <form class="addComment">
+                    {% if user %}
+                        <label for="name" class="hidden">Your name</label>
+                        <input id="user" type="text" class="form-control hidden" name="name" value="{{user.name}}">
+                    {% else %}
+                        <label for="name">Your name</label>
+                        <input id="user" type="text" class="form-control" name="name">
+                    {% endif %}
+                    <label for="comment">Your Comment</label>
+                    <textarea id="comment" class="form-control" type="text" name="comment" placeholder="Leave a comment"></textarea>
+                    <button id="addComment" class="btn btn-default" type="submit" name="submit">Go</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -332,7 +332,7 @@ def getAllPlugins():
 
     if keyWord:
         pagination = createSearchPagination(count, skip, maxPage, keyWord)
-    else: 
+    else:
         pagination = createPagination(count, skip, maxPage)
 
     return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "count": count, "pagination": pagination})
@@ -379,8 +379,7 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
 @config.g_app.route('/plugin/<int:pluginId>/version/<pluginVersion>/comments/updates', methods=['POST'])
 @config.g_app.route('/plugin/<int:pluginId>/comments/update', methods=['POST'])
 def addComment(pluginId, pluginVersion="latest"):
-    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"comuser" : request.json['commentsuser']}})
-    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"comcontent" : request.json['commentscontent']}})
+    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {'comments' : { 'user' : request.json['commentsuser'], 'content' : request.json['commentscontent'] }}})
     return mongodoc_jsonify(True)
 ### Comments End _______________________________________________________________
 

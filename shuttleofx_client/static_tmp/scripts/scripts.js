@@ -35,7 +35,7 @@ $("#searchForm").find("#searchquery").blur(
 
 $('[data-toggle]').on('click', function() {
   var toggle;
-  
+
   toggle = $(this).addClass('active').data('toggle');
   $(this).siblings('[data-toggle]').removeClass('active');
   $('.surveys').removeClass('grid list').addClass(toggle);
@@ -46,7 +46,7 @@ $('[data-toggle]').on('click', function() {
   	var pluginsDiv = $(this).find(".plugins-titles, .plugins-infos");
 
     if (toggle == "list") {
-      // In list mode, move h3 to the next div in order to isolate the img 
+      // In list mode, move h3 to the next div in order to isolate the img
       // so we can have the image on the left and the title and description on the right
   	  title.detach().prependTo($(this).find(".plugins-infos"));
   	  pluginsDiv.css({"display": "table-cell", "vertical-align": "middle"}).redrawForWebkit();
@@ -72,7 +72,7 @@ $('.order-catag label').on('click', function() {
   	$(this).removeClass('descendant').addClass('ascendant');
 
   };
-  
+
 });
 
 // Force webkit browsers to redraw style changes
@@ -101,14 +101,14 @@ var Bamboo = (function (window, document) {
 	openButton = $('.open'),
 	container = $('#container'),
 	cover = null,
-	
+
 	// Browser checks
 	hasTouch = testTouch(),
 	offset = testOffset(),
 	has3d = has3d(),
 	// Helpers
 	translateZ = has3d ? ' translateZ(0)' : '',
-	
+
 	// Events
 	resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize',
 	startEvent = hasTouch ? 'touchstart' : 'mousedown',
@@ -117,7 +117,7 @@ var Bamboo = (function (window, document) {
 	cancelEvent = hasTouch ? 'touchcancel' : 'mouseup',
 
 	Bamboo = function (opts) {
-		
+
 		var _this = this;
 
 		this.options = {
@@ -144,7 +144,7 @@ var Bamboo = (function (window, document) {
 		container.on(startEvent, this._start.bind(this) );
 		container.on(moveEvent, this._move.bind(this) );
 		container.on(endEvent, this._end.bind(this) );
-			
+
 	}
 
 	Bamboo.prototype = {
@@ -155,7 +155,7 @@ var Bamboo = (function (window, document) {
 	    dx : 0,		// distance moved
 	    ox : null,	// original X
 	    tgt: null,	// menu tap target
-	    desktop: false, 
+	    desktop: false,
 
 	    // returns page dimensions in array
 	    dimensions: function(){
@@ -168,7 +168,7 @@ var Bamboo = (function (window, document) {
 
 	    // function to resize site
 	    resizeSite: function() {
-			// get page sizes	
+			// get page sizes
 			this.info.docHeight = $(window).height();
 			this.info.docWidth = $(window).width();
 			this.layout();
@@ -181,7 +181,7 @@ var Bamboo = (function (window, document) {
 			// resize callback
 			if (this.options.resize) {
 				this.options.resize();
-			}		
+			}
 	    },
 
 	    // set layout sizes
@@ -197,8 +197,8 @@ var Bamboo = (function (window, document) {
 	    	} else {
 	    		this.desktop = true;
 	    		// container
-	    		container.css({ 
-	    			width : this.info.docWidth - this.options.menuWidth, 
+	    		container.css({
+	    			width : this.info.docWidth - this.options.menuWidth,
 	    			// height : this.info.docHeight + offset
 	    		});
 	    		// scoller height
@@ -243,7 +243,7 @@ var Bamboo = (function (window, document) {
 
 			$('#console').html('move')
 			var point = hasTouch ? e.originalEvent.touches[0] : e;
-			
+
 			this.stepsX += Math.abs(point.pageX - this.pointX);
 			this.stepsY += Math.abs(point.pageY - this.pointY);
 
@@ -273,10 +273,10 @@ var Bamboo = (function (window, document) {
 		_end: function(e) {
 			if (!this.initiated) return;
 			if (this.desktop || !this.options.menu) return; // if menu not applicable
-	
+
 			var point = hasTouch ? e.originalEvent.changedTouches[0] : e;
 			var nx = parseInt(point.pageX) - this.ox;
-			// choose direction based on dx	
+			// choose direction based on dx
 			if (this.dx <= 0) {
 				this._animateTo(nx, 0);
 			} else {
@@ -342,7 +342,7 @@ var Bamboo = (function (window, document) {
 		if (navigator.userAgent.match(/(iPhone|iPod)/i)) {
 			if (navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('CriOS') == -1) {
 				offset = 60;
-			}	
+			}
 		}
 		// if in safari fullscreen mode
 		if(("standalone" in window.navigator) && window.navigator.standalone){
@@ -353,7 +353,7 @@ var Bamboo = (function (window, document) {
 
 	// 3d check
 	function has3d() {
-	    var el = document.createElement('p'), 
+	    var el = document.createElement('p'),
 	        has3d,
 	        transforms = {
 	            'webkitTransform':'-webkit-transform',
@@ -376,4 +376,4 @@ var Bamboo = (function (window, document) {
 
 	return Bamboo;
 
-})(window, document);		
+})(window, document);
