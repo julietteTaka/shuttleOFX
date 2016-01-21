@@ -74,13 +74,20 @@
             </div>
         </div>
         <div class="row">
-            {% for image in plugin.sampleImagesPath %}
-                <div class="col-md-3">
-                    <div class="preview-img panel panel-primary img-responsive">
-                        <img src="/plugin/{{plugin.pluginId}}/image/{{image}}">
-                    </div>
+            {% if not plugin.sampleImagesPath %}
+                <div class="col-md-12">
+                    <p>No example found.... <i class="fa fa-meh-o"></i></p>
+                    <p style="font-size: 16pt;"> <a class="signedIn" href="/login">Login</a> to upload yours ! <i class="fa fa-rocket"></i></p>
                 </div>
-            {% endfor %}
+            {% else %}
+                {% for image in plugin.sampleImagesPath %}
+                    <div class="col-md-3">
+                        <div class="preview-img panel panel-primary img-responsive">
+                            <img src="/plugin/{{plugin.pluginId}}/image/{{image}}">
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
             {% endif %}
         {% endif %}
