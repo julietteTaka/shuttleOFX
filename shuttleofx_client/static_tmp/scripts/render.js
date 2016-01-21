@@ -355,6 +355,9 @@ $(document).ready(function() {
 
     // Automatic render on load
     // Filter plugin (blur...)
+    if($("#code").length != 0) {
+        $("#input").val("code");
+    };
     if ($('#render').hasClass('OfxImageEffectContextFilter')) {
         renderFilter($("#render.OfxImageEffectContextFilter").attr("pluginId"));
     } else if($('#render').hasClass('OfxImageEffectContextGenerator')) {
