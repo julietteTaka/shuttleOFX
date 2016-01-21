@@ -400,8 +400,8 @@ def addResource():
     size = request.content_length
 
     if not mimetype:
-        logging.error("Invalide resource.")
-        abort(make_response("Invalide resource.", 400))
+        logging.error("Invalid resource.")
+        abort(make_response("Invalid resource.", 400))
 
     uid = config.resourceTable.insert({
         "mimetype" : mimetype,
