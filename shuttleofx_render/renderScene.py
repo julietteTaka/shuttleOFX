@@ -15,6 +15,7 @@ import argparse
 import copy
 import cache
 
+
 class ProgressHandle(tuttle.IProgressHandle):
     def __init__(self, renderSharedInfo):
         super(ProgressHandle, self).__init__()
@@ -40,6 +41,7 @@ class ProgressHandle(tuttle.IProgressHandle):
         """
         pass
 
+
 def configLocalPluginPath(ofxPluginPaths):
     tuttle.core().getPluginCache().addDirectoryToPath(globalOfxPluginPath)
 
@@ -52,14 +54,26 @@ def configLocalPluginPath(ofxPluginPaths):
 
     logging.debug('Number of Plugins:' + str(len(pluginCache.getPlugins())))
 
+
 def loadGraph(scene):
     # logging.warning("loadGraph : " + str(scene))
     tuttleGraph = tuttle.Graph()
 
-
     nodes = []
     for node in scene['nodes']:
-        tuttleNode = tuttleGraph.createNode(str(node['plugin']))
+        if node['plugin'] == 'reader':
+            filename = next(p["value"] for p in node['parameters'] if p["id"] == "filename")
+            nodePlugin = tuttle.getBestReader(str(filename))
+            logging.warning("Auto reader choice: " + nodePlugin)
+        elif node['plugin'] == 'writer':
+            filename = next(p["value"] for p in node['parameters'] if p["id"] == "filename")
+            nodePlugin = tuttle.getBestWriter(str(filename))
+            logging.warning("Auto reader choice: " + nodePlugin)
+        else:
+            nodePlugin = str(node['plugin'])
+
+        tuttleNode = tuttleGraph.createNode(nodePlugin)
+
         node['name'] = tuttleNode.getName()
         for parameter in node['parameters']:
             param = tuttleNode.getParam(str(parameter["id"]))
@@ -74,14 +88,17 @@ def loadGraph(scene):
             else:
                 param.setValue(parameter["value"], tuttle.eChangeUserEdited)
         nodes.append(tuttleNode)
+        # logging.warning("tuttleNode: " + str(tuttleNode))
 
     for connection in scene['connections']:
         # TODO: replace src/dst with from/to.
         tuttleGraph.connect([
             nodes[connection['src']['id']],
             nodes[connection['dst']['id']],
-            ])
+        ])
+
     return tuttleGraph
+
 
 @processify
 def convertScenePatterns(scene):
@@ -94,21 +111,33 @@ def convertScenePatterns(scene):
     tuttle.core().getPluginCache().addDirectoryToPath(globalOfxPluginPath)
     tuttle.core().preload(False)
 
+    logging.warning("outputScene" + str(outputScene))
+
     outputResources = []
     for node in outputScene['nodes']:
+
+        if 'plugin' in node and node['plugin'] is not 'reader':
+            resp = requests.get(catalogRootUri + "/bundle/" + node['plugin'] + '/bundle').json()
+            node["bundleId"] = resp['bundleId']
+
         for parameter in node['parameters']:
             logging.warning('param: %s %s', parameter['id'], parameter['value'])
             if isinstance(parameter['value'], (str, unicode)):
 
-                if '{RESOURCES_DIR}' in parameter['value']:
+                if 'plugin' not in node and '{RESOURCES_DIR}' in parameter['value']:
                     parameter['value'] = parameter['value'].replace('{RESOURCES_DIR}', config.resourcesPath)
                     node['plugin'] = tuttle.getBestReader(str(parameter['value']))
 
+                if 'plugin' not in node and '{UNIQUE_OUTPUT_FILE}' in parameter['value']:
+                    node['plugin'] = tuttle.getBestWriter(str(parameter['value']))
+
     # Create a Tuttle Graph to generate the UID for each node
     tuttleGraphTmp = loadGraph(outputScene)
+    # logging.warning("tuttleGraphTemp" + str(tuttleGraphTmp))
+    # logging.warning("outputScene" + str(outputScene))
     nodesHashMap = tuttle.NodeHashContainer()
     tuttleGraphTmp.computeGlobalHashAtTime(nodesHashMap, 0.0)
-    
+
     for node in outputScene['nodes']:
         for parameter in node['parameters']:
             logging.warning('param: %s %s', parameter['id'], parameter['value'])
@@ -133,6 +162,9 @@ def computeGraph(renderSharedInfo, newRender, bundlePaths):
 
         renderSharedInfo['status'] = 1
         tuttleGraph = loadGraph(newRender['scene'])
+
+        logging.error('tuttle graph:' + str(tuttleGraph))
+        print('tuttle graph:' + str(tuttleGraph))
 
         renderSharedInfo['status'] = 2
         tuttleComputeOptions = tuttle.ComputeOptions()
@@ -160,12 +192,12 @@ def computeGraph(renderSharedInfo, newRender, bundlePaths):
         renderSharedInfo['status'] = 3
 
     except Exception as e:
-        logging.error("_"*80)
-        logging.error(" "*20 + "RENDER ERROR")
+        logging.error("_" * 80)
+        logging.error(" " * 20 + "RENDER ERROR")
         logging.error(str(e))
         # logging.error("bundlePaths:", str(bundlePaths))
         # logging.error("tuttleGraph:", str(tuttleGraph))
-        logging.error("_"*80)
+        logging.error("_" * 80)
         renderSharedInfo['status'] = -1
         raise
 
@@ -174,11 +206,10 @@ def launchComputeGraph(renderSharedInfo, newRender):
     scene = newRender['scene']
     bundleIds = []
     for node in scene['nodes']:
-        if 'plugin' in node:
-            resp = requests.get(catalogRootUri+"/bundle/" + node['plugin']+ '/bundle').json()
-            bundleIds.append(resp['bundleId'])
+        if 'bundleId' in node:
+            bundleIds.append(node['bundleId'])
         else:
-            logging.error("No plugin defined for node: "+str(node))
+            logging.error("No plugin defined for node: " + str(node))
 
     bundlePaths = [os.path.join(pluginsStorage, str(bundleId)) for bundleId in bundleIds]
 
@@ -194,14 +225,17 @@ def launchComputeGraph(renderSharedInfo, newRender):
             "renderSharedInfo": dict(renderSharedInfo),
             "newRender": dict(newRender),
             "bundlePaths": bundlePaths
-            }
+        }
         jsonData = json.dumps(renderArgs, sort_keys=False, indent=4)
         open(tempFilepath, 'w').write(jsonData)
 
         logging.info('tempFilepath: %s', tempFilepath)
 
         env = dict(os.environ)
-        env['LD_LIBRARY_PATH'] = ':'.join([env.get('LD_LIBRARY_PATH', '')] + ['{bundlePath}/lib:{bundlePath}/lib64'.format(bundlePath=bundlePath) for bundlePath in bundlePaths])
+        env['LD_LIBRARY_PATH'] = ':'.join(
+                [env.get('LD_LIBRARY_PATH', '')] + ['{bundlePath}/lib:{bundlePath}/lib64'.format(bundlePath=bundlePath)
+                                                    for
+                                                    bundlePath in bundlePaths])
         logging.info('LD_LIBRARY_PATH: %s', env['LD_LIBRARY_PATH'])
 
         args = [sys.executable, os.path.abspath(__file__), tempFilepath]
@@ -210,10 +244,10 @@ def launchComputeGraph(renderSharedInfo, newRender):
         if p.returncode:
             renderSharedInfo['status'] = -1
             raise RuntimeError(
-                '''Failed to render.\n
-                Return code: %s\n
-                Log:\n%s\n%s\n'''
-                % (p.returncode, stdoutdata, stderrdata))
+                    '''Failed to render.\n
+                    Return code: %s\n
+                    Log:\n%s\n%s\n'''
+                    % (p.returncode, stdoutdata, stderrdata))
 
         logging.info(stdoutdata)
         logging.info(stderrdata)
@@ -226,7 +260,7 @@ def launchComputeGraph(renderSharedInfo, newRender):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Launch the render.')
     parser.add_argument('renderArgs', type=str,
-                       help='The file which contains the render arguments.')
+                        help='The file which contains the render arguments.')
     args = parser.parse_args()
 
     renderArgs = json.load(open(args.renderArgs, 'r'))

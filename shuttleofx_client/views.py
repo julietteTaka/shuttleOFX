@@ -62,7 +62,7 @@ def searchPlugins():
 
 @config.g_app.route("/plugin/count")
 def countPlugins():
-    req = requests.get(config.catalogRootUri+"/plugin", params=request.args)
+    req = requests.get(config.catalogRootUri + "/plugin", params=request.args)
     if req.status_code != 200:
         abort(req.status_code)
     return jsonify(**req.json())
@@ -123,11 +123,11 @@ def getRenderResource(renderId, resourceId):
 
 @config.g_app.route('/resource/<resourceId>', methods=['GET'])
 def getResourceById(resourceId):
-    req = requests.get(config.renderRootUri+"/resource/"+resourceId)
+    req = requests.get(config.renderRootUri + "/resource/" + resourceId)
     return Response(req.content, mimetype="image/png")
 
 @config.g_app.route('/resource', methods=['GET'])
-def getResources() :
+def getResources():
     req = requests.get(config.renderRootUri + '/resource/')
     if req.status_code != 200:
         abort(req.status_code)
@@ -142,14 +142,14 @@ def upload():
     return redirect(url_for('login'))
 
 @config.g_app.route('/bundle')
-def getBundles() :
+def getBundles():
     req = requests.get(config.catalogRootUri + '/bundle', headers=request.headers)
     if req.status_code != 200:
         abort(req.status_code)
     return jsonify(**req.json())
 
 @config.g_app.route('/bundle', methods=['POST'])
-def newBundle() :
+def newBundle():
     header = {'content-type' : 'application/json'}
     req = requests.post(config.catalogRootUri + '/bundle', data=json.dumps(request.form), headers=header)
     if req.status_code != 200:
@@ -219,7 +219,7 @@ def authorizedGoogle():
         logging.warning('login/authorized redirectTarget is None')
 
     logging.warning('login/authorized before redirect')
-    res = redirect( redirectTarget )
+    res = redirect(redirectTarget)
     logging.warning('login/authorized end')
     return res
 
@@ -268,4 +268,4 @@ def get_github_oauth_token():
     return session.get('github_token')
 
 if __name__ == '__main__':
-    config.g_app.run(host="0.0.0.0",port=5000,debug=True)
+    config.g_app.run(host="0.0.0.0", port=5000, debug=True)

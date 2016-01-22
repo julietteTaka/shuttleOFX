@@ -16,7 +16,6 @@
     <link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/bootstrap.css') }}">
-    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/material.css') }}"> -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
 
     <!-- favicon -->
@@ -24,7 +23,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='images/favicon-96x96.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
-    
+
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
@@ -78,6 +77,9 @@
                 <a href='/upload'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
             </li>
             {% endif %}
+            <li>
+                <a href='/about'><i class="fa fa-info"></i>About OpenFX</a>
+            </li>
             <li class="title-nav"><h4>MORE</h4></li>
             <!--
             <li>
@@ -98,6 +100,7 @@
     <header class="header">
         <span class="open icon">&#9776;</span>
         <div class="navbar search-bar">
+            {% block back_button %}{% endblock %}
             <form id="searchForm" action="/plugin/search/">
                   <input type="text" placeholder="Search" id="searchquery" name="search"/>
                   <button id="searchtrigger" type="submit" value="Submitquery"><i class="fa fa-search"></i></button>
@@ -108,7 +111,7 @@
     </header>
 
     <section id="scroller">
-        <div class="main" data-0="padding-top:150px" data-150="padding-top: 150px">
+        <div class="main" data-0="padding-top:230px" data-150="padding-top: 230px">
             {% block content %}{% endblock %}
         </div>
     </section>
@@ -122,7 +125,6 @@
 <script src="{{ url_for('static', filename='scripts/vendor/dropzone.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/vendor/jquery.nouislider.min.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/clips.js') }}"></script>
-<script src="{{ url_for('static', filename='scripts/counter.js') }}"></script>
 
 {% block scripts %}
 {% endblock %}
@@ -152,7 +154,7 @@
     if($('#addThumbForm').length > 0){
 
         var pluginId = $("#addGalleryImage").attr("attr-id");
-       
+
         var thumDropzone = new Dropzone("#addThumbForm", {
             url : '/plugin/0/resource',
             acceptedFiles: "image/jpeg, image/png, image/gif, image/pict",
@@ -166,13 +168,13 @@
             thumDropzone.options.url = '/plugin/'+pluginId+'/resource';
 
             thumDropzone.processQueue();
-            
+
             thumDropzone.on('success', function(data){
 
                 data = JSON.parse(data.xhr.response);;
-                
+
                 var imageId = data._id["$oid"]
-                
+
                 var addImageURI = '/plugin/' + pluginId + '/images';
 
                 $.ajax({
@@ -180,19 +182,18 @@
                     url : addImageURI,
                     contentType: "application/json",
                     data : JSON.stringify({ 'ressourceId' : imageId}),
-                    success: function(){    
-                        location.reload();   
+                    success: function(){
+                        location.reload();
                     }
                 }).done(function(){
                     $("#addImageGallery").hide();
-                    $('.modal-backdrop').remove(); 
+                    $('.modal-backdrop').remove();
                 })
             })
-            
+
         });
     }
 </script>
 
 </body>
 </html>
-

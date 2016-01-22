@@ -28,8 +28,11 @@ ul.surveys{
 }
 
 ul.surveys.grid{
-	li{
-		list-style: none;
+	li.plugin{
+		width: calc(~'(100% / 5) - 10px');
+		margin: 0 5px 0 5px;
+		float: left;
+    		list-style: none;
 		.plugins-titles{
 			width: 100%;
 			background-color: @ofxColor;
@@ -62,7 +65,7 @@ ul.surveys.grid{
 				float: right;
 			}
 		}
-		p{	
+		p{
 			padding: 0;
 			margin: 0;
 			padding-left: 10px;
@@ -121,7 +124,7 @@ ul.surveys.list{
 				box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08), 0 1px 6px rgba(0, 0, 0, 0.08);
 			}
 		}
-		
+
 		.plugins-titles{
 			display: inline-block;
 			h3{
@@ -154,7 +157,7 @@ ul.surveys.list{
 				object-fit: cover;
 			}
 		}
-		.plugins-infos{
+		.plugins-info{
 			padding : 5px;
 			p{
 				// display: none;
@@ -224,6 +227,12 @@ ul.pager-check{
 }
 
 
+@media screen and (max-width: 1275px) {
+ 	ul.surveys.grid li.plugin{
+		width: calc(~'(100% / 2) - 10px');
+	}
+}
+
 // #plugins ul.pager-check li a.disabled{
 // 	cursor: not-allowed;
 // 	color: #ccc!important;
@@ -237,4 +246,3 @@ ul.pager-check{
 // 	color: @ofxTxt;
 // 	font-size: 2em;
 // }
-

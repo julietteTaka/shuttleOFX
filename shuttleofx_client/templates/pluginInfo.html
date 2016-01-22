@@ -1,0 +1,193 @@
+{% extends "plugin.html" %}
+
+{# Set the active item in the menu #}
+{% set active = "info" %}
+
+{% block content %}
+<div class="main-content no-bottom-header">
+    <div class="container-fluid">
+		<div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>Clips</h2>
+                </div>
+                <div class="panel clip">
+                    <div class="clip-name">
+                        {{plugin.shortLabel}}
+                    </div>
+                    {% for clipProps in plugin.clips %}
+                        <a tabindex="0"
+                        {% if clipProps.OfxPropName.value == "Output" %}
+                            class="clip-output"
+                        {% elif clipProps.OfxImageClipPropIsMask.value == 1 %}
+                            class="clip-mask"
+                        {% else %}
+                            class="clip-input"
+                        {% endif %}
+                        role="button" data-toggle="popover" data-trigger="focus" title="{{ clipProps.OfxPropName.value }}" data-content=
+                        {% for clipProps in plugin.clips %}
+
+                            "Supported components:
+                            [{% for val in clipProps.OfxImageEffectPropSupportedComponents.propValues %}
+                                {{ val[('OfxImageComponent'|length):] }}
+                            {% endfor %}]
+                            {% if clipProps.OfxPropName.value != "Output" %}
+                                {% if clipProps.OfxImageClipPropIsMask.value %}
+                                    , Mask
+                                {% endif %}
+                                {% if clipProps.OfxImageClipPropOptional.value %}
+                                    , Optional
+                                {% endif %}
+                                {% if clipProps.OfxImageEffectPropTemporalClipAccess.value %}
+                                    , Temporal clip access
+                                {% endif %}
+                            {% endif %}
+                            .
+                            "
+                        {% endfor %}
+                        >{{ clipProps.OfxPropName.value }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>Parameters</h2>
+                </div>
+                <table class="table table-striped table-hover" id="tab-parameters">
+                    <thead>
+                        <tr>
+                            <th>Script name</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for paramProps in plugin.parameters %}
+                            <tr tabindex="0" class="param-more" role="button" data-toggle="popover" data-trigger="focus" data-placement="right" data-html="true"
+                            title="Details"
+                            data-content="
+                            {% if "OfxParamPropDefault" in paramProps %}
+                                Default value: {{ paramProps.OfxParamPropDefault.value }}
+                            {% endif %}
+                            {% if "OfxParamPropMin" in paramProps %}
+                                <br>
+                                Min value: {{ paramProps.OfxParamPropMin.value }}
+                            {% endif %}
+                            {% if "OfxParamPropMax" in paramProps %}
+                                <br>
+                                Max value: {{ paramProps.OfxParamPropMax.value }}
+                            {% endif %}
+                            ">
+
+                                <td style="opacity:0.5">
+                                    {{ paramProps.OfxPropName.value }}
+                                </td>
+                                <td>
+                                    {{ paramProps.OfxPropLabel.value }}
+                                </td>
+                                <td>
+                                    {{ paramProps.OfxParamPropHint.value }}
+                                </td>
+                                <td>
+                                    <fieldset>
+                                        <div class="form-group">
+                                            {% set default = 0 %}
+                                            {% if "OfxParamPropDefault" in paramProps %}
+                                                {% set default = paramProps.OfxParamPropDefault.value %}
+                                            {% endif %}
+                                            {% set name = paramProps.OfxPropName.value %}
+                                            {% set val = paramProps.OfxParamPropType.value %}
+                                            {% if val == "OfxParamTypeInteger" %}
+                                                <input type="number" ofxType="OfxParamTypeInteger" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                            {% elif val == "OfxParamTypeInteger2D" %}
+                                                <input type="text" ofxType="OfxParamTypeInteger2D" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                            {% elif val == "OfxParamTypeRange" %}
+                                                <div class="slider shor"></div>
+                                                <input name="{{name}}" ofxType="OfxParamTypeRange"  id="{{name}}" class="input-number" type="number" value="{{default}}">
+                                            {% elif val == "OfxParamTypeText" %}
+                                                <input type="text" ofxType="OfxParamTypeText" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                            {% elif val == "OfxParamTypeDouble" %}
+                                                <input type="number" ofxType="OfxParamTypeDouble" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                            {% elif val == "OfxParamTypeString" %}
+                                                <input type="text" ofxType="OfxParamTypeString" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
+                                            {% elif val == "OfxParamTypeChoice" %}
+                                                <select ofxType="OfxParamTypeChoice" name="{{name}}" id="{{name}}" style="display:block">
+                                                    {% set paramIndex = 0 %}
+                                                    {% for val in paramProps.OfxParamPropChoiceOption.propValues %}
+                                                        <option value="{{val}}" {%if paramIndex == default%}selected{%endif%}>{{val}}</option>
+                                                        {% set paramIndex = paramIndex + 1 %}
+                                                    {% endfor %}
+                                                </select>
+                                            {% elif val == "OfxParamTypeBoolean" %}
+                                                <div class="togglebutton">
+                                                    <label>
+                                                        <input ofxType="OfxParamTypeBoolean" name="{{name}}" id="{{name}}" type="checkbox" {% if default == 1%} checked {% endif %}>
+                                                    </label>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </fieldset>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                <h2>Technical information</h2>
+                </div>
+                    <table class="table table-striped table-hover" id="tab-parameters">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Value</th>
+                            <th>Type</th>
+                            <th>Read only</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for propName, prop in plugin.properties.iteritems() %}
+                            <tr tabindex="0" class="param-more" role="button" data-toggle="popover" data-trigger="focus" data-placement="right" data-html="true"
+                            title="Details">
+                                <td>
+                                    {{ propName }}
+                                </td>
+                                <td>
+                                    {{ prop.propValues | join(', ') }}
+                                </td>
+                                <td>
+                                    {% if prop.type == -1 %}
+                                    None
+                                    {% elif prop.type == 0 %}
+                                    Int
+                                    {% elif prop.type == 1 %}
+                                    Double
+                                    {% elif prop.type == 2 %}
+                                    String
+                                    {% elif prop.type == 3 %}
+                                    Pointer
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ prop.readOnly }}
+                                </td>
+                            </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+</div>
+
+
+{% endblock %}
