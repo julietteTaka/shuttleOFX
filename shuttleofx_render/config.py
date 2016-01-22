@@ -45,3 +45,8 @@ g_enablePool = False
 
 # Manager to share rendering information
 g_manager = multiprocessing.Manager()
+
+
+config.read('/etc/shuttleofx/catalog.cfg')
+catalogResourcesPath = config.get('RESOURCES', 'resourcesDirectory')
+catalogResourceTable = db.__getattr__(config.get('MONGODB', 'resourceTable'))
