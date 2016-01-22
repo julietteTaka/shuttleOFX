@@ -19,10 +19,23 @@
 
         <div class="row">
             <div class="col-md-12">
+                {% if user %}
                 <form id="form-wiki">
-                       <textarea id="wiki" class="panel panel-primary" data-provide="markdown" data-iconlibrary="fa" rows="10">{{plugin.wiki | last}}</textarea>
-                       <input type='submit' value='Save' id="setWiki" class="btn btn-primary" attr-id="{{plugin.id}}">
+                    <label for="name" class="hidden">Your name</label>
+                    <input id="user" type="text" class="form-control hidden" name="name" value="{{user.name}}">
+                    <input id="picture" type="text" name="picture" class="form-control hidden" value="{{user.picture}}">
+                    {% for wiki in plugin.wiki %}
+                    {% if loop.last %}
+                    <textarea id="wiki" class="panel panel-primary" data-provide="markdown" data-iconlibrary="fa" rows="10">{{wiki.content}}</textarea>
+                    {% endif %}
+                    {% endfor %}
+                    <input type='submit' value='Save' id="setWiki" class="btn btn-primary" attr-id="{{plugin.id}}">
                 </form>
+                {% else %}
+                <p class="wikialert"><i class="fa fa-exclamation-triangle"></i>
+                    You must be logged in to edit the wiki !
+                </p>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -35,12 +48,21 @@ $(document).ready(function() {
 
     function wikiJson()
     {
+        var now = new Date();
+        var m = now.getMonth() + 1;
+        var d = now.getDate();
+        var y = now.getFullYear();
+        var h = now.getHours();
+        var i = now.getMinutes();
         $.ajax({
             type: "POST",
             url: "/wiki/update/"+{{plugin.pluginId}},
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify({
-                'wikicontent': '\n' + $("#wiki").val()
+                'wikicontent': '\n' + $("#wiki").val(),
+                'wikiuser' : $("#user").val(),
+                'wikipicture' : $("#picture").val(),
+                'wikidate' : m+'/'+d+'/'+y+', '+h+':'+i
             }),
         })
     }

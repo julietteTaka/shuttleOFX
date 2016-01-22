@@ -402,7 +402,7 @@ def getBundleByPluginId(rawIdentifier):
 @config.g_app.route('/wiki/update/<int:pluginId>/version/<pluginVersion>', methods=['POST'])
 @config.g_app.route('/wiki/update/<int:pluginId>', methods=['POST'])
 def setWiki(pluginId, pluginVersion="latest"):
-    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"wiki" : request.json['wikicontent']} })
+    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {'wiki' : { 'content' : request.json['wikicontent'], 'user' : request.json['wikiuser'], 'picture' : request.json['wikipicture'], 'date' : request.json['wikidate']  }}})
     return mongodoc_jsonify(True)
 
 ### Wiki End ___________________________________________________________________

@@ -20,7 +20,7 @@ class Plugin(object):
         self.clip = []
         self.rawIdentifier = None
         self.comments = []
-        self.wiki = ""
+        self.wiki = []
 
     def setDescription(self, description):
         self.description = description
