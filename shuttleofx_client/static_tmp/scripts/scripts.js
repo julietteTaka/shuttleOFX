@@ -43,12 +43,12 @@ $('[data-toggle]').on('click', function() {
   // Change the way images are displayed if there is a preview
   $(".surveys li:has(img.custom)").each(function(){
   	var title = $(this).find("h3");
-  	var pluginsDiv = $(this).find(".plugins-titles, .plugins-infos");
+  	var pluginsDiv = $(this).find(".plugins-titles, .plugins-info");
 
     if (toggle == "list") {
       // In list mode, move h3 to the next div in order to isolate the img
       // so we can have the image on the left and the title and description on the right
-  	  title.detach().prependTo($(this).find(".plugins-infos"));
+  	  title.detach().prependTo($(this).find(".plugins-info"));
   	  pluginsDiv.css({"display": "table-cell", "vertical-align": "middle"}).redrawForWebkit();
   	} else {
   	  // In grid view, go back to the original layout

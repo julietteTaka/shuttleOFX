@@ -55,7 +55,7 @@ def getPlugins():
 	return render_template('plugins.html', dico=resp.json(), user=user)
 
 @config.g_app.route('/about')
-def getInfos():
+def getInfo():
     user = None
     if 'google_token' in session:
         user = config.google.get('userinfo').data
@@ -103,14 +103,14 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
 	return render_template('plugin.html', plugin=resp.json(), user=user)
 
 
-@config.g_app.route("/plugin/<pluginRawIdentifier>/infos")
-def getPluginInfos(pluginRawIdentifier):
+@config.g_app.route("/plugin/<pluginRawIdentifier>/info")
+def getPluginInfo(pluginRawIdentifier):
     user = None
     if 'google_token' in session:
         user = config.google.get('userinfo').data
 
     resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
-    return render_template('pluginInfos.html', plugin=resp.json(), user=user)
+    return render_template('pluginInfo.html', plugin=resp.json(), user=user)
 
 @config.g_app.route('/plugin/<pluginId>/image/<imageId>')
 def getSampleImagesForPlugin(pluginId, imageId):
