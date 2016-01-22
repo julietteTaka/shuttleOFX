@@ -11,7 +11,6 @@
   z-index: 10000;
 }
 
-
 .modal-title{
 	color: @ofxColor;
 	font-size: 150%;
@@ -46,6 +45,9 @@ input.input-number{
 	padding: 0;
 }
 
+#demo{
+	padding-top: 30px;
+}
 
 .display{
 	margin-bottom: 30px;
@@ -267,6 +269,14 @@ input.input-number{
 	}
 }
 
+#buttons {
+    .preloader-wrapper {
+        display: inline-block;
+        float: right;
+        margin: 16px 10px;
+    }
+}
+
 /*****************************/
 /*  STYLES FOR THE SPINNER   */
 /* taken from materializecss */
@@ -290,7 +300,11 @@ input.input-number{
   	z-index: 1;
   	top: 50%;
   	width: 48px;
-  	height: 48px; 
+  	height: 48px;
+	&.extra-small {
+    	width: 24px;
+    	height: 24px;
+	}
   	&.small {
     	width: 36px;
     	height: 36px; 

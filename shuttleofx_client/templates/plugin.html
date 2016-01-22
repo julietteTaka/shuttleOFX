@@ -1,8 +1,11 @@
 {% extends "layout.html" %}
 
+{% block back_button %}
+<a href="/plugin" id="back-to-plugins" data-0="line-height:80px" data-150="line-height:30px"><i class="fa fa-angle-left"></i> Back to all plugins</a>
+{% endblock %}
 
 {% block title %}
-<div class="header-content" data-0="height:100px" data-150="height:0px">
+<div class="header-content" data-0="height:25%" data-150="height:10%">
     <div class="top-header">
         <div class="container-fluid">
             <div class="row">
@@ -15,33 +18,21 @@
                     </h1>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-
-{% block subtitle %}
-<div class="bottom-header">
-    <div class="navbar navbar-default">
-        <div class="navbar-collapse collapse navbar-responsive-collapse-filter">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <a href="/plugin"><i class="fa fa-angle-left"></i> Back to all plugins</a>
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="tabs">
+                        <li class="tab"><a {% if active is not defined %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}">General</a></li>
                         {% if "OfxImageEffectPropSupportedContexts" in plugin.properties %}
                             {% set supportedContexts = plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
-                            {% if "OfxImageEffectContextFilter" in supportedContexts or
-                               "OfxImageEffectContextGenerator" in supportedContexts
-                               %}
-                                <a href="/editor/{{plugin.rawIdentifier}}" class="btn btn-primary btn-render-navbar">
-                                    <i class="fa fa-rocket" style="padding-right: 7px"></i>
-                                    Live demo of 
-                                    <span class="calltolive">{{ plugin.shortLabel }}</span>
-                                </a>
+                            {% if "OfxImageEffectContextFilter" in supportedContexts or "OfxImageEffectContextGenerator" in supportedContexts %}
+                                <li class="tab"><a {% if active == "demo" %}class="active"{% endif %} href="/editor/{{plugin.rawIdentifier}}">Demo</a></li>
                             {% endif %}
                         {% endif %}
-                    </div>
+                        <li class="tab"><a {% if active == "infos" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/infos">Technical info</a></li>
+                        <!-- FIXME enable these tabs when wiki and/or comments are active -->
+                        <li class="tab disabled"><a {% if active == "wiki" %}class="active"{% endif %} href="#">Wiki</a></li>
+                        <li class="tab disabled"><a {% if active == "comments" %}class="active"{% endif %} href="#">Comments</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -49,9 +40,8 @@
 </div>
 {% endblock %}
 
-
 {% block content %}
-<div class="main-content">
+<div class="main-content no-bottom-header">
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
@@ -75,7 +65,7 @@
             <div class="col-md-12">
                 <div class="page-header">
                     <h2>
-                        Preview gallery 
+                        Examples
                         {% if user %}
                         <button class="btn btn-primary btn-addImage" data-toggle="modal" data-target="#addImageGallery"><i class="fa fa-plus"></i></button>
                         {% endif %}
@@ -95,188 +85,7 @@
             {% endif %}
         {% endif %}
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="page-header">
-                    <h2>Clips</h2>
-                </div>
-                <div class="panel clip">
-                    <div class="clip-name">
-                        {{plugin.shortLabel}}
-                    </div>
-                    {% for clipProps in plugin.clips %}
-                        <a tabindex="0"
-                        {% if clipProps.OfxPropName.value == "Output" %}
-                            class="clip-output"
-                        {% elif clipProps.OfxImageClipPropIsMask.value == 1 %}
-                            class="clip-mask"
-                        {% else %}
-                            class="clip-input"
-                        {% endif %}
-                        role="button" data-toggle="popover" data-trigger="focus" title="{{ clipProps.OfxPropName.value }}" data-content=
-                        {% for clipProps in plugin.clips %}
-
-                            "Supported components:
-                            [{% for val in clipProps.OfxImageEffectPropSupportedComponents.propValues %}
-                                {{ val[('OfxImageComponent'|length):] }}
-                            {% endfor %}]
-                            {% if clipProps.OfxPropName.value != "Output" %}
-                                {% if clipProps.OfxImageClipPropIsMask.value %}
-                                    , Mask
-                                {% endif %}
-                                {% if clipProps.OfxImageClipPropOptional.value %}
-                                    , Optional
-                                {% endif %}
-                                {% if clipProps.OfxImageEffectPropTemporalClipAccess.value %}
-                                    , Temporal clip access
-                                {% endif %}
-                            {% endif %}
-                            .
-                            "
-                        {% endfor %}
-                        >{{ clipProps.OfxPropName.value }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
-
-
-        <div class="row">
-            <div class="col-md-12">
-                <div class="page-header">
-                    <h2>Parameters</h2>
-                </div>
-                <table class="table table-striped table-hover" id="tab-parameters">
-                    <thead>
-                        <tr>
-                            <th>Script name</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for paramProps in plugin.parameters %}
-                            <tr tabindex="0" class="param-more" role="button" data-toggle="popover" data-trigger="focus" data-placement="right" data-html="true" 
-                            title="Details" 
-                            data-content="
-                            {% if "OfxParamPropDefault" in paramProps %}
-                                Default value: {{ paramProps.OfxParamPropDefault.value }}
-                            {% endif %}
-                            {% if "OfxParamPropMin" in paramProps %}
-                                <br>
-                                Min value: {{ paramProps.OfxParamPropMin.value }}
-                            {% endif %}
-                            {% if "OfxParamPropMax" in paramProps %}
-                                <br>
-                                Max value: {{ paramProps.OfxParamPropMax.value }}
-                            {% endif %}
-                            ">
-                                
-                                <td style="opacity:0.5">
-                                    {{ paramProps.OfxPropName.value }}
-                                </td>
-                                <td>
-                                    {{ paramProps.OfxPropLabel.value }}
-                                </td>
-                                <td>
-                                    {{ paramProps.OfxParamPropHint.value }}
-                                </td>
-                                <td>
-                                    <fieldset>
-                                        <div class="form-group">
-                                            {% set default = 0 %}
-                                            {% if "OfxParamPropDefault" in paramProps %}
-                                                {% set default = paramProps.OfxParamPropDefault.value %}
-                                            {% endif %}
-                                            {% set name = paramProps.OfxPropName.value %}
-                                            {% set val = paramProps.OfxParamPropType.value %}
-                                            {% if val == "OfxParamTypeInteger" %}
-                                                <input type="number" ofxType="OfxParamTypeInteger" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
-                                            {% elif val == "OfxParamTypeInteger2D" %}
-                                                <input type="text" ofxType="OfxParamTypeInteger2D" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
-                                            {% elif val == "OfxParamTypeRange" %}
-                                                <div class="slider shor"></div>
-                                                <input name="{{name}}" ofxType="OfxParamTypeRange"  id="{{name}}" class="input-number" type="number" value="{{default}}">
-                                            {% elif val == "OfxParamTypeText" %}
-                                                <input type="text" ofxType="OfxParamTypeText" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
-                                            {% elif val == "OfxParamTypeDouble" %}
-                                                <input type="number" ofxType="OfxParamTypeDouble" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
-                                            {% elif val == "OfxParamTypeString" %}
-                                                <input type="text" ofxType="OfxParamTypeString" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}">
-                                            {% elif val == "OfxParamTypeChoice" %}
-                                                <select ofxType="OfxParamTypeChoice" name="{{name}}" id="{{name}}" style="display:block">
-                                                    {% set paramIndex = 0 %}
-                                                    {% for val in paramProps.OfxParamPropChoiceOption.propValues %}
-                                                        <option value="{{val}}" {%if paramIndex == default%}selected{%endif%}>{{val}}</option>
-                                                        {% set paramIndex = paramIndex + 1 %}
-                                                    {% endfor %}
-                                                </select>
-                                            {% elif val == "OfxParamTypeBoolean" %}
-                                                <div class="togglebutton">
-                                                    <label>
-                                                        <input ofxType="OfxParamTypeBoolean" name="{{name}}" id="{{name}}" type="checkbox" {% if default == 1%} checked {% endif %}>
-                                                    </label>
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    </fieldset>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <div class="page-header">
-                <h2>Technical information</h2>
-                </div>
-                    <table class="table table-striped table-hover" id="tab-parameters">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Value</th>
-                            <th>Type</th>
-                            <th>Read only</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for propName, prop in plugin.properties.iteritems() %}
-                            <tr tabindex="0" class="param-more" role="button" data-toggle="popover" data-trigger="focus" data-placement="right" data-html="true" 
-                            title="Details">
-                                <td>
-                                    {{ propName }}
-                                </td>
-                                <td>
-                                    {{ prop.propValues | join(', ') }}
-                                </td>
-                                <td>
-                                    {% if prop.type == -1 %}
-                                    None
-                                    {% elif prop.type == 0 %}
-                                    Int
-                                    {% elif prop.type == 1 %}
-                                    Double
-                                    {% elif prop.type == 2 %}
-                                    String
-                                    {% elif prop.type == 3 %}
-                                    Pointer
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {{ prop.readOnly }}
-                                </td>
-                            </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-</div>
+        
 
 {% if user %}
 <div class="modal" id="addImageGallery">
@@ -306,4 +115,24 @@
     </div>
 </div>
 {% endif %}
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='scripts/vendor/js.cookie.js') }}"></script>
+    <script type="text/javascript">    
+        // Read cookies content and update the back link
+        // to redirect to the plugins page with the right preferences :
+        // nbr of plugins and page
+        $(document).ready(function() {
+            var href = $("#back-to-plugins").attr("href");
+            var prefs = Cookies.getJSON("user_sorting_prefs");
+            if(prefs && prefs.count && prefs.skip){
+                $("#back-to-plugins").attr("href", href + "?count=" + prefs.count + "&skip=" + prefs.skip );    
+            }
+            else if(prefs && prefs.count && prefs.skip && prefs.search) {
+                $("#back-to-plugins").attr("href", href + "?search=" + prefs.search + "count=" + prefs.count + "&skip=" + prefs.skip );
+            }
+        });
+        
+    </script>
 {% endblock %}
