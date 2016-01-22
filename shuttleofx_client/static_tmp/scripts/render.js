@@ -314,17 +314,16 @@ $(document).ready(function () {
             })
             .error(function (data) {
                 console.log('POST ERROR !');
-            });
-        })
+            })
         .error(function(data){
             console.log('POST ERROR !');
-            hideLoader();
+            hideRenderLoader();
         });
     }
 
     // download an image from an url and apply a filter
     function fromUrlRender(pluginId) {
-      displayLoader();
+      displayRenderLoader();
       var renderParameters = formToJson();
 
       $.ajax({
@@ -337,19 +336,19 @@ $(document).ready(function () {
       })
       .done(function(data){
         if (data == "Empty request") {
-          hideLoader();
+          hideRenderLoader();
           $("#imgUrl").before(addMessage("<p> URL input is empty, please type an URL before to click on send button.</p>", "error"));
         }
         else if (data == "Not an image") {
-          hideLoader();
+          hideRenderLoader();
           $("#imgUrl").before(addMessage("<p>The URL that you have sent was not an image.<br/> Please try again.</p>", "error"));
         }
         else if (data == "Not found") {
-          hideLoader();
+          hideRenderLoader();
           $("#imgUrl").before(addMessage("<p>The URL that you have sent was not found.<br/> Please try again.</p>", "error"));
         }
         else if (data == "Not exist") {
-          hideLoader();
+          hideRenderLoader();
           $("#imgUrl").before(addMessage("<p>The URL that you have sent is not accessible.<br/> Please try again.</p>", "error"));
         }
         else {
