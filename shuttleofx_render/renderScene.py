@@ -65,6 +65,10 @@ def loadGraph(scene):
             filename = next(p["value"] for p in node['parameters'] if p["id"] == "filename")
             nodePlugin = tuttle.getBestReader(str(filename))
             logging.warning("Auto reader choice: " + nodePlugin)
+        elif node['plugin'] == 'writer':
+            filename = next(p["value"] for p in node['parameters'] if p["id"] == "filename")
+            nodePlugin = tuttle.getBestWriter(str(filename))
+            logging.warning("Auto reader choice: " + nodePlugin)
         else:
             nodePlugin = str(node['plugin'])
 
@@ -84,7 +88,7 @@ def loadGraph(scene):
             else:
                 param.setValue(parameter["value"], tuttle.eChangeUserEdited)
         nodes.append(tuttleNode)
-        logging.warning("tuttleNode: " + str(tuttleNode))
+        # logging.warning("tuttleNode: " + str(tuttleNode))
 
     for connection in scene['connections']:
         # TODO: replace src/dst with from/to.
@@ -123,6 +127,9 @@ def convertScenePatterns(scene):
                 if 'plugin' not in node and '{RESOURCES_DIR}' in parameter['value']:
                     parameter['value'] = parameter['value'].replace('{RESOURCES_DIR}', config.resourcesPath)
                     node['plugin'] = tuttle.getBestReader(str(parameter['value']))
+
+                if 'plugin' not in node and '{UNIQUE_OUTPUT_FILE}' in parameter['value']:
+                    node['plugin'] = tuttle.getBestWriter(str(parameter['value']))
 
     # Create a Tuttle Graph to generate the UID for each node
     tuttleGraphTmp = loadGraph(outputScene)
