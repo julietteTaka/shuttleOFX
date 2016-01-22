@@ -24,11 +24,15 @@
                     <label for="name" class="hidden">Your name</label>
                     <input id="user" type="text" class="form-control hidden" name="name" value="{{user.name}}">
                     <input id="picture" type="text" name="picture" class="form-control hidden" value="{{user.picture}}">
-                    {% for wiki in plugin.wiki %}
-                    {% if loop.last %}
-                    <textarea id="wiki" class="panel panel-primary" data-provide="markdown" data-iconlibrary="fa" rows="10">{{wiki.content}}</textarea>
+                    {% if plugin.wiki %}
+                        {% for wiki in plugin.wiki %}
+                        {% if loop.last %}
+                        <textarea id="wiki" class="panel panel-primary" data-provide="markdown" data-iconlibrary="fa" rows="10">{{wiki.content}}</textarea>
+                        {% endif %}
+                        {% endfor %}
+                    {% else%}
+                        <textarea id="wiki" class="panel panel-primary" data-provide="markdown" data-iconlibrary="fa" rows="10"></textarea>
                     {% endif %}
-                    {% endfor %}
                     <input type='submit' value='Save' id="setWiki" class="btn btn-primary" attr-id="{{plugin.id}}">
                 </form>
                 {% else %}
@@ -54,6 +58,19 @@ $(document).ready(function() {
         var y = now.getFullYear();
         var h = now.getHours();
         var i = now.getMinutes();
+        var month = new Array();
+        month[0] = "Jan";
+        month[1] = "Feb";
+        month[2] = "Mar";
+        month[3] = "Apr";
+        month[4] = "May";
+        month[5] = "Jun";
+        month[6] = "Jul";
+        month[7] = "Aug";
+        month[8] = "Sep";
+        month[9] = "Oct";
+        month[10] = "Nov";
+        month[11] = "Dec";
         $.ajax({
             type: "POST",
             url: "/wiki/update/"+{{plugin.pluginId}},
@@ -62,7 +79,7 @@ $(document).ready(function() {
                 'wikicontent': '\n' + $("#wiki").val(),
                 'wikiuser' : $("#user").val(),
                 'wikipicture' : $("#picture").val(),
-                'wikidate' : m+'/'+d+'/'+y+', '+h+':'+i
+                'wikidate' : h+':'+i+'\n'+month[m]+' '+d+' '+y
             }),
         })
     }

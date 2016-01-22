@@ -7,7 +7,7 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-10">
+            <div class="col-md-12">
                 {% if plugin.wiki %}
                     {% if user %}
                     <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">Edit wiki</a>
@@ -42,11 +42,11 @@
                 {% endfor %}
                 {% else %}
                     {% if user %}
-                        <p class="wikialert"><i class="fa fa-exclamation-triangle"></i>
+                        <p class="center">
                             No wiki has been created yet, go on and add a <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">new wiki</a>
                         </p>
                     {% else %}
-                        <p class="wikialert"><i class="fa fa-exclamation-triangle"></i>
+                        <p class="wikialert center"><i class="fa fa-exclamation-triangle"></i>
                             No wiki has been created yet, You must be logged in to create a new one !
                         </p>
                     {% endif %}
