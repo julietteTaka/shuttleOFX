@@ -238,7 +238,16 @@ $(document).ready(function () {
                 // Since the displayed proxy is always a generated PNG and not of the type of the original ressource
                 // We want to make sure the proxy is sent with the proper extension
                 var selectedResourceName = selectedResource.split(".")[0];
-                $("#viewer img#originalPic").attr("src", "/proxy/" + selectedResourceName + ".png");
+                var ext = selectedResource.split(".")[1];
+                if (selectedResourceName.indexOf("tmp") <= -1) {
+                    var selectedResourcePath = "proxy/" + selectedResourceName ;
+                    ext = ".png";
+                }
+                else {
+                    var selectedResourcePath = "/resource/" + selectedResourceName;
+                    ext = "."+ext;
+                }
+                $("#viewer img#originalPic").attr("src", selectedResourcePath + ext);
                 $("#viewer img#originalPic").show();
                 $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
                 $("#download-view").removeClass('disabled');
@@ -335,21 +344,9 @@ $(document).ready(function () {
         }),
       })
       .done(function(data){
-        if (data == "Empty request") {
-          hideRenderLoader();
-          $("#imgUrl").before(addMessage("<p> URL input is empty, please type an URL before to click on send button.</p>", "error"));
-        }
-        else if (data == "Not an image") {
-          hideRenderLoader();
-          $("#imgUrl").before(addMessage("<p>The URL that you have sent was not an image.<br/> Please try again.</p>", "error"));
-        }
-        else if (data == "Not found") {
-          hideRenderLoader();
-          $("#imgUrl").before(addMessage("<p>The URL that you have sent was not found.<br/> Please try again.</p>", "error"));
-        }
-        else if (data == "Not exist") {
-          hideRenderLoader();
-          $("#imgUrl").before(addMessage("<p>The URL that you have sent is not accessible.<br/> Please try again.</p>", "error"));
+        if (data.status != "success") {
+            hideRenderLoader();
+            $("#imgUrl").before(addMessage(data, "error"));
         }
         else {
             removeMessage();
@@ -358,6 +355,9 @@ $(document).ready(function () {
 
           renderFilter(pluginId);
         }
+      })
+      .error(function(data) {
+        alert(data);
       });
     }
 

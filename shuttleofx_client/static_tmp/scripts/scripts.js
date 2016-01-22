@@ -11,10 +11,10 @@ function addMessage(content, type) {
 	}
 
 	if (type == "error") {
-		return "<div class=\"message error\"><i class=\"fa fa-meh-o\"></i>" + content + "</div>";
+		return "<div class=\"message error\"><i class=\"fa fa-meh-o\"></i><p>" + content + "</p></div>";
 	}
 	else if (type == "success") {
-		return "<div class=\"message success\"><i class=\"fa fa-rocket\"></i>"+ content + "</div>";
+		return "<div class=\"message success\"><i class=\"fa fa-rocket\"></i><p>"+ content + "</p></div>";
 	}
 };
 

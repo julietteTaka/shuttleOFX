@@ -371,6 +371,7 @@ def getTmpResource(resourceId):
     Returns tmp resource file.
     '''
     resource = os.path.join(config.resourcesPath, 'tmp', resourceId)
+    return send_file(resource);
 
 @config.g_app.route('/proxy/<resourceId>', methods=['GET'])
 def getProxy(resourceId):
@@ -453,7 +454,7 @@ def downloadImgFromUrl():
 
     imgUrl = request.json['url']
     if imgUrl.isspace() or not imgUrl:
-        abort(make_response("Empty request", 500))
+        abort(make_response("URL input is empty, please type an URL before to click on send button.", 400))
 
     if not imgUrl.startswith('http://') and not imgUrl.startswith('https://'):
         imgUrl = 'http://' + imgUrl
@@ -466,13 +467,16 @@ def downloadImgFromUrl():
         imgData = requests.get(imgUrl)
 
     except requests.exceptions.ConnectionError as e:
-        abort(make_response("Not exist", 404))
+        abort(make_response("The URL that you have sent is not accessible.<br/> Please try again.", 400))
 
     if not imgData.status_code == requests.codes.ok:
-        abort(make_response("Not found", imgData.status_code))
+        abort(make_response("The URL that you have sent was not found.", imgData.status_code))
 
     if not imgData.headers['content-type'].startswith('image'):
-        abort(make_response("Not an image", 404))
+        abort(make_response("The URL that you have sent was not an image.<br/> Please try again.", 406))
+
+    if 'gif' in imgData.headers['content-type'] :
+        abort(make_response("Sorry, the gif format is not accepted.<br/> Please try again with another image format.", 406))
 
     imgFile = open(imgPath,'w+')
     imgFile.write(imgData.content)

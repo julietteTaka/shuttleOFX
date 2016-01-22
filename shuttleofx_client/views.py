@@ -174,7 +174,7 @@ def getThumbnailById(resourceId):
 @config.g_app.route('/resource/tmp/<resourceId>', methods=['GET'])
 def getTmpResourceById(resourceId):
     req = requests.get(config.renderRootUri+"/resource/tmp/"+resourceId)
-    return Response(req.content, mimetype="image/png")
+    return Response(req.content)
 
 @config.g_app.route('/resource', methods=['GET'])
 def getResources():
