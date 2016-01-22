@@ -37,10 +37,10 @@ $('select#pageSize').change(function(){
   cookieManager({"count": count, "skip": skip});
 
   if (typeof search == "undefined") {
-    window.location.href = "http://localhost/plugin?count=" + count + "&skip=" + skip;
+    window.location.href = "/plugin?count=" + count + "&skip=" + skip;
   }
   else {
-    window.location.href = "http://localhost/plugin?search=" + search + "&count=" + count + "&skip=" + skip;
+    window.location.href = "/plugin?search=" + search + "&count=" + count + "&skip=" + skip;
   }
 });
 
