@@ -54,6 +54,13 @@ def getPlugins():
 
 	return render_template('plugins.html', dico=resp.json(), user=user)
 
+@config.g_app.route('/plugins')
+def getAllPlugins():
+    req = requests.get(config.catalogRootUri+"/plugins")
+    if req.status_code != 200:
+        abort(req.status_code)
+    return jsonify(**req.json())
+
 @config.g_app.route('/about')
 def getInfos():
     user = None

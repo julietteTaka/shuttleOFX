@@ -336,6 +336,12 @@ def getAllPlugins():
 
     return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "count": count, "pagination": pagination})
 
+@config.g_app.route("/plugins", methods=['GET'])
+def getAllPluginsDefault():
+    cursor = config.pluginTable.find({},{"rawIdentifier":1, "properties.OfxImageEffectPluginPropGrouping": 1})
+    plugins = [result for result in cursor]
+
+    return mongodoc_jsonify({"plugins": plugins})
 
 @config.g_app.route("/bundle/<int:bundleId>/plugin/<pluginRawIdentifier>")
 @config.g_app.route("/plugin/<pluginRawIdentifier>")
