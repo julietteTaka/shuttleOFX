@@ -410,7 +410,6 @@ def addResource():
 
     img = request.data
 
-
     imgFile = os.path.join(config.resourcesPath, str(uid))
     file = request.files['file']
     file.save(imgFile)
