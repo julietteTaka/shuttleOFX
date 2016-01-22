@@ -1,7 +1,7 @@
 {% extends "plugin.html" %}
 
 {# Set the active item in the menu #}
-{% set active = "infos" %}
+{% set active = "info" %}
 
 {% block content %}
 <div class="main-content no-bottom-header">
@@ -69,8 +69,8 @@
                     </thead>
                     <tbody>
                         {% for paramProps in plugin.parameters %}
-                            <tr tabindex="0" class="param-more" role="button" data-toggle="popover" data-trigger="focus" data-placement="right" data-html="true" 
-                            title="Details" 
+                            <tr tabindex="0" class="param-more" role="button" data-toggle="popover" data-trigger="focus" data-placement="right" data-html="true"
+                            title="Details"
                             data-content="
                             {% if "OfxParamPropDefault" in paramProps %}
                                 Default value: {{ paramProps.OfxParamPropDefault.value }}
@@ -84,7 +84,7 @@
                                 Max value: {{ paramProps.OfxParamPropMax.value }}
                             {% endif %}
                             ">
-                                
+
                                 <td style="opacity:0.5">
                                     {{ paramProps.OfxPropName.value }}
                                 </td>
@@ -157,7 +157,7 @@
                     </thead>
                     <tbody>
                     {% for propName, prop in plugin.properties.iteritems() %}
-                            <tr tabindex="0" class="param-more" role="button" data-toggle="popover" data-trigger="focus" data-placement="right" data-html="true" 
+                            <tr tabindex="0" class="param-more" role="button" data-toggle="popover" data-trigger="focus" data-placement="right" data-html="true"
                             title="Details">
                                 <td>
                                     {{ propName }}
