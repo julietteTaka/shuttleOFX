@@ -370,9 +370,13 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
     if not plugins:
         abort(404)
 
+    versions = []
+    for plugin in plugins:
+        versions.append(plugin["plugin"]["version"])
+
     plugin = plugins[0]["plugin"]
 
-    return mongodoc_jsonify(plugin)
+    return mongodoc_jsonify({'plugin': plugin, 'versions': versions})
 
 
 @config.g_app.route("/bundle/<rawIdentifier>/bundle", methods=['GET'])
