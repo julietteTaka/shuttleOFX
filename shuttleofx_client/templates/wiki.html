@@ -107,13 +107,21 @@
                     {% endif %}
                 {% else %}
                     {% if user %}
-                        <p class="center">
-                            No wiki has been created yet, go on and add a <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">new wiki</a>
-                        </p>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p class="center">
+                                No wiki has been created yet, go on and add a <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">new wiki</a>
+                            </p>
+                        </div>
+                    </div>
                     {% else %}
-                        <p class="wikialert center"><i class="fa fa-exclamation-triangle"></i>
-                            No wiki has been created yet, You must be logged in to create a new one !
-                        </p>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p class="wikialert center"><i class="fa fa-exclamation-triangle"></i>
+                                No wiki has been created yet, You must be logged in to create a new one !
+                            </p>
+                        </div>
+                    </div>
                     {% endif %}
                 {% endif %}
             </div>
@@ -123,8 +131,9 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript">
 
+{% if plugin.wiki %}
+<script type="text/javascript">
 $(document).ready(function(){
 
     // Because highlight.js is a bit awkward at times
@@ -265,6 +274,7 @@ $(document).ready(function(){
 });
 
 </script>
+{% endif %}
 <script type="text/javascript">
     var s = $("#mkdwn").html();
         s = "\n\n\n" + s + "\n\n\n";
