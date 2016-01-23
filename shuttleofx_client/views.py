@@ -14,41 +14,39 @@ from flask import (
 )
 import logging
 import config
-
+import userManager
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not 'google_token' in session:
+
+        user = userManager.getUser()
+        if user is None:
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
-
     return decorated_function
-
 
 @config.g_app.errorhandler(404)
 def page_not_found(e):
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
+    if user is not None:
         return render_template("notFound.html", user=user), 404
     return render_template("notFound.html"), 404
 
 
 @config.g_app.route('/')
 def index():
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
+    if user is not None:
         return render_template("index.html", user=user)
     return render_template("index.html")
 
 
 @config.g_app.route('/plugin')
 def getPlugins():
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
     try:
-        resp = requests.get(config.catalogRootUri + "/plugin", params=request.args)
+        resp = requests.get(config.catalogRootUri+"/plugin", params=request.args)
     except:
         return render_template('plugins.html', dico=None, user=user)
 
@@ -56,21 +54,18 @@ def getPlugins():
 
 
 @config.g_app.route('/about')
-def getInfos():
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+def getInfo():
+    user = userManager.getUser()
+    if user is not None:
         return render_template('whatIsOFX.html', user=user)
     return render_template('whatIsOFX.html', user=user)
 
 
 @config.g_app.route("/plugin/search/")
 def searchPlugins():
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
 
-    resp = requests.get(config.catalogRootUri + "/plugin", params=request.args)
+    resp = requests.get(config.catalogRootUri+"/plugin", params=request.args)
 
     return render_template('plugins.html', dico=resp.json(), user=user)
 
@@ -86,15 +81,13 @@ def countPlugins():
 @config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>")
 @config.g_app.route("/plugin/<pluginRawIdentifier>")
 def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
     if pluginVersion is "latest":
-        resp = requests.get(config.catalogRootUri + "/plugin/" + pluginRawIdentifier)
-    # if resp.status_code == 404:
-    # return redirect(url_for('notFoundPage', pluginRawIdentifier=pluginRawIdentifier))
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+       #if resp.status_code == 404:
+            #return redirect(url_for('notFoundPage', pluginRawIdentifier=pluginRawIdentifier))
     else:
-        resp = requests.get(config.catalogRootUri + "/plugin/" + pluginRawIdentifier + "/version/" + pluginVersion)
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
         if resp.status_code == 404:
             return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
 
@@ -105,14 +98,12 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
     return render_template('plugin.html', plugin=resp.json(), user=user)
 
 
-@config.g_app.route("/plugin/<pluginRawIdentifier>/infos")
-def getPluginInfos(pluginRawIdentifier):
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+@config.g_app.route("/plugin/<pluginRawIdentifier>/info")
+def getPluginInfo(pluginRawIdentifier):
+    user = userManager.getUser()
 
-    resp = requests.get(config.catalogRootUri + "/plugin/" + pluginRawIdentifier)
-    return render_template('pluginInfos.html', plugin=resp.json(), user=user)
+    resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+    return render_template('pluginInfo.html', plugin=resp.json(), user=user)
 
 
 @config.g_app.route('/plugin/<pluginId>/image/<imageId>')
@@ -124,10 +115,8 @@ def getSampleImagesForPlugin(pluginId, imageId):
 @config.g_app.route('/editor')
 @config.g_app.route('/editor/<pluginRawIdentifier>')
 def renderPageWithPlugin(pluginRawIdentifier):
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
-    resp = requests.get(config.catalogRootUri + "/plugin/" + str(pluginRawIdentifier))
+    user = userManager.getUser()
+    resp = requests.get(config.catalogRootUri+"/plugin/"+str(pluginRawIdentifier))
     if resp.status_code != 200:
         abort(resp.status_code)
     previewGallery = requests.get(config.renderRootUri + '/resource/').json()
@@ -146,13 +135,12 @@ def render():
 
 @config.g_app.route('/render/<int:renderId>', methods=['GET'])
 def getRenderStatus(renderId):
-    req = requests.get(config.renderRootUri + "/render/" + str(renderId))
+    req = requests.get(config.renderRootUri+"/render/"+str(renderId))
     return jsonify(**req.json())
-
 
 @config.g_app.route('/render/<renderId>/resource/<resourceId>', methods=['GET'])
 def getRenderResource(renderId, resourceId):
-    req = requests.get(config.renderRootUri + "/render/" + str(renderId) + "/resource/" + resourceId)
+    req = requests.get(config.renderRootUri+"/render/"+str(renderId)+"/resource/"+resourceId)
     return Response(req.content, mimetype="image/jpeg")
 
 
@@ -167,12 +155,10 @@ def getProxyById(resourceId):
     req = requests.get(config.renderRootUri + "/proxy/" + resourceId)
     return Response(req.content, mimetype="image/png")
 
-
 @config.g_app.route('/thumbnail/<resourceId>', methods=['GET'])
 def getThumbnailById(resourceId):
     req = requests.get(config.renderRootUri + "/thumbnail/" + resourceId)
     return Response(req.content, mimetype="image/png")
-
 
 @config.g_app.route('/resource', methods=['GET'])
 def getResources():
@@ -185,9 +171,9 @@ def getResources():
 @config.g_app.route('/upload')
 @login_required
 def upload():
-    if 'google_token' in session:
-        user = config.google.get('userinfo')
-        return render_template("upload.html", user=user.data, uploaded=None)
+    user = userManager.getUser()
+    if user is not None:
+        return render_template("upload.html", user=user, uploaded=None)
     return redirect(url_for('login'))
 
 
@@ -201,7 +187,7 @@ def getBundles():
 
 @config.g_app.route('/bundle', methods=['POST'])
 def newBundle():
-    header = {'content-type': 'application/json'}
+    header = {'content-type' : 'application/json'}
     req = requests.post(config.catalogRootUri + '/bundle', data=json.dumps(request.form), headers=header)
     if req.status_code != 200:
         abort(req.status_code)
@@ -216,39 +202,43 @@ def uploadArchive(bundleId):
     file.save("/tmp/" + filename)
     multiple_files = [('file', (filename, open("/tmp/" + filename, 'rb'), 'application/gzip'))]
 
-    req = requests.post(config.catalogRootUri + '/bundle/' + bundleId + '/archive', files=multiple_files)
+    req = requests.post(config.catalogRootUri + '/bundle/' + bundleId + '/archive', files = multiple_files)
     if req.status_code != 200:
         abort(req.status_code)
     os.remove("/tmp/" + filename)
     return jsonify(**req.json())
 
-
 @config.g_app.route('/bundle/<bundleId>/analyse', methods=['POST'])
 def analyseBundle(bundleId):
     req = requests.post(config.catalogRootUri + '/bundle/' + bundleId + '/analyse', data=request.data,
                         headers=request.headers)
+
     if req.status_code != 200:
         abort(req.status_code)
     return jsonify(**req.json())
 
 
-@config.g_app.route('/login')
-def login():
+@config.g_app.route('/login/google')
+def loginGoogle():
     logging.warning('login start')
-    res = config.google.authorize(callback=url_for('authorized', _external=True))
+    res = config.google.authorize(callback=url_for('authorizedGoogle', _external=True))
     logging.warning('login end')
     return res
 
+@config.g_app.route('/login/github')
+def loginGithub():
+    res = config.github.authorize(callback=url_for('authorizedGithub', _external=True))
+    return res
 
 @config.g_app.route('/logout')
 def logout():
     session.pop('google_token', None)
+    session.pop('github_token', None)
     redirectTarget = request.values.get('next') or request.referrer
-    return redirect(redirectTarget)
+    return redirect( redirectTarget )
 
-
-@config.g_app.route('/login/authorized')
-def authorized():
+@config.g_app.route('/login/authorized/google')
+def authorizedGoogle():
     logging.warning('login/authorized start')
     resp = config.google.authorized_response()
     if resp is None:
@@ -270,6 +260,26 @@ def authorized():
     logging.warning('login/authorized before redirect')
     res = redirect(redirectTarget)
     logging.warning('login/authorized end')
+    return res
+
+
+@config.g_app.route('/login/authorized/github')
+def authorizedGithub():
+    resp = config.github.authorized_response()
+
+    if resp is None:
+        return 'Access denied: reason=%s error=%s' % (
+            request.args['error_reason'],
+            request.args['error_description']
+        )
+
+    session['github_token'] = (resp['access_token'], '')
+
+    redirectTarget = request.values.get('next') or request.referrer  or url_for('getPlugins')
+    if redirectTarget == None:
+        logging.warning('login/authorized redirectTarget is None')
+
+    res = redirect( redirectTarget )
     return res
 
 
@@ -330,6 +340,9 @@ def addRenderToPlugin(pluginId, resourceId, renderId):
 def get_google_oauth_token():
     return session.get('google_token')
 
+@config.github.tokengetter
+def get_github_oauth_token():
+    return session.get('github_token')
 
 if __name__ == '__main__':
     config.g_app.run(host="0.0.0.0", port=5000, debug=True)
