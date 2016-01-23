@@ -41,6 +41,27 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
+                    <p>
+                        Here you can upload OFX plugins that you developed to add them in our catalog.
+                    </p>
+                    {% if not user %}
+                    <div class="message info">
+                        <p>Please login to upload plugins</p>
+                    </div>
+                    {% else %}
+                    <p>
+                        To upload new plugin(s), please follow the steps describe below :
+                        <ol>
+                            <li>Compress your plugin(s) in a tar.gz archive. <b>NB: each plugin have to be in its own directory in the archive.</b></li>
+                            <li>Fill the form below giving a name to the bundle of plugins that you send and the description of it.</li>
+                            <li>Click on GO button.</li>
+                            <li>Drag and drop your archive in the frame specified and click on UPLOAD button to send your bundle.</li>
+                            <li>That's all.</li>
+                        </ol>
+                    </p>
+                </div>
+
+                <div class="col-md-12">
                     <div class="page-header">
                     <h2>Bundle's information</h2>
                     </div>
@@ -52,6 +73,7 @@
                         </fieldset>
                     </form>
                 </div>
+                {% endif %}
             </div>
         </div>
         <div class="container-fluid">

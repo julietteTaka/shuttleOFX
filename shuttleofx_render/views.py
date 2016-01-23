@@ -427,6 +427,49 @@ def uploadPage():
 	</html>"""
 
 
+@config.g_app.route('/resource/<resourceId>/plugin/<pluginId>', methods=['POST'])
+def addCatalogRessource(resourceId, pluginId):
+    '''
+    Upload rendered file to the catalog database
+    '''
+
+    # Open the rendered file
+
+    renderFile_name = resourceId
+    renderFile_path = cache.cachePathFromFile(resourceId)
+    if not os.path.isfile(os.path.join(config.renderDirectory, renderFile_path)):
+        logging.error(config.renderDirectory + renderFile_path + " doesn't exists")
+        abort(make_response(config.renderDirectory + renderFile_path + " doesn't exists", 404))
+
+    renderFile = open(os.path.join(config.renderDirectory, renderFile_path), "rw")
+    renderFile.seek(0, os.SEEK_END)
+    renderFile_size = renderFile.tell()
+    renderFile_mimetype, _ = mimetypes.guess_type(renderFile_name)
+
+    # Add an entry in the db
+    uid = config.catalogResourceTable.insert({
+        "mimetype" : renderFile_mimetype,
+        "size" : renderFile_size,
+        "name" : renderFile_name})
+
+    # Write a copy of the rendered file into the catalog with the uid
+    # extension = ".png"
+    catalogFile_name = str(uid)
+    catalogFile_path = os.path.join(config.catalogRootUri, config.catalogResourcesPath, catalogFile_name)
+
+    catalogFile = open(catalogFile_path, "w")
+    renderFile.seek(0, 0)
+    catalogFile.write(renderFile.read(renderFile_size))
+    catalogFile.close()
+
+    renderFile.close()
+
+    resource = config.catalogResourceTable.find_one({"_id": ObjectId(uid)})
+    logging.warning("resource = " + str(resource))
+
+    return mongodoc_jsonify(resource)
+
+
 @atexit.register
 def cleanPool():
     '''
