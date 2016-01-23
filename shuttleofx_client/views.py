@@ -156,12 +156,10 @@ def getResources():
     return jsonify(**req.json())
 
 @config.g_app.route('/upload')
-@login_required
 def upload():
     user = userManager.getUser()
-    if user is not None:
-        return render_template("upload.html", user=user, uploaded=None)
-    return redirect(url_for('login'))
+    return render_template("upload.html", user=user, uploaded=None)
+
 
 @config.g_app.route('/bundle')
 def getBundles():
