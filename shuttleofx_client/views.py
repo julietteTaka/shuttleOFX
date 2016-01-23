@@ -157,10 +157,10 @@ def getResources():
 
 @config.g_app.route('/upload')
 def upload():
-    user = userManager.getUser()
-    if user is not None:
-        return render_template("upload.html", user=user, uploaded=None)
-    return redirect(url_for('login'))
+    user = None
+    if 'google_token' in session:
+        user = config.google.get('userinfo').data
+    return render_template("upload.html", user=user, uploaded=None)
 
 
 @config.g_app.route('/bundle')
