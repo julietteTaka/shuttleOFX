@@ -438,30 +438,18 @@ $(document).ready(function () {
         $("#render").addClass('disabled');
 
         var pluginId = $("#addGalleryImage").attr("pluginId");
+        var renderId = $("#renderedPic").attr("src").split("/resource/")[0].split("/render/")[1];
         var resourceId = $("#renderedPic").attr("src").split("/resource/")[1];
 
         $.ajax({
                 type: "POST",
-                url: "/resource/" + resourceId + "/plugin/" + pluginId,
+                url: "/plugin/" + pluginId + "/render/" + renderId + "/resource/" + resourceId,
                 async: false //avoid an empty data when result is returned.
+            }).done(function(){
+                $("#download-view").removeClass('disabled');
+                $("#addGalleryImage").removeClass('disabled');
+                $("#render").removeClass('disabled');
             })
-            .done(function(data){
-
-                //data = JSON.parse(data);
-                var imageId = data._id["$oid"];
-                var addImageURI = '/plugin/' + pluginId + '/images';
-
-                $.ajax({
-                    type : 'POST',
-                    url : addImageURI,
-                    contentType: "application/json",
-                    data : JSON.stringify({ 'ressourceId' : imageId})
-                }).done(function(){
-                    $("#download-view").removeClass('disabled');
-                    $("#addGalleryImage").removeClass('disabled');
-                    $("#render").removeClass('disabled');
-                })
-            });
     }); //.off("click");
 
     /* Before / After slider */

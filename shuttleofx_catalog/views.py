@@ -470,7 +470,10 @@ def addImageToPlugin(pluginId):
     if plugin == None:
         abort(404)
 
-    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"sampleImagesPath" : imageId} }, upsert=True)
+    config.pluginTable.update(
+        {"pluginId" : pluginId},
+        {'$addToSet' : {"sampleImagesPath" : imageId}},
+        upsert=True)
     plugin = config.pluginTable.find_one({"pluginId": pluginId})
 
     return mongodoc_jsonify(plugin)

@@ -182,13 +182,6 @@ def getResources():
     return jsonify(**req.json())
 
 
-@config.g_app.route('/resource/<resourceId>/plugin/<pluginId>', methods=['POST'])
-def addCatalogRessource(resourceId, pluginId):
-    req = requests.post(config.renderRootUri + "/resource/" + resourceId + "/plugin/" + pluginId)
-
-    return jsonify(**req.json())
-
-
 @config.g_app.route('/upload')
 @login_required
 def upload():
@@ -295,8 +288,41 @@ def addPluginResource(pluginId):
 
 @config.g_app.route("/plugin/<int:pluginId>/images", methods=['POST'])
 def addImageToPlugin(pluginId):
-    req = requests.post(config.catalogRootUri + "/plugin/" + str(pluginId) + "/images", data=request.data,
-                        headers=request.headers)
+    req = requests.post(
+        config.catalogRootUri + "/plugin/" + str(pluginId) + "/images",
+        data=request.data, headers=request.headers)
+    return jsonify(**req.json())
+
+
+@config.g_app.route("/plugin/<int:pluginId>/render/<renderId>/resource/<resourceId>", methods=['POST'])
+def addRenderToPlugin(pluginId, resourceId, renderId):
+    # get rendered image
+    req = requests.get(config.renderRootUri + "/render/" + renderId + "/resource/" + resourceId)
+
+    filename = resourceId
+    file = open("/tmp/" + filename, "w")
+    file.seek(0, 0)
+    file.write(req.content)
+    file.close()
+
+    multiple_files = [("file", (filename, open("/tmp/" + filename, 'rb'), 'application/gzip'))]
+
+    # send rendered image to catalog
+    req = requests.post(config.catalogRootUri + "/resources", files=multiple_files)
+
+    os.remove("/tmp/" + filename)
+
+    content = json.loads(req.content)
+    logging.warning("content = " + str(content))
+    imageId = content["_id"]["$oid"]
+
+    # link rendered image to plugin in catalog
+    headers = {u'content-type': 'application/json'}
+    data = {u'ressourceId': imageId}
+    req = requests.post(
+        config.catalogRootUri + "/plugin/" + str(pluginId) + "/images",
+        data=json.dumps(data), headers=headers)
+
     return jsonify(**req.json())
 
 
