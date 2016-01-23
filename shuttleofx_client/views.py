@@ -177,8 +177,7 @@ def analyseBundle(bundleId):
         abort(req.status_code)
     return jsonify(**req.json())
 
-# TODO Change to /login/google when the callback url in google config is fixed
-@config.g_app.route('/login')
+@config.g_app.route('/login/google')
 def loginGoogle():
     logging.warning('login start')
     res = config.google.authorize(callback=url_for('authorizedGoogle', _external=True))
@@ -197,8 +196,7 @@ def logout():
     redirectTarget = request.values.get('next') or request.referrer
     return redirect( redirectTarget )
 
-# TODO Change to /login/authorized/google when the callback url in google config is fixed
-@config.g_app.route('/login/authorized')
+@config.g_app.route('/login/authorized/google')
 def authorizedGoogle():
     logging.warning('login/authorized start')
     resp = config.google.authorized_response()
