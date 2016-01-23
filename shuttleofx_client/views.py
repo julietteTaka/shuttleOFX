@@ -90,29 +90,48 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
         if resp.status_code == 404:
             return render_template('pluginNotFound.html', user=user)
         abort(resp.status_code)
-    return render_template('plugin.html', plugin=resp.json(), user=user)
+    return render_template('plugin.html', plugin=resp.json()['plugin'], versions=resp.json()['versions'], user=user)
 
 @config.g_app.route("/plugin/<pluginRawIdentifier>/info")
-def getPluginInfo(pluginRawIdentifier):
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/info")
+def getPluginInfo(pluginRawIdentifier, pluginVersion="latest"):
     user = userManager.getUser()
 
-    resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
-    return render_template('pluginInfo.html', plugin=resp.json(), user=user)
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+       #if resp.status_code == 404:
+            #return redirect(url_for('notFoundPage', pluginRawIdentifier=pluginRawIdentifier))
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+
+    return render_template('pluginInfo.html', plugin=resp.json()['plugin'], versions=resp.json()['versions'], user=user)
 
 @config.g_app.route('/plugin/<pluginId>/image/<imageId>')
 def getSampleImagesForPlugin(pluginId, imageId):
     req = requests.get(config.catalogRootUri + "/resources/" + str(imageId) + "/data")
     return Response(req.content, mimetype=req.headers["content-type"])
 
-@config.g_app.route('/editor')
-@config.g_app.route('/editor/<pluginRawIdentifier>')
-def renderPageWithPlugin(pluginRawIdentifier):
+@config.g_app.route('/demo')
+@config.g_app.route('/plugin/<pluginRawIdentifier>/demo')
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/demo")
+def renderPageWithPlugin(pluginRawIdentifier, pluginVersion="latest"):
     user = userManager.getUser()
-    resp = requests.get(config.catalogRootUri+"/plugin/"+str(pluginRawIdentifier))
+
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+       #if resp.status_code == 404:
+            #return redirect(url_for('notFoundPage', pluginRawIdentifier=pluginRawIdentifier))
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+
     if resp.status_code != 200:
         abort(resp.status_code)
     previewGallery = requests.get(config.renderRootUri + '/resource/').json()
-    return render_template('editor.html', plugin=resp.json(), user=user, resources=previewGallery)
+    return render_template('editor.html', plugin=resp.json()['plugin'], versions=resp.json()['versions'], user=user, resources=previewGallery)
 
 @config.g_app.route('/render', methods=['POST'])
 def render():
