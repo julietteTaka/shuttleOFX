@@ -157,9 +157,7 @@ def getResources():
 
 @config.g_app.route('/upload')
 def upload():
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
     return render_template("upload.html", user=user, uploaded=None)
 
 
