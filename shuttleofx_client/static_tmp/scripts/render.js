@@ -1,5 +1,7 @@
 $(document).ready(function () {
 
+    var tmp;
+
     function formToJson() {
         var renderParameters = [];
         $("input", $('#renderForm')).each(function (index) {
@@ -342,22 +344,22 @@ $(document).ready(function () {
         data : JSON.stringify({
           'url': $("#imgUrl").val()
         }),
+          statusCode: {
+            500: function() {
+              alert( "page not found" );
+            }
+          }
       })
-      .done(function(data){
-        if (data.status != "success") {
+      .error(function(data) {
             hideRenderLoader();
-            $("#imgUrl").before(addMessage(data, "error"));
-        }
-        else {
+            $("#imgUrl").before(addMessage(data.responseText, "error"));
+      })
+      .success(function(data, textStat, xhr){
             removeMessage();
-
+            
           selectedResource = data;
 
           renderFilter(pluginId);
-        }
-      })
-      .error(function(data) {
-        alert(data);
       });
     }
 

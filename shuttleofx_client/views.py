@@ -10,7 +10,8 @@ from flask import (
 	Response,
 	redirect,
 	url_for,
-	session
+	session,
+	make_response
 )
 import logging
 import config
@@ -302,6 +303,10 @@ def downloadImgFromUrl():
     '''
     header = {'content-type' : 'application/json'}
     req = requests.post(config.renderRootUri + "/downloadImgFromUrl", data=request.data, headers=header)
+    
+    if req.status_code != requests.codes.ok:
+    	abort(make_response(req.content, req.status_code))
+
     return req.content
 
 @config.google.tokengetter
