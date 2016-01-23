@@ -294,8 +294,8 @@ $(document).ready(function () {
                                     src: {id: 1},
                                     dst: {id: 2}
                                 }],
-                                options: [],
-                            }),
+                                options: []
+                            })
                         })
                         .done(function (data) {
                             var link = document.createElement("a");
@@ -451,16 +451,11 @@ $(document).ready(function () {
                 var imageId = data._id["$oid"];
                 var addImageURI = '/plugin/' + pluginId + '/images';
 
-                alert("imageId =" + JSON.stringify(imageId, null, 4));
-
                 $.ajax({
                     type : 'POST',
                     url : addImageURI,
                     contentType: "application/json",
-                    data : JSON.stringify({ 'ressourceId' : imageId}),
-                    success: function(){
-                        location.reload();
-                    }
+                    data : JSON.stringify({ 'ressourceId' : imageId})
                 }).done(function(){
                     $("#download-view").removeClass('disabled');
                     $("#addGalleryImage").removeClass('disabled');
