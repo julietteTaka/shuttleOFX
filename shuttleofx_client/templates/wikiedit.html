@@ -37,8 +37,22 @@
                 </div>
             </div>
         </div>
-
-        <a href="/plugin/{{plugin.rawIdentifier}}/wiki" class="btn btn-primary">Back to wiki</a>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="/plugin/{{plugin.rawIdentifier}}/wiki" class="btn btn-primary">Back to wiki</a>
+            </div>
+            <div class="col-md-6">
+                <div id="menu">
+                    <div id="saveas-markdown">
+                        <span><i class="fa fa-caret-square-o-down"></i> Download Markdown</span>
+                    </div>
+                    <div id="saveas-html">
+                        <span><i class="fa fa-code"></i> Download HTML</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
 
         {% if user%}
         <div class="row markdownwiki">
@@ -58,15 +72,6 @@
                     {% endif %}
                     <input type='submit' value='Save' id="setWiki" class="btn btn-primary" attr-id="{{plugin.id}}">
                 </form>
-                <div id="menu">
-                    <span>Download : </span>
-                    <div id="saveas-markdown">
-                        <span><i class="fa fa-caret-square-o-down"></i> as Markdown</span>
-                    </div>
-                    <div id="saveas-html">
-                        <span><i class="fa fa-code"></i> as HTML</span>
-                    </div>
-                </div>
             </div>
             <div class="col-md-6">
                 <h3>Preview</h3>

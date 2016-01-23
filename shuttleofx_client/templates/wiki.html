@@ -64,47 +64,49 @@
         </div>
         {% endif %}
 
-
-
-
-
         <div class="row">
             <div class="col-md-12">
                 {% if plugin.wiki %}
                     {% if user %}
-                    <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">Edit wiki</a>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">Edit wiki</a>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="menu">
+                                <div id="saveas-markdown">
+                                    <span><i class="fa fa-caret-square-o-down"></i> Download Markdown</span>
+                                </div>
+                                <div id="saveas-html">
+                                    <span><i class="fa fa-code"></i> Download HTML</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     {% else %}
                         <p class="wikialert">
                             You must be logged in to edit the wiki !
                         </p>
                     {% endif %}
-                {% for wiki in plugin.wiki %}
-                {% if loop.last %}
-                <div id="in" class="hidden">
-                    <textarea id="code">{{wiki.content}}</textarea>
-                </div>
-                <div id="out">
+                    {% for wiki in plugin.wiki %}
+                        {% if loop.last %}
+                        <div class="row editor">
+                            <p>
+                                Last Edit
+                            </p>
+                            <div class="col-md-2">
+                                <img class="thumbnail" src="{{wiki.picture}}"/>
+                            </div>
+                            <div class="col-md-6 user">
+                                {{wiki.user}}
+                            </div>
+                            <div class="col-md-4 date">
+                                {{wiki.date}}
+                            </div>
+                        </div>
+                        {% endif %}
 
-                </div>
-                <div class="row editor">
-                    <p>
-                        Last Edit
-                    </p>
-                    <div class="col-md-2">
-                        <img class="thumbnail" src="{{wiki.picture}}"/>
-                    </div>
-                    <div class="col-md-6 user">
-                        {{wiki.user}}
-                    </div>
-                    <div class="col-md-4 date">
-                        {{wiki.date}}
-                    </div>
-                </div>
-                {% endif %}
-
-
-
-                {% endfor %}
+                    {% endfor %}
                 {% else %}
                     {% if user %}
                         <p class="center">
@@ -192,6 +194,40 @@
     });
 
     editor.on('load', update);
+
+    // Download files
+    function saveAsMarkdown(){
+      save(editor.getValue(), "markdown.md");
+    }
+
+    function saveAsHtml() {
+      save(document.getElementById('out').innerHTML, "html.html");
+    }
+
+    document.getElementById('saveas-markdown').addEventListener('click', function() {
+      saveAsMarkdown();
+    });
+
+    document.getElementById('saveas-html').addEventListener('click', function() {
+      saveAsHtml();
+    });
+
+    function save(code, name){
+      var blob = new Blob([code], { type: 'text/plain' });
+      if(window.saveAs){
+        window.saveAs(blob, name);
+      }else if(navigator.saveBlob){
+        navigator.saveBlob(blob, name);
+      }else{
+        url = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.setAttribute("href",url);
+        link.setAttribute("download",name);
+        var event = document.createEvent('MouseEvents');
+        event.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+        link.dispatchEvent(event);
+      }
+    }
 
     // Get the textarea value
     function updateHash(){
