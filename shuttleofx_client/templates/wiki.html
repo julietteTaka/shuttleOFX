@@ -31,62 +31,35 @@
 <div class="main-content">
     <div class="container-fluid">
 
-        {% if user%}
-        <div class="row markdownwiki">
-            <div class="col-md-6 hidden" id="in">
-                <h3>Edit</h3>
-                <form id="form-wiki">
-                    <input id="user" class="hidden" name="name" value="{{user.name}}">
-                    <input id="picture" name="picture" class="hidden" value="{{user.picture}}">
-                    {% if plugin.wiki %}
-                        {% for wiki in plugin.wiki %}
-                        {% if loop.last %}
-                    <textarea id="code">{{wiki.content}}</textarea>
-                        {% endif %}
-                        {% endfor %}
-                    {% else%}
-                    <textarea id="code"></textarea>
-                    {% endif %}
-                </form>
-            </div>
-            <div class="col-md-12">
-                <div id="out">
-
-                </div>
-            </div>
-        </div>
-        {% else %}
-        <div class="row">
-            <div class="col-md-12">
-                <p class="wikialert"><i class="fa fa-exclamation-triangle"></i>
-                    You must be logged in to edit the wiki !
-                </p>
-            </div>
-        </div>
-        {% endif %}
-
         <div class="row">
             <div class="col-md-12">
                 {% if plugin.wiki %}
-                    {% if user %}
-                    <div class="row">
-                        <div class="col-md-6">
-                            <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">Edit wiki</a>
-                        </div>
-                        <div class="col-md-6">
-                            <div id="menu">
-                                <div id="saveas-markdown">
-                                    <span><i class="fa fa-caret-square-o-down"></i> Download Markdown</span>
-                                </div>
-                                <div id="saveas-html">
-                                    <span><i class="fa fa-code"></i> Download HTML</span>
+
+                    {% for wiki in plugin.wiki %}
+                        {% if loop.last %}
+                        <div class="row markdownwiki">
+                            <div class="col-md-6 hidden" id="in">
+                                <form id="form-wiki">
+                                    <input id="user" class="hidden" name="name" value="{{user.name}}">
+                                    <input id="picture" name="picture" class="hidden" value="{{user.picture}}">
+                                    {% if plugin.wiki %}
+                                        {% for wiki in plugin.wiki %}
+                                        {% if loop.last %}
+                                    <textarea id="code">{{wiki.content}}</textarea>
+                                        {% endif %}
+                                        {% endfor %}
+                                    {% else%}
+                                    <textarea id="code"></textarea>
+                                    {% endif %}
+                                </form>
+                            </div>
+                            <div class="col-md-12">
+                                <div id="out">
+
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    {% endif %}
-                    {% for wiki in plugin.wiki %}
-                        {% if loop.last %}
+
                         <div class="row editor">
                             <p>
                                 Last Edit
@@ -94,16 +67,44 @@
                             <div class="col-md-2">
                                 <img class="thumbnail" src="{{wiki.picture}}"/>
                             </div>
-                            <div class="col-md-6 user">
-                                {{wiki.user}}
+                            <div class="col-md-6">
+                                <div class="user">
+                                    {{wiki.user}}
+                                </div>
+                                <div class="date">
+                                    {{wiki.date}}
+                                </div>
                             </div>
-                            <div class="col-md-4 date">
-                                {{wiki.date}}
+                            <div class="col-md-4">
+                                <div id="menu">
+                                    <div id="saveas-markdown" class="btn btn-primary">
+                                        <span><i class="fa fa-caret-square-o-down"></i> Download Markdown</span>
+                                    </div>
+                                    <!-- DO NOT REMOVE THAT DIV !!!!!!!!!! -->
+                                    <div id="saveas-html" class="btn btn-primary hidden">
+                                        <span><i class="fa fa-code"></i> Download HTML</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         {% endif %}
 
                     {% endfor %}
+                    {% if user %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">Edit wiki</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p class="wikialert"><i class="fa fa-exclamation-triangle"></i>
+                                You must be logged in to edit the wiki !
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
                 {% else %}
                     {% if user %}
                         <p class="center">

@@ -30,30 +30,6 @@
 <div class="main-content">
     <div class="container-fluid">
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="page-header">
-                <h2>Edit {{plugin.label}} wiki</h2>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <a href="/plugin/{{plugin.rawIdentifier}}/wiki" class="btn btn-primary">Back to wiki</a>
-            </div>
-            <div class="col-md-6">
-                <div id="menu">
-                    <div id="saveas-markdown">
-                        <span><i class="fa fa-caret-square-o-down"></i> Download Markdown</span>
-                    </div>
-                    <div id="saveas-html">
-                        <span><i class="fa fa-code"></i> Download HTML</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <hr>
-
         {% if user%}
         <div class="row markdownwiki">
             <div class="col-md-6" id="in">
@@ -70,7 +46,28 @@
                     {% else%}
                     <textarea id="code"></textarea>
                     {% endif %}
-                    <input type='submit' value='Save' id="setWiki" class="btn btn-primary" attr-id="{{plugin.id}}">
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="/plugin/{{plugin.rawIdentifier}}/wiki" class="btn btn-primary"><i class="fa fa-angle-left"></i>Back to wiki</a>
+                        </div>
+                        <div class="col-md-6">
+                            <input type='submit' value='Save' id="setWiki" class="btn btn-primary pull-right" attr-id="{{plugin.id}}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="menu">
+                                <div id="saveas-markdown" class="btn btn-primary">
+                                    <span><i class="fa fa-caret-square-o-down"></i> Download Markdown</span>
+                                </div>
+                                <!-- DO NOT REMOVE THAT DIV !!!!!!!!!!!!!! -->
+                                <div id="saveas-html" class="btn btn-primary hidden">
+                                    <span><i class="fa fa-code"></i> Download HTML</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="col-md-6">
