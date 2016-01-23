@@ -38,6 +38,7 @@
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 
     <!-- markdown -->
+    {% block markdown %}{% endblock %}
     <script src="{{ url_for('static', filename='scripts/vendor/markdown.js') }}" charset="utf-8"></script>
     <script src="{{ url_for('static', filename='scripts/vendor/bootstrap-markdown.js') }}" charset="utf-8"></script>
 
