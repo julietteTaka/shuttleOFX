@@ -13,7 +13,15 @@
                      <h1 data-0="margin-top:25px;font-size:3em;" data-150="margin-top:-55px;font-size:2em;">
                         {{plugin.label}}
                         <small style="color:rgba(255,255,255,0.7);font-weight:300;">
-                            Version {{plugin.version.major}}.{{plugin.version.minor}}
+                            Version 
+                            <div id="version">
+                                <i class="fa fa-angle-down"></i>
+                                <select>
+                                    {% for version in versions %}
+                                        <option>{{plugin.version.major}}.{{plugin.version.minor}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
                         </small>
                     </h1>
                 </div>
@@ -21,14 +29,14 @@
             <div class="row">
                 <div class="col-md-12">
                     <ul class="tabs">
-                        <li class="tab"><a {% if active is not defined %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}">General</a></li>
+                        <li class="tab"><a {% if active is not defined %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}">General</a></li>
                         {% if "OfxImageEffectPropSupportedContexts" in plugin.properties %}
                             {% set supportedContexts = plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
                             {% if "OfxImageEffectContextFilter" in supportedContexts or "OfxImageEffectContextGenerator" in supportedContexts %}
-                                <li class="tab"><a {% if active == "demo" %}class="active"{% endif %} href="/editor/{{plugin.rawIdentifier}}">Demo</a></li>
+                                <li class="tab"><a {% if active == "demo" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}/demo">Demo</a></li>
                             {% endif %}
                         {% endif %}
-                        <li class="tab"><a {% if active == "info" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/info">Technical info</a></li>
+                        <li class="tab"><a {% if active == "info" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}/info">Technical info</a></li>
                         <!-- FIXME enable these tabs when wiki and/or comments are active -->
                         <li class="tab disabled"><a {% if active == "wiki" %}class="active"{% endif %} href="#">Wiki</a></li>
                         <li class="tab disabled"><a {% if active == "comments" %}class="active"{% endif %} href="#">Comments</a></li>
