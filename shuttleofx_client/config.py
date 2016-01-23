@@ -60,10 +60,8 @@ github = oauth.remote_app(
 def get_resource_as_string(name, charset='utf-8'):
     with g_app.open_resource(name) as f:
         return f.read().decode(charset)
-        
+
 g_app.jinja_env.globals['get_resource_as_string'] = get_resource_as_string
 
 catalogRootUri = config.get("APP_CLIENT", "catalogRootUri")
 renderRootUri  = config.get("APP_CLIENT", "renderRootUri")
-
-

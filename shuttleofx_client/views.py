@@ -118,9 +118,7 @@ def renderPageWithPlugin(pluginRawIdentifier):
 @config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/wiki")
 @config.g_app.route("/plugin/<pluginRawIdentifier>/wiki")
 def getPluginWiki(pluginRawIdentifier, pluginVersion="latest"):
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
     if pluginVersion is "latest":
         resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
     else:
@@ -136,9 +134,7 @@ def getPluginWiki(pluginRawIdentifier, pluginVersion="latest"):
 @config.g_app.route("/wiki/edit/<pluginRawIdentifier>/version/<pluginVersion>")
 @config.g_app.route("/wiki/edit/<pluginRawIdentifier>")
 def getPluginWikiEdit(pluginRawIdentifier, pluginVersion="latest"):
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
     if pluginVersion is "latest":
         resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
     else:
@@ -154,9 +150,7 @@ def getPluginWikiEdit(pluginRawIdentifier, pluginVersion="latest"):
 @config.g_app.route('/wiki/update/<pluginId>/version/<pluginVersion>', methods=['POST'])
 @config.g_app.route('/wiki/update/<pluginId>', methods=['POST'])
 def setWiki(pluginId, pluginVersion="latest"):
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
     header = {'content-type' : 'application/json'}
     req = requests.post(config.catalogRootUri + "/wiki/update/" + pluginId, data=request.data, headers=header)
     return req.content
@@ -168,9 +162,7 @@ def setWiki(pluginId, pluginVersion="latest"):
 @config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/comments")
 @config.g_app.route("/plugin/<pluginRawIdentifier>/comments")
 def getPluginComments(pluginRawIdentifier, pluginVersion="latest"):
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
     if pluginVersion is "latest":
         resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
     else:
@@ -186,9 +178,7 @@ def getPluginComments(pluginRawIdentifier, pluginVersion="latest"):
 @config.g_app.route('/plugin/<pluginId>/version/<pluginVersion>/comments/update', methods=['POST'])
 @config.g_app.route('/plugin/<pluginId>/comments/update', methods=['POST'])
 def addComment(pluginId, pluginVersion="latest"):
-    user = None
-    if 'google_token' in session:
-        user = config.google.get('userinfo').data
+    user = userManager.getUser()
     header = {'content-type' : 'application/json'}
     req = requests.post(config.catalogRootUri + "/plugin/" + pluginId + "/comments/update", data=request.data, headers=header)
     return req.content

@@ -2,6 +2,7 @@
 
 {% block markdown %}
 <!-- js -->
+
 <script src="{{ url_for('static', filename='scripts/vendor/markdown/markdown-it.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/vendor/markdown/markdown-it-footnote.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/vendor/markdown/highlight.pack.js') }}"></script>
@@ -83,10 +84,6 @@
                             </div>
                         </div>
                     </div>
-                    {% else %}
-                        <p class="wikialert">
-                            You must be logged in to edit the wiki !
-                        </p>
                     {% endif %}
                     {% for wiki in plugin.wiki %}
                         {% if loop.last %}
@@ -126,6 +123,8 @@
 
 {% block scripts %}
 <script type="text/javascript">
+
+$(document).ready(function(){
 
     // Because highlight.js is a bit awkward at times
     var languageOverrides = {
@@ -262,6 +261,7 @@
       update(editor);
       editor.focus();
     }
+});
 
 </script>
 <script type="text/javascript">
