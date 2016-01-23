@@ -66,8 +66,12 @@
             {% else %}
                 <li class="userunloged">
                     <p class="userName">
-                        <a class="signedIn" href="/login"><i class="fa fa-unlock"></i>Login</a>
+                        <a class="signedIn" href="#"><i class="fa fa-unlock"></i>Login</a>
                     </p>
+                    <div>
+                        <a class="signedIn" href="/login/google"><i class="fa fa-google"></i>with Google</a>
+                        <a class="signedIn" href="/login/github"><i class="fa fa-github"></i>with Github</a>    
+                    </div>
                 </li>
             {% endif %}
 
