@@ -40,51 +40,50 @@
 
         <a href="/plugin/{{plugin.rawIdentifier}}/wiki" class="btn btn-primary">Back to wiki</a>
 
+        {% if user%}
         <div class="row markdownwiki">
             <div class="col-md-6" id="in">
-                <form>
-                    <textarea id="code"></textarea>
-                </form>
-                <div id="menu">
-                    <span>Save as : </span>
-                    <div id="saveas-markdown">
-                        <span><i class="fa fa-caret-square-o-down"></i> Markdown</span>
-                    </div>
-                    <div id="saveas-html">
-                        <span><i class="fa fa-code"></i> HTML</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6" id="out">
-
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                {% if user %}
+                <h3>Edit</h3>
                 <form id="form-wiki">
-                    <label for="name" class="hidden">Your name</label>
-                    <input id="user" type="text" class="form-control hidden" name="name" value="{{user.name}}">
-                    <input id="picture" type="text" name="picture" class="form-control hidden" value="{{user.picture}}">
+                    <input id="user" class="hidden" name="name" value="{{user.name}}">
+                    <input id="picture" name="picture" class="hidden" value="{{user.picture}}">
                     {% if plugin.wiki %}
                         {% for wiki in plugin.wiki %}
                         {% if loop.last %}
-                        <textarea id="wiki" class="panel panel-primary" data-provide="markdown" data-iconlibrary="fa" rows="10">{{wiki.content}}</textarea>
+                    <textarea id="code">{{wiki.content}}</textarea>
                         {% endif %}
                         {% endfor %}
                     {% else%}
-                        <textarea id="wiki" class="panel panel-primary" data-provide="markdown" data-iconlibrary="fa" rows="10"></textarea>
+                    <textarea id="code"></textarea>
                     {% endif %}
                     <input type='submit' value='Save' id="setWiki" class="btn btn-primary" attr-id="{{plugin.id}}">
                 </form>
-                {% else %}
+                <div id="menu">
+                    <span>Download : </span>
+                    <div id="saveas-markdown">
+                        <span><i class="fa fa-caret-square-o-down"></i> as Markdown</span>
+                    </div>
+                    <div id="saveas-html">
+                        <span><i class="fa fa-code"></i> as HTML</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h3>Preview</h3>
+                <div id="out">
+
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="row">
+            <div class="col-md-12">
                 <p class="wikialert"><i class="fa fa-exclamation-triangle"></i>
                     You must be logged in to edit the wiki !
                 </p>
-                {% endif %}
             </div>
         </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
@@ -158,6 +157,7 @@
       extraKeys: {"Enter": "newlineAndIndentContinueMarkdownList"}
     });
 
+    editor.on('load', update);
     editor.on('change', update);
 
     // Download files
@@ -194,6 +194,40 @@
       }
     }
 
+    // Get the textarea value
+    function updateHash(){
+      window.location.hash = btoa( // base64 so url-safe
+        RawDeflate.deflate( // gzip
+          unescape(encodeURIComponent( // convert to utf8
+            editor.getValue()
+          ))
+        )
+      );
+    }
+
+    if(window.location.hash){
+      var h = window.location.hash.replace(/^#/, '');
+      if(h.slice(0,5) == 'view:'){
+        setOutput(decodeURIComponent(escape(RawDeflate.inflate(atob(h.slice(5))))));
+        document.body.className = 'view';
+      }else{
+        editor.setValue(
+          decodeURIComponent(escape(
+            RawDeflate.inflate(
+              atob(
+                h
+              )
+            )
+          ))
+        );
+        update(editor);
+        editor.focus();
+      }
+    }else{
+      update(editor);
+      editor.focus();
+    }
+
 
 </script>
 
@@ -221,12 +255,13 @@ $(document).ready(function() {
         month[9] = "Oct";
         month[10] = "Nov";
         month[11] = "Dec";
+        var val = editor.getValue();
         $.ajax({
             type: "POST",
             url: "/wiki/update/"+{{plugin.pluginId}},
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify({
-                'wikicontent': '\n' + $("#wiki").val(),
+                'wikicontent': val,
                 'wikiuser' : $("#user").val(),
                 'wikipicture' : $("#picture").val(),
                 'wikidate' : h+':'+i+'\n'+month[m]+' '+d+' '+y
@@ -240,46 +275,6 @@ $(document).ready(function() {
 });
 </script>
 <script type="text/javascript">
-$('#wiki').markdown({
-    hiddenButtons:'cmdPreview',
-    footer:'<div id="twitter-footer" class="well" style="display:none;"></div>',
-    additionalButtons: [
-        [{
-            name: "groupCustom",
-            data: [{
-            name: "cmdIndent",
-                toggle: true, // this param only take effect if you load bootstrap.js
-                title: "Indent",
-                icon: "fa fa-indent",
-                callback: function(e){
-                  // Replace selection with some drinks
-                  var string, cursor,
-                      selected = e.getSelection(), content = e.getContent(),
-
-
-                  // Give random drink
-                  string = "    "
-
-                  // transform selection and set the cursor into chunked text
-                  e.replaceSelection(string)
-                  cursor = selected.start
-
-                  // Set the cursor
-                  e.setSelection(cursor,cursor+string.length)
-                }
-              }]
-        }]
-    ],
-    onChange:function(e){
-        var content = e.parseContent()
-
-        if (content == '') {
-            $('#twitter-footer').hide()
-        } else {
-            $('#twitter-footer').show().html(content)
-        }
-    }
-})
     var s = $("#mkdwn").html();
         s = "\n\n\n" + s + "\n\n\n";
     var rend = markdown.toHTML(s);
