@@ -448,8 +448,6 @@ ul.right-nav li .fa{
             color: #555;
         }
     }
-
-
     ul{
         line-height: 2;
         // padding-top: 1em;
@@ -497,16 +495,32 @@ ul.right-nav li .fa{
         }
         ul {
             width: 100%;
-            display: none;
+            //display: none;
+            padding-left: 10%;
+            text-transform: capitalize;
             li {
                 width: 100%;
                 border: none;
                 a {
                     width: 100%;
                     font-size: 0.85em;
-                    padding-left: 80px;
                     display: block;
+                    line-height: 1.5;
                 }
+                ul{
+                    display: none;
+                }
+            }
+            li a::after{
+                font-family: 'FontAwesome';
+                content: " \f0d7";
+            }
+            li a.active::after{
+                font-family: 'FontAwesome';
+                content: " \f0d8";
+            }
+            li a:only-child::after{
+                content: '';
             }
         }
     }
