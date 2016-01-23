@@ -50,6 +50,12 @@ def getPlugins():
 
     return render_template('plugins.html', dico=resp.json(), user=user)
 
+@config.g_app.route('/about')
+def getInfo():
+    user = userManager.getUser()
+    if user is not None:
+        return render_template('whatIsOFX.html', user=user)
+    return render_template('whatIsOFX.html', user=user)
 
 @config.g_app.route("/plugin/search/")
 def searchPlugins():
@@ -86,6 +92,13 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
         abort(resp.status_code)
     return render_template('plugin.html', plugin=resp.json(), user=user)
 
+@config.g_app.route("/plugin/<pluginRawIdentifier>/info")
+def getPluginInfo(pluginRawIdentifier):
+    user = userManager.getUser()
+
+    resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+    return render_template('pluginInfo.html', plugin=resp.json(), user=user)
+
 @config.g_app.route('/plugin/<pluginId>/image/<imageId>')
 def getSampleImagesForPlugin(pluginId, imageId):
     req = requests.get(config.catalogRootUri + "/resources/" + str(imageId) + "/data")
@@ -120,11 +133,20 @@ def getRenderResource(renderId, resourceId):
     req = requests.get(config.renderRootUri+"/render/"+str(renderId)+"/resource/"+resourceId)
     return Response(req.content, mimetype="image/jpeg")
 
-
 @config.g_app.route('/resource/<resourceId>', methods=['GET'])
 def getResourceById(resourceId):
     req = requests.get(config.renderRootUri + "/resource/" + resourceId)
     return Response(req.content, mimetype="image/png")
+
+@config.g_app.route('/proxy/<resourceId>', methods=['GET'])
+def getProxyById(resourceId):
+	req = requests.get(config.renderRootUri + "/proxy/" + resourceId)
+	return Response(req.content, mimetype="image/png")
+
+@config.g_app.route('/thumbnail/<resourceId>', methods=['GET'])
+def getThumbnailById(resourceId):
+	req = requests.get(config.renderRootUri + "/thumbnail/" + resourceId)
+	return Response(req.content, mimetype="image/png")
 
 @config.g_app.route('/resource', methods=['GET'])
 def getResources():
