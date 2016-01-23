@@ -400,8 +400,8 @@ def addResource():
     size = request.content_length
 
     if not mimetype:
-        logging.error("Invalide resource.")
-        abort(make_response("Invalide resource.", 400))
+        logging.error("Invalid resource.")
+        abort(make_response("Invalid resource.", 400))
 
     uid = config.resourceTable.insert({
         "mimetype" : mimetype,
@@ -409,7 +409,6 @@ def addResource():
         "name" : name})
 
     img = request.data
-
 
     imgFile = os.path.join(config.resourcesPath, str(uid))
     file = request.files['file']
@@ -471,7 +470,10 @@ def addImageToPlugin(pluginId):
     if plugin == None:
         abort(404)
 
-    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"sampleImagesPath" : imageId} }, upsert=True)
+    config.pluginTable.update(
+        {"pluginId" : pluginId},
+        {'$addToSet' : {"sampleImagesPath" : imageId}},
+        upsert=True)
     plugin = config.pluginTable.find_one({"pluginId": pluginId})
 
     return mongodoc_jsonify(plugin)

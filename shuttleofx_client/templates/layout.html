@@ -168,9 +168,9 @@
 
             thumDropzone.on('success', function(data){
 
-                data = JSON.parse(data.xhr.response);;
+                data = JSON.parse(data.xhr.response);
 
-                var imageId = data._id["$oid"]
+                var imageId = data._id["$oid"];
 
                 var addImageURI = '/plugin/' + pluginId + '/images';
 
