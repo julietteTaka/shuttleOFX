@@ -447,7 +447,6 @@ $(document).ready(function () {
                 async: false //avoid an empty data when result is returned.
             }).done(function(){
                 $("#download-view").removeClass('disabled');
-                $("#addGalleryImage").removeClass('disabled');
                 $("#render").removeClass('disabled');
             })
     }); //.off("click");
