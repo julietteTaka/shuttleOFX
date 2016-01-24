@@ -121,9 +121,7 @@ def getSampleImagesForPlugin(pluginId, imageId):
 
 @config.g_app.route('/category')
 def getCategory():
-	user = None
-	if 'google_token' in session:
-		user = config.google.get('userinfo').data
+	user = userManager.getUser()
 	try:
 		resp = requests.get(config.catalogRootUri + "/category", params=request.args)
 	except:
