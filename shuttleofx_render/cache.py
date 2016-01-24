@@ -4,7 +4,7 @@ from processify import processify
 import config
 
 @processify
-def cleanCache(cachePath):
+def cleanCache(cachePath, cacheMaxSize):
     '''
         Clean the folder so it does not get bigger
         than the limit set in the config file
@@ -26,7 +26,7 @@ def cleanCache(cachePath):
 
     for file in allFiles:
         # TODO : Maybe pass the max size as an argument
-        if cacheSize <= config.cacheMaxSize:
+        if cacheSize <= cacheMaxSize:
             break
         os.remove(os.path.join(cachePath, os.path.join(cachePath, file[2])))
         cacheSize -= file[1]

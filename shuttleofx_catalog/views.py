@@ -60,6 +60,47 @@ def createPagination(count, skip, maxPage):
 
     return pagination
 
+def createSearchPagination(count, skip, maxPage, keyWord):
+
+    '''
+    ' Create the HTML code for the pagination bar in search result page
+    '''
+
+    pagination = []
+
+    pagination.append( """ <div class="row">
+                <div class="col-md-12">
+                    <div id="filter-page">
+                        <ul class="pagination pagination-sm pager-check">""")
+
+    if skip == 1 :
+        pagination .append('     <li id="previous" class="disabled"><a href=""> < </a></li>')
+    else :
+        pagination.append('     <li id="previous"><a href="/plugin?search='+ keyWord + '&count=' + str(count)+'&skip=' + str(skip-1) + '"> < </a></li>')
+
+    pageCounter = 1
+
+    for pageCounter in range(1, maxPage+1) :
+        if pageCounter == skip:
+            pagination.append('                            <li class="disabled"><a href="">' + str(pageCounter) + '</a></li>')
+        else:
+            pagination.append('                            <li><a href="/plugin?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(pageCounter) +'">' + str(pageCounter) + '</a></li>')
+
+    if skip == maxPage:
+        pagination.append('                          <li id="next" class="disabled"><a href=""> > </a></li>')
+    else:
+        pagination.append('                          <li id="next"><a href="/plugin?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(skip+1) + '"> > </a></li>')
+
+    pagination.append("""                    </ul>
+                    </div>
+                </div>
+            </div>
+        """)
+
+    pagination = ''.join(pagination)
+
+    return pagination
+
 @config.g_app.route("/")
 def index():
     return "ShuttleOFX Catalog service"
@@ -288,9 +329,12 @@ def getAllPlugins():
 
     maxPage = int(math.ceil(totalPlugins / count)+1)
 
-    pagination = createPagination(count, skip, maxPage)
+    if keyWord:
+        pagination = createSearchPagination(count, skip, maxPage, keyWord)
+    else: 
+        pagination = createPagination(count, skip, maxPage)
 
-    return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "pagination": pagination})
+    return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "count": count, "pagination": pagination})
 
 
 @config.g_app.route("/bundle/<int:bundleId>/plugin/<pluginRawIdentifier>")
@@ -356,8 +400,8 @@ def addResource():
     size = request.content_length
 
     if not mimetype:
-        logging.error("Invalide resource.")
-        abort(make_response("Invalide resource.", 400))
+        logging.error("Invalid resource.")
+        abort(make_response("Invalid resource.", 400))
 
     uid = config.resourceTable.insert({
         "mimetype" : mimetype,
@@ -365,7 +409,6 @@ def addResource():
         "name" : name})
 
     img = request.data
-
 
     imgFile = os.path.join(config.resourcesPath, str(uid))
     file = request.files['file']
@@ -427,7 +470,10 @@ def addImageToPlugin(pluginId):
     if plugin == None:
         abort(404)
 
-    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"sampleImagesPath" : imageId} }, upsert=True)
+    config.pluginTable.update(
+        {"pluginId" : pluginId},
+        {'$addToSet' : {"sampleImagesPath" : imageId}},
+        upsert=True)
     plugin = config.pluginTable.find_one({"pluginId": pluginId})
 
     return mongodoc_jsonify(plugin)

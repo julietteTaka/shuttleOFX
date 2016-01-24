@@ -32,8 +32,6 @@ ul.surveys.grid{
 		width: calc(~'(100% / 5) - 10px');
 		margin: 0 5px 0 5px;
 		float: left;
-		transition: all 2s ease-in-out;
-		transition-delay : 0;
     		list-style: none;
 		.plugins-titles{
 			width: 100%;
@@ -67,7 +65,7 @@ ul.surveys.grid{
 				float: right;
 			}
 		}
-		p{	
+		p{
 			padding: 0;
 			margin: 0;
 			padding-left: 10px;
@@ -110,17 +108,6 @@ ul.surveys.grid{
 	}
 }
 
-@iterations: 10;
-
-.mixin-loop (@i) when (@i > 1) {
-  ul.surveys.grid li.plugin:nth-child(@{i}) {
-    transition-delay: calc(0.05s * @i);
-  }
-  .mixin-loop(@i - 1);
-}
-
-.mixin-loop(@iterations);
-
 ul.surveys.list{
 	list-style: none;
 	li{
@@ -137,7 +124,7 @@ ul.surveys.list{
 				box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08), 0 1px 6px rgba(0, 0, 0, 0.08);
 			}
 		}
-		
+
 		.plugins-titles{
 			display: inline-block;
 			h3{
@@ -170,7 +157,7 @@ ul.surveys.list{
 				object-fit: cover;
 			}
 		}
-		.plugins-infos{
+		.plugins-info{
 			padding : 5px;
 			p{
 				// display: none;
