@@ -207,41 +207,37 @@
 
     <script src="{{ url_for('static', filename='scripts/vendor/ace.js') }}"></script>
     <script>
-        $("#code").hide();
-        $("#code").val("");
+            $("#input").val("code");
+            $("#input option[value='code']").prop("selected", true);
+            $("#input option").removeAttr("data-default");
+            $("#input option[value='code']").attr("data-default", 'selected');
 
-        $("#code").before(
-             '<div id = "script-editor" style="width: 100%; height: 250px;">'+
-                '<pre id = "editor" style="height: 100%;">'+
-                    "void main( &#10;"+
-                    "   input varying float rIn, &#10;"+
-                    "   input varying float gIn, &#10;"+
-                    "   input varying float bIn, &#10;"+
-                    "   input varying float aIn, &#10;"+
-                    "   output varying float rOut, &#10;"+
-                    "   output varying float gOut, &#10;"+
-                    "   output varying float bOut, &#10;"+
-                    "   output varying float aOut &#10;"+
-                    ") {&#10;"+
-                    "   rOut = rIn;&#10;"+
-                    "   gOut = gIn;&#10;"+
-                    "   bOut = bIn;&#10;"+
-                    "   aOut = aIn;&#10;"+
-                    "}"+
-                '</pre>'+
-             '</div>'
-        )
 
-        var editor = ace.edit("editor");
-        editor.setTheme("ace/theme/solarized_dark");
-        editor.getSession().setMode("ace/mode/c_cpp");
-        document.getElementById('editor').style.fontSize='11pt';
-        $(".ace_scrollbar").css("z-index", 1);
-        $("#code").val(editor.getValue());
+            $("#code").hide();
 
-        editor.getSession().on('change', function(e) {
-            $("#code").val(editor.getValue());
-        });
+            $("#code").before(
+                 '<div id = "script-editor" style="width: 100%; height: 250px;">'+
+                    '<pre id = "editor" style="height: 100%;">'+
+
+                    '</pre>'+
+                 '</div>'
+            );
+
+            var editor = ace.edit("editor");
+            editor.setTheme("ace/theme/solarized_dark");
+            editor.getSession().setMode("ace/mode/c_cpp");
+            document.getElementById('editor').style.fontSize='11pt';
+            $(".ace_scrollbar").css("z-index", 1);
+
+            editor.setValue($("#code").data('default'));
+
+            editor.getSession().on('change', function(e) {
+                $("#code").val(editor.getValue());
+            });
+
+            $('#reset').click(function() {
+                editor.setValue($("#code").data('default'));
+            })
 
         // Delete underlining of demo-links
         var style = document.createElement("style");
