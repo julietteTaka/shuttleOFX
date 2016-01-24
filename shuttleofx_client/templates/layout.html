@@ -57,8 +57,12 @@
             {% else %}
                 <li class="userunloged">
                     <p class="userName">
-                        <a class="signedIn" href="/login"><i class="fa fa-unlock"></i>Login</a>
+                        <a class="signedIn" href="#"><i class="fa fa-unlock"></i>Login</a>
                     </p>
+                    <div>
+                        <a class="signedIn" href="/login/google"><i class="fa fa-google"></i>with Google</a>
+                        <a class="signedIn" href="/login/github"><i class="fa fa-github"></i>with Github</a>    
+                    </div>
                 </li>
             {% endif %}
 
@@ -67,11 +71,9 @@
             <li class="active">
                 <a href='/plugin'><i class="fa fa-crop"></i>Explore plugins</a>
             </li>
-            {% if user %}
             <li>
                 <a href='/upload'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
             </li>
-            {% endif %}
             <li>
                 <a href='/about'><i class="fa fa-info"></i>About OpenFX</a>
             </li>
@@ -166,9 +168,9 @@
 
             thumDropzone.on('success', function(data){
 
-                data = JSON.parse(data.xhr.response);;
+                data = JSON.parse(data.xhr.response);
 
-                var imageId = data._id["$oid"]
+                var imageId = data._id["$oid"];
 
                 var addImageURI = '/plugin/' + pluginId + '/images';
 

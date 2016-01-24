@@ -100,6 +100,7 @@ $(document).ready(function () {
         var renderParameters = formToJson();
 
         $("#download-view").addClass('disabled');
+        $("#addGalleryImage").addClass('disabled');
         $("#render").addClass('disabled');
 
         $.ajax({
@@ -129,12 +130,15 @@ $(document).ready(function () {
             .done(function (data) {
                 $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
                 $("#download-view").removeClass('disabled');
+                $("#addGalleryImage").removeClass('disabled');
+                $("#render").removeClass('disabled');
                 hideRenderLoader();
                 $('.display img').css({height: "auto"});
 
                 $("#downloadtrigger").off("click").click(function (data) {
                     $("#download-view").addClass('disabled');
                     $("#render").addClass('disabled');
+                    $("#addGalleryImage").addClass('disabled');
                     $("#downloadModal").modal('hide');
                     displayDownloadLoader();
 
@@ -175,6 +179,7 @@ $(document).ready(function () {
 
                             hideDownloadLoader();
                             $("#download-view").removeClass('disabled');
+                            $("#addGalleryImage").removeClass('disabled');
                             $("#render").removeClass('disabled');
                         });
                 });
@@ -189,6 +194,7 @@ $(document).ready(function () {
         var renderParameters = formToJson();
 
         $("#download-view").addClass('disabled');
+        $("#addGalleryImage").addClass('disabled');
         $("#render").addClass('disabled');
 
         $.ajax({
@@ -253,6 +259,7 @@ $(document).ready(function () {
                 $("#viewer img#originalPic").show();
                 $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
                 $("#download-view").removeClass('disabled');
+                $("#addGalleryImage").removeClass('disabled');
                 $("#render").removeClass('disabled');
                 hideRenderLoader();
                 $('.display img').css({height: "auto"});
@@ -260,6 +267,7 @@ $(document).ready(function () {
 
                 $("#downloadtrigger").off("click").click(function (data) {
                     $("#download-view").addClass('disabled');
+                    $("#addGalleryImage").addClass('disabled');
                     $("#render").addClass('disabled');
                     $("#downloadModal").modal('hide');
                     displayDownloadLoader();
@@ -305,8 +313,8 @@ $(document).ready(function () {
                                     src: {id: 1},
                                     dst: {id: 2}
                                 }],
-                                options: [],
-                            }),
+                                options: []
+                            })
                         })
                         .done(function (data) {
                             var link = document.createElement("a");
@@ -319,6 +327,7 @@ $(document).ready(function () {
 
                             hideDownloadLoader();
                             $("#download-view").removeClass('disabled');
+                            $("#addGalleryImage").removeClass('disabled');
                             $("#render").removeClass('disabled');
                         });
                 });
@@ -480,6 +489,27 @@ $(document).ready(function () {
     $('button#reset').click(function () {
         resetParameters();
     });
+
+
+    $("#addGalleryImage").click(function(event){
+
+        $("#download-view").addClass('disabled');
+        $("#addGalleryImage").addClass('disabled');
+        $("#render").addClass('disabled');
+
+        var pluginId = $("#addGalleryImage").attr("pluginId");
+        var renderId = $("#renderedPic").attr("src").split("/resource/")[0].split("/render/")[1];
+        var resourceId = $("#renderedPic").attr("src").split("/resource/")[1];
+
+        $.ajax({
+                type: "POST",
+                url: "/plugin/" + pluginId + "/render/" + renderId + "/resource/" + resourceId,
+                async: false //avoid an empty data when result is returned.
+            }).done(function(){
+                $("#download-view").removeClass('disabled');
+                $("#render").removeClass('disabled');
+            })
+    }); //.off("click");
 
     /* Before / After slider */
 
