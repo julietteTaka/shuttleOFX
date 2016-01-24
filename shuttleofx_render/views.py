@@ -6,6 +6,8 @@ import logging
 import tempfile
 import multiprocessing
 import mimetypes
+import requests
+import imghdr
 import zipfile
 import datetime
 
@@ -34,6 +36,8 @@ g_manager = multiprocessing.Manager()
 
 g_lastClean = datetime.datetime.min
 
+g_tmpLastClean = datetime.datetime.min
+
 
 def mongodoc_jsonify(*args, **kwargs):
     return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
@@ -53,7 +57,7 @@ def newRender():
 
     # Clean the cache every interval set in the config
     if g_lastClean < datetime.datetime.now() - datetime.timedelta(hours=config.cleanCacheInterval):
-        cache.cleanCache(config.renderDirectory)
+        cache.cleanCache(config.renderDirectory, config.cacheMaxSize)
         # update clean date
         g_lastClean = datetime.datetime.now()
 
@@ -361,6 +365,13 @@ def getResource(resourceId):
         logging.error("can't find " + resource)
         abort(make_response("can't find " + resource, 404))
 
+@config.g_app.route('/resource/tmp/<resourceId>', methods=['GET'])
+def getTmpResource(resourceId):
+    '''
+    Returns tmp resource file.
+    '''
+    resource = os.path.join(config.resourcesPath, 'tmp', resourceId)
+    return send_file(resource);
 
 @config.g_app.route('/proxy/<resourceId>', methods=['GET'])
 def getProxy(resourceId):
@@ -390,7 +401,6 @@ def getThumbnail(resourceId):
     else:
         logging.error("can't find " + resource)
         abort(make_response("can't find " + resource, 404))
-
 
 @config.g_app.route('/resource/', methods=['GET'])
 def getResourcesDict():
@@ -426,6 +436,59 @@ def uploadPage():
 	</body>
 	</html>"""
 
+
+@config.g_app.route('/downloadImgFromUrl', methods=['POST'])
+def downloadImgFromUrl():
+    '''
+    download an image from an url
+    '''
+
+    # clean 
+    global g_tmpLastClean
+
+    # Clean the cache every interval set in the config
+    if g_tmpLastClean < datetime.datetime.now() - datetime.timedelta(hours=config.cleanTmpInterval):
+        cache.cleanCache(os.path.join(config.resourcesPath, "tmp"), config.tmpMaxSize)
+        # update clean date
+        g_tmpLastClean = datetime.datetime.now()
+
+    imgUrl = request.json['url']
+    if imgUrl.isspace() or not imgUrl:
+        abort(make_response("URL input is empty, please type an URL before to click on send button.", 400))
+
+    if not imgUrl.startswith('http://') and not imgUrl.startswith('https://'):
+        imgUrl = 'http://' + imgUrl
+
+    imgId = "tmp/" + str(uuid.uuid4())
+
+    imgPath = os.path.join(config.resourcesPath, imgId)
+
+    try:
+        imgData = requests.get(imgUrl)
+
+    except requests.exceptions.ConnectionError as e:
+        abort(make_response("The URL that you have sent is not accessible.<br/> Please try again.", 400))
+
+    if not imgData.status_code == requests.codes.ok:
+        abort(make_response("The URL that you have sent was not found.", imgData.status_code))
+
+    if not imgData.headers['content-type'].startswith('image'):
+        abort(make_response("The URL that you have sent was not an image.<br/> Please try again.", 406))
+
+    if 'gif' in imgData.headers['content-type'] :
+        abort(make_response("Sorry, the gif format is not accepted.<br/> Please try again with another image format.", 406))
+
+    imgFile = open(imgPath,'w+')
+    imgFile.write(imgData.content)
+    imgFile.close()
+
+    ext = imghdr.what(imgPath)
+
+    newImgPath = imgPath + "." + ext
+
+    os.rename(imgPath, newImgPath)
+
+    return imgId + "." + ext
 
 @config.g_app.route('/resource/<resourceId>/plugin/<pluginId>', methods=['POST'])
 def addCatalogRessource(resourceId, pluginId):
@@ -468,7 +531,6 @@ def addCatalogRessource(resourceId, pluginId):
     logging.warning("resource = " + str(resource))
 
     return mongodoc_jsonify(resource)
-
 
 @atexit.register
 def cleanPool():

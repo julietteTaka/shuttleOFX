@@ -34,6 +34,9 @@ globalOfxPluginPath = config.get("OFX_PATH", "globalOfxPluginPath")
 cacheMaxSize = config.getint('CACHE', 'maxSize')
 cleanCacheInterval = config.getfloat('CACHE', 'interval')
 
+tmpMaxSize = config.getint('TMP', 'maxSize')
+cleanTmpInterval = config.getfloat('TMP', 'interval')
+
 # list of all computing renders
 g_renders = {}
 g_rendersSharedInfo = {}

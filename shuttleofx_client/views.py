@@ -3,14 +3,15 @@ import json
 import requests
 from functools import wraps
 from flask import (
-    request,
-    jsonify,
-    render_template,
-    abort,
-    Response,
-    redirect,
-    url_for,
-    session
+	request,
+	jsonify,
+	render_template,
+	abort,
+	Response,
+	redirect,
+	url_for,
+	session,
+	make_response
 )
 import logging
 import config
@@ -159,6 +160,11 @@ def getProxyById(resourceId):
 def getThumbnailById(resourceId):
     req = requests.get(config.renderRootUri + "/thumbnail/" + resourceId)
     return Response(req.content, mimetype="image/png")
+
+@config.g_app.route('/resource/tmp/<resourceId>', methods=['GET'])
+def getTmpResourceById(resourceId):
+    req = requests.get(config.renderRootUri+"/resource/tmp/"+resourceId)
+    return Response(req.content)
 
 @config.g_app.route('/resource', methods=['GET'])
 def getResources():
@@ -333,6 +339,19 @@ def addRenderToPlugin(pluginId, resourceId, renderId):
 
     return jsonify(**req.json())
 
+
+@config.g_app.route('/downloadImgFromUrl', methods=['POST'])
+def downloadImgFromUrl():
+    '''
+    download an image from an url
+    '''
+    header = {'content-type' : 'application/json'}
+    req = requests.post(config.renderRootUri + "/downloadImgFromUrl", data=request.data, headers=header)
+    
+    if req.status_code != requests.codes.ok:
+    	abort(make_response(req.content, req.status_code))
+
+    return req.content
 
 @config.google.tokengetter
 def get_google_oauth_token():

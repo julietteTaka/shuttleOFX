@@ -1,5 +1,7 @@
 $(document).ready(function () {
 
+    var tmp;
+
     function formToJson() {
         var renderParameters = [];
         $("input", $('#renderForm')).each(function (index) {
@@ -196,47 +198,64 @@ $(document).ready(function () {
         $("#render").addClass('disabled');
 
         $.ajax({
-                type: "POST",
-                url: "/render",
-                contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify({
-                    nodes: [{
-                        id: 0,
-                        parameters: [
-                            {
-                                "id": "filename",
-                                "value": "{RESOURCES_DIR}/" + selectedResource
-                            }
-                        ]
-                    }, {
-                        id: 1,
-                        plugin: pluginId,
-                        parameters: renderParameters
-                    }, {
-                        id: 2,
-                        plugin: "tuttle.pngwriter",
-                        parameters: [{
-                            id: "filename",
-                            value: "{UNIQUE_OUTPUT_FILE}.png"
-                        }]
-                    }],
+            type: "POST",
+            url: "/render",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                nodes: [{
+                    id: 0,
+                    parameters: [
+                        {
+                            "id" : "filename",
+                            "value" : "{RESOURCES_DIR}/"+ selectedResource
+                        },
+                        {
+                            "id" : "channel",
+                            "value" : "rgba"
+                        },
+                        {
+                            "id" : "bitDepth",
+                            "value" : "32f"
+                        }
+                    ]
+                },{
+                    id: 1,
+                    plugin: pluginId,
+                    parameters: renderParameters
+                },{
+                    id: 2,
+                    plugin: "tuttle.pngwriter",
+                    parameters: [{
+                        id: "filename",
+                        value:  "{UNIQUE_OUTPUT_FILE}.png"
+                    }]
+                }],
 
-                    connections: [{
-                        src: {id: 0},
-                        dst: {id: 1}
-                    }, {
-                        src: {id: 1},
-                        dst: {id: 2}
-                    }],
-                    options: [],
-                }),
-            })
+                connections: [{
+                    src: {id: 0},
+                    dst: {id: 1}
+                },{
+                    src: {id: 1},
+                    dst: {id: 2}
+                }],
+                options:[],
+            }),
+        })
             .done(function (data) {
                 // Change the extension of the proxy file path to .png
                 // Since the displayed proxy is always a generated PNG and not of the type of the original ressource
                 // We want to make sure the proxy is sent with the proper extension
                 var selectedResourceName = selectedResource.split(".")[0];
-                $("#viewer img#originalPic").attr("src", "/proxy/" + selectedResourceName + ".png");
+                var ext = selectedResource.split(".")[1];
+                if (selectedResourceName.indexOf("tmp") <= -1) {
+                    var selectedResourcePath = "proxy/" + selectedResourceName ;
+                    ext = ".png";
+                }
+                else {
+                    var selectedResourcePath = "/resource/" + selectedResourceName;
+                    ext = "."+ext;
+                }
+                $("#viewer img#originalPic").attr("src", selectedResourcePath + ext);
                 $("#viewer img#originalPic").show();
                 $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
                 $("#download-view").removeClass('disabled');
@@ -315,7 +334,42 @@ $(document).ready(function () {
             })
             .error(function (data) {
                 console.log('POST ERROR !');
-            });
+            })
+        .error(function(data){
+            console.log('POST ERROR !');
+            hideRenderLoader();
+        });
+    }
+
+    // download an image from an url and apply a filter
+    function fromUrlRender(pluginId) {
+      displayRenderLoader();
+      var renderParameters = formToJson();
+
+      $.ajax({
+        type: "POST",
+        url: "/downloadImgFromUrl",
+        contentType: 'application/json; charset=utf-8',
+        data : JSON.stringify({
+          'url': $("#imgUrl").val()
+        }),
+          statusCode: {
+            500: function() {
+              alert( "page not found" );
+            }
+          }
+      })
+      .error(function(data) {
+            hideRenderLoader();
+            $("#imgUrl").before(addMessage(data.responseText, "error"));
+      })
+      .success(function(data, textStat, xhr){
+            removeMessage();
+            
+          selectedResource = data;
+
+          renderFilter(pluginId);
+      });
     }
 
     var allResources = undefined;
@@ -411,8 +465,9 @@ $(document).ready(function () {
     // Automatic render on load
     // Filter plugin (blur...)
     if ($('#render').hasClass('OfxImageEffectContextFilter')) {
-        renderFilter($("#render.OfxImageEffectContextFilter").attr("pluginId"));
-    } else if ($('#render').hasClass('OfxImageEffectContextGenerator')) {
+        $("#imgUrl").val("http://lorempixel.com/600/400/");
+        fromUrlRender($("#render.OfxImageEffectContextFilter").attr("pluginId"));
+    } else if($('#render').hasClass('OfxImageEffectContextGenerator')) {
         // Generator plugin (color wheel...)
         renderGenerator($("#render.OfxImageEffectContextGenerator").attr("pluginId"));
     }
@@ -423,6 +478,11 @@ $(document).ready(function () {
     });
     $("#render.OfxImageEffectContextGenerator").click(function () {
         renderGenerator($(this).attr("pluginId"));
+    });
+
+    // Send an image from an external URL
+    $("#renderUrl.OfxImageEffectContextFilter").click(function(){
+        fromUrlRender($(this).attr("pluginId"));
     });
 
     // Reset button
