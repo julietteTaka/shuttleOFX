@@ -119,6 +119,7 @@
 <script src="{{ url_for('static', filename='scripts/vendor/ripples.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/vendor/material.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/scripts.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/categories.js') }}"></script>
 
 <script src="{{ url_for('static', filename='scripts/vendor/dropzone.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/vendor/jquery.nouislider.min.js') }}"></script>
@@ -138,70 +139,7 @@
             resize: function(){
             }
         });
-        $("#left-nav li#categories").click(function(){
-            //$("#left-nav ul ul").slideToggle(300);
-            if(!$(this).next().is(":visible"))
-            {
-                $(this).next().slideDown();
-            }
-        });
     });
-
-    $.ajax({
-        url: '/plugins',
-        type: 'GET',
-    })
-    .done(function(data) {
-        var categoryTree = [];
-        var object = {};
-
-        for (var i = 0; i < data.plugins.length; i++) {
-            if (data.plugins[i].properties.OfxImageEffectPluginPropGrouping) {
-                var group = data.plugins[i].properties.OfxImageEffectPluginPropGrouping.value;
-                var splittedPath = group.split("/");
-
-                splittedPath.reduce(function(o, s){
-                    return o[s] = [];
-                }, object);
-
-                // Merge all arrays to create one
-                $.extend(true, categoryTree, object);
-            }
-        }
-
-        var depth = 0;
-        var html = generateHtmlFromCategoriesTree(categoryTree, '', depth);
-        $('#categories').append(html);
-    })
-    .fail(function() {
-        console.log("error");
-    });
-
-    function generateHtmlFromCategoriesTree(object, previous, depth){
-        var html = '<ul>';
-
-        for (var i = 0; i < Object.keys(object).length; i++) {
-            // Do not add a / if it's the root element
-            if (depth === 0) {
-                previous += Object.keys(object)[i];
-            } else {
-                previous += '/' + Object.keys(object)[i];
-            }
-
-            html += '<li><a href="'+ previous + '">' + Object.keys(object)[i] + '</a>';
-
-            if (! $.isEmptyObject(object[Object.keys(object)[i]]) ) {
-                depth++;
-                html += generateHtmlFromCategoriesTree(object[Object.keys(object)[i]], previous, depth);
-            }
-
-            previous = previous.substring(0, previous.length - Object.keys(object)[i].length - 1);
-            html += '</li>';
-        }
-        html += '</ul>';
-        return html;
-    }
-
 </script>
 
 <script>
