@@ -162,36 +162,44 @@
 
                 splittedPath.reduce(function(o, s){
                     return o[s] = [];
-                }, object)
+                }, object);
 
                 // Merge all arrays to create one
                 $.extend(true, categoryTree, object);
-            };
-        };
+            }
+        }
 
-       var html = generateHtmlFromCategoriesTree(categoryTree, '');
-       $('#categories').append(html);
+        var depth = 0;
+        var html = generateHtmlFromCategoriesTree(categoryTree, '', depth);
+        $('#categories').append(html);
     })
     .fail(function() {
         console.log("error");
     });
 
-    function generateHtmlFromCategoriesTree(object, previous){
+    function generateHtmlFromCategoriesTree(object, previous, depth){
         var html = '<ul>';
 
         for (var i = 0; i < Object.keys(object).length; i++) {
-            previous += '/' + Object.keys(object)[i];
+            // Do not add a / if it's the root element
+            if (depth === 0) {
+                previous += Object.keys(object)[i];
+            } else {
+                previous += '/' + Object.keys(object)[i];
+            }
+
             html += '<li><a href="'+ previous + '">' + Object.keys(object)[i] + '</a>';
 
             if (! $.isEmptyObject(object[Object.keys(object)[i]]) ) {
-                html += generateHtmlFromCategoriesTree(object[Object.keys(object)[i]], previous);
+                depth++;
+                html += generateHtmlFromCategoriesTree(object[Object.keys(object)[i]], previous, depth);
             }
 
             previous = previous.substring(0, previous.length - Object.keys(object)[i].length - 1);
             html += '</li>';
-        };
+        }
         html += '</ul>';
-        return html
+        return html;
     }
 
 </script>

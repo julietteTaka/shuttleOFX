@@ -125,6 +125,18 @@ def getSampleImagesForPlugin(pluginId, imageId):
 	return Response(req.content, mimetype=req.headers["content-type"])
 
 
+@config.g_app.route('/category')
+def getCategory():
+	user = None
+	if 'google_token' in session:
+		user = config.google.get('userinfo').data
+	try:
+		resp = requests.get(config.catalogRootUri + "/category", params=request.args)
+	except:
+		return render_template('plugins.html', dico=None, user=user)
+
+	return render_template('plugins.html', dico=resp.json(), user=user)
+
 @config.g_app.route('/editor')
 @config.g_app.route('/editor/<pluginRawIdentifier>')
 def renderPageWithPlugin(pluginRawIdentifier):

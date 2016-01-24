@@ -60,7 +60,7 @@ def createPagination(count, skip, maxPage):
 
     return pagination
 
-def createSearchPagination(count, skip, maxPage, keyWord):
+def createSearchPagination(count, skip, maxPage, keyWord, page):
 
     '''
     ' Create the HTML code for the pagination bar in search result page
@@ -76,7 +76,7 @@ def createSearchPagination(count, skip, maxPage, keyWord):
     if skip == 1 :
         pagination .append('     <li id="previous" class="disabled"><a href=""> < </a></li>')
     else :
-        pagination.append('     <li id="previous"><a href="/plugin?search='+ keyWord + '&count=' + str(count)+'&skip=' + str(skip-1) + '"> < </a></li>')
+        pagination.append('     <li id="previous"><a href="/' + page + '?search='+ keyWord + '&count=' + str(count)+'&skip=' + str(skip-1) + '"> < </a></li>')
 
     pageCounter = 1
 
@@ -84,12 +84,12 @@ def createSearchPagination(count, skip, maxPage, keyWord):
         if pageCounter == skip:
             pagination.append('                            <li class="disabled"><a href="">' + str(pageCounter) + '</a></li>')
         else:
-            pagination.append('                            <li><a href="/plugin?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(pageCounter) +'">' + str(pageCounter) + '</a></li>')
+            pagination.append('                            <li><a href="/' + page + '?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(pageCounter) +'">' + str(pageCounter) + '</a></li>')
 
     if skip == maxPage:
         pagination.append('                          <li id="next" class="disabled"><a href=""> > </a></li>')
     else:
-        pagination.append('                          <li id="next"><a href="/plugin?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(skip+1) + '"> > </a></li>')
+        pagination.append('                          <li id="next"><a href="/' + page + '?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(skip+1) + '"> > </a></li>')
 
     pagination.append("""                    </ul>
                     </div>
@@ -330,7 +330,7 @@ def getAllPlugins():
     maxPage = int(math.ceil(totalPlugins / count)+1)
 
     if keyWord:
-        pagination = createSearchPagination(count, skip, maxPage, keyWord)
+        pagination = createSearchPagination(count, skip, maxPage, keyWord, "plugin")
     else: 
         pagination = createPagination(count, skip, maxPage)
 
@@ -338,7 +338,7 @@ def getAllPlugins():
 
 @config.g_app.route("/plugins", methods=['GET'])
 def getAllPluginsDefault():
-    cursor = config.pluginTable.find({},{"rawIdentifier":1, "properties.OfxImageEffectPluginPropGrouping": 1})
+    cursor = config.pluginTable.find({},{"properties.OfxImageEffectPluginPropGrouping": 1})
     plugins = [result for result in cursor]
 
     return mongodoc_jsonify({"plugins": plugins})
@@ -394,6 +394,32 @@ def getBundleByPluginId(rawIdentifier):
 
     return mongodoc_jsonify(bundleId)
 
+@config.g_app.route('/category')
+def getCategory():
+    count = request.args.get('count', 10)
+    if count:
+        count = int(count)
+
+    skip = request.args.get('skip', 1)
+    if skip:
+        skip = int(skip)
+
+    keyWord = request.args.get('search', '')
+    cursor = list(config.pluginTable.find( {"properties.OfxImageEffectPluginPropGrouping.value": { "$regex": ".*" + keyWord + ".*"} } ))
+
+    if count and skip:
+        filteredCursor = cursor[(skip-1)*count : skip*count]
+    else:
+        filteredCursor = cursor
+
+    totalPlugins = len(cursor)
+    plugins = [result for result in filteredCursor]
+    maxPage = int(math.ceil(totalPlugins / count)+1)
+
+    if keyWord:
+        pagination = createSearchPagination(count, skip, maxPage, keyWord, "category")
+
+    return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "count": count, "pagination": pagination})
 
 @config.g_app.route('/resources', methods=['POST'])
 def addResource():
