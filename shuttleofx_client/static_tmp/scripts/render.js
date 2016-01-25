@@ -2,6 +2,8 @@ $(document).ready(function () {
 
     var tmp;
 
+    $('#'.selectedResource).addClass('selected');
+
     function formToJson() {
         var renderParameters = [];
         $("input", $('#renderForm')).each(function (index) {
@@ -242,13 +244,15 @@ $(document).ready(function () {
             }),
         })
             .done(function (data) {
+                removeMessage();
+
                 // Change the extension of the proxy file path to .png
                 // Since the displayed proxy is always a generated PNG and not of the type of the original ressource
                 // We want to make sure the proxy is sent with the proper extension
                 var selectedResourceName = selectedResource.split(".")[0];
                 var ext = selectedResource.split(".")[1];
                 if (selectedResourceName.indexOf("tmp") <= -1) {
-                    var selectedResourcePath = "proxy/" + selectedResourceName ;
+                    var selectedResourcePath = "/proxy/" + selectedResourceName ;
                     ext = ".png";
                 }
                 else {
@@ -361,11 +365,10 @@ $(document).ready(function () {
       })
       .error(function(data) {
             hideRenderLoader();
-            $("#imgUrl").before(addMessage(data.responseText, "error"));
+            $("#imgUrl").parent().before(addMessage(data.responseText, "error"));
       })
-      .success(function(data, textStat, xhr){
-            removeMessage();
-            
+      .success(function(data){
+          removeMessage();
           selectedResource = data;
 
           renderFilter(pluginId);
@@ -397,6 +400,7 @@ $(document).ready(function () {
 
     $(".sampleImage").each(function () {
         $(this).click(function () {
+            $("#imgUrl").parent().css("border-left", "none").css("color", "inherit");
             setResourceSelected($(this));
             var pluginId = $("#render.OfxImageEffectContextFilter").attr("pluginId");
             renderFilter(pluginId);
@@ -407,12 +411,12 @@ $(document).ready(function () {
         $(".sampleImage").each(function () {
             deselect($(this));
         });
-        $(obj).parent().css("border", "solid 2px gray");
+        $(obj).parent().css("border-left", "solid 10px rgb(0,150,136)");
         selectedResource = $(obj).attr('id');
     }
 
     function deselect(obj) {
-        $(obj).parent().css("border", "");
+        $(obj).parent().css("border-left", "none");
     }
 
     function displayRenderLoader() {
@@ -465,9 +469,8 @@ $(document).ready(function () {
     // Automatic render on load
     // Filter plugin (blur...)
     if ($('#render').hasClass('OfxImageEffectContextFilter')) {
-        $("#imgUrl").val("http://lorempixel.com/600/400/");
-        fromUrlRender($("#render.OfxImageEffectContextFilter").attr("pluginId"));
-    } else if($('#render').hasClass('OfxImageEffectContextGenerator')) {
+        renderFilter($("#render.OfxImageEffectContextFilter").attr("pluginId"));
+    } else if ($('#render').hasClass('OfxImageEffectContextGenerator')) {
         // Generator plugin (color wheel...)
         renderGenerator($("#render.OfxImageEffectContextGenerator").attr("pluginId"));
     }
@@ -483,6 +486,11 @@ $(document).ready(function () {
     // Send an image from an external URL
     $("#renderUrl.OfxImageEffectContextFilter").click(function(){
         fromUrlRender($(this).attr("pluginId"));
+        $("#imgUrl").parent().css("border-left", "solid 10px rgb(0,150,136)").css("color", "white");
+        $(".sampleImage").each(function () {
+            deselect($(this));
+        });
+
     });
 
     // Reset button
