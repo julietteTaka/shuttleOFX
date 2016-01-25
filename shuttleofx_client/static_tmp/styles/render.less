@@ -253,24 +253,15 @@ input.input-number{
 		// font-family: "Roboto-Light";
 		// border-bottom: 1px solid #ccc;
 	}
-	a{
+	input, button{
 		display: inline-block;
 		float: right;
-		&.btn-success{
-			background-color: @ofxColor!important;
-		}
 	}
-	input{
-		display: inline-block;
-		float: right;
-		&.btn-success{
-			background-color: @ofxColor!important;
-		}
+	input.btn-success, button.btn-success{
+		background-color: @ofxColor!important;
+		font-size: 20px;
 	}
-}
-
-#buttons {
-    .preloader-wrapper {
+	.preloader-wrapper {
         display: inline-block;
         float: right;
         margin: 16px 10px;
