@@ -1,0 +1,283 @@
+{% extends "plugin.html" %}
+
+{% block markdown %}
+<!-- js -->
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/markdown-it.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/markdown-it-footnote.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/highlight.pack.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/emojify.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/codemirror/lib/codemirror.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/codemirror/overlay.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/codemirror/xml/xml.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/codemirror/markdown/markdown.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/codemirror/gfm/gfm.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/codemirror/javascript/javascript.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/codemirror/css/css.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/codemirror/htmlmixed/htmlmixed.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/codemirror/lib/util/continuelist.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/rawinflate.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/markdown/rawdeflate.js') }}"></script>
+<!-- css -->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='scripts/vendor/markdown/codemirror/css/base16-light.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='scripts/vendor/markdown/codemirror/lib/codemirror.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='scripts/vendor/markdown/codemirror/css/default.css') }}">
+{% endblock %}
+
+{# Set the active item in the menu #}
+{% set active = "wiki" %}
+
+{% block content %}
+<div class="main-content">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-12">
+                {% if plugin.wiki %}
+
+                    {% for wiki in plugin.wiki %}
+                        {% if loop.last %}
+                        <div class="row markdownwiki">
+                            <div class="col-md-6 hidden" id="in">
+                                <form id="form-wiki">
+                                    <input id="user" class="hidden" name="name" value="{{user.name}}">
+                                    <input id="picture" name="picture" class="hidden" value="{{user.picture}}">
+                                    {% if plugin.wiki %}
+                                        {% for wiki in plugin.wiki %}
+                                        {% if loop.last %}
+                                    <textarea id="code">{{wiki.content}}</textarea>
+                                        {% endif %}
+                                        {% endfor %}
+                                    {% else%}
+                                    <textarea id="code"></textarea>
+                                    {% endif %}
+                                </form>
+                            </div>
+                            <div class="col-md-12">
+                                <div id="out">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row editor">
+                            <p>
+                                Last Edit
+                            </p>
+                            <div class="col-md-2">
+                                <img class="thumbnail" src="{{wiki.picture}}"/>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="user">
+                                    {{wiki.user}}
+                                </div>
+                                <div class="date">
+                                    {{wiki.date}}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="menu">
+                                    <div id="saveas-markdown" class="btn btn-primary">
+                                        <span><i class="fa fa-caret-square-o-down"></i> Download Markdown</span>
+                                    </div>
+                                    <!-- DO NOT REMOVE THAT DIV !!!!!!!!!! -->
+                                    <div id="saveas-html" class="btn btn-primary hidden">
+                                        <span><i class="fa fa-code"></i> Download HTML</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                    {% endfor %}
+                    {% if user %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">Edit wiki</a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p class="wikialert"><i class="fa fa-exclamation-triangle"></i>
+                                You must be logged in to edit the wiki !
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    {% if user %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p class="center">
+                                No wiki has been created yet, go on and add a <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">new wiki</a>
+                            </p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p class="wikialert center"><i class="fa fa-exclamation-triangle"></i>
+                                No wiki has been created yet, You must be logged in to create a new one !
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+{% if plugin.wiki %}
+<script type="text/javascript">
+$(document).ready(function(){
+
+    // Because highlight.js is a bit awkward at times
+    var languageOverrides = {
+      js: 'javascript',
+      html: 'xml'
+    };
+
+    // Emoji's folder
+    emojify.setConfig({ img_dir: "{{ url_for('static', filename='images/markdown/emoji') }}" });
+
+    // Basic Editor
+    var md = markdownit({
+      html: true,
+      highlight: function(code, lang){
+        if(languageOverrides[lang]) lang = languageOverrides[lang];
+        if(lang && hljs.getLanguage(lang)){
+          try {
+            return hljs.highlight(lang, code).value;
+          }catch(e){}
+        }
+        return '';
+      }
+    })
+      .use(markdownitFootnote);
+
+    var hashto;
+
+    function update(e){
+        setOutput(e.getValue());
+
+        clearTimeout(hashto);
+        hashto = setTimeout(updateHash, 1000);
+    }
+
+    function setOutput(val){
+      val = val.replace(/<equation>((.*?\n)*?.*?)<\/equation>/ig, function(a, b){
+        return '<img src="http://latex.codecogs.com/png.latex?' + encodeURIComponent(b) + '" />';
+      });
+
+      var out = document.getElementById('out');
+      var old = out.cloneNode(true);
+      out.innerHTML = md.render(val);
+      emojify.run(out);
+
+      var allold = old.getElementsByTagName("*");
+      if (allold === undefined) return;
+
+      var allnew = out.getElementsByTagName("*");
+      if (allnew === undefined) return;
+
+      for (var i = 0, max = Math.min(allold.length, allnew.length); i < max; i++) {
+        if (!allold[i].isEqualNode(allnew[i])) {
+          out.scrollTop = allnew[i].offsetTop;
+          return;
+        }
+      }
+    }
+
+    var editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+      mode: 'gfm',
+      lineNumbers: true,
+      matchBrackets: true,
+      lineWrapping: true,
+      theme: 'base16-light',
+      extraKeys: {"Enter": "newlineAndIndentContinueMarkdownList"}
+    });
+
+    editor.on('load', update);
+
+    // Download files
+    function saveAsMarkdown(){
+      save(editor.getValue(), "markdown.md");
+    }
+
+    function saveAsHtml() {
+      save(document.getElementById('out').innerHTML, "html.html");
+    }
+
+    document.getElementById('saveas-markdown').addEventListener('click', function() {
+      saveAsMarkdown();
+    });
+
+    document.getElementById('saveas-html').addEventListener('click', function() {
+      saveAsHtml();
+    });
+
+    function save(code, name){
+      var blob = new Blob([code], { type: 'text/plain' });
+      if(window.saveAs){
+        window.saveAs(blob, name);
+      }else if(navigator.saveBlob){
+        navigator.saveBlob(blob, name);
+      }else{
+        url = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.setAttribute("href",url);
+        link.setAttribute("download",name);
+        var event = document.createEvent('MouseEvents');
+        event.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+        link.dispatchEvent(event);
+      }
+    }
+
+    // Get the textarea value
+    function updateHash(){
+      window.location.hash = btoa( // base64 so url-safe
+        RawDeflate.deflate( // gzip
+          unescape(encodeURIComponent( // convert to utf8
+            editor.getValue()
+          ))
+        )
+      );
+    }
+
+    if(window.location.hash){
+      var h = window.location.hash.replace(/^#/, '');
+      if(h.slice(0,5) == 'view:'){
+        setOutput(decodeURIComponent(escape(RawDeflate.inflate(atob(h.slice(5))))));
+        document.body.className = 'view';
+      }else{
+        editor.setValue(
+          decodeURIComponent(escape(
+            RawDeflate.inflate(
+              atob(
+                h
+              )
+            )
+          ))
+        );
+        update(editor);
+        editor.focus();
+      }
+    }else{
+      update(editor);
+      editor.focus();
+    }
+});
+
+</script>
+{% endif %}
+<script type="text/javascript">
+    var s = $("#mkdwn").html();
+        s = "\n\n\n" + s + "\n\n\n";
+    var rend = markdown.toHTML(s);
+    $("#mkdwn").html(rend);
+</script>
+{% endblock %}

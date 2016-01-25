@@ -123,6 +123,76 @@ def renderPageWithPlugin(pluginRawIdentifier):
     previewGallery = requests.get(config.renderRootUri + '/resource/').json()
     return render_template('editor.html', plugin=resp.json(), user=user, resources=previewGallery)
 
+### Wiki Start _________________________________________________________________
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/wiki")
+@config.g_app.route("/plugin/<pluginRawIdentifier>/wiki")
+def getPluginWiki(pluginRawIdentifier, pluginVersion="latest"):
+    user = userManager.getUser()
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+    if resp.status_code != 200:
+        if resp.status_code == 404:
+            return render_template('notFound.html', user=user)
+        abort(resp.status_code)
+    return render_template('wiki.html', plugin=resp.json(), user=user)
+
+@config.g_app.route("/wiki/edit/<pluginRawIdentifier>/version/<pluginVersion>")
+@config.g_app.route("/wiki/edit/<pluginRawIdentifier>")
+def getPluginWikiEdit(pluginRawIdentifier, pluginVersion="latest"):
+    user = userManager.getUser()
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+    if resp.status_code != 200:
+        if resp.status_code == 404:
+            return render_template('notFound.html', user=user)
+        abort(resp.status_code)
+    return render_template('wikiedit.html', plugin=resp.json(), user=user)
+
+@config.g_app.route('/wiki/update/<pluginId>/version/<pluginVersion>', methods=['POST'])
+@config.g_app.route('/wiki/update/<pluginId>', methods=['POST'])
+def setWiki(pluginId, pluginVersion="latest"):
+    user = userManager.getUser()
+    header = {'content-type' : 'application/json'}
+    req = requests.post(config.catalogRootUri + "/wiki/update/" + pluginId, data=request.data, headers=header)
+    return req.content
+
+### Wiki End ___________________________________________________________________
+
+### Comments Start _____________________________________________________________
+
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/comments")
+@config.g_app.route("/plugin/<pluginRawIdentifier>/comments")
+def getPluginComments(pluginRawIdentifier, pluginVersion="latest"):
+    user = userManager.getUser()
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+    if resp.status_code != 200:
+        if resp.status_code == 404:
+            return render_template('notFound.html', user=user)
+        abort(resp.status_code)
+    return render_template('comments.html', plugin=resp.json(), user=user)
+
+@config.g_app.route('/plugin/<pluginId>/version/<pluginVersion>/comments/update', methods=['POST'])
+@config.g_app.route('/plugin/<pluginId>/comments/update', methods=['POST'])
+def addComment(pluginId, pluginVersion="latest"):
+    user = userManager.getUser()
+    header = {'content-type' : 'application/json'}
+    req = requests.post(config.catalogRootUri + "/plugin/" + pluginId + "/comments/update", data=request.data, headers=header)
+    return req.content
+
+### Comments End _______________________________________________________________
 
 @config.g_app.route('/render', methods=['POST'])
 def render():

@@ -14,8 +14,12 @@
 
     <!-- Styles -->
     <link href='http://fonts.googleapis.com/css?family=Roboto:300,400,500,700' rel='stylesheet' type='text/css'>
-    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/bootstrap-markdown.min.css') }}">
+    <!--
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/material.css') }}">
+    -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
 
     <!-- favicon -->
@@ -32,6 +36,11 @@
 
     <!-- jQuery -->
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+
+    <!-- markdown -->
+    {% block markdown %}{% endblock %}
+    <script src="{{ url_for('static', filename='scripts/vendor/markdown.js') }}" charset="utf-8"></script>
+    <script src="{{ url_for('static', filename='scripts/vendor/bootstrap-markdown.js') }}" charset="utf-8"></script>
 
 </head>
 
@@ -61,7 +70,7 @@
                     </p>
                     <div>
                         <a class="signedIn" href="/login/google"><i class="fa fa-google"></i>with Google</a>
-                        <a class="signedIn" href="/login/github"><i class="fa fa-github"></i>with Github</a>    
+                        <a class="signedIn" href="/login/github"><i class="fa fa-github"></i>with Github</a>
                     </div>
                 </li>
             {% endif %}
