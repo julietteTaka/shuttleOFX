@@ -10,7 +10,7 @@ $(document).ready(function() {
         $("#left-nav ul li#categories > ul").slideToggle(300);
     });
     $("#left-nav ul li#categories").on('click', ' ul li i',function(){
-        $(this).next('ul').slideToggle(300);
+        $(this).parent().children('ul').slideToggle(300);
         $(this).toggleClass('fa-minus', 'fa-plus');
     });
 });
@@ -54,9 +54,9 @@ function generateHtmlFromCategoriesTree(object, previous, depth){
         }
 
         if ($.isEmptyObject(object[Object.keys(object)[i]])) {
-            html += '<li><a href="'+ previous + '">' + Object.keys(object)[i];
+            html += '<li><a href="'+ previous + '">' + Object.keys(object)[i] + '</a>';
         } else {
-            html += '<li><a href="'+ previous + '">' + Object.keys(object)[i] + '</a> <i class="fa fa-plus"></i>';
+            html += '<li><i class="fa fa-plus"></i><a href="'+ previous + '">' + Object.keys(object)[i] + '</a>';
             depth++;
             html += generateHtmlFromCategoriesTree(object[Object.keys(object)[i]], previous, depth);
         }
