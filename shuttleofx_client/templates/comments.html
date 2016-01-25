@@ -1,0 +1,129 @@
+{% extends "plugin.html" %}
+
+{# Set the active item in the menu #}
+{% set active = "comments" %}
+
+{% block content %}
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Comments</h2>
+                <div class="row">
+                    {% if plugin.comments %}
+                    <div class="col-md-11 col-md-offset-1">
+                        {% for comment in plugin.comments %}
+                        <div class="comment-container row">
+                            {% if comment.picture %}
+                            <div class="col-md-3 user">
+                                {{comment.user}}
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <img class="thumbnail" src="{{comment.picture}}">
+                                    </div>
+                                    <div class="col-md-4 date">
+                                        {{comment.date}}
+                                    </div>
+                                    <div class="col-md-4">
+
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="col-md-3 user">{{comment.user}}
+                                <div class="row">
+                                    <div class="col-md-4 date">
+                                        {{comment.date}}
+                                    </div>
+                                    <div class="col-md-4">
+
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="col-md-9 content">{{comment.content}}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="col-md-12">
+                        <p>
+                            No comments have been posted yet, enjoy and post a new comment !
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {% if user %}
+                <form class="addComment">
+                        <label for="name" class="hidden">Your name</label>
+                        <input id="user" type="text" class="form-control hidden" name="name" value="{{user.name}}">
+                        <input id="picture" type="text" name="picture" class="form-control hidden" value="{{user.picture}}">
+                        <label for="comment">Your Comment</label>
+                        <textarea id="comment" class="form-control" type="text" name="comment" placeholder="Leave a comment"></textarea>
+                        <button id="addComment" class="btn btn-primary" type="submit" name="submit">Comment</button>
+                </form>
+                {% else %}
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="alert center"><i class="fa fa-exclamation-triangle"></i>
+                            You must be logged in to leave a comment !
+                        </div>
+                    </div>
+                </div>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+$(document).ready(function() {
+
+    function commentJson()
+    {
+        var now = new Date();
+        var m = now.getMonth() + 1;
+        var d = now.getDate();
+        var y = now.getFullYear();
+        var h = now.getHours();
+        var i = now.getMinutes();
+        var month = new Array();
+        month[0] = "Jan";
+        month[1] = "Feb";
+        month[2] = "Mar";
+        month[3] = "Apr";
+        month[4] = "May";
+        month[5] = "Jun";
+        month[6] = "Jul";
+        month[7] = "Aug";
+        month[8] = "Sep";
+        month[9] = "Oct";
+        month[10] = "Nov";
+        month[11] = "Dec";
+        $.ajax({
+            type: "POST",
+            url: "/plugin/"+{{plugin.pluginId}}+"/comments/update",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                'commentscontent': $("#comment").val(),
+                'commentsuser' : $("#user").val(),
+                'commentspicture' : $("#picture").val(),
+                'commentsdate' : h+':'+i+'\n'+month[m]+' '+d+' '+y
+            }),
+        })
+    }
+
+    $("#addComment").click(function(){
+        commentJson();
+    });
+});
+</script>
+{% endblock %}

@@ -1,11 +1,14 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
-    function formToJson()
-    {
+    var tmp;
+
+    $('#'.selectedResource).addClass('selected');
+
+    function formToJson() {
         var renderParameters = [];
-        $("input", $('#renderForm')).each(function(index){
-            var jsonForm={};
-            switch($(this).attr("ofxType")) {
+        $("input", $('#renderForm')).each(function (index) {
+            var jsonForm = {};
+            switch ($(this).attr("ofxType")) {
                 case 'OfxParamTypeInteger':
                     jsonForm["id"] = $(this).attr("id");
                     jsonForm["value"] = parseInt(this.value);
@@ -70,7 +73,7 @@ $(document).ready(function() {
                         jsonForm["id"] = $(this).attr("id");
                         jsonForm["value"] = true;
                         renderParameters.push(jsonForm);
-                    }else{
+                    } else {
                         jsonForm["id"] = $(this).attr("id");
                         jsonForm["value"] = false;
                         renderParameters.push(jsonForm);
@@ -84,8 +87,8 @@ $(document).ready(function() {
             }
         });
 
-        $("select", $('#renderForm')).each(function(index){
-            var jsonForm={};
+        $("select", $('#renderForm')).each(function (index) {
+            var jsonForm = {};
             jsonForm["id"] = $(this).attr("id");
             jsonForm["value"] = this.value;
             renderParameters.push(jsonForm);
@@ -94,82 +97,107 @@ $(document).ready(function() {
         return renderParameters;
     }
 
-    function renderGenerator(pluginId){
-        displayLoader();
+    function renderGenerator(pluginId) {
+        displayRenderLoader();
         var renderParameters = formToJson();
+
+        $("#download-view").addClass('disabled');
+        $("#addGalleryImage").addClass('disabled');
+        $("#render").addClass('disabled');
 
         $.ajax({
-            type: "POST",
-            url: "/render",
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify({
-                nodes: [{
-                    id: 0,
-                    plugin: pluginId,
-                    parameters: renderParameters
-                },{
-                    id: 1,
-                    plugin: "tuttle.pngwriter",
-                    parameters: [{
-                        id: "filename",
-                        value: "{UNIQUE_OUTPUT_FILE}.png"
-                    }]
-                }],
-                connections: [{
-                    src: {id: 0},
-                    dst: {id: 1}
-                }],
-                options:[],
-            }),
-        })
-        .done(function(data){
-            $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
-            $("#download-view").removeClass('disabled');
-            hideLoader();
-            $('.display img').css({height: "auto"});
+                type: "POST",
+                url: "/render",
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({
+                    nodes: [{
+                        id: 0,
+                        plugin: pluginId,
+                        parameters: renderParameters
+                    }, {
+                        id: 1,
+                        plugin: "tuttle.pngwriter",
+                        parameters: [{
+                            id: "filename",
+                            value: "{UNIQUE_OUTPUT_FILE}.png"
+                        }]
+                    }],
+                    connections: [{
+                        src: {id: 0},
+                        dst: {id: 1}
+                    }],
+                    options: [],
+                }),
+            })
+            .done(function (data) {
+                $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
+                $("#download-view").removeClass('disabled');
+                $("#addGalleryImage").removeClass('disabled');
+                $("#render").removeClass('disabled');
+                hideRenderLoader();
+                $('.display img').css({height: "auto"});
 
-             $("#downloadtrigger").click(function(data){
-               $.ajax({
-                    type: "POST",
-                    url: "/render",
-                    contentType: 'application/json; charset=utf-8',
-                    data: JSON.stringify({
-                        nodes: [{
-                            id: 0,
-                            plugin: pluginId,
-                            parameters: renderParameters
-                        },{
-                            id: 1,
-                            plugin: "tuttle.pngwriter",
-                            parameters: [{
-                                id: "filename",
-                                value: "{UNIQUE_OUTPUT_FILE}.png"
-                            }]
-                        }],
-                        connections: [{
-                            src: {id: 0},
-                            dst: {id: 1}
-                        }],
-                        options:[],
-                    }),
-        })
-        .done(function(data){
-                    var link = document.createElement("a");
-                    link.download = name;
-                    link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
-                    link.click();
+                $("#downloadtrigger").off("click").click(function (data) {
+                    $("#download-view").addClass('disabled');
+                    $("#render").addClass('disabled');
+                    $("#addGalleryImage").addClass('disabled');
                     $("#downloadModal").modal('hide');
+                    displayDownloadLoader();
+
+                    // Find the appropriate extension for the file to be generated
+                    var extension = '.' + $('input[name=format]:checked', '#formatSelect').val();
+
+                    $.ajax({
+                            type: "POST",
+                            url: "/render",
+                            contentType: 'application/json; charset=utf-8',
+                            data: JSON.stringify({
+                                nodes: [{
+                                    id: 0,
+                                    plugin: pluginId,
+                                    parameters: renderParameters
+                                }, {
+                                    id: 1,
+                                    parameters: [{
+                                        id: "filename",
+                                        value: "{UNIQUE_OUTPUT_FILE}" + extension
+                                    }]
+                                }],
+                                connections: [{
+                                    src: {id: 0},
+                                    dst: {id: 1}
+                                }],
+                                options: [],
+                            }),
+                        })
+                        .done(function (data) {
+                            var link = document.createElement("a");
+                            link.style.display = "none";
+                            link.download = name;
+                            link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
+                            document.body.appendChild(link);
+                            link.click();
+                            link.parentNode.removeChild(link);
+
+                            hideDownloadLoader();
+                            $("#download-view").removeClass('disabled');
+                            $("#addGalleryImage").removeClass('disabled');
+                            $("#render").removeClass('disabled');
+                        });
                 });
+            })
+            .error(function (data) {
+                console.log('POST ERROR !');
             });
-        })
-        .error(function(data){
-            console.log('POST ERROR !');
-        });
     }
 
-    function renderFilter(pluginId){
-        displayLoader();
+    function renderFilter(pluginId) {
+        displayRenderLoader();
         var renderParameters = formToJson();
+
+        $("#download-view").addClass('disabled');
+        $("#addGalleryImage").addClass('disabled');
+        $("#render").addClass('disabled');
 
         $.ajax({
             type: "POST",
@@ -182,56 +210,14 @@ $(document).ready(function() {
                         {
                             "id" : "filename",
                             "value" : "{RESOURCES_DIR}/"+ selectedResource
-                        }
-                    ]
-                },{
-                    id: 1,
-                    plugin: pluginId,
-                    parameters: renderParameters
-                },{
-                    id: 2,
-                    plugin: "tuttle.pngwriter",
-                    parameters: [{
-                        id: "filename",
-                        value:  "{UNIQUE_OUTPUT_FILE}.png"
-                    }]
-                }],
-
-                connections: [{
-                    src: {id: 0},
-                    dst: {id: 1}
-                },{
-                    src: {id: 1},
-                    dst: {id: 2}
-                }],
-                options:[],
-            }),
-        })
-        .done(function(data){
-            // Change the extension of the proxy file path to .png
-            // Since the displayed proxy is always a generated PNG and not of the type of the original ressource
-            // We want to make sure the proxy is sent with the proper extension
-            var selectedResourceName = selectedResource.split(".")[0];
-			$("#viewer img#originalPic").attr("src", "/proxy/" + selectedResourceName + ".png");
-        	$("#viewer img#originalPic").show();
-        	$("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
-            $("#download-view").removeClass('disabled');
-            hideLoader();
-            $('.display img').css({height: "auto"});
-        	init_beforeAfterSlider();
-
-             $("#downloadtrigger").click(function(data){
-               $.ajax({
-            type: "POST",
-            url: "/render",
-            contentType: 'application/json; charset=utf-8',
-            data: JSON.stringify({
-                nodes: [{
-                    id: 0,
-                    parameters: [
+                        },
                         {
-                            "id" : "filename",
-                            "value" : "{RESOURCES_DIR}/" + selectedResource
+                            "id" : "channel",
+                            "value" : "rgba"
+                        },
+                        {
+                            "id" : "bitDepth",
+                            "value" : "32f"
                         }
                     ]
                 },{
@@ -257,83 +243,210 @@ $(document).ready(function() {
                 options:[],
             }),
         })
-        .done(function(data){
-                    var link = document.createElement("a");
-                    link.download = name;
-                    link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
-                    link.click();
+            .done(function (data) {
+                removeMessage();
+
+                // Change the extension of the proxy file path to .png
+                // Since the displayed proxy is always a generated PNG and not of the type of the original ressource
+                // We want to make sure the proxy is sent with the proper extension
+                var selectedResourceName = selectedResource.split(".")[0];
+                var ext = selectedResource.split(".")[1];
+                if (selectedResourceName.indexOf("tmp") <= -1) {
+                    var selectedResourcePath = "/proxy/" + selectedResourceName ;
+                    ext = ".png";
+                }
+                else {
+                    var selectedResourcePath = "/resource/" + selectedResourceName;
+                    ext = "."+ext;
+                }
+                $("#viewer img#originalPic").attr("src", selectedResourcePath + ext);
+                $("#viewer img#originalPic").show();
+                $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
+                $("#download-view").removeClass('disabled');
+                $("#addGalleryImage").removeClass('disabled');
+                $("#render").removeClass('disabled');
+                hideRenderLoader();
+                $('.display img').css({height: "auto"});
+                init_beforeAfterSlider();
+
+                $("#downloadtrigger").off("click").click(function (data) {
+                    $("#download-view").addClass('disabled');
+                    $("#addGalleryImage").addClass('disabled');
+                    $("#render").addClass('disabled');
                     $("#downloadModal").modal('hide');
+                    displayDownloadLoader();
+
+                    // Find the appropriate extension for the file to be generated
+                    var extension = '.png'
+                    if($('input[value=original]', '#formatSelect').is(":checked")) {
+                        extension = '.' + selectedResource.split(".")[1];
+                    }
+                    else {
+                        extension = '.' + $('input[name=format]:checked', '#formatSelect').val();
+                    }
+
+                    $.ajax({
+                            type: "POST",
+                            url: "/render",
+                            contentType: 'application/json; charset=utf-8',
+                            data: JSON.stringify({
+                                nodes: [{
+                                    id: 0,
+                                    parameters: [
+                                        {
+                                            "id": "filename",
+                                            "value": "{RESOURCES_DIR}/" + selectedResource
+                                        }
+                                    ]
+                                }, {
+                                    id: 1,
+                                    plugin: pluginId,
+                                    parameters: renderParameters
+                                }, {
+                                    id: 2,
+                                    parameters: [{
+                                        id: "filename",
+                                        value: "{UNIQUE_OUTPUT_FILE}" + extension
+                                    }]
+                                }],
+
+                                connections: [{
+                                    src: {id: 0},
+                                    dst: {id: 1}
+                                }, {
+                                    src: {id: 1},
+                                    dst: {id: 2}
+                                }],
+                                options: []
+                            })
+                        })
+                        .done(function (data) {
+                            var link = document.createElement("a");
+                            link.style.display = "none";
+                            link.download = name;
+                            link.href = "/render/" + data.render.id + "/resource/" + data.render.outputFilename;
+                            document.body.appendChild(link);
+                            link.click();
+                            link.parentNode.removeChild(link);
+
+                            hideDownloadLoader();
+                            $("#download-view").removeClass('disabled');
+                            $("#addGalleryImage").removeClass('disabled');
+                            $("#render").removeClass('disabled');
+                        });
                 });
-            });
-        })
+            })
+            .error(function (data) {
+                console.log('POST ERROR !');
+            })
         .error(function(data){
             console.log('POST ERROR !');
+            hideRenderLoader();
         });
+    }
+
+    // download an image from an url and apply a filter
+    function fromUrlRender(pluginId) {
+      displayRenderLoader();
+      var renderParameters = formToJson();
+
+      $.ajax({
+        type: "POST",
+        url: "/downloadImgFromUrl",
+        contentType: 'application/json; charset=utf-8',
+        data : JSON.stringify({
+          'url': $("#imgUrl").val()
+        }),
+          statusCode: {
+            500: function() {
+              alert( "page not found" );
+            }
+          }
+      })
+      .error(function(data) {
+            hideRenderLoader();
+            $("#imgUrl").parent().before(addMessage(data.responseText, "error"));
+      })
+      .success(function(data){
+          removeMessage();
+          selectedResource = data;
+
+          renderFilter(pluginId);
+      });
     }
 
     var allResources = undefined;
     var selectedResource = undefined;
 
     $.ajax({
-        type: "GET",
-        url: "/resource",
-        async: false, //avoid an empty data when result is returned.
-    })
-    .done(function(data){
-        allResources = [];
+            type: "GET",
+            url: "/resource",
+            async: false, //avoid an empty data when result is returned.
+        })
+        .done(function (data) {
+            allResources = [];
 
-        $.each( data.resources, function( index, resource){
-            allResources.push(resource['registeredName']);
+            $.each(data.resources, function (index, resource) {
+                allResources.push(resource['registeredName']);
+            });
+
+            if (allResources !== undefined && allResources.length > 0) {
+                selectedResource = allResources[0];
+            }
+        })
+        .error(function (data) {
+            console.log('POST ERROR !');
         });
 
-        if(allResources !== undefined && allResources.length > 0){
-            selectedResource = allResources[0];
-        }
-    })
-    .error(function(data){
-        console.log('POST ERROR !');
-    });
-
-    $(".sampleImage").each(function() {
-        $(this).click(function(){
+    $(".sampleImage").each(function () {
+        $(this).click(function () {
+            $("#imgUrl").parent().css("border-left", "none").css("color", "inherit");
             setResourceSelected($(this));
             var pluginId = $("#render.OfxImageEffectContextFilter").attr("pluginId");
             renderFilter(pluginId);
         });
     });
 
-    function setResourceSelected(obj){
-        $(".sampleImage").each(function() {
+    function setResourceSelected(obj) {
+        $(".sampleImage").each(function () {
             deselect($(this));
         });
-        $(obj).parent().css("border", "solid 2px gray");
+        $(obj).parent().css("border-left", "solid 10px rgb(0,150,136)");
         selectedResource = $(obj).attr('id');
     }
 
-    function deselect(obj){
-        $(obj).parent().css("border", "");
+    function deselect(obj) {
+        $(obj).parent().css("border-left", "none");
     }
 
-    function displayLoader(){
+    function displayRenderLoader() {
         $('#viewer .preloader-wrapper').addClass('active');
         $("#viewer-placeholder").css('display', 'block');
     }
 
-    function hideLoader(){
+    function hideRenderLoader() {
         $('#viewer .preloader-wrapper').removeClass('active');
         $("#viewer-placeholder").css('display', 'none');
     }
 
-    function resetParameters () {
+    function displayDownloadLoader() {
+        $('#buttons .preloader-wrapper').addClass('active');
+    }
+
+    function hideDownloadLoader() {
+        $('#buttons .preloader-wrapper').removeClass('active');
+    }
+
+    function resetParameters() {
         // Reset basic inputs : text and number
-        $('#renderForm input[type="text"], #renderForm input[type="number"]').each(function() {
+        $('#renderForm input[type="text"], #renderForm input[type="number"]').each(function () {
             $(this).val($(this).data('default'));
         });
 
         // Reset dropdown lists (select)
-        $('#renderForm select').each(function() {
+        $('#renderForm select').each(function () {
             // Loop through each option
-            $(this).find('option').each(function() {
+            $(this).find('option').each(function () {
                 $(this).removeAttr('selected');
                 // If it's the default one
                 if ($(this).data('default') === "selected") {
@@ -342,7 +455,7 @@ $(document).ready(function() {
             });
         });
 
-        $('#renderForm input[type="checkbox"]').each(function() {
+        $('#renderForm input[type="checkbox"]').each(function () {
             if ($(this).data('default') === "checked") {
                 // Not checked but should be
                 $(this).prop('checked', true);
@@ -357,79 +470,110 @@ $(document).ready(function() {
     // Filter plugin (blur...)
     if ($('#render').hasClass('OfxImageEffectContextFilter')) {
         renderFilter($("#render.OfxImageEffectContextFilter").attr("pluginId"));
-    } else if($('#render').hasClass('OfxImageEffectContextGenerator')) {
+    } else if ($('#render').hasClass('OfxImageEffectContextGenerator')) {
         // Generator plugin (color wheel...)
         renderGenerator($("#render.OfxImageEffectContextGenerator").attr("pluginId"));
     }
 
     // Manual render on button click
-    $("#render.OfxImageEffectContextFilter").click(function(){
+    $("#render.OfxImageEffectContextFilter").click(function () {
         renderFilter($(this).attr("pluginId"));
     });
-    $("#render.OfxImageEffectContextGenerator").click(function(){
+    $("#render.OfxImageEffectContextGenerator").click(function () {
         renderGenerator($(this).attr("pluginId"));
     });
 
+    // Send an image from an external URL
+    $("#renderUrl.OfxImageEffectContextFilter").click(function(){
+        fromUrlRender($(this).attr("pluginId"));
+        $("#imgUrl").parent().css("border-left", "solid 10px rgb(0,150,136)").css("color", "white");
+        $(".sampleImage").each(function () {
+            deselect($(this));
+        });
+
+    });
+
     // Reset button
-    $('button#reset').click(function() {
+    $('button#reset').click(function () {
         resetParameters();
     });
 
-/* Before / After slider */
 
-function init_beforeAfterSlider() {
-  if (!$('#BeforeAfterSlider').is(":visible")) {
-    $('#BeforeAfterSlider').noUiSlider({
-      start : 50,
-      step: 1,
-      direction: 'ltr',
-      orientation: 'horizontal',
-      behaviour: 'tap-drag',
-      range : {
-        'min' : 0,
-        'max' : 100
-      }
-    }).fadeIn(500);
-  }
-  reload_beforeAfterRender();
-  $(".noUi-handle").after("<div id=\"original-label\">Original picture</div>");
-  $(".noUi-handle").after("<div id=\"render-label\">Rendered picture</div>");
-  $("#original-label").css({
-    "margin-left": "-130px",
-    "margin-top": "-35px",
-    "position": "absolute"
-  });
-  $("#render-label").css({
-    "margin-top": "-35px",
-    "position": "absolute",
-    "margin-left": "10px"
-  });
+    $("#addGalleryImage").click(function(event){
 
-  $('#BeforeAfterSlider div.noUi-handle').mousedown(function() {
-    $(document).mousemove(function(event) {
-      if ($('#BeforeAfterSlider').val() >= 75) {
-        $("#render-label").fadeOut(200);
-      }
-      else if ($('#BeforeAfterSlider').val() <= 25) {
-        $("#original-label").fadeOut(200);
-      }
-      else {
-        $("#render-label").fadeIn(200);
-        $("#original-label").fadeIn(200);
-      }
-      change_beforeAfterRender($('#BeforeAfterSlider').val());
-    });
-  });
-}
+        $("#download-view").addClass('disabled');
+        $("#addGalleryImage").addClass('disabled');
+        $("#render").addClass('disabled');
 
-function change_beforeAfterRender(value) {
-  originalPicW = (value/100) * $("#viewer img#renderedPic").width();
-  $("#viewer img#originalPic").css("clip", "rect(0 " + originalPicW + "px auto 0)");
-}
+        var pluginId = $("#addGalleryImage").attr("pluginId");
+        var renderId = $("#renderedPic").attr("src").split("/resource/")[0].split("/render/")[1];
+        var resourceId = $("#renderedPic").attr("src").split("/resource/")[1];
 
-function reload_beforeAfterRender() {
-  $('#BeforeAfterSlider').val(50, { set: true });
-  change_beforeAfterRender(50);
-}
+        $.ajax({
+                type: "POST",
+                url: "/plugin/" + pluginId + "/render/" + renderId + "/resource/" + resourceId,
+                async: false //avoid an empty data when result is returned.
+            }).done(function(){
+                $("#download-view").removeClass('disabled');
+                $("#render").removeClass('disabled');
+            })
+    }); //.off("click");
+
+    /* Before / After slider */
+
+    function init_beforeAfterSlider() {
+        if (!$('#BeforeAfterSlider').is(":visible")) {
+            $('#BeforeAfterSlider').noUiSlider({
+                start: 50,
+                step: 1,
+                direction: 'ltr',
+                orientation: 'horizontal',
+                behaviour: 'tap-drag',
+                range: {
+                    'min': 0,
+                    'max': 100
+                }
+            }).fadeIn(500);
+        }
+        reload_beforeAfterRender();
+        $(".noUi-handle").after("<div id=\"original-label\">Original picture</div>");
+        $(".noUi-handle").after("<div id=\"render-label\">Rendered picture</div>");
+        $("#original-label").css({
+            "margin-left": "-130px",
+            "margin-top": "-35px",
+            "position": "absolute"
+        });
+        $("#render-label").css({
+            "margin-top": "-35px",
+            "position": "absolute",
+            "margin-left": "10px"
+        });
+
+        $('#BeforeAfterSlider div.noUi-handle').mousedown(function () {
+            $(document).mousemove(function (event) {
+                if ($('#BeforeAfterSlider').val() >= 75) {
+                    $("#render-label").fadeOut(200);
+                }
+                else if ($('#BeforeAfterSlider').val() <= 25) {
+                    $("#original-label").fadeOut(200);
+                }
+                else {
+                    $("#render-label").fadeIn(200);
+                    $("#original-label").fadeIn(200);
+                }
+                change_beforeAfterRender($('#BeforeAfterSlider').val());
+            });
+        });
+    }
+
+    function change_beforeAfterRender(value) {
+        originalPicW = (value / 100) * $("#viewer img#renderedPic").width();
+        $("#viewer img#originalPic").css("clip", "rect(0 " + originalPicW + "px auto 0)");
+    }
+
+    function reload_beforeAfterRender() {
+        $('#BeforeAfterSlider').val(50, {set: true});
+        change_beforeAfterRender(50);
+    }
 
 });

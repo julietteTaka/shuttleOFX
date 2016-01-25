@@ -10,7 +10,7 @@
                       Upload a bundle
                     </h1>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -41,18 +41,39 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
+                    <p>
+                        Here you can upload OFX plugins that you developed to add them in our catalog.
+                    </p>
+                    {% if not user %}
+                    <div class="message info">
+                        <p>Please login to upload plugins</p>
+                    </div>
+                    {% else %}
+                    <p>
+                        To upload new plugin(s), please follow the steps describe below :
+                        <ol>
+                            <li>Compress your plugin(s) in a tar.gz archive. <b>NB: each plugin have to be in its own directory in the archive.</b></li>
+                            <li>Fill the form below giving a name to the bundle of plugins that you send and the description of it.</li>
+                            <li>Click on GO button.</li>
+                            <li>Drag and drop your archive in the frame specified and click on UPLOAD button to send your bundle.</li>
+                            <li>That's all.</li>
+                        </ol>
+                    </p>
+                </div>
+
+                <div class="col-md-12">
                     <div class="page-header">
                     <h2>Bundle's information</h2>
                     </div>
                     <form id='metaBundle'>
                         <fieldset>
-
                             <input type='text' id="bundleName" required placeholder="Your bundle's name" class="form-control empty panel panel-primary validate">
                             <input type='text' id="bundleDescription" required placeholder="Your bundle's description" class="form-control empty panel panel-primary">
-                            <input type='submit' value = 'Go' id="createBundle" class="btn btn-primary" attr-id="{{user.id}}">
+                            <input type='submit' value ='Go' id="createBundle" class="btn btn-primary" attr-id="{{user.id}}">
                         </fieldset>
                     </form>
                 </div>
+                {% endif %}
             </div>
         </div>
         <div class="container-fluid">
@@ -83,4 +104,3 @@
 <script src="{{ url_for('static', filename='scripts/dropzone-config.js') }}"></script>
 
 {% endblock %}
-

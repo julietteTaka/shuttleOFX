@@ -26,6 +26,8 @@ g_app = Flask(__name__)
 
 g_app.config['GOOGLE_ID'] = config.get('OAUTH_CONFIG', 'googleId')
 g_app.config['GOOGLE_SECRET'] = config.get('OAUTH_CONFIG', 'googleSecret')
+g_app.config['GITHUB_ID'] = config.get('OAUTH_CONFIG', 'githubId')
+g_app.config['GITHUB_SECRET'] = config.get('OAUTH_CONFIG', 'githubSecret')
 g_app.debug = True
 g_app.secret_key = 'development'
 
@@ -45,13 +47,21 @@ google = oauth.remote_app(
     authorize_url='https://accounts.google.com/o/oauth2/auth',
 )
 
+github = oauth.remote_app(
+    'github',
+    consumer_key=g_app.config.get('GITHUB_ID'),
+    consumer_secret=g_app.config.get('GITHUB_SECRET'),
+    access_token_method='POST',
+    base_url='https://api.github.com/user',
+    access_token_url='https://github.com/login/oauth/access_token',
+    authorize_url='https://github.com/login/oauth/authorize',
+)
+
 def get_resource_as_string(name, charset='utf-8'):
     with g_app.open_resource(name) as f:
         return f.read().decode(charset)
-        
+
 g_app.jinja_env.globals['get_resource_as_string'] = get_resource_as_string
 
 catalogRootUri = config.get("APP_CLIENT", "catalogRootUri")
 renderRootUri  = config.get("APP_CLIENT", "renderRootUri")
-
-

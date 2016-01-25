@@ -240,6 +240,7 @@ def deleteBundle(bundleId):
         abort(make_response("Bundle not found.", 404))
 
     plugins = config.pluginTable.find({"bundleId": bundleId})
+
     for plugin in plugins:
         pluginId = plugin["pluginId"]
         deleteStatus = config.pluginTable.remove({"pluginId":pluginId})
@@ -331,7 +332,7 @@ def getAllPlugins():
 
     if keyWord:
         pagination = createSearchPagination(count, skip, maxPage, keyWord)
-    else: 
+    else:
         pagination = createPagination(count, skip, maxPage)
 
     return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "count": count, "pagination": pagination})
@@ -374,6 +375,14 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
 
     return mongodoc_jsonify(plugin)
 
+### Comments Start _____________________________________________________________
+@config.g_app.route('/plugin/<int:pluginId>/version/<pluginVersion>/comments/updates', methods=['POST'])
+@config.g_app.route('/plugin/<int:pluginId>/comments/update', methods=['POST'])
+def addComment(pluginId, pluginVersion="latest"):
+    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {'comments' : { 'user' : request.json['commentsuser'], 'content' : request.json['commentscontent'], 'picture' : request.json['commentspicture'], 'date' : request.json['commentsdate'] }}})
+    return mongodoc_jsonify(True)
+### Comments End _______________________________________________________________
+
 
 @config.g_app.route("/bundle/<rawIdentifier>/bundle", methods=['GET'])
 def getBundleByPluginId(rawIdentifier):
@@ -388,6 +397,15 @@ def getBundleByPluginId(rawIdentifier):
 
     return mongodoc_jsonify(bundleId)
 
+### Wiki Start _________________________________________________________________
+
+@config.g_app.route('/wiki/update/<int:pluginId>/version/<pluginVersion>', methods=['POST'])
+@config.g_app.route('/wiki/update/<int:pluginId>', methods=['POST'])
+def setWiki(pluginId, pluginVersion="latest"):
+    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {'wiki' : { 'content' : request.json['wikicontent'], 'user' : request.json['wikiuser'], 'picture' : request.json['wikipicture'], 'date' : request.json['wikidate']  }}})
+    return mongodoc_jsonify(True)
+
+### Wiki End ___________________________________________________________________
 
 @config.g_app.route('/resources', methods=['POST'])
 def addResource():
@@ -400,8 +418,8 @@ def addResource():
     size = request.content_length
 
     if not mimetype:
-        logging.error("Invalide resource.")
-        abort(make_response("Invalide resource.", 400))
+        logging.error("Invalid resource.")
+        abort(make_response("Invalid resource.", 400))
 
     uid = config.resourceTable.insert({
         "mimetype" : mimetype,
@@ -409,7 +427,6 @@ def addResource():
         "name" : name})
 
     img = request.data
-
 
     imgFile = os.path.join(config.resourcesPath, str(uid))
     file = request.files['file']
@@ -471,7 +488,10 @@ def addImageToPlugin(pluginId):
     if plugin == None:
         abort(404)
 
-    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"sampleImagesPath" : imageId} }, upsert=True)
+    config.pluginTable.update(
+        {"pluginId" : pluginId},
+        {'$addToSet' : {"sampleImagesPath" : imageId}},
+        upsert=True)
     plugin = config.pluginTable.find_one({"pluginId": pluginId})
 
     return mongodoc_jsonify(plugin)

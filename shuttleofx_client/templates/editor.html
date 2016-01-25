@@ -4,13 +4,13 @@
 {% set active = "demo" %}
 
 {% block content %}
-<div class="main-content no-bottom-header">
+<div class="main-content no-bottom-header" xmlns="http://www.w3.org/1999/html">
     <div id="demo">
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="col-md-9">
                     <div class="row-fluid">
-                        <div class="demo-links">
+                        <div id="buttons" class="demo-links">
                             <h3>Settings</h3>
                                 <input type="button" value="Render" id="render" pluginId="{{plugin.rawIdentifier}}"
                                     {% for context in plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
@@ -19,6 +19,25 @@
                                         {% endif %}
                                     {% endfor%}
                                 >
+
+								<input  type="button" value="Add to preview gallery" id="addGalleryImage" pluginId="{{plugin.pluginId}}"
+									class="btn btn-success"
+								>
+
+								<a id="download-view" type="button" class=" btn btn-success" data-toggle="modal" data-target="#downloadModal">
+                                  	Download
+								</a>
+								<div class="preloader-wrapper extra-small">
+									<div class="spinner-layer">
+										<div class="circle-clipper left">
+											<div class="circle"></div>
+										</div><div class="gap-patch">
+											<div class="circle"></div>
+										</div><div class="circle-clipper right">
+											<div class="circle"></div>
+										</div>
+									</div>
+								</div>
                         </div>
                     </div>
                     <div class="row-fluid">
@@ -51,6 +70,20 @@
                                 </div>
                             </div>
                         </div>
+                        <h4>Image from an URL</h4>
+                        <div class="row">
+                          <div class="col-md-12">
+                                <input id="imgUrl" class="form-control empty"  type="text" name="imgUrl" value="" placeholder="type an image url here ...">
+                            <input type="button" value="Send" id="renderUrl" pluginId="{{plugin.rawIdentifier}}"
+                                {% for context in plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
+                                    {% if context != "OfxImageEffectContextGeneral" %}
+                                        class="btn btn-primary {{context}}"
+                                    {% endif %}
+                                {% endfor%}
+                            >
+                          </div>
+                        </div>
+                        <h4>Image from ShuttleOFX resources</h4>
                         <div class="row">
                             {% for resource in resources.resources %}
                                 {% for key in resource._id %}
@@ -147,11 +180,20 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">Choose a format to download</h4>
+                <h4 class="modal-title">Choose a format for the rendered image</h4>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                        <div class="radio radio-primary">
+                <div class="form-group" id="formatSelect">
+						{% if 'OfxImageEffectContextFilter'in plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
+						<div class="radio radio-primary">
+                            <label>
+                                <input type="radio" name="format" value="original">
+                                ORIGINAL FORMAT
+                            </label>
+                        </div>
+						<br>
+						{% endif %}
+						<div class="radio radio-primary">
                             <label>
                                 <input type="radio" name="format" value="png" checked="">
                                 PNG
@@ -159,13 +201,13 @@
                         </div>
                         <div class="radio radio-primary">
                             <label>
-                                <input type="radio" name="format" value="jpg" disabled>
+                                <input type="radio" name="format" value="jpg">
                                 JPG
                             </label>
                         </div>
                         <div class="radio radio-primary">
                             <label>
-                                <input type="radio" name="format" value="tiff" disabled>
+                                <input type="radio" name="format" value="tiff">
                                 TIFF
                             </label>
                         </div>
