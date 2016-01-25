@@ -248,7 +248,7 @@ $(document).ready(function () {
                 var selectedResourceName = selectedResource.split(".")[0];
                 var ext = selectedResource.split(".")[1];
                 if (selectedResourceName.indexOf("tmp") <= -1) {
-                    var selectedResourcePath = "proxy/" + selectedResourceName ;
+                    var selectedResourcePath = "/proxy/" + selectedResourceName ;
                     ext = ".png";
                 }
                 else {
@@ -465,9 +465,8 @@ $(document).ready(function () {
     // Automatic render on load
     // Filter plugin (blur...)
     if ($('#render').hasClass('OfxImageEffectContextFilter')) {
-        $("#imgUrl").val("http://lorempixel.com/600/400/");
-        fromUrlRender($("#render.OfxImageEffectContextFilter").attr("pluginId"));
-    } else if($('#render').hasClass('OfxImageEffectContextGenerator')) {
+        renderFilter($("#render.OfxImageEffectContextFilter").attr("pluginId"));
+    } else if ($('#render').hasClass('OfxImageEffectContextGenerator')) {
         // Generator plugin (color wheel...)
         renderGenerator($("#render.OfxImageEffectContextGenerator").attr("pluginId"));
     }
