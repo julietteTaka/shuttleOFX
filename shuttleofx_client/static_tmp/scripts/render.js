@@ -494,7 +494,7 @@ $(document).ready(function () {
     });
 
     // Reset button
-    $('button#reset').click(function () {
+    $('#reset').click(function () {
         resetParameters();
     });
 

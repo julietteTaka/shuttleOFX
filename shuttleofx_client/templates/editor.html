@@ -20,12 +20,12 @@
                                     {% endfor%}
                                 >
 
-                                <button id="addGalleryImage" class="btn btn-success" title="Add to preview gallery" pluginId="{{plugin.pluginId}}">
+                                <a href="#" id="addGalleryImage" title="Add to preview gallery" pluginId="{{plugin.pluginId}}">
                                     <i class="fa fa-thumb-tack"></i>
-                                </button>
-                                <button id="download-view" class="btn btn-success" title="Download the rendered image" data-toggle="modal" data-target="#downloadModal">
+                                </a>
+                                <a href="#" id="download-view" title="Download the rendered image" data-toggle="modal" data-target="#downloadModal">
                                     <i class="fa fa-cloud-download"></i>
-                                </button>
+                                </a>
 								<div class="preloader-wrapper extra-small">
 									<div class="spinner-layer">
 										<div class="circle-clipper left">
@@ -119,7 +119,7 @@
                     <div class="changeParameters">
                         <div class="changeParameters-title">
                             <h3>Parameters</h3>
-                            <button class="btn btn-primary" id="reset" title="Reset render parameters"><i class="fa fa-undo"></i></button>
+                            <a href="#" id="reset" title="Reset render parameters"><i class="fa fa-undo"></i></a>
                         </div>
                         <div class="changeParameters-content">
                             <form id="renderForm" name="renderForm">
