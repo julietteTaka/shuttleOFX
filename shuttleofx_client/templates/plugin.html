@@ -30,8 +30,8 @@
                         {% endif %}
                         <li class="tab"><a {% if active == "info" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/info">Technical info</a></li>
                         <!-- FIXME enable these tabs when wiki and/or comments are active -->
-                        <li class="tab disabled"><a {% if active == "wiki" %}class="active"{% endif %} href="#">Wiki</a></li>
-                        <li class="tab disabled"><a {% if active == "comments" %}class="active"{% endif %} href="#">Comments</a></li>
+                        <li class="tab"><a {% if active == "wiki" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/wiki">Wiki</a></li>
+                        <li class="tab"><a {% if active == "comments" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/comments">Comments</a></li>
                     </ul>
                 </div>
             </div>
