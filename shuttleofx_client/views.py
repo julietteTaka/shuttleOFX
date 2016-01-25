@@ -121,6 +121,10 @@ def renderPageWithPlugin(pluginRawIdentifier):
     if resp.status_code != 200:
         abort(resp.status_code)
     previewGallery = requests.get(config.renderRootUri + '/resource/').json()
+
+    if pluginRawIdentifier == 'tuttle.ctl':
+        return render_template('scriptEditor.html', plugin=resp.json(), user=user, resources=previewGallery)
+
     return render_template('editor.html', plugin=resp.json(), user=user, resources=previewGallery)
 
 ### Wiki Start _________________________________________________________________

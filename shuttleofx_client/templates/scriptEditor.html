@@ -1,0 +1,269 @@
+{% extends "plugin.html" %}
+
+{# Set the active item in the menu #}
+{% set active = "demo" %}
+
+{% block content %}
+<div class="main-content no-bottom-header">
+    <div id="demo">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="col-md-6">
+                    <div class="changeParameters" style="border-right: 1px solid #ddd; padding-right: 20px;">
+                        <div class="changeParameters-title" style="border-bottom: 1px solid #ddd;">
+                            <h3 style="border: none;">Parameters</h3>
+                            <button class="btn btn-primary" id="reset" style="float: right;">Reset</button>
+                            <input type="button" value="Render" id="render" style="float: right;" pluginId="{{plugin.rawIdentifier}}"
+                                    {% for context in plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
+                                        {% if context != "OfxImageEffectContextGeneral" %}
+                                            class="btn btn-primary {{context}}"
+                                        {% endif %}
+                                    {% endfor%}
+                                >
+                        </div>
+                        <div class="changeParameters-content" style="border: none;">
+                            <form id="renderForm" name="renderForm">
+                                <fieldset>
+                                    <div class="form-group">
+                                        {% for paramProps in plugin.parameters %}
+                                            <label class="control-label">{{ paramProps.OfxPropLabel.value }}</label>
+                                            {% set default = 0 %}
+                                            {% if "OfxParamPropDefault" in paramProps %}
+                                                {% set default = paramProps.OfxParamPropDefault.value %}
+                                            {% endif %}
+                                            {% set name = paramProps.OfxPropName.value %}
+                                            {% set paramType = paramProps.OfxParamPropType.value %}
+                                            {% if paramType == "OfxParamTypeInteger" %}
+                                                <input type="number" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}" >
+                                            {% elif paramType == "OfxParamTypeInteger2D" %}
+                                                <input type="text" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}">
+                                            {% elif paramType == "OfxParamTypeInteger3D" %}
+                                                <input type="text" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}">
+                                            {% elif paramType == "OfxParamTypeDouble" %}
+                                                <input type="number" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}">
+                                            {% elif paramType == "OfxParamTypeDouble2D" %}
+                                                <input type="number" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}">
+                                            {% elif paramType == "OfxParamTypeDouble3D" %}
+                                                <input type="number" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}">
+                                            {% elif paramType == "OfxParamTypeString" %}
+                                                <input type="text" ofxType="{{paramType}}" name="{{name}}" id="{{name}}" class="form-control" value="{{default}}" data-default="{{default}}">
+                                            {% elif paramType == "OfxParamTypeChoice" %}
+                                                <select ofxType="{{paramType}}" name="{{name}}" id="{{name}}" style="display:block">
+                                                    {% set paramIndex = 0 %}
+                                                    {% for val in paramProps.OfxParamPropChoiceOption.propValues %}
+                                                        <option value="{{val}}" {%if paramIndex == default%}selected data-default="selected"{%endif%}>{{val}}</option>
+                                                        {% set paramIndex = paramIndex + 1 %}
+                                                    {% endfor %}
+                                                </select>
+                                            {% elif paramType == "OfxParamTypeBoolean" %}
+                                                <div class="togglebutton form-control">
+                                                    <label>
+                                                        <input ofxType="{{paramType}}" name="{{name}}" id="{{name}}" type="checkbox" {% if default == 1%} checked data-default="checked" {% endif %}>
+                                                    </label>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </fieldset>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <div class="col-md-6">
+                    <div class="row-fluid">
+                        <div class="demo-links">
+                            <h3>Settings</h3>
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                        <div id="viewer" class="display">
+                            <div id="BeforeAfterSlider"></div>
+                            <img src="" alt="" class="panel panel-primary img-responsive" id="originalPic"/>
+                            <img src="" alt="" class="panel panel-primary img-responsive" id="renderedPic"/>
+                            <div id="viewer-placeholder">
+                                <div class="preloader-wrapper big active">
+                                    <div class="spinner-layer">
+                                        <div class="circle-clipper left">
+                                            <div class="circle"></div>
+                                        </div><div class="gap-patch">
+                                            <div class="circle"></div>
+                                        </div><div class="circle-clipper right">
+                                            <div class="circle"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% set countContext = 0 %}
+                    {% for context in plugin.properties.OfxImageEffectPropSupportedContexts.propValues if context == "OfxImageEffectContextFilter" and countContext == 0 %}
+                        {% set countContext = 1 %}
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="page-header">
+                                    <h3>Select source image</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <h4>Image from an URL</h4>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <input id="imgUrl"  type="text" name="imgUrl" value="" placeholder="type an image url here ...">
+                            <input type="button" value="Send" id="renderUrl" pluginId="{{plugin.rawIdentifier}}"
+                                {% for context in plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
+                                    {% if context != "OfxImageEffectContextGeneral" %}
+                                        class="btn btn-primary {{context}}"
+                                    {% endif %}
+                                {% endfor%}
+                            >
+                          </div>
+                        </div>
+                        <h4>Image from ShuttleOFX resources</h4>
+                        <div class="row">
+                            {% for resource in resources.resources %}
+                                {% for key in resource._id %}
+                                    <div class="col-md-3">
+                                        <div class="preview-img preview-render panel panel-primary">
+                                            <img class="sampleImage img-responsive" src="/thumbnail/{{resource.registeredName}}" id="{{ resource.registeredName}}">
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endfor%}
+
+                    <div class="row-fluid">
+                        <div id="graph" class="graph">
+                            <div id="resultForm"></div>
+                                {% if "OfxImageEffectContextFilter" in plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
+                                    <div class="node">Reader</div>
+                                    <svg width="100px" height="10px">
+                                        <path d="M0 4 L 85 4 L 85 0 L 100 5 L 85 10 L 85 6 L 0 6 Z" stroke="black" fill="black"/>
+                                    </svg>
+                                {% endif %}
+                            <div class="node">
+                                {{plugin.properties.OfxPropShortLabel.value}}
+                            </div>
+                            <svg width="100px" height="10px">
+                                <path d="M0 4 L 85 4 L 85 0 L 100 5 L 85 10 L 85 6 L 0 6 Z" stroke="black" fill="black"/>
+                            </svg>
+                            <div class="node">Writer</div>
+                        </div>
+                    </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="downloadModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Choose a format to download</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                        <div class="radio radio-primary">
+                            <label>
+                                <input type="radio" name="format" value="png" checked="">
+                                PNG
+                            </label>
+                        </div>
+                        <div class="radio radio-primary">
+                            <label>
+                                <input type="radio" name="format" value="jpg" disabled>
+                                JPG
+                            </label>
+                        </div>
+                        <div class="radio radio-primary">
+                            <label>
+                                <input type="radio" name="format" value="tiff" disabled>
+                                TIFF
+                            </label>
+                        </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="downloadtrigger" type="button" class="btn btn-primary">Download</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='scripts/render.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $slider = $(".shor").noUiSlider({
+                start: 40,
+                connect: "lower",
+                range: {
+                    min: 0,
+                    max: 100
+                },
+                step: 1,
+                handles : 1,
+                format: wNumb({
+                    decimals: false
+                })
+            });
+            $value = $slider.val();
+            $slider.Link('lower').to($('.input-number'));
+            $slider.Link('lower').to($('#input-number'));
+        });
+    </script>
+
+    <script src="{{ url_for('static', filename='scripts/vendor/ace.js') }}"></script>
+    <script>
+            $("#input").val("code");
+            $("#input option[value='code']").prop("selected", true);
+            $("#input option").removeAttr("data-default");
+            $("#input option[value='code']").attr("data-default", 'selected');
+
+
+            $("#code").hide();
+
+            $("#code").before(
+                 '<div id = "script-editor" style="width: 100%; height: 250px;">'+
+                    '<pre id = "editor" style="height: 100%;">'+
+
+                    '</pre>'+
+                 '</div>'
+            );
+
+            var editor = ace.edit("editor");
+            editor.setTheme("ace/theme/solarized_dark");
+            editor.getSession().setMode("ace/mode/c_cpp");
+            document.getElementById('editor').style.fontSize='11pt';
+            $(".ace_scrollbar").css("z-index", 1);
+
+            editor.setValue($("#code").data('default'));
+
+            editor.getSession().on('change', function(e) {
+                $("#code").val(editor.getValue());
+            });
+
+            $('#reset').click(function() {
+                editor.setValue($("#code").data('default'));
+            })
+
+        // Delete underlining of demo-links
+        var style = document.createElement("style");
+
+        // Append the style tag to head
+        document.head.appendChild(style);
+
+        // Grab the stylesheet object
+        sheet = style.sheet
+
+        // Use addRule or insertRule to inject styles
+        //sheet.addRule('.demo-links::before','height: 0px;');
+        sheet.insertRule('.demo-links::before { height: 0px }', 0);
+    </script>
+{% endblock %}
