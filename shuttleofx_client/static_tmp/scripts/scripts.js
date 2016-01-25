@@ -12,6 +12,9 @@ function addMessage(content, type) {
 	else if (type == "success") {
 		return "<div class=\"message success\"><i class=\"fa fa-rocket\"></i><p>"+ content + "</p></div>";
 	}
+      else if(type == "info") {
+          return "<div class=\"message info\"><i class=\"fa fa-info-circle\"></i><p>"+ content + "</p></div>";
+      }
 };
 
 function removeMessage() {

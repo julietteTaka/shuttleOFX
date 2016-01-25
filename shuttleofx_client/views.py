@@ -54,6 +54,13 @@ def getPlugins():
     return render_template('plugins.html', dico=resp.json(), user=user)
 
 
+@config.g_app.route('/plugins')
+def getAllPlugins():
+    req = requests.get(config.catalogRootUri+"/plugins")
+    if req.status_code != 200:
+        abort(req.status_code)
+    return jsonify(**req.json())
+
 @config.g_app.route('/about')
 def getInfo():
     user = userManager.getUser()
@@ -113,6 +120,16 @@ def getSampleImagesForPlugin(pluginId, imageId):
     return Response(req.content, mimetype=req.headers["content-type"])
 
 
+@config.g_app.route('/category')
+def getCategory():
+	user = userManager.getUser()
+	try:
+		resp = requests.get(config.catalogRootUri + "/category", params=request.args)
+	except:
+		return render_template('plugins.html', dico=None, user=user)
+
+	return render_template('plugins.html', dico=resp.json(), user=user)
+
 @config.g_app.route('/editor')
 @config.g_app.route('/editor/<pluginRawIdentifier>')
 def renderPageWithPlugin(pluginRawIdentifier):
@@ -121,6 +138,10 @@ def renderPageWithPlugin(pluginRawIdentifier):
     if resp.status_code != 200:
         abort(resp.status_code)
     previewGallery = requests.get(config.renderRootUri + '/resource/').json()
+
+    if pluginRawIdentifier == 'tuttle.ctl':
+        return render_template('scriptEditor.html', plugin=resp.json(), user=user, resources=previewGallery)
+
     return render_template('editor.html', plugin=resp.json(), user=user, resources=previewGallery)
 
 ### Wiki Start _________________________________________________________________
