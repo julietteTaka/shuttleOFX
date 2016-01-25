@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block back_button %}
-<a href="/plugin" id="back-to-plugins" data-0="line-height:80px" data-150="line-height:30px"><i class="fa fa-angle-left"></i> Back to all plugins</a>
+<a href="/" id="back-to-plugins" data-0="line-height:80px" data-150="line-height:30px"><i class="fa fa-angle-left"></i> Back to all plugins</a>
 {% endblock %}
 
 {% block title %}
@@ -126,11 +126,10 @@
         $(document).ready(function() {
             var href = $("#back-to-plugins").attr("href");
             var prefs = Cookies.getJSON("user_sorting_prefs");
-            if(prefs && prefs.count && prefs.skip){
-                $("#back-to-plugins").attr("href", href + "?count=" + prefs.count + "&skip=" + prefs.skip );
-            }
-            else if(prefs && prefs.count && prefs.skip && prefs.search) {
-                $("#back-to-plugins").attr("href", href + "?search=" + prefs.search + "count=" + prefs.count + "&skip=" + prefs.skip );
+            if(prefs && prefs.count && prefs.skip && prefs.search && prefs.page){
+                $("#back-to-plugins").attr("href", href + prefs.page + "?search=" + prefs.search + "&count=" + prefs.count + "&skip=" + prefs.skip );
+            } else {
+                $("#back-to-plugins").attr("href", href + prefs.page + "?count=" + prefs.count + "&skip=" + prefs.skip );
             }
         });
 

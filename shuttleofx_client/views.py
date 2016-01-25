@@ -54,6 +54,13 @@ def getPlugins():
     return render_template('plugins.html', dico=resp.json(), user=user)
 
 
+@config.g_app.route('/plugins')
+def getAllPlugins():
+    req = requests.get(config.catalogRootUri+"/plugins")
+    if req.status_code != 200:
+        abort(req.status_code)
+    return jsonify(**req.json())
+
 @config.g_app.route('/about')
 def getInfo():
     user = userManager.getUser()
@@ -112,6 +119,16 @@ def getSampleImagesForPlugin(pluginId, imageId):
     req = requests.get(config.catalogRootUri + "/resources/" + str(imageId) + "/data")
     return Response(req.content, mimetype=req.headers["content-type"])
 
+
+@config.g_app.route('/category')
+def getCategory():
+	user = userManager.getUser()
+	try:
+		resp = requests.get(config.catalogRootUri + "/category", params=request.args)
+	except:
+		return render_template('plugins.html', dico=None, user=user)
+
+	return render_template('plugins.html', dico=resp.json(), user=user)
 
 @config.g_app.route('/editor')
 @config.g_app.route('/editor/<pluginRawIdentifier>')

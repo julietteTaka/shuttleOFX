@@ -356,16 +356,12 @@ ul.right-nav li .fa{
 #left-nav{
     height: 100%;
     background: @bkWhi;
-    position: fixed;
     left: 0;
     top: 0;
     z-index: 3;
-    // padding-bottom: 100px;
-    overflow-y: scroll;
     .mainLogo{
         height: 79px;
         background-color: rgba(0, 0, 0, 0.07);
-        // margin-bottom: -15px;
         padding-top: 10px;
         img{
             height: 60px;
@@ -394,9 +390,6 @@ ul.right-nav li .fa{
         background: #fff;
         margin-bottom: 1.5em;
         background-color: #009688;
-        // position: fixed;
-        // top: 0;
-        // left: 0;
         padding: 3px;
         img{
             height: 74px;
@@ -410,7 +403,6 @@ ul.right-nav li .fa{
         height: 60px;
         border-radius: 50%;
     }
-
     li.userloged{
         display: flex;
         align-items: center;
@@ -427,7 +419,6 @@ ul.right-nav li .fa{
         font-size: 1em;
         line-height: 2;
         padding: 0;
-
     }
     p.signedIn{
         width: 265px;
@@ -437,7 +428,6 @@ ul.right-nav li .fa{
         padding-right: 30px;
         font-size: 0.9em;
     }
-
     li.userunloged{
         p.userName, div{
             margin-top: 40px;
@@ -467,18 +457,26 @@ ul.right-nav li .fa{
             }
         }
     }
-
-
+    li#categories > a::after{
+        font-family: 'FontAwesome';
+        content: " \f0d7";
+    }
+    li#categories > a.active::after{
+        font-family: 'FontAwesome';
+        content: " \f0d8";
+    }
     ul{
+        height: 90%;
+        overflow-y: auto;
+        overflow-x: hidden;
         line-height: 2;
-        // padding-top: 1em;
         width: 100%;
-        float: left;
         padding: 0;
         li{
-            width: 100%;
+            display: block;
             list-style-type: none;
             &.title-nav{
+                position: relative;
                 margin-top: 3.5em;
                 margin-bottom: 1.5em;
                 width: 265px;
@@ -498,7 +496,7 @@ ul.right-nav li .fa{
                 }
             }
             a {
-                padding-left: 30px;
+                margin-left: 30px;
                 width: 100%;
                 line-height: 3.5;
                 font-size: 0.9em;
@@ -514,24 +512,43 @@ ul.right-nav li .fa{
                 }
             }
         }
-        ul {
+        ul:first-child{
             width: 100%;
+        }
+        ul {
+            width: auto;
+            height: auto;
             display: none;
+            padding-left: 10%;
+            text-transform: capitalize;
             li {
-                width: 100%;
+                width: auto;
                 border: none;
+                min-height: 26px;
                 a {
-                    width: 100%;
+                    width: auto;
+                    max-width: 100%;
+                    margin-left: 5px;
                     font-size: 0.85em;
-                    padding-left: 80px;
-                    display: block;
+                    display: inline-block;
+                    line-height: 1.5;
+                    // Prevent long plugins names to be wider than the navbar
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    vertical-align: middle;
+                }
+                i{
+                    padding: .5em;
+                    cursor: pointer;
+                    font-size: 0.8em;
+                }
+                ul{
+                    display: none;
                 }
             }
         }
     }
-    li.active ul {
-        display: block;
-    }
+    
     .fa{
         padding-right: 10px;
     }
