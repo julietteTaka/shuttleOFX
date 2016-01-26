@@ -92,7 +92,7 @@
                     {% if user %}
                     <div class="row">
                         <div class="col-md-6">
-                            <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">Edit wiki</a>
+                            <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary white">Edit wiki</a>
                         </div>
                     </div>
                     {% else %}
@@ -109,7 +109,10 @@
                     <div class="row">
                         <div class="col-md-12">
                             <p class="center">
-                                No wiki has been created yet, go on and add a <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary">new wiki</a>
+                                <i class="fa fa-frown-o"></i> No wiki created yet!
+                            </p>
+                            <p class="center">
+                                <a href="/wiki/edit/{{plugin.rawIdentifier}}" class="btn btn-primary white">add a new wiki</a>
                             </p>
                         </div>
                     </div>
