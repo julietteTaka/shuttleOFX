@@ -19,12 +19,12 @@ html,body{
 }
 
 .main-content{
-    padding-top: 40px;
+    padding-top: 210px;
     z-index: 2;
 }
 
 .main-content.no-bottom-header{
-    padding-top: 10px;
+    padding-top: 200px;
 }
 
 .page-header h2{
@@ -105,7 +105,7 @@ header{
         background-image:linear-gradient(90deg, @ofxColor, @ofxColor - 15);
         margin-bottom: 0px;
         padding-bottom: 0;
-        height: 100%;
+        height: 55px;
         .navbar-right{
             height: 100%;
             margin: 0;
@@ -167,7 +167,6 @@ header{
         input[type="text"]{
             // color: @ofxColor;
             margin-bottom: 20px;
-            margin-top: 17px;
             padding-bottom: 0px;
             border-bottom:1px solid rgba(255, 255, 255, 0.7);
             width:200px;
@@ -257,7 +256,7 @@ header{
 
 @media only screen and (max-width: 550px){
     header form#searchForm{
-       display: none;
+       line-height: 70px;
     }
     .navbar.navbar{
         height: 75px;
@@ -271,13 +270,13 @@ header{
 
 .header-content{
     padding-right: 265px;
-    height:100px;
+    //height:80px;
     color: #fff;
     width: 100%;
     background: @ofxColor;
     h1{
         color: #fff;
-        margin-top: 25px;
+        margin-top: 5px;
         font-size: 3em;
         font-family: 'Roboto-Light';
     }
@@ -298,7 +297,7 @@ header{
         margin-top: 0;
         margin-bottom: 0;
         display: inline-block;
-        line-height: 70px;
+        line-height: 55px;
         label span{
             margin-left: -34px;
             margin-top: 27px;
@@ -337,6 +336,11 @@ header{
 @media only screen and (max-width: 768px){
     .header-content h1{
         margin-left: 25px;
+    }
+}
+@media only screen and (max-width: 550px){
+    .header-content h1{
+        font-size: 2em;
     }
 }
 /*----------------------------------------------------------------
