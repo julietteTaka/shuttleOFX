@@ -224,7 +224,8 @@ module.exports = function (grunt) {
       },
       server: {
         files: {
-          '<%= project.static_tmp %>/styles/main.css' : '<%= project.static %>/styles/main.less'
+          '<%= project.static_tmp %>/styles/main.css' : '<%= project.static %>/styles/main.less',
+          '<%= project.static_tmp %>/styles/script-editor.css' : '<%= project.static %>/styles/script-editor.less'
         }
       },
     },
