@@ -260,6 +260,7 @@ $(document).ready(function () {
                     ext = "."+ext;
                 }
                 $("#viewer img#originalPic").attr("src", selectedResourcePath + ext);
+                $("#viewer img#originalPic").css("width", $("#viewer img#renderedPic").width());
                 $("#viewer img#originalPic").show();
                 $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
                 $("#download-view").removeClass('disabled');
@@ -575,5 +576,10 @@ $(document).ready(function () {
         $('#BeforeAfterSlider').val(50, {set: true});
         change_beforeAfterRender(50);
     }
+
+    /* Resize originalPic on resize of window */
+    $(window).resize(function() {
+        $("#viewer img#originalPic").css("width", $("#viewer img#renderedPic").width());
+    })
 
 });
