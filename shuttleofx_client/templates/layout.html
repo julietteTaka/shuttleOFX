@@ -21,6 +21,8 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/material.css') }}">
     -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
+    {% block styles %}
+    {% endblock %}
 
     <!-- favicon -->
     <link rel="icon" type="image/png" sizes="192x192"  href="{{ url_for('static', filename='images/android-icon-192x192.png') }}">

@@ -1,0 +1,33 @@
+/* The worst css ever but no choice to display correctly scriptEditor.html 
+ * I'm so sorry you know TT_TT */
+
+#demo > div > div > div {
+     display: block;
+     float: right;
+     width: 50%;
+}
+
+#demo > div > div > div:nth-child(2) {
+     border-right: 1px solid #dddddd;
+}
+
+#demo > div > div > div:nth-child(2) div:not(.changeparameters-title), h3 {
+     border-bottom: medium none ! important;
+     border-left: medium none ! important;
+}
+
+#demo > div > div > div:nth-child(2) div.changeparameters-title {
+     border-bottom: 1px solid #dddddd;
+}
+
+#demo > div > div > div:nth-child(1) div:nth-child(n+5):not(.node), 
+#demo > div > div > div:nth-child(1) div:nth-child(n+5):not(.node) h3,
+#demo > div > div > div:nth-child(1) div:nth-child(n+5):not(.node) h4 {
+     left: -100%;
+     position: relative;
+     width: 200%;
+}
+
+#originalPic {
+  margin-top: 8px;
+}
