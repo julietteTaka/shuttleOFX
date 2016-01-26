@@ -42,21 +42,28 @@
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        Here you can upload OFX plugins that you developed to add them in our catalog.
+                        Here you can upload OFX plugins to add them to the ShuttleOFX catalog.
                     </p>
                     {% if not user %}
                     <div class="message info">
                         <p>Please login to upload plugins</p>
                     </div>
                     {% else %}
-                    <p>
-                        To upload new plugin(s), please follow the steps describe below :
                         <ol>
-                            <li>Compress your plugin(s) in a tar.gz archive. <b>NB: each plugin have to be in its own directory in the archive.</b></li>
-                            <li>Fill the form below giving a name to the bundle of plugins that you send and the description of it.</li>
-                            <li>Click on GO button.</li>
-                            <li>Drag and drop your archive in the frame specified and click on UPLOAD button to send your bundle.</li>
-                            <li>That's all.</li>
+                            <li>Your plugins should respect the <a href="http://openfx.sourceforge.net/Documentation/1.4/ofxProgrammingReference.html#idp56354784">OpenFX standard.</a></li>
+                            <li>Your plugins should should be compiled for Linux 64 bits. We use the <a href="https://hub.docker.com/r/tuttleofx/tuttleofx/" >Docker image of TuttleOFX</a> to load and process your plugins, so you can reproduce the same environment locally to ensure that your plugins are recognized.</li>
+                            <li>
+                                If your plugins used shared libraries you can put them in a folder "lib" or "lib64" at the root of your archive :
+                                <pre>
+./PLUGIN_A.ofx.bundle/
+./PLUGIN_B.ofx.bundle/
+./lib/ <-- shared libraries
+                                </pre>
+                            </li>
+                            <li>Compress your plugins in a <b>tar.gz</b> archive.</li>
+                            <li>Fill the form below with a name and a description of the bundle of plugins and click <b>GO</b>.</li>
+                            <li>Drag and drop your archive and click <b>UPLOAD</b>.</li>
+                            <li>Wait until you have confirmation that the bundle has been uploaded and processed correctly.</li>
                         </ol>
                     </p>
                 </div>
