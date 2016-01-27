@@ -69,7 +69,7 @@ def getInfo():
     return render_template('whatIsOFX.html', user=user)
 
 
-@config.g_app.route("/plugin/search/")
+@config.g_app.route("/plugin/search")
 def searchPlugins():
     user = userManager.getUser()
 
