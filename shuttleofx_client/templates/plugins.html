@@ -47,9 +47,16 @@
 
                         <div class="col-md-3 col-sm-3 filter-item order-catag">
                             <div class="radio radio-primary">
-                                <label class="ascendant">
-                                    <i class="fa fa-sort-alpha-asc"></i>Ascending
-                                </label>
+                                {% if dico.alphaSort|int == 1 %}
+                                    <label class="descendant">
+                                        <i class="fa fa-sort-alpha-desc"></i>Descending
+                                    </label>
+                                {% else %}
+                                    <label class="ascendant">
+                                        <i class="fa fa-sort-alpha-asc"></i>Ascending
+                                    </label>
+                                {% endif %}
+                                </a>
                             </div>
                         </div>
 

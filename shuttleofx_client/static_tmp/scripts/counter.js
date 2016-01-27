@@ -2,8 +2,9 @@ var currentUrl = window.location.href;
 var decomposedUrl = currentUrl.split("?");
 
 var search ; // keyword in search field
-var count = 10; // number of plugin per page default = 10
+var count = 20; // number of plugin per page default = 20
 var skip = 1; // number of current page default = 1
+var alphaSort = 1; // alphabetical ordered by default
 var totalPlugins = $("#totalPlugins").val(); // number of plugins return by the search 
 
 var page = decomposedUrl[0].split("/"); // page plugin or category
@@ -24,14 +25,15 @@ if (typeof decomposedUrl[1] != "undefined") {
   if (typeof params["search"] != "undefined") search = params["search"];
   if (typeof params["skip"] != "undefined") skip = params["skip"];
   if (typeof params["count"] != "undefined") count = params["count"];
+  if (typeof params["alphaSort"] != "undefined") alphaSort = params["alphaSort"];
 }
 
 // Update cookie with new parameters
-cookieManager({"page": page, "search": search, "count": count, "skip":skip});
+cookieManager({"page": page, "search": search, "count": count, "skip":skip, "alphaSort": alphaSort});
 
 // Change number of plugin per page
 $('select#pageSize').change(function(){
-  count = $('select#pageSize').val();
+  count = $(this).val();
   var maxPage = Math.ceil(totalPlugins/$('select#pageSize').val());
   if (skip > maxPage) {
     skip = maxPage;
@@ -39,12 +41,42 @@ $('select#pageSize').change(function(){
 
   cookieManager({"count": count, "skip": skip});
 
-  if (typeof search == "undefined") {
-    window.location.href = "/" + page + "?count=" + count + "&skip=" + skip;
+  newUrl = "/" + page + "?";
+
+  if (typeof search != "undefined") {
+    newUrl += "search=" + search +"&";
   }
-  else {
-    window.location.href = "/" + page + "?search=" + search + "&count=" + count + "&skip=" + skip;
+
+  newUrl += "count=" + count + "&skip=" + skip;
+
+  if (typeof alphaSort != "undefined") {
+    newUrl += "&alphaSort=" + alphaSort;
   }
+
+  window.location.href = newUrl;
+});
+
+// Change sorting preferences
+$('.order-catag label').on('click', function() {
+  var content = $(this).html();
+
+  alphaSort = -alphaSort;
+
+  cookieManager({"count": count, "skip": skip, "alphaSort": alphaSort});
+
+  newUrl = "/" + page + "?";
+
+  if (typeof search != "undefined") {
+    newUrl += "search=" + search +"&";
+  }
+
+  newUrl += "count=" + count + "&skip=" + skip;
+
+  if (typeof alphaSort != "undefined") {
+    newUrl += "&alphaSort=" + alphaSort;
+  }
+
+  window.location.href = newUrl;
 });
 
 // Manage User sorting preferences inside cookies 
