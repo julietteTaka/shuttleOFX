@@ -5,10 +5,6 @@
       - Handle events to expand/minimize
 ********************************************/
 $(document).ready(function() {
-    $("#left-nav li#categories a").on('click', function(){
-        $(this).toggleClass('active');
-        $("#left-nav ul li#categories > ul").slideToggle(300);
-    });
     $("#left-nav ul li#categories").on('click', ' ul li i',function(){
         $(this).parent().children('ul').slideToggle(300);
         $(this).toggleClass('fa-minus', 'fa-plus');
