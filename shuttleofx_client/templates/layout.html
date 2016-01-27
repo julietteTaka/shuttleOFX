@@ -79,11 +79,8 @@
 
             <li class="title-nav" style="margin-top:2em;"><h4>NAVIGATION</h4></li>
 
-            <li>
-                <a href='/plugin'><i class="fa fa-crop"></i>Explore plugins</a>
-            </li>
             <li id="categories">
-                <a href='#'><i class="fa fa-tags"></i>Categories</a>
+                <a href='/plugin'><i class="fa fa-crop"></i>Explore plugins</a>
             </li>
             <li>
                 <a href='/upload'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
@@ -137,6 +134,7 @@
 <script src="{{ url_for('static', filename='scripts/vendor/dropzone.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/vendor/jquery.nouislider.min.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/clips.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/vendor/js.cookie.js') }}"></script>
 
 {% block scripts %}
 {% endblock %}
