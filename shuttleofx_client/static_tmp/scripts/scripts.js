@@ -69,23 +69,6 @@ $('[data-toggle]').on('click', function() {
   });
 });
 
-
-$('.order-catag label').on('click', function() {
-  var content = $(this).html();
-
-  if ($(this).hasClass('ascendant')) {
-  	//send catalog descendant
-  	$(this).html('<i class="fa fa-sort-alpha-desc"></i>Descending');
-  	$(this).removeClass('ascendant').addClass('descendant');
-  }else{
-  	//send catalog descendant
-  	$(this).html('<i class="fa fa-sort-alpha-asc"></i>Ascending');
-  	$(this).removeClass('descendant').addClass('ascendant');
-
-  };
-
-});
-
 // Force webkit browsers to redraw style changes
 // see : http://stackoverflow.com/a/3485654
 (function($) {

@@ -19,7 +19,7 @@ from Plugin import Plugin
 def mongodoc_jsonify(*args, **kwargs):
     return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
 
-def createPagination(count, skip, maxPage):
+def createPagination(count, skip, maxPage, alphaSort):
 
     '''
     ' Create the HTML code for the pagination bar
@@ -35,7 +35,7 @@ def createPagination(count, skip, maxPage):
     if skip == 1 :
         pagination .append('     <li id="previous" class="disabled"><a href=""> < </a></li>')
     else :
-        pagination.append('     <li id="previous"><a href="/plugin?count=' + str(count)+'&skip=' + str(skip-1) + '"> < </a></li>')
+        pagination.append('     <li id="previous"><a href="/plugin?count=' + str(count)+'&skip=' + str(skip-1) + '&alphaSort=' + str(alphaSort) + '"> < </a></li>')
 
     pageCounter = 1
 
@@ -43,12 +43,12 @@ def createPagination(count, skip, maxPage):
         if pageCounter == skip:
             pagination.append('                            <li class="disabled"><a href="">' + str(pageCounter) + '</a></li>')
         else:
-            pagination.append('                            <li><a href="/plugin?count=' + str(count) + '&skip=' + str(pageCounter) +'">' + str(pageCounter) + '</a></li>')
+            pagination.append('                            <li><a href="/plugin?count=' + str(count) + '&skip=' + str(pageCounter) + '&alphaSort=' + str(alphaSort) +'">' + str(pageCounter) + '</a></li>')
 
     if skip == maxPage:
         pagination.append('                          <li id="next" class="disabled"><a href=""> > </a></li>')
     else:
-        pagination.append('                          <li id="next"><a href="/plugin?count=' + str(count) + '&skip=' + str(skip+1) + '"> > </a></li>')
+        pagination.append('                          <li id="next"><a href="/plugin?count=' + str(count) + '&skip=' + str(skip+1) + '&alphaSort=' + str(alphaSort) + '"> > </a></li>')
 
     pagination.append("""                    </ul>
                     </div>
@@ -60,7 +60,7 @@ def createPagination(count, skip, maxPage):
 
     return pagination
 
-def createSearchPagination(count, skip, maxPage, keyWord, page):
+def createSearchPagination(count, skip, maxPage, alphaSort, keyWord, page):
 
     '''
     ' Create the HTML code for the pagination bar in search result page
@@ -72,11 +72,10 @@ def createSearchPagination(count, skip, maxPage, keyWord, page):
                 <div class="col-md-12">
                     <div id="filter-page">
                         <ul class="pagination pagination-sm pager-check">""")
-
     if skip == 1 :
         pagination .append('     <li id="previous" class="disabled"><a href=""> < </a></li>')
     else :
-        pagination.append('     <li id="previous"><a href="/' + page + '?search='+ keyWord + '&count=' + str(count)+'&skip=' + str(skip-1) + '"> < </a></li>')
+        pagination.append('     <li id="previous"><a href="/' + page + '?search='+ keyWord + '&count=' + str(count)+'&skip=' + str(skip-1) + '&alphaSort=' + str(alphaSort) + '"> < </a></li>')
 
     pageCounter = 1
 
@@ -84,12 +83,12 @@ def createSearchPagination(count, skip, maxPage, keyWord, page):
         if pageCounter == skip:
             pagination.append('                            <li class="disabled"><a href="">' + str(pageCounter) + '</a></li>')
         else:
-            pagination.append('                            <li><a href="/' + page + '?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(pageCounter) +'">' + str(pageCounter) + '</a></li>')
+            pagination.append('                            <li><a href="/' + page + '?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(pageCounter) + '&alphaSort=' + str(alphaSort) +'">' + str(pageCounter) + '</a></li>')
 
     if skip == maxPage:
         pagination.append('                          <li id="next" class="disabled"><a href=""> > </a></li>')
     else:
-        pagination.append('                          <li id="next"><a href="/' + page + '?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(skip+1) + '"> > </a></li>')
+        pagination.append('                          <li id="next"><a href="/' + page + '?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(skip+1) + '&alphaSort=' + str(alphaSort) + '"> > </a></li>')
 
     pagination.append("""                    </ul>
                     </div>
@@ -283,16 +282,15 @@ def getAllPlugins():
     keyWord = request.args.get('search', None)
 
     #Alphabetical sorting
-    alphaSort = request.args.get('alphaSort', 1)
-
-    if alphaSort == 'asc':
-        alphaSort = 1
-    elif alphaSort == 'desc':
-        alphaSort = -1
-    elif alphaSort not in [1, -1]:
+    try:
+        alphaSort = int(request.args.get('alphaSort', 1))
+    except ValueError:
         alphaSort = 1
 
-    count = request.args.get('count', 10)
+    if alphaSort != -1 and alphaSort != 1:
+        alphaSort = 1
+
+    count = request.args.get('count', 20)
     if count:
         count = int(count)
         logging.error(count)
@@ -320,22 +318,23 @@ def getAllPlugins():
 
     cursor = list(config.pluginTable.aggregate(pipeline))
 
+    totalPlugins = len(cursor)
+
     if count and skip:
         filteredCursor = cursor[(skip-1)*count : skip*count]
     else:
         filteredCursor = cursor
 
-    totalPlugins = len(cursor)
     plugins = [result["plugin"] for result in filteredCursor]
 
     maxPage = int(math.ceil(totalPlugins / count)+1)
 
     if keyWord:
-        pagination = createSearchPagination(count, skip, maxPage, keyWord, "plugin")
+        pagination = createSearchPagination(count, skip, maxPage, alphaSort, keyWord, "plugin")
     else: 
-        pagination = createPagination(count, skip, maxPage)
+        pagination = createPagination(count, skip, maxPage, alphaSort)
 
-    return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "count": count, "pagination": pagination})
+    return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "count": count, "alphaSort": alphaSort, "pagination": pagination})
 
 @config.g_app.route("/plugins", methods=['GET'])
 def getAllPluginsDefault():
@@ -414,7 +413,18 @@ def getBundleByPluginId(rawIdentifier):
 
 @config.g_app.route('/category')
 def getCategory():
-    count = request.args.get('count', 10)
+    #Alphabetical sorting
+    try:
+        alphaSort = int(request.args.get('alphaSort', 1))
+    except ValueError:
+        alphaSort = 1
+
+    if alphaSort != -1 and alphaSort != 1:
+        alphaSort = 1
+
+    nextAlphaSort = -alphaSort;
+
+    count = request.args.get('count', 20)
     if count:
         count = int(count)
 
@@ -423,7 +433,19 @@ def getCategory():
         skip = int(skip)
 
     keyWord = request.args.get('search', '')
-    cursor = list(config.pluginTable.find( {"properties.OfxImageEffectPluginPropGrouping.value": { "$regex": ".*" + keyWord + ".*"} } ))
+
+    pipeline = [
+        {"$match": {"properties.OfxImageEffectPluginPropGrouping.value": { "$regex": ".*" + keyWord + ".*"} }},
+        {"$sort": SON([("version.major",-1), ("version.minor",-1)])},
+        {"$group": {
+            "_id": "$rawIdentifier",
+            "plugin": {"$first": "$$ROOT"}, # retrieve the first plugin
+            }
+        },
+        {"$sort": {"plugin.label":alphaSort}}
+        ]
+
+    cursor = list(config.pluginTable.aggregate( pipeline ))
 
     if count and skip:
         filteredCursor = cursor[(skip-1)*count : skip*count]
@@ -431,13 +453,13 @@ def getCategory():
         filteredCursor = cursor
 
     totalPlugins = len(cursor)
-    plugins = [result for result in filteredCursor]
+    plugins = [result['plugin'] for result in filteredCursor]
     maxPage = int(math.ceil(totalPlugins / count)+1)
 
     if keyWord:
-        pagination = createSearchPagination(count, skip, maxPage, keyWord, "category")
+        pagination = createSearchPagination(count, skip, maxPage, alphaSort, keyWord, "category")
 
-    return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "count": count, "pagination": pagination})
+    return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "count": count, "alphaSort": alphaSort, "pagination": pagination})
 
 @config.g_app.route('/resources', methods=['POST'])
 def addResource():
