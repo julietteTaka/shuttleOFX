@@ -537,20 +537,21 @@ $(document).ready(function () {
                     'max': 100
                 }
             }).fadeIn(500);
+
+            $(".noUi-handle").after("<div id=\"original-label\">Original picture</div>");
+            $(".noUi-handle").after("<div id=\"render-label\">Rendered picture</div>");
+            $("#original-label").css({
+                "margin-left": "-130px",
+                "margin-top": "-35px",
+                "position": "absolute"
+            });
+            $("#render-label").css({
+                "margin-top": "-35px",
+                "position": "absolute",
+                "margin-left": "10px"
+            });
         }
         reload_beforeAfterRender();
-        $(".noUi-handle").after("<div id=\"original-label\">Original picture</div>");
-        $(".noUi-handle").after("<div id=\"render-label\">Rendered picture</div>");
-        $("#original-label").css({
-            "margin-left": "-130px",
-            "margin-top": "-35px",
-            "position": "absolute"
-        });
-        $("#render-label").css({
-            "margin-top": "-35px",
-            "position": "absolute",
-            "margin-left": "10px"
-        });
 
         $('#BeforeAfterSlider div.noUi-handle').mousedown(function () {
             $(document).mousemove(function (event) {
