@@ -58,8 +58,6 @@ $('select#pageSize').change(function(){
 
 // Change sorting preferences
 $('.order-catag label').on('click', function() {
-  var content = $(this).html();
-
   alphaSort = -alphaSort;
 
   cookieManager({"count": count, "skip": skip, "alphaSort": alphaSort});

@@ -19,7 +19,7 @@ from Plugin import Plugin
 def mongodoc_jsonify(*args, **kwargs):
     return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
 
-def createPagination(count, skip, alphaSort, maxPage):
+def createPagination(count, skip, maxPage, alphaSort):
 
     '''
     ' Create the HTML code for the pagination bar
@@ -72,7 +72,6 @@ def createSearchPagination(count, skip, maxPage, alphaSort, keyWord, page):
                 <div class="col-md-12">
                     <div id="filter-page">
                         <ul class="pagination pagination-sm pager-check">""")
-
     if skip == 1 :
         pagination .append('     <li id="previous" class="disabled"><a href=""> < </a></li>')
     else :
@@ -319,20 +318,21 @@ def getAllPlugins():
 
     cursor = list(config.pluginTable.aggregate(pipeline))
 
+    totalPlugins = len(cursor)
+
     if count and skip:
         filteredCursor = cursor[(skip-1)*count : skip*count]
     else:
         filteredCursor = cursor
 
-    totalPlugins = len(cursor)
     plugins = [result["plugin"] for result in filteredCursor]
 
     maxPage = int(math.ceil(totalPlugins / count)+1)
 
     if keyWord:
-        pagination = createSearchPagination(count, skip, alphaSort, maxPage, keyWord, "plugin")
+        pagination = createSearchPagination(count, skip, maxPage, alphaSort, keyWord, "plugin")
     else: 
-        pagination = createPagination(count, skip, alphaSort, maxPage)
+        pagination = createPagination(count, skip, maxPage, alphaSort)
 
     return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "count": count, "alphaSort": alphaSort, "pagination": pagination})
 
