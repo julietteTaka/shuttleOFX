@@ -30,7 +30,9 @@ ENV PATH=${PATH}:/opt/mongodb/bin
 
 COPY . ${SHUTTLEOFX_DEV}
 RUN cd ${SHUTTLEOFX_DEV}/shuttleofx_client/ && npm install && npm install -g grunt-cli && grunt build
-RUN mkdir /opt/logs
+
+# Hack for genarts plugins
+RUN mkdir -p /usr/genarts/SapphireOFX && cp ${SHUTTLEOFX_DEV}/etc/usr-genarts-SapphireOFX-s_config.text /usr/genarts/SapphireOFX/s_config.text
 
 RUN chmod 777 ${SHUTTLEOFX_DEV}/start.sh
 
