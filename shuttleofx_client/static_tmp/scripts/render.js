@@ -550,8 +550,9 @@ $(document).ready(function () {
                 "position": "absolute",
                 "margin-left": "10px"
             });
+
+            reload_beforeAfterRender();
         }
-        reload_beforeAfterRender();
 
         $('#BeforeAfterSlider div.noUi-handle').mousedown(function () {
             $(document).mousemove(function (event) {
@@ -602,7 +603,8 @@ $(document).ready(function () {
             offset = $("#viewer img#renderedPic").offset;
             $("#viewer img#originalPic").offset({ top: offset.top, left: offset.left})
             .fadeIn(200);
-            reload_beforeAfterRender();
+
+            change_beforeAfterRender($('#BeforeAfterSlider').val());
         }               
     }
 
