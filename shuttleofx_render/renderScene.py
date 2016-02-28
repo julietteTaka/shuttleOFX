@@ -56,7 +56,7 @@ def configLocalPluginPath(ofxPluginPaths):
 
 
 def loadGraph(scene):
-    # logging.warning("loadGraph : " + str(scene))
+    logging.warning("loadGraph : " + str(scene))
     tuttleGraph = tuttle.Graph()
 
     nodes = []
@@ -108,17 +108,23 @@ def convertScenePatterns(scene):
     :return: (scene, outputFilepaths)
     '''
     outputScene = copy.deepcopy(scene)
+    # Preload general plugins to use getBestReader/getBestWriter.
     tuttle.core().getPluginCache().addDirectoryToPath(globalOfxPluginPath)
     tuttle.core().preload(False)
-
-    logging.warning("outputScene" + str(outputScene))
+    logging.debug("outputScene: " + str(outputScene))
 
     outputResources = []
     for node in outputScene['nodes']:
 
         if 'plugin' in node and node['plugin'] is not 'reader':
-            resp = requests.get(catalogRootUri + "/bundle/" + node['plugin'] + '/bundle').json()
-            node["bundleId"] = resp['bundleId']
+            logging.debug("Retrieve bundleId from plugin: " + str(node['plugin']))
+            resp = requests.get(catalogRootUri + "/bundle/" + node['plugin'] + '/bundle')
+            if resp.status_code == 404:
+              logging.warning("Cannont retrieve bundleId for plugin: " + str(node['plugin']))
+            else:
+              respJson = resp.json()
+              node["bundleId"] = respJson['bundleId']
+              logging.debug("bundleId: " + str(respJson['bundleId']))
 
         for parameter in node['parameters']:
             logging.warning('param: %s %s', parameter['id'], parameter['value'])
@@ -130,6 +136,19 @@ def convertScenePatterns(scene):
 
                 if 'plugin' not in node and '{UNIQUE_OUTPUT_FILE}' in parameter['value']:
                     node['plugin'] = tuttle.getBestWriter(str(parameter['value']))
+
+    # Declare Bundles paths to TuttleOFX
+    bundleIds = []
+    for node in outputScene['nodes']:
+        if 'bundleId' in node:
+            bundleIds.append(node['bundleId'])
+        else:
+            logging.error("No bundle defined for node: " + str(node))
+    bundlePaths = [os.path.join(pluginsStorage, str(bundleId)) for bundleId in bundleIds]
+    logging.debug("bundlePaths: " + str(bundlePaths))
+    configLocalPluginPath(bundlePaths)
+
+    logging.debug("outputScene after conversion: " + str(outputScene))
 
     # Create a Tuttle Graph to generate the UID for each node
     tuttleGraphTmp = loadGraph(outputScene)
@@ -209,7 +228,7 @@ def launchComputeGraph(renderSharedInfo, newRender):
         if 'bundleId' in node:
             bundleIds.append(node['bundleId'])
         else:
-            logging.error("No plugin defined for node: " + str(node))
+            logging.error("No bundle defined for node: " + str(node))
 
     bundlePaths = [os.path.join(pluginsStorage, str(bundleId)) for bundleId in bundleIds]
 
