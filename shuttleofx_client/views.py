@@ -113,6 +113,17 @@ def getPluginInfo(pluginRawIdentifier):
     resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
     return render_template('pluginInfo.html', plugin=resp.json(), user=user)
 
+@config.g_app.route("/plugin/<int:pluginId>/version/<pluginVersion>/download")
+@config.g_app.route("/plugin/<int:pluginId>/download")
+def downloadPlugin(pluginId, pluginVersion="latest"):
+    if pluginVersion is "latest":
+        req = requests.get(config.catalogRootUri+"/plugin/"+str(pluginId)+"/download")
+    else:
+        req = requests.get(config.catalogRootUri+"/plugin/"+str(pluginId)+"/version/"+pluginVersion+"/download")
+    if req.status_code != requests.codes.ok:
+        abort(make_response(req.content, req.status_code))
+
+    return Response(req.content, mimetype="application/zip")
 
 @config.g_app.route('/plugin/<pluginId>/image/<imageId>')
 def getSampleImagesForPlugin(pluginId, imageId):
