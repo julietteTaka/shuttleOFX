@@ -44,34 +44,29 @@ $.ajax({
         }
     }
 
-    var depth = 0;
-    var html = generateHtmlFromCategoriesTree(categoryTree, '', depth);
+    var html = generateHtmlFromCategoriesTree(categoryTree, '');
     $('#categories').append(html);
     // When all categories are loaded and append,
     // re-open the ones that were opened on the previous page
     autoOpenCategories();
 });
 
-function generateHtmlFromCategoriesTree(object, previous, depth){
+function generateHtmlFromCategoriesTree(object, previous){
     var html = '<ul>';
-
     for (var i = 0; i < Object.keys(object).length; i++) {
+        var link = previous;
         // Do not add a / if it's the root element
-        if (depth === 0) {
-            previous += '/category?search=' + Object.keys(object)[i];
+        if (link.length === 0) {
+            link += '/category?search=' + Object.keys(object)[i];
         } else {
-            previous += '/' + Object.keys(object)[i];
+            link += '/' + Object.keys(object)[i];
         }
-
         if ($.isEmptyObject(object[Object.keys(object)[i]])) {
-            html += '<li><a href="'+ previous + '">' + Object.keys(object)[i] + '</a>';
+            html += '<li><a href="'+ link + '">' + Object.keys(object)[i] + '</a>';
         } else {
-            html += '<li><i class="fa fa-plus"></i><a href="'+ previous + '">' + Object.keys(object)[i] + '</a>';
-            depth++;
-            html += generateHtmlFromCategoriesTree(object[Object.keys(object)[i]], previous, depth);
+            html += '<li><i class="fa fa-plus"></i><a href="'+ link + '">' + Object.keys(object)[i] + '</a>';
+            html += generateHtmlFromCategoriesTree(object[Object.keys(object)[i]], link);
         }
-
-        previous = previous.substring(0, previous.length - Object.keys(object)[i].length - 1);
         html += '</li>';
     }
     html += '</ul>';
