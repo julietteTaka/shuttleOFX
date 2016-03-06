@@ -381,12 +381,10 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
 
     return mongodoc_jsonify(plugin)
 
-@config.g_app.route("/plugin/<int:pluginId>/download")
-@config.g_app.route("/plugin/<int:pluginId>/version/<pluginVersion>/download")
-def downloadPlugin(pluginId, pluginVersion="latest"):
+@config.g_app.route("/plugin/<int:pluginId>/download/<bundleId>")
+@config.g_app.route("/plugin/<int:pluginId>/version/<pluginVersion>/download/<bundleId>")
+def downloadPlugin(pluginId, bundleId, pluginVersion="latest"):
     #TODO Handle versions
-    cursor = config.pluginTable.find_one({"pluginId" : pluginId},{"bundleId": 1})
-    bundleId = cursor.get("bundleId")
     filePath = os.path.join(config.bundleRootPath, bundleId + '.zip')
     dirPath = os.path.join(config.bundleRootPath, bundleId)
 

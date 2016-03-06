@@ -113,13 +113,13 @@ def getPluginInfo(pluginRawIdentifier):
     resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
     return render_template('pluginInfo.html', plugin=resp.json(), user=user)
 
-@config.g_app.route("/plugin/<int:pluginId>/version/<pluginVersion>/download")
-@config.g_app.route("/plugin/<int:pluginId>/download")
-def downloadPlugin(pluginId, pluginVersion="latest"):
+@config.g_app.route("/plugin/<int:pluginId>/version/<pluginVersion>/download/<bundleId>")
+@config.g_app.route("/plugin/<int:pluginId>/download/<bundleId>")
+def downloadPlugin(pluginId, bundleId, pluginVersion="latest"):
     if pluginVersion is "latest":
-        req = requests.get(config.catalogRootUri+"/plugin/"+str(pluginId)+"/download")
+        req = requests.get(config.catalogRootUri+"/plugin/"+str(pluginId)+"/download/"+str(bundleId))
     else:
-        req = requests.get(config.catalogRootUri+"/plugin/"+str(pluginId)+"/version/"+pluginVersion+"/download")
+        req = requests.get(config.catalogRootUri+"/plugin/"+str(pluginId)+"/version/"+pluginVersion+"/download/"+str(bundleId))
     if req.status_code != requests.codes.ok:
         abort(make_response(req.content, req.status_code))
 
