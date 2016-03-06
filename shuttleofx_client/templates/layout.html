@@ -135,9 +135,14 @@
 <script src="{{ url_for('static', filename='scripts/vendor/jquery.nouislider.min.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/clips.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/vendor/js.cookie.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/counter.js') }}"></script>
 
 {% block scripts %}
 {% endblock %}
+
+<script type="text/javascript">
+    updateLinkWithUserSortingPrefs($('#categories a'), false);
+</script>
 
 <script type="text/javascript">
     $(document).ready(function() {
