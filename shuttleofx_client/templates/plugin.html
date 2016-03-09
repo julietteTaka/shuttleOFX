@@ -16,9 +16,13 @@
                             Version 
                             <div id="version">
                                 <i class="fa fa-angle-down"></i>
-                                <select>
+                                <select onChange="changeVersion(this);">
                                     {% for version in versions %}
-                                        <option>{{plugin.version.major}}.{{plugin.version.minor}}</option>
+                                        {% if version.version.major == plugin.version.major and version.version.minor == plugin.version.minor %}
+                                            <option selected>{{version.version.major}}.{{version.version.minor}}</option>
+                                        {% else %}
+                                            <option>{{version.version.major}}.{{version.version.minor}}</option>
+                                        {% endif %}
                                     {% endfor %}
                                 </select>
                             </div>
