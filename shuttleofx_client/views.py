@@ -111,6 +111,11 @@ def getSampleImagesForPlugin(pluginId, imageId):
     req = requests.get(config.catalogRootUri + "/resources/" + str(imageId) + "/data")
     return Response(req.content, mimetype=req.headers["content-type"])
 
+@config.g_app.route('/plugin/<pluginId>/thumbnail/<imageId>')
+def getSampleThumbnailForPlugin(pluginId, imageId):
+    req = requests.get(config.catalogRootUri + "/resources/" + str(imageId) + "-thumbnail/data")
+    return Response(req.content, mimetype=req.headers["content-type"])
+
 
 @config.g_app.route('/editor')
 @config.g_app.route('/editor/<pluginRawIdentifier>')
@@ -306,6 +311,7 @@ def addImageToPlugin(pluginId):
 
 @config.g_app.route("/plugin/<int:pluginId>/render/<renderId>/resource/<resourceId>", methods=['POST'])
 def addRenderToPlugin(pluginId, resourceId, renderId):
+
     # get rendered image
     req = requests.get(config.renderRootUri + "/render/" + renderId + "/resource/" + resourceId)
 

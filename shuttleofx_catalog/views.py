@@ -5,6 +5,7 @@ import requests
 import re
 import math
 
+from processify import processify
 from time import sleep
 from bson import json_util, ObjectId
 from bson.son import SON
@@ -15,6 +16,17 @@ import config
 from Bundle import Bundle
 from Plugin import Plugin
 
+
+@processify
+def generateThumbnail(imgFile):
+    from pyTuttle import tuttle
+    tuttle.core().preload(False)
+
+    tuttle.compute([
+        tuttle.NodeInit( "tuttle.pngreader", filename=imgFile),
+        tuttle.NodeInit( "tuttle.resize", width=256, keepRatio=1),
+        tuttle.NodeInit( "tuttle.pngwriter", filename=imgFile + '-thumbnail'),
+        ])
 
 def mongodoc_jsonify(*args, **kwargs):
     return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
@@ -413,6 +425,8 @@ def addResource():
     imgFile = os.path.join(config.resourcesPath, str(uid))
     file = request.files['file']
     file.save(imgFile)
+
+    generateThumbnail(imgFile)
 
     resource = config.resourceTable.find_one({ "_id" : ObjectId(uid)})
     return mongodoc_jsonify(resource)
