@@ -5,7 +5,7 @@
       - Handle events to expand/minimize
 ********************************************/
 $(document).ready(function() {
-    $("#left-nav ul li#categories").on('click', 'ul li i',function(){
+    $("#left-nav ul div#categories").on('click', 'ul li i.folder',function(){
         var category = $(this).next('a').text(); // get category name
 
         $(this).parent().children('ul').slideToggle(300, function(){
@@ -18,7 +18,7 @@ $(document).ready(function() {
             }
         });
 
-        $(this).toggleClass('fa-minus', 'fa-plus');
+        $(this).toggleClass('fa-folder-open', 'fa-folder');
     });
 });
 
@@ -62,9 +62,9 @@ function generateHtmlFromCategoriesTree(object, previous){
             link += '/' + Object.keys(object)[i];
         }
         if ($.isEmptyObject(object[Object.keys(object)[i]])) {
-            html += '<li class="no-sub-category"><a href="'+ link + '">' + Object.keys(object)[i] + '</a>';
+            html += '<li><i class="nofolder fa fa-fw"> - </i><a href="'+ link + '">' + Object.keys(object)[i] + '</a>';
         } else {
-            html += '<li><i class="fa fa-plus"></i><a href="'+ link + '">' + Object.keys(object)[i] + '</a>';
+            html += '<li><i class="folder fa fa-fw fa-folder"></i><a href="'+ link + '">' + Object.keys(object)[i] + '</a>';
             html += generateHtmlFromCategoriesTree(object[Object.keys(object)[i]], link);
         }
         html += '</li>';
@@ -85,10 +85,10 @@ function autoOpenCategories(){
     if (Cookies.get("open_categories")) {
         var openedCategories = Cookies.get("open_categories").split(",");
         // Loop through each category and open it, if it's in the array of opened categories
-        $("#left-nav ul li#categories ul li").each(function(index) {
+        $("#left-nav ul div#categories ul li").each(function(index) {
             if ( openedCategories.indexOf( $(this).children('a').text() ) > -1) {
                 $(this).children('ul').show();
-                $(this).children('i').toggleClass('fa-minus', 'fa-plus');
+                $(this).children('i').toggleClass('fa-folder-open', 'fa-folder');
             };
         });
     }
