@@ -62,7 +62,7 @@ function generateHtmlFromCategoriesTree(object, previous){
             link += '/' + Object.keys(object)[i];
         }
         if ($.isEmptyObject(object[Object.keys(object)[i]])) {
-            html += '<li><a href="'+ link + '">' + Object.keys(object)[i] + '</a>';
+            html += '<li class="no-sub-category"><a href="'+ link + '">' + Object.keys(object)[i] + '</a>';
         } else {
             html += '<li><i class="fa fa-plus"></i><a href="'+ link + '">' + Object.keys(object)[i] + '</a>';
             html += generateHtmlFromCategoriesTree(object[Object.keys(object)[i]], link);
