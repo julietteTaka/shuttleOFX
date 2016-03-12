@@ -223,13 +223,14 @@ def computeGraph(renderSharedInfo, newRender, bundlePaths):
 
 def launchComputeGraph(renderSharedInfo, newRender):
     scene = newRender['scene']
-    bundleIds = []
+    bundleIds = set([])
     for node in scene['nodes']:
         if 'bundleId' in node:
-            bundleIds.append(node['bundleId'])
+            bundleIds.add(node['bundleId'])
         else:
             logging.error("No bundle defined for node: " + str(node))
 
+    name = '_'.join([node['plugin'].lower() for node in scene['nodes']])
     bundlePaths = [os.path.join(pluginsStorage, str(bundleId)) for bundleId in bundleIds]
 
     if False:
@@ -256,9 +257,45 @@ def launchComputeGraph(renderSharedInfo, newRender):
                                                     for
                                                     bundlePath in bundlePaths])
         logging.info('LD_LIBRARY_PATH: %s', env['LD_LIBRARY_PATH'])
-
+        
+        codePath = os.path.dirname(os.path.abspath(__file__))
+        timeout_sec = '30'
+        dockerargs = [
+            '/usr/bin/timelimit', '-t', timeout_sec, '-T', timeout_sec,
+            '/bin/docker', 'run',
+            # set cpu-shares to 1024 (the default value).
+            # The main docker (for the server) use 4096 to ensure responsiveness.
+            '--cpu-shares=1024',
+            '--memory=500M',  # limit RAM
+            '--memory-swap=-1',  # disable memory swap
+            '--rm=true',  # Automatically remove the container
+            '--net=none',  # disables all incoming and outgoing networking
+            # Set a unique name (only useful for debugging)
+            # '--name=shuttleofx_render_{name}'.format(name=name),
+            # Give access to source code to execute in read-only
+            # '-v', 'DEV_CODE_PATH:{codePath}:ro'.format(codePath=codePath),
+            # '-w', '{codePath}'.format(codePath=codePath),  # set the workdir
+            # Give access to the image cache
+            # '-v', '{renderDirectory}:{renderDirectory}'.format(renderDirectory=config.renderDirectory),
+            # Give access to the output json file
+            '-v', '{tempFilepath}:{tempFilepath}'.format(tempFilepath=tempFilepath),
+            # Give access to config files
+            '-v', '/etc/shuttleofx:/etc/shuttleofx:ro',
+            # TODO: use config instead of hardcoded paths
+            # TODO: limit access to sub-directories
+            '-v', '/opt/shuttleofx:/opt/shuttleofx',
+            ]
+        # Give access to the plugins themselves in read-only
+        # for bundlePath in bundlePaths:
+        #     dockerargs += ['-v', '{bundlePath}:{bundlePath}'.format(bundlePath=bundlePath)]
+        # Name of the docker image (after all options)
+        dockerargs.append('shuttleofx/shuttleofx:latest')
+        
         args = [sys.executable, os.path.abspath(__file__), tempFilepath]
-        p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
+        logging.warning('dockerargs: %s', ' '.join(dockerargs))
+        logging.warning('args: %s', ' '.join(args))
+
+        p = subprocess.Popen(dockerargs + args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
         stdoutdata, stderrdata = p.communicate()
         if p.returncode:
             renderSharedInfo['status'] = -1
