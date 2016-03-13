@@ -14,6 +14,7 @@ import subprocess
 import argparse
 import copy
 import cache
+import uuid
 
 
 class ProgressHandle(tuttle.IProgressHandle):
@@ -259,19 +260,20 @@ def launchComputeGraph(renderSharedInfo, newRender):
         logging.info('LD_LIBRARY_PATH: %s', env['LD_LIBRARY_PATH'])
         
         codePath = os.path.dirname(os.path.abspath(__file__))
-        timeout_sec = '30'
+        timeout_sec = 30
+        name = 'shuttleofx_render_{uid}'.format(uid=uuid.uuid4())
         dockerargs = [
-            '/usr/bin/timelimit', '-t', timeout_sec, '-T', timeout_sec,
+            '/usr/bin/timelimit', '-t', str(timeout_sec), '-T', str(timeout_sec),
             '/bin/docker', 'run',
             # set cpu-shares to 1024 (the default value).
             # The main docker (for the server) use 4096 to ensure responsiveness.
             '--cpu-shares=1024',
             '--memory=500M',  # limit RAM
             '--memory-swap=-1',  # disable memory swap
-            '--rm=true',  # Automatically remove the container
+            '--rm=true',  # Automatically remove the container => doesn't work with kill from timelimit
             '--net=none',  # disables all incoming and outgoing networking
-            # Set a unique name (only useful for debugging)
-            # '--name=shuttleofx_render_{name}'.format(name=name),
+            # Set a unique name
+            '--name={name}'.format(name=name),
             # Give access to source code to execute in read-only
             # '-v', 'DEV_CODE_PATH:{codePath}:ro'.format(codePath=codePath),
             # '-w', '{codePath}'.format(codePath=codePath),  # set the workdir
@@ -289,21 +291,35 @@ def launchComputeGraph(renderSharedInfo, newRender):
         # for bundlePath in bundlePaths:
         #     dockerargs += ['-v', '{bundlePath}:{bundlePath}'.format(bundlePath=bundlePath)]
         # Name of the docker image (after all options)
-        dockerargs.append('shuttleofx/shuttleofx:latest')
+        dockerargs.append('shuttleofx/shuttleofx-develop:latest')
         
-        args = [sys.executable, os.path.abspath(__file__), tempFilepath]
+        pyfile = os.path.abspath(__file__[:-1] if __file__.endswith('.pyc') else __file__)
+        args = [sys.executable, pyfile, tempFilepath]
         logging.warning('dockerargs: %s', ' '.join(dockerargs))
         logging.warning('args: %s', ' '.join(args))
 
         p = subprocess.Popen(dockerargs + args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
         stdoutdata, stderrdata = p.communicate()
+
+        # Remove the docker container
+        # We do it manually instead of using --rm=true
+        # to remove the container even if docker was killed by timelimit.
+        subprocess.call(['/bin/docker', 'rm', '-f', name])
+
         if p.returncode:
             renderSharedInfo['status'] = -1
+            tmpData = ""
+            try:
+                tmpData = open(tempFilepath, 'r').read()
+            except:
+                pass
             raise RuntimeError(
                     '''Failed to render.\n
                     Return code: %s\n
-                    Log:\n%s\n%s\n'''
-                    % (p.returncode, stdoutdata, stderrdata))
+                    Log:\n%s\n
+                    Log err:\n%s\n
+                    File data:\n%s\n'''
+                    % (p.returncode, stdoutdata, stderrdata, tmpData))
 
         logging.info(stdoutdata)
         logging.info(stderrdata)
