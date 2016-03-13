@@ -29,7 +29,7 @@ g_rendersSharedInfo = {}
 # Pool for rendering jobs
 # processes=None => os.cpu_count()
 g_pool = multiprocessing.Pool(processes=4)
-g_enablePool = False
+g_enablePool = True
 
 # Manager to share rendering information
 g_manager = multiprocessing.Manager()
