@@ -260,10 +260,9 @@ def launchComputeGraph(renderSharedInfo, newRender):
         logging.info('LD_LIBRARY_PATH: %s', env['LD_LIBRARY_PATH'])
         
         codePath = os.path.dirname(os.path.abspath(__file__))
-        timeout_sec = 30
         name = 'shuttleofx_render_{uid}'.format(uid=uuid.uuid4())
         dockerargs = [
-            '/usr/bin/timelimit', '-t', str(timeout_sec), '-T', str(timeout_sec),
+            '/usr/bin/timelimit', '-t', str(config.timeout_sec), '-T', str(config.timeout_sec),
             '/bin/docker', 'run',
             # set cpu-shares to 1024 (the default value).
             # The main docker (for the server) use 4096 to ensure responsiveness.
@@ -291,7 +290,7 @@ def launchComputeGraph(renderSharedInfo, newRender):
         # for bundlePath in bundlePaths:
         #     dockerargs += ['-v', '{bundlePath}:{bundlePath}'.format(bundlePath=bundlePath)]
         # Name of the docker image (after all options)
-        dockerargs.append('shuttleofx/shuttleofx-develop:latest')
+        dockerargs.append(config.dockerImage)
         
         pyfile = os.path.abspath(__file__[:-1] if __file__.endswith('.pyc') else __file__)
         args = [sys.executable, pyfile, tempFilepath]
