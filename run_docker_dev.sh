@@ -17,4 +17,4 @@ sudo docker run -td --name shuttleofx_cnt \
 -v /usr/bin/docker:/bin/docker \
 -v /tmp:/tmp \
 --cpu-shares=4096 \
-shuttleofx/shuttleofx
+shuttleofx/shuttleofx-develop
