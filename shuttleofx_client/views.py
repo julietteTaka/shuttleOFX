@@ -452,5 +452,37 @@ def get_google_oauth_token():
 def get_github_oauth_token():
     return session.get('github_token')
 
+@config.g_app.route('/create')
+def createPlugin():
+    user = userManager.getUser()
+    provider = userManager.getOAuthProvider()
+    return render_template("createPlugin.html", user=user, provider=provider)
+
+@config.g_app.route('/create/user/repo')
+def createUserRepo():
+    user = userManager.getUser()
+    provider = userManager.getOAuthProvider()
+    if session['github_token'] is None:
+        logging.warning('Trying to create a repo without being authenticated using Github')
+        status = 'error'
+        message = 'You are trying to create a repository without being logged using Github.'
+
+    req = config.github.post('/user/repos', data={
+            "name": "Hello-World",
+            "description": "This is your first repository",
+            "has_issues": "true",
+            "has_wiki": "true",
+            "has_downloads": "true"
+        }, format='json')
+
+    if req.status == 201:
+        status = 'success'
+        message = 'Repository created with success, check your Github account !'
+    else :
+        logging.warning('Error while creating a repo : ' + req.raw_data)
+        status = 'error'
+        message = req.data['errors'][0]['message']
+    return render_template("createPlugin.html", user=user, provider=provider, status=status, message=message)
+
 if __name__ == '__main__':
     config.g_app.run(host="0.0.0.0", port=5000, debug=True)

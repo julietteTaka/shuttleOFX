@@ -27,3 +27,11 @@ def getUser():
             return user
     else:
         return None
+
+def getOAuthProvider():
+    if 'google_token' in session:
+        return 'google'
+    elif 'github_token' in session:
+        return 'github'
+    else:
+        return None

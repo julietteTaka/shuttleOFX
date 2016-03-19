@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+
+{% block back_button %}
+    <a href="/plugin" id="back-to-plugins"><i class="fa fa-angle-left"></i> Back to all plugins</a>
+{% endblock %}
+
+{% block title %}
+<div class="header-content">
+    <div class="top-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                     <h1>
+                      Create a plugin
+                    </h1>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="main-content no-bottom-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    {% if status %}
+                    <div class="message {{ status }}">
+                        <p>{{ message|capitalize() }}</p>
+                    </div>
+                    {% endif %}
+                    <p>
+                        Here you can create an OFX plugin from scratch.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-md-offset-3">
+                    <a href="/create/user/repo" class="btn btn-primary {% if provider != "github" %} disabled{% endif %}"><i class="fa fa-github"></i> Using Github</a>
+                    <a href="" class="btn btn-primary"><i class="fa fa-download"></i> Using sources</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
