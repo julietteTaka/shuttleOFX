@@ -80,16 +80,14 @@
             <li class="title-nav" style="margin-top:2em;"><h4>NAVIGATION</h4></li>
 
             <li>
-                <a href='/'><i class="fa fa-home"></i>Home</a>
-            </li>
-            <li id="categories">
-                <a href='/plugin'><i class="fa fa-crop"></i>Explore plugins</a>
+                <a href='/plugin'><i class="fa fa-fw fa-crop"></i>Explore plugins</a>
+                <div id="categories"></div>
             </li>
             <li>
-                <a href='/upload'><i class="fa fa-cloud-upload"></i>Upload new plugins</a>
+                <a href='/upload'><i class="fa fa-fw fa-cloud-upload"></i>Upload new plugins</a>
             </li>
             <li>
-                <a href='/about'><i class="fa fa-info"></i>About OpenFX</a>
+                <a href='/about'><i class="fa fa-fw fa-info"></i>About OpenFX</a>
             </li>
             <li class="title-nav"><h4>MORE</h4></li>
             <!--
@@ -140,9 +138,14 @@
 <script src="{{ url_for('static', filename='scripts/vendor/jquery.nouislider.min.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/clips.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/vendor/js.cookie.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/counter.js') }}"></script>
 
 {% block scripts %}
 {% endblock %}
+
+<script type="text/javascript">
+    updateLinkWithUserSortingPrefs($('#categories a'), false);
+</script>
 
 <script type="text/javascript">
     $(document).ready(function() {

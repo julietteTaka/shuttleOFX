@@ -29,7 +29,7 @@ g_rendersSharedInfo = {}
 # Pool for rendering jobs
 # processes=None => os.cpu_count()
 g_pool = multiprocessing.Pool(processes=4)
-g_enablePool = False
+g_enablePool = True
 
 # Manager to share rendering information
 g_manager = multiprocessing.Manager()
@@ -62,7 +62,7 @@ def newRender():
         g_lastClean = datetime.datetime.now()
 
     inputScene = request.json
-    logging.warning(inputScene)
+    logging.warning("inputScene: " + str(inputScene))
     renderID = str(uuid.uuid1())
     logging.info("RENDERID: " + renderID)
     scene, outputResources = renderScene.convertScenePatterns(inputScene)
@@ -74,7 +74,7 @@ def newRender():
     newRender['scene'] = scene
     g_renders[renderID] = newRender
 
-    config.g_app.logger.debug('new resource is ' + newRender['outputFilename'])
+    logging.warning('new resource is ' + newRender['outputFilename'])
 
     renderSharedInfo = g_manager.dict()
     renderSharedInfo['status'] = 0

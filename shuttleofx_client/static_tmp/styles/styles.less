@@ -518,16 +518,17 @@ ul.right-nav li .fa{
         ul {
             width: auto;
             height: auto;
-            padding-left: 15%;
+            padding-left: 3.5em;
             text-transform: capitalize;
             li {
                 width: auto;
                 border: none;
-                min-height: 26px;
+                margin-top: 2px;
+                margin-bottom: 2px;
                 a {
                     width: auto;
                     max-width: 100%;
-                    margin-left: 5px;
+                    margin-left: 0px;
                     font-size: 0.85em;
                     display: inline-block;
                     line-height: 1.5;
@@ -536,21 +537,21 @@ ul.right-nav li .fa{
                     text-overflow: ellipsis;
                     vertical-align: middle;
                 }
-                i{
-                    padding: .5em;
+                i.folder{
                     cursor: pointer;
-                    font-size: 0.8em;
+                }
+                i.nofolder{
+                    color: lightgrey;
+                    cursor: default;
                 }
                 ul{
                     display: none;
+                    padding-left: 1.5em;
                 }
             }
         }
     }
     
-    .fa{
-        padding-right: 10px;
-    }
     .legacy{
         border-top: 1px solid #ddd;
         background: #fff;
