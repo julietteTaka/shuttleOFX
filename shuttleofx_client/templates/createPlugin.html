@@ -34,16 +34,39 @@
                     </div>
                     {% endif %}
                     <p>
-                        Here you can create an OFX plugin from scratch.
+                        Here you can create an OFX plugin from scratch. You just need to fill in the following form :
                     </p>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-8 col-md-offset-3">
-                    <a href="/create/user/repo" class="btn btn-primary {% if provider != "github" %} disabled{% endif %}"><i class="fa fa-github"></i> Using Github</a>
-                    <a href="" class="btn btn-primary"><i class="fa fa-download"></i> Using sources</a>
+            <form method="POST">
+                <div class="row">
+                    <fieldset>
+                        <div class="col-md-6">
+                            <input type='text' name="pluginName" required placeholder="Your plugin's name" class="form-control empty panel panel-primary validate">
+                        </div>
+                        <div class="col-md-6">
+                            <input type='text' name="pluginLabel" placeholder="Your plugin's label" class="form-control panel panel-primary">
+                            <input type='text' name="pluginLongLabel" placeholder="Your plugin's long label" class="form-control panel panel-primary">
+                        </div>
+                    </fieldset>
                 </div>
-            </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type='text' name="pluginMenu" required placeholder="Your plugin's menu" class="form-control panel panel-primary">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <fieldset>
+                            <input type='text' name="project" required placeholder="Project" class="form-control panel panel-primary">
+                            <input type='text' name="company" placeholder="Your company" class="form-control panel panel-primary">
+                        </fieldset>
+                    </div>
+                </div>
+
+                <button type="submit" formaction="/create/repo" class="btn btn-primary {% if provider != "github" %} disabled{% endif %}"><i class="fa fa-github"></i> Using Github</button>
+                <button type="submit" formaction="/create/sources" class="btn btn-primary"><i class="fa fa-download"></i> Using sources</button>
+            </form>
         </div>
     </div>
 

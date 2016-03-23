@@ -458,7 +458,7 @@ def createPlugin():
     provider = userManager.getOAuthProvider()
     return render_template("createPlugin.html", user=user, provider=provider)
 
-@config.g_app.route('/create/user/repo')
+@config.g_app.route('/create/repo', methods=['POST'])
 def createUserRepo():
     user = userManager.getUser()
     provider = userManager.getOAuthProvider()
@@ -468,8 +468,7 @@ def createUserRepo():
         message = 'You are trying to create a repository without being logged using Github.'
 
     req = config.github.post('/user/repos', data={
-            "name": "Hello-World",
-            "description": "This is your first repository",
+            "name": request.form['pluginName'],
             "has_issues": "true",
             "has_wiki": "true",
             "has_downloads": "true"
