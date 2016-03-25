@@ -21,240 +21,107 @@
 {% block header %}{% endblock %}
 
 {% block content %}
-<div id="main-home">
-    <div id="hero-home">
-        <div id="cover-home">
-            <section id="intro">
-                <div class="content container">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="mainLogo">
-                                <img src="{{ url_for('static', filename='images/logo.png') }}">
-                                <a>ShuttleOFX</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row title-home">
-                        <h1>Create, share and play online with image processing plugins.</h1>
-                        <h3>
-                            <span>Help us to develop the plateform</span>
-                            <iframe src="http://ghbtns.com/github-btn.html?user=ShuttleOFX&repo=shuttleofx&type=fork&count=true&size=large" frameborder="0" scrolling="0" allowTransparency="true" height="30" width="170" style="padding-top:0px;margin-left:10px;"></iframe>
-                        </h3>
-                    </div>
-                </div>
-            </section>
-            <section id="students">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h1>About ShuttleOFX</h1>
-                        </div>
-                    </div>
-                    <div class="row imac">
-                        <div class="col-md-12">
-                            <h2>A student team | <span>ShuttleOFX was created by a team of 3 students from <a href="http://imac.alwaysdata.net">IMAC engineering school...</a></span></h2>
-                        </div>
-                    </div>
-                    <div class="row students">
-                        <div class="col-md-4">
-                            <div class="student">
-                                <img src="{{ url_for('static', filename='images/team/armand.jpg') }}" class="panel panel-primary">
-                                <h4>Armand Biteau</h4>
-                                <div class="contact">
-                                    <ul>
-                                        <li>
-                                            <a href="https://github.com/ArmandBiteau" target="_blank"><i class="fa fa-github"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="http://armandbiteau.com" target="_blank"><i class="fa fa-globe"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="https://twitter.com/Armand_Biteau" target="_blank"><i class="fa fa-twitter"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="student">
-                                <img src="{{ url_for('static', filename='images/team/hugo.jpg') }}" class="panel panel-primary">
-                                <h4>Hugo Garrido Y Saez</h4>
-                                <div class="contact">
-                                    <ul>
-                                        <li>
-                                            <a href="https://github.com/HugoGarrido" target="_blank"><i class="fa fa-github"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="http://letsdovoodoo.com" target="_blank"><i class="fa fa-globe"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="https://twitter.com/CosmicKick" target="_blank"><i class="fa fa-twitter"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="student">
-                                <img src="{{ url_for('static', filename='images/team/juliette1.jpg') }}" class="panel panel-primary">
-                                <h4>Juliette Belin</h4>
-                                <div class="contact">
-                                    <ul>
-                                        <li>
-                                            <a href="https://github.com/julietteTaka" target="_blank"><i class="fa fa-github"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="http://jbelin.com" target="_blank"><i class="fa fa-globe"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row imac">
-                        <div class="col-md-12">
-                            <h2>...<span>And it has been carried on by a team of 4 others students from <a href="http://imac.alwaysdata.net">the same school</a>, the year after</span></h2>
-                        </div>
-                    </div>
-                    <div class="row students">
-                        <div class="col-md-3">
-                            <div class="student">
-                                <img src="{{ url_for('static', filename='images/team/olivierf.jpg') }}" class="panel panel-primary">
-                                <h4>Olivier Falconnet</h4>
-                                <div class="contact">
-                                    <ul>
-                                        <li>
-                                            <a href="https://github.com/Anixen" target="_blank"><i class="fa fa-github"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="student">
-                                <img src="{{ url_for('static', filename='images/team/chris.jpg') }}" class="panel panel-primary">
-                                <h4>Christophe Assante Di Capillo</h4>
-                                <div class="contact">
-                                    <ul>
-                                        <li>
-                                            <a href="https://github.com/KrisNumber24" target="_blank"><i class="fa fa-github"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="http://christophe-assante.alwaysdata.net" target="_blank"><i class="fa fa-globe"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="student">
-                                <img src="{{ url_for('static', filename='images/team/olivierd.jpg') }}" class="panel panel-primary">
-                                <h4>Olivier Daire</h4>
-                                <div class="contact">
-                                    <ul>
-                                        <li>
-                                            <a href="https://github.com/Olivier-Daire" target="_blank"><i class="fa fa-github"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="http://www.olivierdaire.com" target="_blank"><i class="fa fa-globe"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="https://twitter.com/OlivierDaire" target="_blank"><i class="fa fa-twitter"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="student">
-                                <img src="{{ url_for('static', filename='images/team/lo.jpg') }}" class="panel panel-primary">
-                                <h4>Lorenzo Milesi</h4>
-                                <div class="contact">
-                                    <ul>
-                                        <li>
-                                            <a href="https://github.com/LoRayZm" target="_blank"><i class="fa fa-github"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="http://www.lorenzomilesi-portfolio.com" target="_blank"><i class="fa fa-globe"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="https://twitter.com/Lorayzm" target="_blank"><i class="fa fa-twitter"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <footer>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="logo">
-                                <img src="{{ url_for('static', filename='images/logo.png') }}">
-                                <p>
-                                    <a>ShuttleOFX</a>
-                                    <a class="license" target="_blank" href="http://github.com/shuttleofx/ShuttleOFX/blob/develop/LICENSE.LGPL">LGPL License</a>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-xs-6">
-                            <div class="links">
-                                <h2>Make a tour</h2>
-                                <ul>
-                                    <li><a href="/">Home</a></li>
-                                    <li><a href="/plugin">Plugins</a></li>
-                                    <li><a href="http://openeffects.org/">Community</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-xs-6">
-                            <div class="links">
-                                <h2>Discover</h2>
-                                <ul>
-                                    <li>
-                                        <a href="http://www.tuttleofx.org/">TuttleOFX</a>
-                                    </li>
-                                    <li>
-                                        <a target="_blank" href="http://imac.alwaysdata.net/">IMAC school</a>
-                                    </li>
-                                    <li>
-                                        <a target="_blank" href="http://www.arkena.com/">Arkena</a>
-                                    </li>
-                                    <li>
-                                        <a target="_blank" href="http://www.mikrosimage.eu/">Mikros Image</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="col-md-2 col-xs-12">
-                            <div class="social">
-                                <h2>Connect</h2>
-                                <ul>
-                                    <li>
-                                        <a target="_blank" href="https://github.com/ShuttleOFX/shuttleofx"><i class="fa fa-github"></i>Github</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-3 col-md-offset-2">
-                            <img width="60%" src="{{ url_for('static', filename='images/collaborators/arkena.png') }}">
-                        </div>
-                        <div class="col-md-3">
-                            <img width="30%" src="{{ url_for('static', filename='images/collaborators/mikros.png') }}">
-                        </div>
-                        <div class="col-md-3">
-                            <img width="30%" src="{{ url_for('static', filename='images/collaborators/imac_logo.png') }}">
-                        </div>
-                    </div>
-                </div>
-            </footer>
+<div class="home">
+    <div class="header">
+
+        <div class="row">
+            <div class="col-md-12">
+                <p class="base-line">
+                    Create, share and play online with image processing plugins.
+                </p>
+                <p class="fork">
+                    Help us develop the platform
+                    <iframe src="http://ghbtns.com/github-btn.html?user=ShuttleOFX&repo=shuttleofx&type=fork&count=true&size=large" frameborder="0" scrolling="0" allowTransparency="true" height="30" width="170" style="padding-top:0px;margin-left:10px;"></iframe>
+                </p>
+            </div>
         </div>
     </div>
+    <!--
+    <div class="video is-hidden">
+        <img src="http://lorempixel.com/1920/1080" width="100%"/>
+    </div>
+    -->
+    <div class="part">
+        <div class="row no-margins">
+            <div class="col-md-4 title">
+                <span>
+                    Welcome
+                </span>
+                <span>
+                    on board
+                </span>
+            </div>
+            <div class="col-md-7 content">
+                <p>
+                    The ShuttleOFX platform is designed to share OpenFX plugins
+                    between plugins creators (industrials, developpers, researchers, students, ...)
+                    and graphic artists.
+                </p>
+                <p>
+                    Following the TuttleOFX initiative, the ambition is to promote
+                    a standard way to create image processing algorithms usable across softwares.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="part">
+        <div class="row no-margins">
+            <div class="col-md-4 title">
+                <span>
+                    What
+                </span>
+                <span>
+                    is OFX?
+                </span>
+            </div>
+            <div class="col-md-7 content">
+                <p>
+                    OFX is an open API for writing visual effects plug-ins for a wide variety of applications,
+                    such as video editing and compositing systems.
+                    This guide demonstrates by example the low level C APIs that defines OFX.
+                </p>
+                <p>
+                    Do you write visual effects or image processing software?
+                    Do you have an application which deals with moving images and
+                    hosts plug-ins or would like to host plug-ins? Then OFX is for you.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="actors">
+        <div class="row no-margins">
+            <div class="col-md-2 col-md-offset-4">
+                <img src="{{ url_for('static', filename='images/personae/ga.png') }}" alt="" />
+                <div class="content">
+                    <p>
+                        Graphic
+                    </p>
+                    <p>
+                        artist
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <img src="{{ url_for('static', filename='images/personae/dev.png') }}" alt="" />
+                <div class="content">
+                    <p>
+                        Plugin
+                    </p>
+                    <p>
+                        creator
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <img src="{{ url_for('static', filename='images/personae/dev.png') }}" alt="" />
+                <div class="content">
+                    <p>
+                        Researcher
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}
