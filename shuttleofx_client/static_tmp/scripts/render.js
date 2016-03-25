@@ -1,5 +1,9 @@
 $(document).ready(function () {
 
+    var tmp;
+
+    $('#'.selectedResource).addClass('selected');
+
     function formToJson() {
         var renderParameters = [];
         $("input", $('#renderForm')).each(function (index) {
@@ -98,6 +102,7 @@ $(document).ready(function () {
         var renderParameters = formToJson();
 
         $("#download-view").addClass('disabled');
+        $("#addGalleryImage").addClass('disabled');
         $("#render").addClass('disabled');
 
         $.ajax({
@@ -127,12 +132,15 @@ $(document).ready(function () {
             .done(function (data) {
                 $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
                 $("#download-view").removeClass('disabled');
+                $("#addGalleryImage").removeClass('disabled');
+                $("#render").removeClass('disabled');
                 hideRenderLoader();
                 $('.display img').css({height: "auto"});
 
                 $("#downloadtrigger").off("click").click(function (data) {
                     $("#download-view").addClass('disabled');
                     $("#render").addClass('disabled');
+                    $("#addGalleryImage").addClass('disabled');
                     $("#downloadModal").modal('hide');
                     displayDownloadLoader();
 
@@ -173,6 +181,7 @@ $(document).ready(function () {
 
                             hideDownloadLoader();
                             $("#download-view").removeClass('disabled');
+                            $("#addGalleryImage").removeClass('disabled');
                             $("#render").removeClass('disabled');
                         });
                 });
@@ -187,53 +196,77 @@ $(document).ready(function () {
         var renderParameters = formToJson();
 
         $("#download-view").addClass('disabled');
+        $("#addGalleryImage").addClass('disabled');
         $("#render").addClass('disabled');
 
         $.ajax({
-                type: "POST",
-                url: "/render",
-                contentType: 'application/json; charset=utf-8',
-                data: JSON.stringify({
-                    nodes: [{
-                        id: 0,
-                        parameters: [
-                            {
-                                "id": "filename",
-                                "value": "{RESOURCES_DIR}/" + selectedResource
-                            }
-                        ]
-                    }, {
-                        id: 1,
-                        plugin: pluginId,
-                        parameters: renderParameters
-                    }, {
-                        id: 2,
-                        plugin: "tuttle.pngwriter",
-                        parameters: [{
-                            id: "filename",
-                            value: "{UNIQUE_OUTPUT_FILE}.png"
-                        }]
-                    }],
+            type: "POST",
+            url: "/render",
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({
+                nodes: [{
+                    id: 0,
+                    parameters: [
+                        {
+                            "id" : "filename",
+                            "value" : "{RESOURCES_DIR}/"+ selectedResource
+                        },
+                        {
+                            "id" : "channel",
+                            "value" : "rgba"
+                        },
+                        {
+                            "id" : "bitDepth",
+                            "value" : "32f"
+                        }
+                    ]
+                },{
+                    id: 1,
+                    plugin: pluginId,
+                    parameters: renderParameters
+                },{
+                    id: 2,
+                    plugin: "tuttle.pngwriter",
+                    parameters: [{
+                        id: "filename",
+                        value:  "{UNIQUE_OUTPUT_FILE}.png"
+                    }]
+                }],
 
-                    connections: [{
-                        src: {id: 0},
-                        dst: {id: 1}
-                    }, {
-                        src: {id: 1},
-                        dst: {id: 2}
-                    }],
-                    options: [],
-                }),
-            })
+                connections: [{
+                    src: {id: 0},
+                    dst: {id: 1}
+                },{
+                    src: {id: 1},
+                    dst: {id: 2}
+                }],
+                options:[],
+            }),
+        })
             .done(function (data) {
+                removeMessage();
+
                 // Change the extension of the proxy file path to .png
                 // Since the displayed proxy is always a generated PNG and not of the type of the original ressource
                 // We want to make sure the proxy is sent with the proper extension
                 var selectedResourceName = selectedResource.split(".")[0];
-                $("#viewer img#originalPic").attr("src", "/proxy/" + selectedResourceName + ".png");
-                $("#viewer img#originalPic").show();
+                var ext = selectedResource.split(".")[1];
+                if (selectedResourceName.indexOf("tmp") <= -1) {
+                    var selectedResourcePath = "/proxy/" + selectedResourceName ;
+                    ext = ".png";
+                }
+                else {
+                    var selectedResourcePath = "/resource/" + selectedResourceName;
+                    ext = "."+ext;
+                }
                 $("#viewer img#renderedPic").attr("src", "/render/" + data.render.id + "/resource/" + data.render.outputFilename);
+                $("#viewer img#originalPic").attr("src", selectedResourcePath + ext);
+                $("#viewer img#originalPic").css("width", $("#viewer img#renderedPic").width());
+                offset = $("#viewer img#renderedPic").offset;
+                $("#viewer img#originalPic").offset({ top: offset.top, left: offset.left});
+                $("#viewer img#originalPic").show();
                 $("#download-view").removeClass('disabled');
+                $("#addGalleryImage").removeClass('disabled');
                 $("#render").removeClass('disabled');
                 hideRenderLoader();
                 $('.display img').css({height: "auto"});
@@ -241,6 +274,7 @@ $(document).ready(function () {
 
                 $("#downloadtrigger").off("click").click(function (data) {
                     $("#download-view").addClass('disabled');
+                    $("#addGalleryImage").addClass('disabled');
                     $("#render").addClass('disabled');
                     $("#downloadModal").modal('hide');
                     displayDownloadLoader();
@@ -286,8 +320,8 @@ $(document).ready(function () {
                                     src: {id: 1},
                                     dst: {id: 2}
                                 }],
-                                options: [],
-                            }),
+                                options: []
+                            })
                         })
                         .done(function (data) {
                             var link = document.createElement("a");
@@ -300,13 +334,48 @@ $(document).ready(function () {
 
                             hideDownloadLoader();
                             $("#download-view").removeClass('disabled');
+                            $("#addGalleryImage").removeClass('disabled');
                             $("#render").removeClass('disabled');
                         });
                 });
             })
             .error(function (data) {
                 console.log('POST ERROR !');
-            });
+            })
+        .error(function(data){
+            console.log('POST ERROR !');
+            hideRenderLoader();
+        });
+    }
+
+    // download an image from an url and apply a filter
+    function fromUrlRender(pluginId) {
+      displayRenderLoader();
+      var renderParameters = formToJson();
+
+      $.ajax({
+        type: "POST",
+        url: "/downloadImgFromUrl",
+        contentType: 'application/json; charset=utf-8',
+        data : JSON.stringify({
+          'url': $("#imgUrl").val()
+        }),
+          statusCode: {
+            500: function() {
+              alert( "page not found" );
+            }
+          }
+      })
+      .error(function(data) {
+            hideRenderLoader();
+            $("#imgUrl").parent().before(addMessage(data.responseText, "error"));
+      })
+      .success(function(data){
+          removeMessage();
+          selectedResource = data;
+
+          renderFilter(pluginId);
+      });
     }
 
     var allResources = undefined;
@@ -334,6 +403,7 @@ $(document).ready(function () {
 
     $(".sampleImage").each(function () {
         $(this).click(function () {
+            $("#imgUrl").parent().css("border-left", "none").css("color", "inherit");
             setResourceSelected($(this));
             var pluginId = $("#render.OfxImageEffectContextFilter").attr("pluginId");
             renderFilter(pluginId);
@@ -344,12 +414,12 @@ $(document).ready(function () {
         $(".sampleImage").each(function () {
             deselect($(this));
         });
-        $(obj).parent().css("border", "solid 2px gray");
+        $(obj).parent().css("border-left", "solid 10px rgb(0,150,136)");
         selectedResource = $(obj).attr('id');
     }
 
     function deselect(obj) {
-        $(obj).parent().css("border", "");
+        $(obj).parent().css("border-left", "none");
     }
 
     function displayRenderLoader() {
@@ -416,10 +486,41 @@ $(document).ready(function () {
         renderGenerator($(this).attr("pluginId"));
     });
 
+    // Send an image from an external URL
+    $("#renderUrl.OfxImageEffectContextFilter").click(function(){
+        fromUrlRender($(this).attr("pluginId"));
+        $("#imgUrl").parent().css("border-left", "solid 10px rgb(0,150,136)").css("color", "white");
+        $(".sampleImage").each(function () {
+            deselect($(this));
+        });
+
+    });
+
     // Reset button
-    $('button#reset').click(function () {
+    $('#reset').click(function () {
         resetParameters();
     });
+
+
+    $("#addGalleryImage").click(function(event){
+
+        $("#download-view").addClass('disabled');
+        $("#addGalleryImage").addClass('disabled');
+        $("#render").addClass('disabled');
+
+        var pluginId = $("#addGalleryImage").attr("pluginId");
+        var renderId = $("#renderedPic").attr("src").split("/resource/")[0].split("/render/")[1];
+        var resourceId = $("#renderedPic").attr("src").split("/resource/")[1];
+
+        $.ajax({
+                type: "POST",
+                url: "/plugin/" + pluginId + "/render/" + renderId + "/resource/" + resourceId,
+                async: false //avoid an empty data when result is returned.
+            }).done(function(){
+                $("#download-view").removeClass('disabled');
+                $("#render").removeClass('disabled');
+            })
+    }); //.off("click");
 
     /* Before / After slider */
 
@@ -436,20 +537,22 @@ $(document).ready(function () {
                     'max': 100
                 }
             }).fadeIn(500);
+
+            $(".noUi-handle").after("<div id=\"original-label\">Original picture</div>");
+            $(".noUi-handle").after("<div id=\"render-label\">Rendered picture</div>");
+            $("#original-label").css({
+                "margin-left": "-130px",
+                "margin-top": "-35px",
+                "position": "absolute"
+            });
+            $("#render-label").css({
+                "margin-top": "-35px",
+                "position": "absolute",
+                "margin-left": "10px"
+            });
+
+            reload_beforeAfterRender();
         }
-        reload_beforeAfterRender();
-        $(".noUi-handle").after("<div id=\"original-label\">Original picture</div>");
-        $(".noUi-handle").after("<div id=\"render-label\">Rendered picture</div>");
-        $("#original-label").css({
-            "margin-left": "-130px",
-            "margin-top": "-35px",
-            "position": "absolute"
-        });
-        $("#render-label").css({
-            "margin-top": "-35px",
-            "position": "absolute",
-            "margin-left": "10px"
-        });
 
         $('#BeforeAfterSlider div.noUi-handle').mousedown(function () {
             $(document).mousemove(function (event) {
@@ -476,6 +579,33 @@ $(document).ready(function () {
     function reload_beforeAfterRender() {
         $('#BeforeAfterSlider').val(50, {set: true});
         change_beforeAfterRender(50);
+    }
+
+    /* Resize originalPic on resize of window */
+    var rtime;
+    var timeout = false;
+    var delta = 200;
+    $(window).resize(function() {
+        $("#viewer img#originalPic").fadeOut(200);
+        rtime = new Date();
+        if (timeout === false) {
+            timeout = true;
+            setTimeout(resizeend, delta);
+        }
+    });
+
+    function resizeend() {
+        if (new Date() - rtime < delta) {
+            setTimeout(resizeend, delta);
+        } else {
+            timeout = false;
+            $("#viewer img#originalPic").css("width", $("#viewer img#renderedPic").width());
+            offset = $("#viewer img#renderedPic").offset;
+            $("#viewer img#originalPic").offset({ top: offset.top, left: offset.left})
+            .fadeIn(200);
+
+            change_beforeAfterRender($('#BeforeAfterSlider').val());
+        }               
     }
 
 });

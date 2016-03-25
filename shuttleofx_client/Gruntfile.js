@@ -32,9 +32,14 @@ module.exports = function (grunt) {
 
 
     watch: {
-      
+
       script: {
         files: [
+          '<%=  project.static %>/scripts/vendor/markdown/**/*.css',
+          '<%=  project.static %>/scripts/vendor/markdown/**/*.js',
+          '<%=  project.static %>/scripts/vendor/markdown/*.js',
+          '<%=  project.static %>/scripts/vendor/**/*.js',
+          '<%=  project.static %>/scripts/vendor/*.js',
           '<%=  project.static %>/scripts/*.js',
           '<%=  project.static %>/scripts/**/*.js',
 
@@ -60,9 +65,13 @@ module.exports = function (grunt) {
           '<%= project.static_tmp %>/styles/*.css',
           '<%= project.static_tmp %>/styles/vendor/*.css',
 
-
           '/templates/*.html',
 
+          '<%= project.static_tmp %>/scripts/vendor/markdown/**/*.css',
+          '<%= project.static_tmp %>/scripts/vendor/markdown/**/*.js',
+          '<%= project.static_tmp %>/scripts/vendor/markdown/*.js',
+          '<%= project.static_tmp %>/scripts/vendor/**/*.js',
+          '<%= project.static_tmp %>/scripts/vendor/*.js',
           '<%= project.static_tmp %>/scripts/**/*.js',
           '<%= project.static_tmp %>/scripts/*.js',
 
@@ -100,8 +109,13 @@ module.exports = function (grunt) {
         reporter: require('jshint-stylish'),
         force : true
       },
-      
+
       all: [
+        '<%= project.static %>/scripts/vendor/markdown/**/*.css',
+        '<%= project.static %>/scripts/vendor/markdown/**/*.js',
+        '<%= project.static %>/scripts/vendor/markdown/*.js',
+        '<%= project.static %>/scripts/vendor/**/*.js',
+        '<%= project.static %>/scripts/vendor/*.js',
         '<%= project.static %>/scripts/**/*.js',
         '<%= project.static %>/scripts/*.js',
       ]
@@ -167,7 +181,11 @@ module.exports = function (grunt) {
             'fonts/**/*',
             'styles/vendor/*.css',
             'styles/vendor/*.map',
-            
+
+            'scripts/vendor/markdown/**/*.css',
+            'scripts/vendor/markdown/**/*.js',
+            'scripts/vendor/markdown/*.js',
+            'scripts/vendor/**/*.js',
             'scripts/vendor/*.js',
             'scripts/*.js',
 
@@ -206,7 +224,8 @@ module.exports = function (grunt) {
       },
       server: {
         files: {
-          '<%= project.static_tmp %>/styles/main.css' : '<%= project.static %>/styles/main.less'
+          '<%= project.static_tmp %>/styles/main.css' : '<%= project.static %>/styles/main.less',
+          '<%= project.static_tmp %>/styles/script-editor.css' : '<%= project.static %>/styles/script-editor.less'
         }
       },
     },
@@ -231,6 +250,7 @@ module.exports = function (grunt) {
   grunt.registerTask('serve', function (target) {
 
     grunt.task.run([
+      'build',
       'clean:server',
       'concurrent:server',
       'autoprefixer',

@@ -19,7 +19,7 @@ from Plugin import Plugin
 def mongodoc_jsonify(*args, **kwargs):
     return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
 
-def createPagination(count, skip, maxPage):
+def createPagination(count, skip, maxPage, alphaSort):
 
     '''
     ' Create the HTML code for the pagination bar
@@ -35,7 +35,7 @@ def createPagination(count, skip, maxPage):
     if skip == 1 :
         pagination .append('     <li id="previous" class="disabled"><a href=""> < </a></li>')
     else :
-        pagination.append('     <li id="previous"><a href="/plugin?count=' + str(count)+'&skip=' + str(skip-1) + '"> < </a></li>')
+        pagination.append('     <li id="previous"><a href="/plugin?count=' + str(count)+'&skip=' + str(skip-1) + '&alphaSort=' + str(alphaSort) + '"> < </a></li>')
 
     pageCounter = 1
 
@@ -43,12 +43,12 @@ def createPagination(count, skip, maxPage):
         if pageCounter == skip:
             pagination.append('                            <li class="disabled"><a href="">' + str(pageCounter) + '</a></li>')
         else:
-            pagination.append('                            <li><a href="/plugin?count=' + str(count) + '&skip=' + str(pageCounter) +'">' + str(pageCounter) + '</a></li>')
+            pagination.append('                            <li><a href="/plugin?count=' + str(count) + '&skip=' + str(pageCounter) + '&alphaSort=' + str(alphaSort) +'">' + str(pageCounter) + '</a></li>')
 
     if skip == maxPage:
         pagination.append('                          <li id="next" class="disabled"><a href=""> > </a></li>')
     else:
-        pagination.append('                          <li id="next"><a href="/plugin?count=' + str(count) + '&skip=' + str(skip+1) + '"> > </a></li>')
+        pagination.append('                          <li id="next"><a href="/plugin?count=' + str(count) + '&skip=' + str(skip+1) + '&alphaSort=' + str(alphaSort) + '"> > </a></li>')
 
     pagination.append("""                    </ul>
                     </div>
@@ -60,7 +60,7 @@ def createPagination(count, skip, maxPage):
 
     return pagination
 
-def createSearchPagination(count, skip, maxPage, keyWord):
+def createSearchPagination(count, skip, maxPage, alphaSort, keyWord, page):
 
     '''
     ' Create the HTML code for the pagination bar in search result page
@@ -72,11 +72,10 @@ def createSearchPagination(count, skip, maxPage, keyWord):
                 <div class="col-md-12">
                     <div id="filter-page">
                         <ul class="pagination pagination-sm pager-check">""")
-
     if skip == 1 :
         pagination .append('     <li id="previous" class="disabled"><a href=""> < </a></li>')
     else :
-        pagination.append('     <li id="previous"><a href="/plugin?search='+ keyWord + '&count=' + str(count)+'&skip=' + str(skip-1) + '"> < </a></li>')
+        pagination.append('     <li id="previous"><a href="/' + page + '?search='+ keyWord + '&count=' + str(count)+'&skip=' + str(skip-1) + '&alphaSort=' + str(alphaSort) + '"> < </a></li>')
 
     pageCounter = 1
 
@@ -84,12 +83,12 @@ def createSearchPagination(count, skip, maxPage, keyWord):
         if pageCounter == skip:
             pagination.append('                            <li class="disabled"><a href="">' + str(pageCounter) + '</a></li>')
         else:
-            pagination.append('                            <li><a href="/plugin?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(pageCounter) +'">' + str(pageCounter) + '</a></li>')
+            pagination.append('                            <li><a href="/' + page + '?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(pageCounter) + '&alphaSort=' + str(alphaSort) +'">' + str(pageCounter) + '</a></li>')
 
     if skip == maxPage:
         pagination.append('                          <li id="next" class="disabled"><a href=""> > </a></li>')
     else:
-        pagination.append('                          <li id="next"><a href="/plugin?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(skip+1) + '"> > </a></li>')
+        pagination.append('                          <li id="next"><a href="/' + page + '?search='+ keyWord + '&count=' + str(count) + '&skip=' + str(skip+1) + '&alphaSort=' + str(alphaSort) + '"> > </a></li>')
 
     pagination.append("""                    </ul>
                     </div>
@@ -240,6 +239,7 @@ def deleteBundle(bundleId):
         abort(make_response("Bundle not found.", 404))
 
     plugins = config.pluginTable.find({"bundleId": bundleId})
+
     for plugin in plugins:
         pluginId = plugin["pluginId"]
         deleteStatus = config.pluginTable.remove({"pluginId":pluginId})
@@ -282,16 +282,15 @@ def getAllPlugins():
     keyWord = request.args.get('search', None)
 
     #Alphabetical sorting
-    alphaSort = request.args.get('alphaSort', 1)
-
-    if alphaSort == 'asc':
-        alphaSort = 1
-    elif alphaSort == 'desc':
-        alphaSort = -1
-    elif alphaSort not in [1, -1]:
+    try:
+        alphaSort = int(request.args.get('alphaSort', 1))
+    except ValueError:
         alphaSort = 1
 
-    count = request.args.get('count', 10)
+    if alphaSort != -1 and alphaSort != 1:
+        alphaSort = 1
+
+    count = request.args.get('count', 20)
     if count:
         count = int(count)
         logging.error(count)
@@ -319,23 +318,30 @@ def getAllPlugins():
 
     cursor = list(config.pluginTable.aggregate(pipeline))
 
+    totalPlugins = len(cursor)
+
     if count and skip:
         filteredCursor = cursor[(skip-1)*count : skip*count]
     else:
         filteredCursor = cursor
 
-    totalPlugins = len(cursor)
     plugins = [result["plugin"] for result in filteredCursor]
 
     maxPage = int(math.ceil(totalPlugins / count)+1)
 
     if keyWord:
-        pagination = createSearchPagination(count, skip, maxPage, keyWord)
+        pagination = createSearchPagination(count, skip, maxPage, alphaSort, keyWord, "plugin")
     else: 
-        pagination = createPagination(count, skip, maxPage)
+        pagination = createPagination(count, skip, maxPage, alphaSort)
 
-    return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "count": count, "pagination": pagination})
+    return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "count": count, "alphaSort": alphaSort, "pagination": pagination})
 
+@config.g_app.route("/plugins", methods=['GET'])
+def getAllPluginsDefault():
+    cursor = config.pluginTable.find({},{"properties.OfxImageEffectPluginPropGrouping": 1})
+    plugins = [result for result in cursor]
+
+    return mongodoc_jsonify({"plugins": plugins})
 
 @config.g_app.route("/bundle/<int:bundleId>/plugin/<pluginRawIdentifier>")
 @config.g_app.route("/plugin/<pluginRawIdentifier>")
@@ -383,6 +389,23 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
 
     return mongodoc_jsonify({'plugin': plugin, 'versions': versions})
 
+### Comments Start _____________________________________________________________
+@config.g_app.route('/plugin/<int:pluginId>/version/<pluginVersion>/comments/updates', methods=['POST'])
+@config.g_app.route('/plugin/<int:pluginId>/comments/update', methods=['POST'])
+def addComment(pluginId, pluginVersion="latest"):
+    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {'comments' : { 'user' : request.json['commentsuser'], 'content' : request.json['commentscontent'], 'picture' : request.json['commentspicture'], 'date' : request.json['commentsdate'] }}})
+    return mongodoc_jsonify(True)
+### Comments End _______________________________________________________________
+
+### Wiki Start _________________________________________________________________
+
+@config.g_app.route('/wiki/update/<int:pluginId>/version/<pluginVersion>', methods=['POST'])
+@config.g_app.route('/wiki/update/<int:pluginId>', methods=['POST'])
+def setWiki(pluginId, pluginVersion="latest"):
+    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {'wiki' : { 'content' : request.json['wikicontent'], 'user' : request.json['wikiuser'], 'picture' : request.json['wikipicture'], 'date' : request.json['wikidate']  }}})
+    return mongodoc_jsonify(True)
+
+### Wiki End ______________________
 
 @config.g_app.route("/bundle/<rawIdentifier>/bundle", methods=['GET'])
 def getBundleByPluginId(rawIdentifier):
@@ -397,6 +420,55 @@ def getBundleByPluginId(rawIdentifier):
 
     return mongodoc_jsonify(bundleId)
 
+@config.g_app.route('/category')
+def getCategory():
+    #Alphabetical sorting
+    try:
+        alphaSort = int(request.args.get('alphaSort', 1))
+    except ValueError:
+        alphaSort = 1
+
+    if alphaSort != -1 and alphaSort != 1:
+        alphaSort = 1
+
+    nextAlphaSort = -alphaSort;
+
+    count = request.args.get('count', 20)
+    if count:
+        count = int(count)
+
+    skip = request.args.get('skip', 1)
+    if skip:
+        skip = int(skip)
+
+    keyWord = request.args.get('search', '')
+
+    pipeline = [
+        {"$match": {"properties.OfxImageEffectPluginPropGrouping.value": { "$regex": ".*" + keyWord + ".*"} }},
+        {"$sort": SON([("version.major",-1), ("version.minor",-1)])},
+        {"$group": {
+            "_id": "$rawIdentifier",
+            "plugin": {"$first": "$$ROOT"}, # retrieve the first plugin
+            }
+        },
+        {"$sort": {"plugin.label":alphaSort}}
+        ]
+
+    cursor = list(config.pluginTable.aggregate( pipeline ))
+
+    if count and skip:
+        filteredCursor = cursor[(skip-1)*count : skip*count]
+    else:
+        filteredCursor = cursor
+
+    totalPlugins = len(cursor)
+    plugins = [result['plugin'] for result in filteredCursor]
+    maxPage = int(math.ceil(totalPlugins / count)+1)
+
+    if keyWord:
+        pagination = createSearchPagination(count, skip, maxPage, alphaSort, keyWord, "category")
+
+    return mongodoc_jsonify({"plugins": plugins, "totalPlugins": totalPlugins, "count": count, "alphaSort": alphaSort, "pagination": pagination})
 
 @config.g_app.route('/resources', methods=['POST'])
 def addResource():
@@ -409,8 +481,8 @@ def addResource():
     size = request.content_length
 
     if not mimetype:
-        logging.error("Invalide resource.")
-        abort(make_response("Invalide resource.", 400))
+        logging.error("Invalid resource.")
+        abort(make_response("Invalid resource.", 400))
 
     uid = config.resourceTable.insert({
         "mimetype" : mimetype,
@@ -418,7 +490,6 @@ def addResource():
         "name" : name})
 
     img = request.data
-
 
     imgFile = os.path.join(config.resourcesPath, str(uid))
     file = request.files['file']
@@ -480,7 +551,10 @@ def addImageToPlugin(pluginId):
     if plugin == None:
         abort(404)
 
-    config.pluginTable.update({"pluginId" : pluginId}, { '$addToSet' : {"sampleImagesPath" : imageId} }, upsert=True)
+    config.pluginTable.update(
+        {"pluginId" : pluginId},
+        {'$addToSet' : {"sampleImagesPath" : imageId}},
+        upsert=True)
     plugin = config.pluginTable.find_one({"pluginId": pluginId})
 
     return mongodoc_jsonify(plugin)

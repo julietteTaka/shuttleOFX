@@ -20,9 +20,12 @@
                                     {% endfor%}
                                 >
 
-								<a id="download-view" type="button" class=" btn btn-success" data-toggle="modal" data-target="#downloadModal">
-                                  	Download
-								</a>
+                                <a href="#" id="addGalleryImage" title="Add to preview gallery" pluginId="{{plugin.pluginId}}">
+                                    <i class="fa fa-thumb-tack"></i>
+                                </a>
+                                <a href="#" id="download-view" title="Download the rendered image" data-toggle="modal" data-target="#downloadModal">
+                                    <i class="fa fa-cloud-download"></i>
+                                </a>
 								<div class="preloader-wrapper extra-small">
 									<div class="spinner-layer">
 										<div class="circle-clipper left">
@@ -66,6 +69,22 @@
                                 </div>
                             </div>
                         </div>
+                        <h4>Image from an URL</h4>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <input id="imgUrl" class="form-control empty"  type="text" name="imgUrl" value="" placeholder="type an image url here ...">
+                            </div>
+                            <div class="col-md-4">
+                            <input type="button" value="Send" id="renderUrl" pluginId="{{plugin.rawIdentifier}}"
+                                {% for context in plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
+                                    {% if context != "OfxImageEffectContextGeneral" %}
+                                        class="btn btn-primary {{context}}"
+                                    {% endif %}
+                                {% endfor%}
+                            >
+                          </div>
+                        </div>
+                        <h4>Image from ShuttleOFX resources</h4>
                         <div class="row">
                             {% for resource in resources.resources %}
                                 {% for key in resource._id %}
@@ -102,7 +121,7 @@
                     <div class="changeParameters">
                         <div class="changeParameters-title">
                             <h3>Parameters</h3>
-                            <button class="btn btn-primary" id="reset">Reset</button>
+                            <a href="#" id="reset" title="Reset render parameters"><i class="fa fa-undo"></i></a>
                         </div>
                         <div class="changeParameters-content">
                             <form id="renderForm" name="renderForm">
@@ -191,6 +210,18 @@
                             <label>
                                 <input type="radio" name="format" value="tiff">
                                 TIFF
+                            </label>
+                        </div>
+						<div class="radio radio-primary">
+                            <label>
+                                <input type="radio" name="format" value="exr">
+                                EXR
+                            </label>
+                        </div>
+						<div class="radio radio-primary">
+                            <label>
+                                <input type="radio" name="format" value="dpx">
+                                DPX
                             </label>
                         </div>
                 </div>

@@ -1,33 +1,20 @@
 {% extends "layout.html" %}
 
+{% block back_button %}
+    <a href="/plugin" id="back-to-plugins"><i class="fa fa-angle-left"></i> Back to all plugins</a>
+{% endblock %}
+
 {% block title %}
-<div class="header-content" data-0="height:100px" data-150="height:0px">
+<div class="header-content">
     <div class="top-header">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                     <h1 data-0="margin-top:25px;font-size:3em;" data-150="margin-top:-55px;font-size:2em;">
+                     <h1>
                       Upload a bundle
                     </h1>
                 </div>
-                
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
 
-
-{% block subtitle %}
-<div class="bottom-header">
-    <div class="navbar navbar-default">
-        <div class="navbar-collapse collapse navbar-responsive-collapse-filter">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <a href="/plugin"><i class="fa fa-angle-left"></i> Back to all plugins</a>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -37,22 +24,50 @@
 
 {% block content %}
 
-    <div class="main-content">
+    <div class="main-content no-bottom-header">
         <div class="container-fluid">
             <div class="row">
+                <div class="col-md-12">
+                    <p>
+                        Here you can upload OFX plugins to add them to the ShuttleOFX catalog.
+                    </p>
+                    {% if not user %}
+                    <div class="message info">
+                        <p>Please login to upload plugins</p>
+                    </div>
+                    {% else %}
+                        <ol>
+                            <li>Your plugins should respect the <a href="http://openfx.sourceforge.net/Documentation/1.4/ofxProgrammingReference.html#idp56354784">OpenFX standard.</a></li>
+                            <li>Your plugins should should be compiled for Linux 64 bits. We use the <a href="https://hub.docker.com/r/tuttleofx/tuttleofx/" >Docker image of TuttleOFX</a> to load and process your plugins, so you can reproduce the same environment locally to ensure that your plugins are recognized.</li>
+                            <li>
+                                If your plugins used shared libraries you can put them in a folder "lib" or "lib64" at the root of your archive :
+                                <pre>
+./PLUGIN_A.ofx.bundle/
+./PLUGIN_B.ofx.bundle/
+./lib/ <-- shared libraries
+                                </pre>
+                            </li>
+                            <li>Compress your plugins in a <b>tar.gz</b> archive.</li>
+                            <li>Fill the form below with a name and a description of the bundle of plugins and click <b>GO</b>.</li>
+                            <li>Drag and drop your archive and click <b>UPLOAD</b>.</li>
+                            <li>Wait until you have confirmation that the bundle has been uploaded and processed correctly.</li>
+                        </ol>
+                    </p>
+                </div>
+
                 <div class="col-md-12">
                     <div class="page-header">
                     <h2>Bundle's information</h2>
                     </div>
                     <form id='metaBundle'>
                         <fieldset>
-
                             <input type='text' id="bundleName" required placeholder="Your bundle's name" class="form-control empty panel panel-primary validate">
                             <input type='text' id="bundleDescription" required placeholder="Your bundle's description" class="form-control empty panel panel-primary">
-                            <input type='submit' value = 'Go' id="createBundle" class="btn btn-primary" attr-id="{{user.id}}">
+                            <input type='submit' value ='Go' id="createBundle" class="btn btn-primary" attr-id="{{user.id}}">
                         </fieldset>
                     </form>
                 </div>
+                {% endif %}
             </div>
         </div>
         <div class="container-fluid">
@@ -83,4 +98,3 @@
 <script src="{{ url_for('static', filename='scripts/dropzone-config.js') }}"></script>
 
 {% endblock %}
-

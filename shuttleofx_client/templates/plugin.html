@@ -1,16 +1,16 @@
 {% extends "layout.html" %}
 
 {% block back_button %}
-<a href="/plugin" id="back-to-plugins" data-0="line-height:80px" data-150="line-height:30px"><i class="fa fa-angle-left"></i> Back to all plugins</a>
+<a href="/plugin" id="back-to-plugins"><i class="fa fa-angle-left"></i> Back to all plugins</a>
 {% endblock %}
 
 {% block title %}
-<div class="header-content" data-0="height:25%" data-150="height:10%">
+<div class="header-content">
     <div class="top-header">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                     <h1 data-0="margin-top:25px;font-size:3em;" data-150="margin-top:-55px;font-size:2em;">
+                     <h1>
                         {{plugin.label}}
                         <small style="color:rgba(255,255,255,0.7);font-weight:300;">
                             Version 
@@ -41,9 +41,8 @@
                             {% endif %}
                         {% endif %}
                         <li class="tab"><a {% if active == "info" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}/info">Technical info</a></li>
-                        <!-- FIXME enable these tabs when wiki and/or comments are active -->
-                        <li class="tab disabled"><a {% if active == "wiki" %}class="active"{% endif %} href="#">Wiki</a></li>
-                        <li class="tab disabled"><a {% if active == "comments" %}class="active"{% endif %} href="#">Comments</a></li>
+                        <li class="tab"><a {% if active == "wiki" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}/wiki">Wiki</a></li>
+                        <li class="tab"><a {% if active == "comments" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}/comments">Comments</a></li>
                     </ul>
                 </div>
             </div>
@@ -86,13 +85,26 @@
             </div>
         </div>
         <div class="row">
-            {% for image in plugin.sampleImagesPath %}
-                <div class="col-md-3">
-                    <div class="preview-img panel panel-primary img-responsive">
-                        <img src="/plugin/{{plugin.pluginId}}/image/{{image}}">
-                    </div>
+            {% if not plugin.sampleImagesPath %}
+                <div class="col-md-12">
+                    <p>No example found.... <i class="fa fa-meh-o"></i></p>
+                    <p style="font-size: 16pt;"> 
+                        {% if  user %}
+                        Upload yours ! <i class="fa fa-rocket"></i>
+                        {% else %}
+                        Login to upload yours ! <i class="fa fa-rocket"></i>
+                        {% endif %}
+                    </p>
                 </div>
-            {% endfor %}
+            {% else %}
+                {% for image in plugin.sampleImagesPath %}
+                    <div class="col-md-3">
+                        <div class="preview-img panel panel-primary img-responsive">
+                            <img src="/plugin/{{plugin.pluginId}}/image/{{image}}">
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
             {% endif %}
         {% endif %}
@@ -130,21 +142,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ url_for('static', filename='scripts/vendor/js.cookie.js') }}"></script>
     <script type="text/javascript">
-        // Read cookies content and update the back link
-        // to redirect to the plugins page with the right preferences :
-        // nbr of plugins and page
-        $(document).ready(function() {
-            var href = $("#back-to-plugins").attr("href");
-            var prefs = Cookies.getJSON("user_sorting_prefs");
-            if(prefs && prefs.count && prefs.skip){
-                $("#back-to-plugins").attr("href", href + "?count=" + prefs.count + "&skip=" + prefs.skip );
-            }
-            else if(prefs && prefs.count && prefs.skip && prefs.search) {
-                $("#back-to-plugins").attr("href", href + "?search=" + prefs.search + "count=" + prefs.count + "&skip=" + prefs.skip );
-            }
-        });
-
+        updateLinkWithUserSortingPrefs($("#back-to-plugins"), true);
     </script>
 {% endblock %}
