@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import shutil
 from functools import wraps
 from flask import (
 	request,
@@ -11,8 +12,10 @@ from flask import (
 	redirect,
 	url_for,
 	session,
-	make_response
+	make_response,
+    send_file
 )
+from subprocess import call
 import logging
 import config
 import userManager
@@ -469,12 +472,65 @@ def createUserRepo():
 
     req = config.github.post('/user/repos', data={
             "name": request.form['pluginName'],
-            "has_issues": "true",
-            "has_wiki": "true",
-            "has_downloads": "true"
+            "private": False,
+            "auto_init": True
         }, format='json')
 
     if req.status == 201:
+        call(['git', 'clone', '--recursive', 'https://github.com/tuttleofx/pluginOFX.git'], cwd=os.path.join(os.sep, 'tmp'))
+        pluginTemplatePath = os.path.join(os.sep, 'tmp', 'pluginOFX')
+        # Remove .git folder as we do not want to push it on user's repo
+        shutil.rmtree(os.path.join(pluginTemplatePath,'.git'))
+
+        owner = req.data['owner']['login']
+        repo = req.data['name']
+
+        # Get latest commit SHA and latest tree SHA
+        latestCommitSha = config.github.get('/repos/' + owner + '/' + repo + '/git/refs/heads/master').data['object']['sha']
+        latestTreeSha = config.github.get('/repos/' + owner + '/' + repo + '/git/commits/' + latestCommitSha).data['tree']['sha']
+
+        # Change working directory
+        cwd = os.getcwd()
+        os.chdir(pluginTemplatePath)
+        # Create the file tree of blobs
+        tree = []
+        for root, dirs, files in os.walk(pluginTemplatePath):
+            for file in files:
+                f = open(os.path.join(root, file), 'r')
+                #create blob
+                blob = config.github.post('/repos/' + owner + '/' + repo + '/git/blobs', data={
+                    "content": f.read()
+                    }, format="json")
+
+                filepath = os.path.join(root, file)
+                # Remove the beginning of the path as Github only wants relative paths
+                item = {"path": os.path.join(*(filepath.split(os.path.sep)[3:])), "mode": "100644", "type": "blob", "sha": blob.data['sha']}
+                tree.append(item)
+
+        # Send new tree to Github
+        newTree = config.github.post('/repos/' + owner + '/' + repo + '/git/trees', data={
+            "base_tree": latestTreeSha,
+            "tree": tree
+            }, format='json')
+
+        # Get back to the previous working directory
+        os.chdir(cwd)
+
+        # Create commit with new tree
+        commit = config.github.post('/repos/' + owner + '/' + repo + '/git/commits', data={
+                "message": "Add plugin's template",
+                "tree": newTree.data['sha'],
+                "parents": [latestCommitSha]
+            }, format='json')
+
+        # Post commit to Github
+        config.github.post('/repos/' + owner + '/' + repo + '/git/refs/heads/master', data={
+                "sha": commit.data['sha']
+            }, format='json')
+
+        # Delete plugin template sources as they are not needed anymore
+        shutil.rmtree(pluginTemplatePath)
+
         status = 'success'
         message = 'Repository created with success, check your Github account !'
     else :
@@ -482,6 +538,18 @@ def createUserRepo():
         status = 'error'
         message = req.data['errors'][0]['message']
     return render_template("createPlugin.html", user=user, provider=provider, status=status, message=message)
+
+@config.g_app.route('/create/sources', methods=['POST'])
+def downloadPluginTemplate():
+    call(['git', 'clone', '--recursive', 'https://github.com/tuttleofx/pluginOFX.git'], cwd=os.path.join(os.sep, 'tmp'))
+    pluginTemplatePath = os.path.join(os.sep, 'tmp', 'pluginOFX')
+    # Remove .git folder as we do not want to push it on user's repo
+    shutil.rmtree(os.path.join(pluginTemplatePath,'.git'))
+    # TODO Use form data to change plugin's name...
+    shutil.make_archive(pluginTemplatePath, 'zip', pluginTemplatePath)
+    shutil.rmtree(pluginTemplatePath)
+
+    return send_file(pluginTemplatePath + '.zip', as_attachment=True, attachment_filename="OpenFX_plugin_template.zip")
 
 if __name__ == '__main__':
     config.g_app.run(host="0.0.0.0", port=5000, debug=True)
