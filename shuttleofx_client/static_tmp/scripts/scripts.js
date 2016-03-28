@@ -89,11 +89,11 @@ $('[data-toggle]').on('click', function() {
 
 var Bamboo = (function (window, document) {
 
-	var
+	var container = $('#container').length == 0 ? $('#containerHome') : $('#container')
 
+	var
 	// objects
 	openButton = $('.open'),
-	container = $('#container'),
 	cover = null,
 
 	// Browser checks
