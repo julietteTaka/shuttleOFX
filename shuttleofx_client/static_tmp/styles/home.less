@@ -4,7 +4,7 @@
 */
 
 .headerImg{
-    //position : fixed;
+    position : fixed;
     margin-top:10px;
 }
 
@@ -35,8 +35,7 @@
 
 #welcome{
     background-color: white!important;
-
-    padding-top: 28em;
+    padding-top: 25em;
     margin-bottom: 0.5em;
     h1{
         font-family: 'Roboto-Light';
@@ -56,55 +55,68 @@
 #users{
     padding-top: 8em;
     padding-bottom: 8em;
-    display: table;
     background-color: white;
-    
-    .user-content > div{
-        padding-bottom : 20px;
+    .user-content li{
+        cursor : pointer;
+        h2{
+            text-align : center;
+            width : 100%;
+            //clear :both;
+            display : block;
+            float : left;
+            text-align :center;
+                &::before{
+                    position: absolute;
+                    content: "";
+                    left: 50%;
+                    transform: translate(-50%);
+                    margin-top: 55px;
+                    width: 100px;
+                    height: 3px;
+                    background-color: @ofxColor;
+                }
+        }
+        .inner{
+            padding-left : 20px;
+            padding-right : 20px;
+        }
+
     }
 
-    p{
-        display:table-cell!important;
-        vertical-align: middle;
-        display: inline-block;
-        height : 200px;
-        text-align:justify;
+
+
+    .description{
+        float : left;
+        p{
+            margin-top : 25px;
+            display: inline-block;
+            height : 150px;
+            text-align :center;
+        }
+        //display: none;
     }
 
      img{
+        display:block;
+        max-width: 150px;
+        border-radius: 150px;
+        margin : auto;
+        text-align :center;
 
      }
 
     .user-active {
-        border-bottom : 5px solid @ofxColor;
-        p{
-            left : 0;
-        }
-        img{
-            display:block;
-            float : left;
-            max-width: 150px;
-            margin: auto;
-            border-radius: 150px;
-            margin-top : 31px;
-        }
+        display: table;
     }
 
     .user-inactive {
-        p{
-visibility: hidden;
-        }
-        img{
-            display:block;
-            max-width: 150px;
-            margin: auto;
-            border-radius: 150px;
-            margin-top : 31px;
-        }
+        display: table;
     }
 }
 
+
 #format{
+    z-index :50;
     padding-top: 3em;
     padding-bottom: 1em;
     background: @ofxColor url(../images/logoOpa.png);
