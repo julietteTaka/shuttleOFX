@@ -15,7 +15,7 @@ from flask import (
 	make_response,
     send_file
 )
-from subprocess import call
+from subprocess import (call, check_output)
 import logging
 import config
 import userManager
@@ -466,71 +466,41 @@ def createUserRepo():
     user = userManager.getUser()
     provider = userManager.getOAuthProvider()
     if session['github_token'] is None:
-        logging.warning('Trying to create a repo without being authenticated using Github')
         status = 'error'
         message = 'You are trying to create a repository without being logged using Github.'
 
+    # Create user's repo
     req = config.github.post('/user/repos', data={
             "name": request.form['pluginName'],
             "private": False,
-            "auto_init": True
         }, format='json')
 
     if req.status == 201:
-        call(['git', 'clone', '--recursive', 'https://github.com/tuttleofx/pluginOFX.git'], cwd=os.path.join(os.sep, 'tmp'))
+        # Create folder source folder
         pluginTemplatePath = os.path.join(os.sep, 'tmp', 'pluginOFX')
-        # Remove .git folder as we do not want to push it on user's repo
-        shutil.rmtree(os.path.join(pluginTemplatePath,'.git'))
-
-        owner = req.data['owner']['login']
-        repo = req.data['name']
-
-        # Get latest commit SHA and latest tree SHA
-        latestCommitSha = config.github.get('/repos/' + owner + '/' + repo + '/git/refs/heads/master').data['object']['sha']
-        latestTreeSha = config.github.get('/repos/' + owner + '/' + repo + '/git/commits/' + latestCommitSha).data['tree']['sha']
-
+        os.mkdir(pluginTemplatePath)
         # Change working directory
         cwd = os.getcwd()
         os.chdir(pluginTemplatePath)
-        # Create the file tree of blobs
-        tree = []
-        for root, dirs, files in os.walk(pluginTemplatePath):
-            for file in files:
-                f = open(os.path.join(root, file), 'r')
-                #create blob
-                blob = config.github.post('/repos/' + owner + '/' + repo + '/git/blobs', data={
-                    "content": f.read()
-                    }, format="json")
 
-                filepath = os.path.join(root, file)
-                # Remove the beginning of the path as Github only wants relative paths
-                item = {"path": os.path.join(*(filepath.split(os.path.sep)[3:])), "mode": "100644", "type": "blob", "sha": blob.data['sha']}
-                tree.append(item)
+        # Create new repo from project template (squash all commits into one to get a clean history)
+        call(['git', 'init'])
+        call(['git', 'fetch', '--depth=1', '-n', 'https://github.com/tuttleofx/pluginOFX.git'])
+        output = check_output(['git', 'commit-tree', 'FETCH_HEAD^{tree}', '-m', 'Initial Openfx structure']).strip()
+        call(['git', 'reset', '--hard', output])
 
-        # Send new tree to Github
-        newTree = config.github.post('/repos/' + owner + '/' + repo + '/git/trees', data={
-            "base_tree": latestTreeSha,
-            "tree": tree
-            }, format='json')
+        # TODO Change source files according to the form
 
-        # Get back to the previous working directory
-        os.chdir(cwd)
+        # Push on user's repo
+        owner = req.data['owner']['login']
+        url = 'https://' + owner + ':' + session['github_token'][0] + '@github.com' +'/'+ owner +'/'+ request.form['pluginName'] + '.git'
+        call(['git', 'remote', 'add', 'origin', url])
+        call(['git', 'remote', '-v'])
+        call(['git', 'push', 'origin', 'master'])
 
-        # Create commit with new tree
-        commit = config.github.post('/repos/' + owner + '/' + repo + '/git/commits', data={
-                "message": "Add plugin's template",
-                "tree": newTree.data['sha'],
-                "parents": [latestCommitSha]
-            }, format='json')
-
-        # Post commit to Github
-        config.github.post('/repos/' + owner + '/' + repo + '/git/refs/heads/master', data={
-                "sha": commit.data['sha']
-            }, format='json')
-
-        # Delete plugin template sources as they are not needed anymore
         shutil.rmtree(pluginTemplatePath)
-
+        # Get back to old dir
+        os.chdir(cwd)
         status = 'success'
         message = 'Repository created with success, check your Github account !'
     else :
@@ -543,9 +513,12 @@ def createUserRepo():
 def downloadPluginTemplate():
     call(['git', 'clone', '--recursive', 'https://github.com/tuttleofx/pluginOFX.git'], cwd=os.path.join(os.sep, 'tmp'))
     pluginTemplatePath = os.path.join(os.sep, 'tmp', 'pluginOFX')
-    # Remove .git folder as we do not want to push it on user's repo
+    # Remove .git folder and files not needed by user using sources
     shutil.rmtree(os.path.join(pluginTemplatePath,'.git'))
-    # TODO Use form data to change plugin's name...
+    os.remove(os.path.join(pluginTemplatePath,'.gitmodules'))
+
+    # TODO Use form data to change plugin's name & co
+
     shutil.make_archive(pluginTemplatePath, 'zip', pluginTemplatePath)
     shutil.rmtree(pluginTemplatePath)
 
