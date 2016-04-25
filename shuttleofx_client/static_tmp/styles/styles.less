@@ -227,6 +227,7 @@ header{
 @media only screen and (min-width: 875px) {
     .navigation { width: 265px }
     #container {left: 265px; overflow: auto; -webkit-overflow-scrolling: touch; }
+    #containerHome {left: 265px; overflow: auto; -webkit-overflow-scrolling: touch; }
     header .icon { display: none }
     header .navbar{padding-right: 265px;}
 }
@@ -368,17 +369,18 @@ ul.right-nav li .fa{
     top: 0;
     z-index: 3;
     .mainLogo{
-        height: 79px;
-        background-color: rgba(0, 0, 0, 0.07);
-        padding-top: 10px;
+        height: 133px;
+        background-color: @ofxColor;
+        padding-top: 15px;
         img{
-            height: 60px;
-            margin-left: 30px;
+            height : 100px;
             display: inline-block;
+            margin-left : 5px;
         }
         span{
             margin: 5px;
-            color: @ofxColor!important;
+            color: white!important;
+            font-size: 24px;
         }
     }
     .input-field{
