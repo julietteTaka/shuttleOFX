@@ -4,8 +4,13 @@
 */
 
 .headerImg{
-    position : fixed;
+    position: relative;
     margin-top:10px;
+    img {
+        position: absolute;
+        bottom: -51px;
+        width: 100%;
+    }
 }
 
 #containerHome{
@@ -18,11 +23,19 @@
         overflow:hidden;
     }
     .appTitle, small {
-        margin-left : 220px;
         margin-top : 50px;
+        //margin-left : 220px;
     }
     small {
         font-size: 20px;
+    }
+}
+
+@media (max-width: 992px) {
+    .headerImg {
+        img {
+            display: none;
+        }
     }
 }
 
@@ -167,4 +180,3 @@
         font-family: 'Roboto-Light';
     }
 }
-
