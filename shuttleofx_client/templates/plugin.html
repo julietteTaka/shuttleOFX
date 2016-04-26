@@ -13,7 +13,23 @@
                      <h1>
                         {{plugin.label}}
                         <small style="color:rgba(255,255,255,0.7);font-weight:300;">
-                            Version {{plugin.version.major}}.{{plugin.version.minor}}
+                            Version 
+                            <div id="version">
+                                {% if versions|length > 1 %}
+                                <i class="fa fa-angle-down"></i>
+                                <select onChange="changeVersion(this);">
+                                    {% for version in versions %}
+                                        {% if version.version.major == plugin.version.major and version.version.minor == plugin.version.minor %}
+                                            <option selected>{{version.version.major}}.{{version.version.minor}}</option>
+                                        {% else %}
+                                            <option>{{version.version.major}}.{{version.version.minor}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% else %}
+                                <span>{{versions[0].version.major}}.{{versions[0].version.minor}}</span>
+                                {% endif %}
+                            </div>
                         </small>
                     </h1>
                 </div>
@@ -21,16 +37,16 @@
             <div class="row">
                 <div class="col-md-12">
                     <ul class="tabs">
-                        <li class="tab"><a {% if active is not defined %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}">General</a></li>
+                        <li class="tab"><a {% if active is not defined %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}">General</a></li>
                         {% if "OfxImageEffectPropSupportedContexts" in plugin.properties %}
                             {% set supportedContexts = plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
                             {% if "OfxImageEffectContextFilter" in supportedContexts or "OfxImageEffectContextGenerator" in supportedContexts %}
-                                <li class="tab"><a {% if active == "demo" %}class="active"{% endif %} href="/editor/{{plugin.rawIdentifier}}">Demo</a></li>
+                                <li class="tab"><a {% if active == "demo" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}/demo">Demo</a></li>
                             {% endif %}
                         {% endif %}
-                        <li class="tab"><a {% if active == "info" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/info">Technical info</a></li>
-                        <li class="tab"><a {% if active == "wiki" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/wiki">Wiki</a></li>
-                        <li class="tab"><a {% if active == "comments" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/comments">Comments</a></li>
+                        <li class="tab"><a {% if active == "info" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}/info">Technical info</a></li>
+                        <li class="tab"><a {% if active == "wiki" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}/wiki">Wiki</a></li>
+                        <li class="tab"><a {% if active == "comments" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}/comments">Comments</a></li>
                     </ul>
                 </div>
             </div>

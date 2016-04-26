@@ -353,6 +353,13 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
 
     match = { "rawIdentifier": str(pluginRawIdentifier)}
 
+    pipeline = [
+        {"$match": match},
+        {"$project": {"version": 1, "_id": 0}},
+        {"$sort": SON([("version.major",1), ("version.minor",1)])}
+    ]
+    versions = list(config.pluginTable.aggregate(pipeline))
+
     if pluginVersion is not "latest":
         try:
             version = pluginVersion.split(".")
@@ -367,7 +374,7 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
         {"$sort": SON([("version.major",1), ("version.minor",1)])},
         {"$group": {
             "_id": "$rawIdentifier",
-            "plugin": {"$first": "$$ROOT"}, # retrieve the first plugin
+            "plugin": {"$last": "$$ROOT"}, # retrieve the first plugin
             }
         }]
 
@@ -378,7 +385,9 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
 
     plugin = plugins[0]["plugin"]
 
-    return mongodoc_jsonify(plugin)
+    logging.error(plugin);
+
+    return mongodoc_jsonify({'plugin': plugin, 'versions': versions})
 
 ### Comments Start _____________________________________________________________
 @config.g_app.route('/plugin/<int:pluginId>/version/<pluginVersion>/comments/updates', methods=['POST'])

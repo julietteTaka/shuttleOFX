@@ -131,7 +131,10 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
         analysedBundle = json.load(open(tempFilepath, 'r'))
         # os.path.remove(tempFilepath)
 
-    sharedBundleDatas['analyse'] = 'done'
+    if not analysedBundle:
+        sharedBundleDatas['analyse'] = 'error'
+    else:
+        sharedBundleDatas['analyse'] = 'done'
 
     # print analysedBundle
 
