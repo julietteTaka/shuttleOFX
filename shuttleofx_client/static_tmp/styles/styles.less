@@ -227,6 +227,7 @@ header{
 @media only screen and (min-width: 875px) {
     .navigation { width: 265px }
     #container {left: 265px; overflow: auto; -webkit-overflow-scrolling: touch; }
+    #containerHome {left: 265px; overflow: auto; -webkit-overflow-scrolling: touch; }
     header .icon { display: none }
     header .navbar{padding-right: 265px;}
 }
@@ -377,17 +378,18 @@ ul.right-nav li .fa{
     top: 0;
     z-index: 3;
     .mainLogo{
-        height: 79px;
-        background-color: rgba(0, 0, 0, 0.07);
-        padding-top: 10px;
+        height: 133px;
+        background-color: @ofxColor;
+        padding-top: 15px;
         img{
-            height: 60px;
-            margin-left: 30px;
+            height : 100px;
             display: inline-block;
+            margin-left : 5px;
         }
         span{
             margin: 5px;
-            color: @ofxColor!important;
+            color: white!important;
+            font-size: 24px;
         }
     }
     .input-field{
@@ -527,16 +529,17 @@ ul.right-nav li .fa{
         ul {
             width: auto;
             height: auto;
-            padding-left: 15%;
+            padding-left: 3.5em;
             text-transform: capitalize;
             li {
                 width: auto;
                 border: none;
-                min-height: 26px;
+                margin-top: 2px;
+                margin-bottom: 2px;
                 a {
                     width: auto;
                     max-width: 100%;
-                    margin-left: 5px;
+                    margin-left: 0px;
                     font-size: 0.85em;
                     display: inline-block;
                     line-height: 1.5;
@@ -545,21 +548,21 @@ ul.right-nav li .fa{
                     text-overflow: ellipsis;
                     vertical-align: middle;
                 }
-                i{
-                    padding: .5em;
+                i.folder{
                     cursor: pointer;
-                    font-size: 0.8em;
+                }
+                i.nofolder{
+                    color: lightgrey;
+                    cursor: default;
                 }
                 ul{
                     display: none;
+                    padding-left: 1.5em;
                 }
             }
         }
     }
     
-    .fa{
-        padding-right: 10px;
-    }
     .legacy{
         border-top: 1px solid #ddd;
         background: #fff;
