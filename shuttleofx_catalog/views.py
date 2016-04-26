@@ -386,8 +386,6 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
 
     plugin = plugins[0]["plugin"]
 
-    logging.error(plugin);
-
     return mongodoc_jsonify({'plugin': plugin, 'versions': versions})
 
 @config.g_app.route("/plugin/<int:pluginId>/download/<bundleId>")
