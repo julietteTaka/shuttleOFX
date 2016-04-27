@@ -1,16 +1,104 @@
 {% extends "headersInformation.html" %}
 
+{% block nav %}
+<nav id="home-main-nav" class="navigation overflow row">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 left-nav-container">
+            <div id="left-nav">
+                <a href="/">
+                    <div class="mainLogo">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}">
+                        <span>ShuttleOFX</span>
+                    </div>
+                </a>
+                <ul id="home-links">
+                    {% if user %}
+                    <li class="userloged link">
+                        <img class="signedIn" src="{{user.picture}}">
+                        <p class="userName">
+                            {{user.name}}
+                            <a class="signedIn" href="/logout"><i class="fa fa-lock"></i>Logout</a>
+                        </p>
+                    </li>
+                    {% else %}
+                    <li class="userunloged link">
+                        <p class="userName">
+                            <a class="signedIn" href="#"><i class="fa fa-unlock"></i>Login</a>
+                        </p>
+                        <div>
+                            <a class="signedIn" href="/login/google"><i class="fa fa-google"></i>with Google</a>
+                            <a class="signedIn" href="/login/github"><i class="fa fa-github"></i>with Github</a>
+                        </div>
+                    </li>
+                    {% endif %}
+
+                    <li class="title-nav" style="margin-top:2em;"><h4>NAVIGATION</h4></li>
+
+                    <li class="link">
+                        <a href='/plugin'><i class="fa fa-fw fa-crop"></i>Explore plugins</a>
+                        <div id="categories"></div>
+                    </li>
+                    <li class="link">
+                        <a href='/upload'><i class="fa fa-fw fa-cloud-upload"></i>Upload new plugins</a>
+                    </li>
+                    <li class="link">
+                        <a href='/about'><i class="fa fa-fw fa-info"></i>About OpenFX</a>
+                    </li>
+                    <li class="title-nav"><h4>MORE</h4></li>
+                    <li class="link">
+                        <a href='http://www.openeffects.org' target="_blank"><i class="fa fa-share-alt"></i>OFX community</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
 {% block body %}
 
-<div id="containerHome">
-    <header class="header">
-        <span class="open icon">&#9776;</span>
+<div class="row home-header-container">
+    <header class="home-header col-lg-9 col-md-9 col-sm-9 col-xs-9 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-3">
         <div class="navbar search-bar">
             <form id="searchForm" action="/plugin">
-                  <input type="text" placeholder="Search" id="searchquery" name="search"/>
-                  <button id="searchtrigger" type="submit" value="Submitquery"><i class="fa fa-search"></i></button>
+                <input type="text" placeholder="Search" id="searchquery" name="search"/>
+                <button id="searchtrigger" type="submit" value="Submitquery"><i class="fa fa-search"></i></button>
             </form>
         </div>
+        <div class="header-image">
+            <img alt="header image" src="{{ url_for('static', filename='images/header.png') }}" />
+        </div>
+        <div class="header-content">
+            <div class="top-header">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-6 col-lg-offset-6 col-md-6 col-md-offset-6">
+                            <h1 class="appTitle">
+                                ShuttleOFX
+                            </h1>
+                            <small style="color:rgba(255,255,255,0.7);font-weight:300;">Create, Share and Play online with image processing plugins</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+</div>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+<!--
+<div id="homeContainer">
+    <header class="header">
+        <span class="open icon">&#9776;</span>
 
         <div class="headerImg">
             <img alt="header image" src="{{ url_for('static', filename='images/header.png') }}" />
@@ -33,91 +121,80 @@
     </header>
 
     <section id="welcome">
-        <div class="container">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h1>Welcome <span>on board</span></h1>
-                    </div>
-                    <div class="col-md-8">
-                        <p>
-                            The ShuttleOFX platform is designed to share OpenFX plugins between plugins creators (industrials, developpers, researchers, students, ...) and graphic artists.
-                            <br>Following the TuttleOFX initiative, the ambition is to promote a standard way to create image processing algorithms usable across softwares.
-                        </p>
-                    </div></div>
-                </div>
-        </section>
-
-        <section id="users" class="container">
-        <div class="row">
-            <div class="user-content " id="accordian">
-                <ul>
-                    <li class="col-md-4 ga user-active">
-                        <div class="inner">
-                            <div>
-                                <img src="{{ url_for('static', filename='images/personae/ga.png') }}" class="img-responsive">
-                            </div>
-                            <h2>Graphic&nbsp;Artist</h2>
-                            <div class="description">
-                                <p>
-                                    Find the plugin that really fits your needs, have a look on its documentation and try it online.
-                                </p>
-                            </div>
-                        </div>
-                    </li>
-
-                    <li class="col-md-4 dev user-inactive">
-                        <div class="inner">
-                            <div>
-                                <img src="{{ url_for('static', filename='images/personae/dev.png') }}" class="img-responsive">
-                            </div>
-                            <h2>Plugin&nbsp;Developer</h2>
-                            <div class="description">
-                                <p>
-                                    Provide beta testing for people interested in your work.
-                                </p>
-                            </div>
-                        </div>
-                    </li>
-
-                    <li class="col-md-4 res user-inactive">
-                        <div class="inner">
-                            <div>
-                                <img src="{{ url_for('static', filename='images/personae/researcher.png') }}" class="img-responsive">
-                            </div>
-                            <h2>Researcher</h2>
-                            <div class="description">
-                                <p>
-                                    Share the result of your work with the community. Upload your plugin to bring visibility on your products.
-                                </p>
-                            </div>
-                        </div>
-
-                    </li>
-
-                </ul>
-            </div>
-
+        <div class="col-md-4">
+            <h1>Welcome <span>on board</span></h1>
+        </div>
+        <div class="col-md-8">
+            <p>
+                The ShuttleOFX platform is designed to share OpenFX plugins between plugins creators (industrials, developpers, researchers, students, ...) and graphic artists.
+                <br>Following the TuttleOFX initiative, the ambition is to promote a standard way to create image processing algorithms usable across softwares.
+            </p>
         </div>
     </section>
 
+    <section id="users">
+        <div class="user-content " id="accordian">
+            <ul>
+                <li class="col-md-4 ga user-active">
+                    <div class="inner">
+                        <div>
+                            <img src="{{ url_for('static', filename='images/personae/ga.png') }}" class="img-responsive">
+                        </div>
+                        <h2>Graphic&nbsp;Artist</h2>
+                        <div class="description">
+                            <p>
+                                Find the plugin that really fits your needs, have a look on its documentation and try it online.
+                            </p>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="col-md-4 dev user-inactive">
+                    <div class="inner">
+                        <div>
+                            <img src="{{ url_for('static', filename='images/personae/dev.png') }}" class="img-responsive">
+                        </div>
+                        <h2>Plugin&nbsp;Developer</h2>
+                        <div class="description">
+                            <p>
+                                Provide beta testing for people interested in your work.
+                            </p>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="col-md-4 res user-inactive">
+                    <div class="inner">
+                        <div>
+                            <img src="{{ url_for('static', filename='images/personae/researcher.png') }}" class="img-responsive">
+                        </div>
+                        <h2>Researcher</h2>
+                        <div class="description">
+                            <p>
+                                Share the result of your work with the community. Upload your plugin to bring visibility on your products.
+                            </p>
+                        </div>
+                    </div>
+
+                </li>
+
+            </ul>
+        </div>
+    </section>
 
     <section id="format">
-        <div class="container">
-                <div class="row">
-                                        <div class="col-md-4">
-                        <h1 class="content-format">OpenFX<span>Open standard</span></h1>
-                    </div>
-                    <div class="col-md-8">
-                        <p>
-                            OpenFX is an open standard for image processing plug-ins. It allows plug-ins written to the standard to work on any application that supports the standard. This avoids the current per application fragmentation of plugin development and support, which causes much heartache to everyone: plug-in developers, application developers and end-users alike.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <div class="col-md-4">
+            <h1 class="content-format">OpenFX<span>Open standard</span></h1>
+        </div>
+        <div class="col-md-8">
+            <p>
+                OpenFX is an open standard for image processing plug-ins. It allows plug-ins written to the standard to work on any application that supports the standard. This avoids the current per application fragmentation of plugin development and support, which causes much heartache to everyone: plug-in developers, application developers and end-users alike.
+            </p>
+        </div>
+    </section>
 
-            </div>
+</div>-->
 
 
-{% endblock %}
+
 <script src="{{ url_for('static', filename='scripts/home.js') }}"></script>

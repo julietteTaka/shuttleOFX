@@ -3,28 +3,26 @@
 ------------------------------------------------------------------
 */
 
-.headerImg{
+/*
+#homeContainer{
     position: relative;
-    margin-top:10px;
-    img {
-        position: absolute;
-        bottom: -51px;
-        width: 100%;
-    }
-}
-
-#containerHome{
-    position: relative;
-    min-height: 100%;
-    height: 1px;
     background-color: white;
+    width: 80%;
     header{
         height : 312px;
         overflow:hidden;
+        .headerImg{
+            position: relative;
+            margin-top:10px;
+            img {
+                position: absolute;
+                bottom: -51px;
+                width: 100%;
+            }
+        }
     }
     .appTitle, small {
         margin-top : 50px;
-        //margin-left : 220px;
     }
     small {
         font-size: 20px;
@@ -39,16 +37,11 @@
     }
 }
 
-#containerHome{
-    section{
-        display : block;
-    }
-    background-color: white!important;
-}
 
 #welcome{
+    margin-top: 19em;
+    padding-top: 3em;
     background-color: white!important;
-    padding-top: 25em;
     margin-bottom: 0.5em;
     h1{
         font-family: 'Roboto-Light';
@@ -69,6 +62,7 @@
     padding-top: 8em;
     padding-bottom: 8em;
     background-color: white;
+    height: 100%;
     .user-content li{
         cursor : pointer;
         h2{
@@ -129,34 +123,34 @@
 
 
 #format{
-    z-index :50;
-    padding-top: 3em;
-    padding-bottom: 1em;
-    background: @ofxColor url(../images/logoOpa.png);
-    background-size: 50%;
-    background-position: center -100px;
-    background-repeat: no-repeat;
-    overflow: hidden;
-
+    //padding-top: 3em;
+    //padding-bottom: 1em;
+    background-color: @ofxColor;
+    //background: @ofxColor url(../images/logoOpa.png);
+    //background-size: 50%;
+    //background-position: center -100px;
+    //background-repeat: no-repeat;
+    //overflow: hidden;
     h1{
         font-family: 'Roboto-Light';
-        color: #fff;
+        //color: #fff;
         font-weight: 200;
-        margin-bottom: 3em;
+        //margin-bottom: 3em;
         font-size: 2em;
-        text-align: center;
+        //text-align: center;
         text-transform: uppercase;
-        &::before{
-            position: absolute;
-            content: "";
-            left: 50%;
-            transform: translate(-50%);
-            margin-top: 55px;
-            width: 100px;
-            height: 3px;
-            background-color: #fff;
-        }
+        //&::before{
+        //    position: absolute;
+        //    content: "";
+        //    left: 50%;
+        //    transform: translate(-50%);
+        //    margin-top: 55px;
+        //    width: 100px;
+        //    height: 3px;
+        //    background-color: #fff;
+        //}
     }
+    /*
     h1.content-format{
         font-family: 'Roboto-Light';
         color: #fff;
@@ -175,8 +169,86 @@
             font-size: 48%;
         }
     }
+
     p{
         color: #fff;
         font-family: 'Roboto-Light';
+    }
+}
+
+*/
+
+#home-main-nav{
+    width: 100%;
+    .left-nav-container {
+        margin: 0;
+        padding: 0 0 0 .5em;
+        #left-nav {
+            .mainlogo {
+                padding-left: 1em;
+            }
+            li.title-nav {
+                width: 100%;
+            }
+        }
+        @media (max-width: 1271px) {
+            #left-nav {
+                .mainlogo {
+                    span {
+                        display: none;
+                    }
+                    display: block;
+                    text-align: center;
+                    width: 100%;
+                }
+            }
+        }
+        @media (max-width: 960px) {
+            #left-nav {
+                ul{
+                    li {
+                        a {
+                            margin-left: .3em;
+                        }
+                        p {
+                            padding-left: .3em;
+                        }
+                    }
+                }
+                .mainlogo {
+                    span {
+                        display: none;
+                    }
+                    display: block;
+                    text-align: center;
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+
+.home-header-container {
+    margin: 0;
+    padding: 0;
+    margin-left: -1.5em;
+    .home-header {
+        height: 312px;
+        overflow: hidden;
+        padding-left: 0;
+        .search-bar {
+            padding-right: 0;
+        }
+        .header-image {
+            position: relative;
+            margin-top: 10px;
+            img {
+                position: absolute;
+                bottom: -15.5em;
+                left: -1em;
+                width: 100%;
+            }
+        }
     }
 }
