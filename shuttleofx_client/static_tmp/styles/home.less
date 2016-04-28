@@ -216,9 +216,33 @@
                 }
             }
         }
+        #frame {
+            position: relative;
+            margin-top: 40em;
+            padding-bottom: 56.25%; /* 16:9 */
+            padding-top: 2em;
+            height: 0;
+            iframe {
+                position: absolute;
+                top: 0;
+                left: 25%;
+                width: 50%;
+                height: 50%;
+            }
+            @media (max-width: 992px) {
+                margin-top: 5em;
+            }
+            @media (max-width: 768px) {
+                iframe{
+                    left: 1%;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+        }
         #format {
             width: 101.5%;
-            margin-top: 35em;
+            margin-top: -10em;
             padding-top: 2em;
             height: 14em;
             background-color: @ofxColor;
@@ -260,7 +284,7 @@
                 color: white;
             }
             @media (max-width: 992px) {
-                margin-top: 4em;
+                margin-top: -7em;
                 width: 102.25%;
                 height: 20.75em;
                 h1 {
@@ -273,7 +297,7 @@
                 }
             }
             @media (max-width: 768px) {
-                margin-top: 2em;
+                margin-top:  2em;
                 padding-top: .5em;
                 width: 102.25%;
                 height: 22.75em;
