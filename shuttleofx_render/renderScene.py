@@ -263,7 +263,7 @@ def launchComputeGraph(renderSharedInfo, newRender):
         name = 'shuttleofx_render_{uid}'.format(uid=uuid.uuid4())
         dockerargs = [
             '/usr/bin/timelimit', '-t', str(config.timeout_sec), '-T', str(config.timeout_sec),
-            '/bin/docker', 'run',
+            '/usr/bin/docker', 'run',
             # set cpu-shares to 1024 (the default value).
             # The main docker (for the server) use 4096 to ensure responsiveness.
             '--cpu-shares=1024',
@@ -303,7 +303,7 @@ def launchComputeGraph(renderSharedInfo, newRender):
         # Remove the docker container
         # We do it manually instead of using --rm=true
         # to remove the container even if docker was killed by timelimit.
-        subprocess.call(['/bin/docker', 'rm', '-f', name])
+        subprocess.call(['/usr/bin/docker', 'rm', '-f', name])
 
         if p.returncode:
             renderSharedInfo['status'] = -1
