@@ -61,39 +61,42 @@
             {% if "OfxImageEffectContextFilter" in supportedContexts or
                "OfxImageEffectContextGenerator" in supportedContexts
                %}
-        <div class="row">
-            <div class="col-md-12">
-                <div class="page-header">
-                    <h2>
-                        Examples
-                        {% if user %}
-                        <button class="btn btn-primary btn-addImage" data-toggle="modal" data-target="#addImageGallery"><i class="fa fa-plus"></i></button>
-                        {% endif %}
-                    </h2>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            {% if not plugin.sampleImagesPath %}
-                <div class="col-md-12">
-                    <p>No example found.... <i class="fa fa-meh-o"></i></p>
-                    <p style="font-size: 16pt;"> 
-                        {% if  user %}
-                        Upload yours ! <i class="fa fa-rocket"></i>
-                        {% else %}
-                        Login to upload yours ! <i class="fa fa-rocket"></i>
-                        {% endif %}
-                    </p>
-                </div>
-            {% else %}
-                {% for image in plugin.sampleImagesPath %}
-                    <div class="col-md-3">
-                        <div class="preview-img panel panel-primary img-responsive">
-                            <img src="/plugin/{{plugin.pluginId}}/thumbnail/{{image}}">
-        			</div>
-				{%  endfor %}
-            {% endif %}
-        {% endif %}
+			<div class="row">
+				<div class="col-md-12">
+					<div class="page-header">
+						<h2>
+							Examples
+							{% if user %}
+							<button class="btn btn-primary btn-addImage" data-toggle="modal" data-target="#addImageGallery"><i class="fa fa-plus"></i></button>
+							{% endif %}
+						</h2>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				{% if not plugin.sampleImagesPath %}
+					<div class="col-md-12">
+						<p>No example found.... <i class="fa fa-meh-o"></i></p>
+						<p style="font-size: 16pt;">
+							{% if  user %}
+							Upload yours ! <i class="fa fa-rocket"></i>
+							{% else %}
+							Login to upload yours ! <i class="fa fa-rocket"></i>
+							{% endif %}
+						</p>
+					</div>
+				{% else %}
+					{% for image in plugin.sampleImagesPath %}
+						<div class="col-md-3">
+							<div class="preview-img panel panel-primary img-responsive">
+								<img src="/plugin/{{plugin.pluginId}}/thumbnail/{{image}}">
+							</div>
+						</div>
+					{%  endfor %}
+				{% endif %}
+			</div>
+        	{% endif %}
+		{% endif %}
 
 
 

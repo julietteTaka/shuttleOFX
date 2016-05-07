@@ -113,7 +113,7 @@ def getSampleImagesForPlugin(pluginId, imageId):
 
 @config.g_app.route('/plugin/<pluginId>/thumbnail/<imageId>')
 def getSampleThumbnailForPlugin(pluginId, imageId):
-    req = requests.get(config.catalogRootUri + "/resources/" + str(imageId) + "-thumbnail/data")
+    req = requests.get(config.catalogRootUri + "/resources/" + str(imageId) + "/thumbnail")
     return Response(req.content, mimetype=req.headers["content-type"])
 
 

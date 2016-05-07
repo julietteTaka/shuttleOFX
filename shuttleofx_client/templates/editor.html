@@ -19,11 +19,11 @@
                                         {% endif %}
                                     {% endfor%}
                                 >
-
+								{%  if user %}
 								<input  type="button" value="Add to preview gallery" id="addGalleryImage" pluginId="{{plugin.pluginId}}"
 									class="btn btn-success"
 								>
-
+								{%  endif %}
 								<a id="download-view" type="button" class=" btn btn-success" data-toggle="modal" data-target="#downloadModal">
                                   	Download
 								</a>

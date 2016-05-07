@@ -25,7 +25,7 @@ def generateThumbnail(imgFile):
     tuttle.compute([
         tuttle.NodeInit( "tuttle.pngreader", filename=imgFile),
         tuttle.NodeInit( "tuttle.resize", width=256, keepRatio=1),
-        tuttle.NodeInit( "tuttle.pngwriter", filename=imgFile + '-thumbnail'),
+        tuttle.NodeInit( "tuttle.pngwriter", filename=imgFile + "-thumbnail"),
         ])
 
 def mongodoc_jsonify(*args, **kwargs):
@@ -453,6 +453,23 @@ def getResourceById(resourceId):
         abort(404)
     return mongodoc_jsonify(resourceData)
 
+
+@config.g_app.route('/resources/<resourceId>/thumbnail', methods=['GET'])
+def getResourceThumbnail(resourceId):
+    '''
+     Returns the resource.
+    '''
+
+    resourceData = config.resourceTable.find_one({ "_id" : ObjectId(resourceId)})
+    if not resourceData:
+        abort(404)
+
+    filePath = os.path.join (config.resourcesPath, resourceId + "-thumbnail")
+    if not os.path.isfile(filePath):
+        abort(404)
+
+    resource = open(filePath)
+    return Response(resource.read(), mimetype=resourceData['mimetype'])
 
 @config.g_app.route('/resources/<resourceId>/data', methods=['GET'])
 def getResourceData(resourceId):
