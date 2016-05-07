@@ -403,7 +403,7 @@ def downloadPlugin(pluginId, bundleId, pluginVersion="latest"):
             logging.error("Could not find Bundle " + bundleId + " folder")
             abort(404)
 
-    return send_file(filePath)
+    return send_file(filePath, as_attachment=True)
 
 ### Comments Start _____________________________________________________________
 @config.g_app.route('/plugin/<int:pluginId>/version/<pluginVersion>/comments/updates', methods=['POST'])
