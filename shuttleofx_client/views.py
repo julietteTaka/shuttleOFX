@@ -11,7 +11,8 @@ from flask import (
 	redirect,
 	url_for,
 	session,
-	make_response
+	make_response,
+    send_file
 )
 import logging
 import config
@@ -132,7 +133,9 @@ def downloadPlugin(pluginId, bundleId, pluginVersion="latest"):
     if req.status_code != requests.codes.ok:
         abort(make_response(req.content, req.status_code))
 
-    return Response(req.content, mimetype="application/zip")
+    content = json.loads(req.content)
+    filename = 'Bundle_' + content['bundleId'] + '.' + content['fileExtension']
+    return send_file(content['filePath'], as_attachment=True, attachment_filename=filename)
 
 @config.g_app.route('/plugin/<pluginId>/image/<imageId>')
 def getSampleImagesForPlugin(pluginId, imageId):

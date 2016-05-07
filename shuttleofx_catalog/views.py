@@ -9,7 +9,7 @@ import shutil
 from time import sleep
 from bson import json_util, ObjectId
 from bson.son import SON
-from flask import jsonify, Response, request, abort, make_response, send_file
+from flask import jsonify, Response, request, abort, make_response
 
 import config
 
@@ -391,19 +391,19 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
 @config.g_app.route("/plugin/<int:pluginId>/download/<bundleId>")
 @config.g_app.route("/plugin/<int:pluginId>/version/<pluginVersion>/download/<bundleId>")
 def downloadPlugin(pluginId, bundleId, pluginVersion="latest"):
-    #TODO Handle versions
-    filePath = os.path.join(config.bundleRootPath, bundleId + '.zip')
+    fileExtension = 'zip'
+    filePath = os.path.join(config.bundleRootPath, bundleId + '.' + fileExtension)
     dirPath = os.path.join(config.bundleRootPath, bundleId)
 
     # Check if the zip already exists
     if not os.path.isfile(filePath):
         if os.path.isdir(dirPath):
-            shutil.make_archive(dirPath, 'zip', dirPath)
+            shutil.make_archive(dirPath, fileExtension, dirPath)
         else:
             logging.error("Could not find Bundle " + bundleId + " folder")
             abort(404)
 
-    return send_file(filePath, as_attachment=True)
+    return mongodoc_jsonify({'filePath': filePath, 'bundleId': bundleId, 'fileExtension': fileExtension})
 
 ### Comments Start _____________________________________________________________
 @config.g_app.route('/plugin/<int:pluginId>/version/<pluginVersion>/comments/updates', methods=['POST'])
