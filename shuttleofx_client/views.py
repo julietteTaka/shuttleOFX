@@ -489,7 +489,7 @@ def createUserRepo():
         output = check_output(['git', 'commit-tree', 'FETCH_HEAD^{tree}', '-m', 'Initial Openfx structure']).strip()
         call(['git', 'reset', '--hard', output])
 
-        # TODO Change source files according to the form
+        jsonForm = repoFormToJSON(request)
 
         # Push on user's repo
         owner = req.data['owner']['login']
@@ -517,12 +517,34 @@ def downloadPluginTemplate():
     shutil.rmtree(os.path.join(pluginTemplatePath,'.git'))
     os.remove(os.path.join(pluginTemplatePath,'.gitmodules'))
 
-    # TODO Use form data to change plugin's name & co
+    jsonForm = repoFormToJSON(request)
 
     shutil.make_archive(pluginTemplatePath, 'zip', pluginTemplatePath)
     shutil.rmtree(pluginTemplatePath)
 
     return send_file(pluginTemplatePath + '.zip', as_attachment=True, attachment_filename="OpenFX_plugin_template.zip")
+
+def repoFormToJSON(request):
+    pluginLabel = request.form["pluginLabel"]
+    pluginLongLabel = request.form["pluginLongLabel"]
+
+    if not request.form["pluginLabel"]:
+        pluginLabel = request.form["pluginName"]
+    else:
+        pluginLabel = request.form["pluginLabel"]
+
+    if not request.form["pluginLongLabel"]:
+        pluginLongLabel = request.form["pluginName"]
+    else:
+        pluginLongLabel = request.form["pluginLongLabel"]
+
+    return json.dumps({"TEMPLATE": request.form['pluginName'],
+                       "PLUGIN_NAME": request.form['pluginName'],
+                       "PLUGIN_LABEL": pluginLabel,
+                       "PLUGIN_LONG_LABEL": pluginLongLabel,
+                       "PLUGIN_GROUPING": request.form["pluginMenu"],
+                       "PLUGIN_UID": request.form["id"],
+                       "PLUGIN_DESCRIPTION": request.form["pluginDescription"]})
 
 if __name__ == '__main__':
     config.g_app.run(host="0.0.0.0", port=5000, debug=True)
