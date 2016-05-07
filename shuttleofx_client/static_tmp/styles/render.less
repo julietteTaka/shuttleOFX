@@ -51,6 +51,7 @@ input.input-number{
 
 .display{
 	margin-bottom: 30px;
+	min-height: 35%;
 	img{
 		margin: auto;
 		position: relative;
@@ -64,7 +65,7 @@ input.input-number{
 		position: absolute;
 		z-index: 1;
 		height: auto;
-		width: calc(~"100% - 29px");
+		width: calc(~"100% - 29.5px");
 	}
 
 #BeforeAfterSlider {
@@ -168,8 +169,13 @@ input.input-number{
 		border-left: 1px solid #ddd;
 		border-bottom: 1px solid #ddd;	
 	}
-	button#reset{
+	#reset{
 		margin-left: 30px;
+		font-size: 1.5em;
+		color: @ofxColor2;
+		&:hover{
+			color: @grey;
+		}
 	}
 }
 
@@ -253,24 +259,21 @@ input.input-number{
 		// font-family: "Roboto-Light";
 		// border-bottom: 1px solid #ccc;
 	}
+	input, button{
+		display: inline-block;
+		float: right;
+	}
 	a{
 		display: inline-block;
 		float: right;
-		&.btn-success{
-			background-color: @ofxColor!important;
+		font-size: 1.5em;
+		margin: 15px 30px 0 0 ;
+		color: @ofxColor2;
+		&:hover, &.disabled{
+			color: @grey;
 		}
 	}
-	input{
-		display: inline-block;
-		float: right;
-		&.btn-success{
-			background-color: @ofxColor!important;
-		}
-	}
-}
-
-#buttons {
-    .preloader-wrapper {
+	.preloader-wrapper {
         display: inline-block;
         float: right;
         margin: 16px 10px;
@@ -492,4 +495,9 @@ input.input-number{
 
   to {
     transform: rotate(-130deg); } 
+}
+
+#renderUrl {
+	float: right;
+	margin-top: 0px;
 }

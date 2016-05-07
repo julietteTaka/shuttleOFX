@@ -150,11 +150,40 @@ h2.title-plugin{
 }
 
 #back-to-plugins{
-    line-height: 80px;
+    line-height: 55px;
     margin-left: 30px;
     text-decoration: none;
     color: #fff;
     &:hover, &:focus{
         color: #DBDBDB;
+    }
+}
+
+div#version {
+    display: inline-block;
+    width: 150px;
+
+    i {
+        position: relative;
+        left: 50px;
+    }
+
+    select{
+        background: transparent;
+        border: none;
+        -moz-appearance: none;
+        -o-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+        width: 75px;
+        position: relative;
+        left: -30px;
+        &:hover{
+            cursor: pointer;
+        }
+    }
+
+    option {
+        background: @ofxColor;
     }
 }

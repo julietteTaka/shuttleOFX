@@ -1,19 +1,35 @@
 {% extends "layout.html" %}
 
 {% block back_button %}
-<a href="/plugin" id="back-to-plugins" data-0="line-height:80px" data-150="line-height:30px"><i class="fa fa-angle-left"></i> Back to all plugins</a>
+<a href="/plugin" id="back-to-plugins"><i class="fa fa-angle-left"></i> Back to all plugins</a>
 {% endblock %}
 
 {% block title %}
-<div class="header-content" data-0="height:25%" data-150="height:10%">
+<div class="header-content">
     <div class="top-header">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                     <h1 data-0="margin-top:25px;font-size:3em;" data-150="margin-top:-55px;font-size:2em;">
+                     <h1>
                         {{plugin.label}}
                         <small style="color:rgba(255,255,255,0.7);font-weight:300;">
-                            Version {{plugin.version.major}}.{{plugin.version.minor}}
+                            Version 
+                            <div id="version">
+                                {% if versions|length > 1 %}
+                                <i class="fa fa-angle-down"></i>
+                                <select onChange="changeVersion(this);">
+                                    {% for version in versions %}
+                                        {% if version.version.major == plugin.version.major and version.version.minor == plugin.version.minor %}
+                                            <option selected>{{version.version.major}}.{{version.version.minor}}</option>
+                                        {% else %}
+                                            <option>{{version.version.major}}.{{version.version.minor}}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                {% else %}
+                                <span>{{versions[0].version.major}}.{{versions[0].version.minor}}</span>
+                                {% endif %}
+                            </div>
                         </small>
                     </h1>
                 </div>
@@ -21,17 +37,16 @@
             <div class="row">
                 <div class="col-md-12">
                     <ul class="tabs">
-                        <li class="tab"><a {% if active is not defined %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}">General</a></li>
+                        <li class="tab"><a {% if active is not defined %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}">General</a></li>
                         {% if "OfxImageEffectPropSupportedContexts" in plugin.properties %}
                             {% set supportedContexts = plugin.properties.OfxImageEffectPropSupportedContexts.propValues %}
                             {% if "OfxImageEffectContextFilter" in supportedContexts or "OfxImageEffectContextGenerator" in supportedContexts %}
-                                <li class="tab"><a {% if active == "demo" %}class="active"{% endif %} href="/editor/{{plugin.rawIdentifier}}">Demo</a></li>
+                                <li class="tab"><a {% if active == "demo" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}/demo">Demo</a></li>
                             {% endif %}
                         {% endif %}
-                        <li class="tab"><a {% if active == "info" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/info">Technical info</a></li>
-                        <!-- FIXME enable these tabs when wiki and/or comments are active -->
-                        <li class="tab disabled"><a {% if active == "wiki" %}class="active"{% endif %} href="#">Wiki</a></li>
-                        <li class="tab disabled"><a {% if active == "comments" %}class="active"{% endif %} href="#">Comments</a></li>
+                        <li class="tab"><a {% if active == "info" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}/info">Technical info</a></li>
+                        <li class="tab"><a {% if active == "wiki" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}/wiki">Wiki</a></li>
+                        <li class="tab"><a {% if active == "comments" %}class="active"{% endif %} href="/plugin/{{plugin.rawIdentifier}}/version/{{plugin.version.major}}.{{plugin.version.minor}}/comments">Comments</a></li>
                     </ul>
                 </div>
             </div>
@@ -61,43 +76,43 @@
             {% if "OfxImageEffectContextFilter" in supportedContexts or
                "OfxImageEffectContextGenerator" in supportedContexts
                %}
-			<div class="row">
-				<div class="col-md-12">
-					<div class="page-header">
-						<h2>
-							Examples
-							{% if user %}
-							<button class="btn btn-primary btn-addImage" data-toggle="modal" data-target="#addImageGallery"><i class="fa fa-plus"></i></button>
-							{% endif %}
-						</h2>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				{% if not plugin.sampleImagesPath %}
-					<div class="col-md-12">
-						<p>No example found.... <i class="fa fa-meh-o"></i></p>
-						<p style="font-size: 16pt;">
-							{% if  user %}
-							Upload yours ! <i class="fa fa-rocket"></i>
-							{% else %}
-							Login to upload yours ! <i class="fa fa-rocket"></i>
-							{% endif %}
-						</p>
-					</div>
-				{% else %}
-					{% for image in plugin.sampleImagesPath %}
-						<div class="col-md-3">
-							<div class="preview-img panel panel-primary img-responsive">
-								<img src="/plugin/{{plugin.pluginId}}/thumbnail/{{image}}">
-							</div>
-						</div>
-					{%  endfor %}
-				{% endif %}
-			</div>
-        	{% endif %}
-		{% endif %}
 
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>
+                        Examples
+                        {% if user %}
+                        <button class="btn btn-primary btn-addImage" data-toggle="modal" data-target="#addImageGallery"><i class="fa fa-plus"></i></button>
+                        {% endif %}
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            {% if not plugin.sampleImagesPath %}
+                <div class="col-md-12">
+                    <p>No example found.... <i class="fa fa-meh-o"></i></p>
+                    <p style="font-size: 16pt;"> 
+                        {% if  user %}
+                        Upload yours ! <i class="fa fa-rocket"></i>
+                        {% else %}
+                        Login to upload yours ! <i class="fa fa-rocket"></i>
+                        {% endif %}
+                    </p>
+                </div>
+            {% else %}
+                {% for image in plugin.sampleImagesPath %}
+                    <div class="col-md-3">
+                        <div class="preview-img panel panel-primary img-responsive">
+                            <img src="/plugin/{{plugin.pluginId}}/thumbnail/{{image}}">
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+            {% endif %}
+        {% endif %}
 
 
 {% if user %}
@@ -131,21 +146,9 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{{ url_for('static', filename='scripts/vendor/js.cookie.js') }}"></script>
     <script type="text/javascript">
-        // Read cookies content and update the back link
-        // to redirect to the plugins page with the right preferences :
-        // nbr of plugins and page
-        $(document).ready(function() {
-            var href = $("#back-to-plugins").attr("href");
-            var prefs = Cookies.getJSON("user_sorting_prefs");
-            if(prefs && prefs.count && prefs.skip){
-                $("#back-to-plugins").attr("href", href + "?count=" + prefs.count + "&skip=" + prefs.skip );
-            }
-            else if(prefs && prefs.count && prefs.skip && prefs.search) {
-                $("#back-to-plugins").attr("href", href + "?search=" + prefs.search + "count=" + prefs.count + "&skip=" + prefs.skip );
-            }
-        });
-
+    $(document).ready(function () {
+        updateLinkWithUserSortingPrefs($("#back-to-plugins"), true);
+    });
     </script>
 {% endblock %}

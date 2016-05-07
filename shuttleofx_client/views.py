@@ -3,14 +3,15 @@ import json
 import requests
 from functools import wraps
 from flask import (
-    request,
-    jsonify,
-    render_template,
-    abort,
-    Response,
-    redirect,
-    url_for,
-    session
+	request,
+	jsonify,
+	render_template,
+	abort,
+	Response,
+	redirect,
+	url_for,
+	session,
+	make_response
 )
 import logging
 import config
@@ -38,8 +39,8 @@ def page_not_found(e):
 def index():
     user = userManager.getUser()
     if user is not None:
-        return render_template("index.html", user=user)
-    return render_template("index.html")
+        return render_template("home.html", user=user)
+    return render_template("home.html")
 
 
 @config.g_app.route('/plugin')
@@ -53,6 +54,13 @@ def getPlugins():
     return render_template('plugins.html', dico=resp.json(), user=user)
 
 
+@config.g_app.route('/plugins')
+def getAllPlugins():
+    req = requests.get(config.catalogRootUri+"/plugins")
+    if req.status_code != 200:
+        abort(req.status_code)
+    return jsonify(**req.json())
+
 @config.g_app.route('/about')
 def getInfo():
     user = userManager.getUser()
@@ -61,7 +69,7 @@ def getInfo():
     return render_template('whatIsOFX.html', user=user)
 
 
-@config.g_app.route("/plugin/search/")
+@config.g_app.route("/plugin/search")
 def searchPlugins():
     user = userManager.getUser()
 
@@ -95,15 +103,24 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest"):
         if resp.status_code == 404:
             return render_template('pluginNotFound.html', user=user)
         abort(resp.status_code)
-    return render_template('plugin.html', plugin=resp.json(), user=user)
+    return render_template('plugin.html', plugin=resp.json()['plugin'], versions=resp.json()['versions'], user=user)
 
 
 @config.g_app.route("/plugin/<pluginRawIdentifier>/info")
-def getPluginInfo(pluginRawIdentifier):
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/info")
+def getPluginInfo(pluginRawIdentifier, pluginVersion="latest"):
     user = userManager.getUser()
 
-    resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
-    return render_template('pluginInfo.html', plugin=resp.json(), user=user)
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+       #if resp.status_code == 404:
+            #return redirect(url_for('notFoundPage', pluginRawIdentifier=pluginRawIdentifier))
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+
+    return render_template('pluginInfo.html', plugin=resp.json()['plugin'], versions=resp.json()['versions'], user=user)
 
 
 @config.g_app.route('/plugin/<pluginId>/image/<imageId>')
@@ -117,16 +134,110 @@ def getSampleThumbnailForPlugin(pluginId, imageId):
     return Response(req.content, mimetype=req.headers["content-type"])
 
 
-@config.g_app.route('/editor')
-@config.g_app.route('/editor/<pluginRawIdentifier>')
-def renderPageWithPlugin(pluginRawIdentifier):
+@config.g_app.route('/category')
+def getCategory():
+	user = userManager.getUser()
+	try:
+		resp = requests.get(config.catalogRootUri + "/category", params=request.args)
+	except:
+		return render_template('plugins.html', dico=None, user=user)
+
+	return render_template('plugins.html', dico=resp.json(), user=user)
+
+@config.g_app.route('/demo')
+@config.g_app.route('/plugin/<pluginRawIdentifier>/demo')
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/demo")
+def renderPageWithPlugin(pluginRawIdentifier, pluginVersion="latest"):
     user = userManager.getUser()
-    resp = requests.get(config.catalogRootUri+"/plugin/"+str(pluginRawIdentifier))
+
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+       #if resp.status_code == 404:
+            #return redirect(url_for('notFoundPage', pluginRawIdentifier=pluginRawIdentifier))
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+
     if resp.status_code != 200:
         abort(resp.status_code)
     previewGallery = requests.get(config.renderRootUri + '/resource/').json()
-    return render_template('editor.html', plugin=resp.json(), user=user, resources=previewGallery)
 
+    if pluginRawIdentifier == 'tuttle.ctl':
+        return render_template('scriptEditor.html', plugin=resp.json(), user=user, resources=previewGallery)
+
+    return render_template('editor.html', plugin=resp.json()['plugin'], versions=resp.json()['versions'], user=user, resources=previewGallery)
+
+### Wiki Start _________________________________________________________________
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/wiki")
+@config.g_app.route("/plugin/<pluginRawIdentifier>/wiki")
+def getPluginWiki(pluginRawIdentifier, pluginVersion="latest"):
+    user = userManager.getUser()
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+    if resp.status_code != 200:
+        if resp.status_code == 404:
+            return render_template('notFound.html', user=user)
+        abort(resp.status_code)
+    return render_template('wiki.html', plugin=resp.json()['plugin'], versions=resp.json()['versions'],user=user)
+
+@config.g_app.route("/wiki/edit/<pluginRawIdentifier>/version/<pluginVersion>")
+@config.g_app.route("/wiki/edit/<pluginRawIdentifier>")
+def getPluginWikiEdit(pluginRawIdentifier, pluginVersion="latest"):
+    user = userManager.getUser()
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+    if resp.status_code != 200:
+        if resp.status_code == 404:
+            return render_template('notFound.html', user=user)
+        abort(resp.status_code)
+    return render_template('wikiedit.html', plugin=resp.json()['plugin'], versions=resp.json()['versions'], user=user)
+
+@config.g_app.route('/wiki/update/<pluginId>/version/<pluginVersion>', methods=['POST'])
+@config.g_app.route('/wiki/update/<pluginId>', methods=['POST'])
+def setWiki(pluginId, pluginVersion="latest"):
+    user = userManager.getUser()
+    header = {'content-type' : 'application/json'}
+    req = requests.post(config.catalogRootUri + "/wiki/update/" + pluginId, data=request.data, headers=header)
+    return req.content
+
+### Wiki End ___________________________________________________________________
+
+### Comments Start _____________________________________________________________
+
+@config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/comments")
+@config.g_app.route("/plugin/<pluginRawIdentifier>/comments")
+def getPluginComments(pluginRawIdentifier, pluginVersion="latest"):
+    user = userManager.getUser()
+    if pluginVersion is "latest":
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier)
+    else:
+        resp = requests.get(config.catalogRootUri+"/plugin/"+pluginRawIdentifier+"/version/"+pluginVersion)
+        if resp.status_code == 404:
+            return redirect(url_for('getPlugin', pluginRawIdentifier=pluginRawIdentifier))
+    if resp.status_code != 200:
+        if resp.status_code == 404:
+            return render_template('notFound.html', user=user)
+        abort(resp.status_code)
+    return render_template('comments.html', plugin=resp.json()['plugin'], versions=resp.json()['versions'], user=user)
+
+@config.g_app.route('/plugin/<pluginId>/version/<pluginVersion>/comments/update', methods=['POST'])
+@config.g_app.route('/plugin/<pluginId>/comments/update', methods=['POST'])
+def addComment(pluginId, pluginVersion="latest"):
+    user = userManager.getUser()
+    header = {'content-type' : 'application/json'}
+    req = requests.post(config.catalogRootUri + "/plugin/" + pluginId + "/comments/update", data=request.data, headers=header)
+    return req.content
+
+### Comments End _______________________________________________________________
 
 @config.g_app.route('/render', methods=['POST'])
 def render():
@@ -165,6 +276,11 @@ def getThumbnailById(resourceId):
     req = requests.get(config.renderRootUri + "/thumbnail/" + resourceId)
     return Response(req.content, mimetype="image/png")
 
+@config.g_app.route('/resource/tmp/<resourceId>', methods=['GET'])
+def getTmpResourceById(resourceId):
+    req = requests.get(config.renderRootUri+"/resource/tmp/"+resourceId)
+    return Response(req.content)
+
 @config.g_app.route('/resource', methods=['GET'])
 def getResources():
     req = requests.get(config.renderRootUri + '/resource/')
@@ -174,12 +290,10 @@ def getResources():
 
 
 @config.g_app.route('/upload')
-@login_required
 def upload():
     user = userManager.getUser()
-    if user is not None:
-        return render_template("upload.html", user=user, uploaded=None)
-    return redirect(url_for('login'))
+    return render_template("upload.html", user=user, uploaded=None)
+
 
 
 @config.g_app.route('/bundle')
@@ -341,6 +455,19 @@ def addRenderToPlugin(pluginId, resourceId, renderId):
 
     return jsonify(**req.json())
 
+
+@config.g_app.route('/downloadImgFromUrl', methods=['POST'])
+def downloadImgFromUrl():
+    '''
+    download an image from an url
+    '''
+    header = {'content-type' : 'application/json'}
+    req = requests.post(config.renderRootUri + "/downloadImgFromUrl", data=request.data, headers=header)
+
+    if req.status_code != requests.codes.ok:
+    	abort(make_response(req.content, req.status_code))
+
+    return req.content
 
 @config.google.tokengetter
 def get_google_oauth_token():

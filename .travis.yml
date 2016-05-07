@@ -17,4 +17,3 @@ install:
 # command to run tests
 script:
   - python -m flake8 . || true
-
