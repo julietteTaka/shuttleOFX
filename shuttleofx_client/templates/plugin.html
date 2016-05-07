@@ -13,7 +13,7 @@
                      <h1>
                         {{plugin.label}}
                         <small style="color:rgba(255,255,255,0.7);font-weight:300;">
-                            Version 
+                            Version
                             <div id="version">
                                 {% if versions|length > 1 %}
                                 <i class="fa fa-angle-down"></i>
@@ -93,7 +93,7 @@
             {% if not plugin.sampleImagesPath %}
                 <div class="col-md-12">
                     <p>No example found.... <i class="fa fa-meh-o"></i></p>
-                    <p style="font-size: 16pt;"> 
+                    <p style="font-size: 16pt;">
                         {% if  user %}
                         Upload yours ! <i class="fa fa-rocket"></i>
                         {% else %}
@@ -104,7 +104,9 @@
             {% else %}
                 {% for image in plugin.sampleImagesPath %}
                     <div class="col-md-3">
-                        <div class="preview-img panel panel-primary img-responsive">
+                        <div class="gallery-preview-img preview-img panel panel-primary img-responsive"
+							 data-toggle="modal" data-target="#fullSizeImage" pluginId={{plugin.pluginId}} imageId={{image}}>
+
                             <img src="/plugin/{{plugin.pluginId}}/thumbnail/{{image}}">
                         </div>
                     </div>
@@ -114,6 +116,21 @@
             {% endif %}
         {% endif %}
 
+
+<div class="modal" id="fullSizeImage" style="margin: auto">
+	<div class="modal-dialog" style="display: flex; justify-content: center">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">Example image</h4>
+			</div>
+
+			<div class="modal-body" >
+				<img id="fullSizeDisplay" style="margin: auto" src="">
+			</div>
+		</div>
+	</div>
+</div>
 
 {% if user %}
 <div class="modal" id="addImageGallery">
@@ -144,6 +161,7 @@
 </div>
 {% endif %}
 {% endblock %}
+
 
 {% block scripts %}
     <script type="text/javascript">
