@@ -2,6 +2,7 @@ import os
 import json
 import requests
 import shutil
+import tempfile
 from functools import wraps
 from flask import (
 	request,
@@ -15,7 +16,7 @@ from flask import (
 	make_response,
     send_file
 )
-from subprocess import (call, check_output)
+from subprocess import (check_call, check_output, CalledProcessError)
 import logging
 import config
 import userManager
@@ -469,60 +470,82 @@ def createUserRepo():
         status = 'error'
         message = 'You are trying to create a repository without being logged using Github.'
 
-    # Create user's repo
-    req = config.github.post('/user/repos', data={
+    try:
+        # Create folder source folder
+        pluginTemplatePath = tempfile.mkdtemp()
+
+        # Create new repo from project template (squash all commits into one to get a clean history)
+        check_call(['git', 'init'], cwd=pluginTemplatePath)
+        check_call(['git', 'fetch', '--depth=1', '-n', 'https://github.com/tuttleofx/ofxPluginTemplate.git'], cwd=pluginTemplatePath)
+        output = check_output(['git', 'commit-tree', 'FETCH_HEAD^{tree}', '-m', 'Initial Openfx structure'], cwd=pluginTemplatePath).strip()
+        check_call(['git', 'reset', '--hard', output], cwd=pluginTemplatePath)
+
+        # Replace template data with user's data
+        jsonFile = repoFormToJSON(request)
+        check_call(['python','createPlugin.py', jsonFile, './'], cwd=pluginTemplatePath)
+        # Remove createPlugin.py and the JSON used to replace data with user's data
+        os.remove(os.path.join(pluginTemplatePath,'createPlugin.py'))
+        os.remove(jsonFile)
+
+        check_call(['git', 'add', '-A'], cwd=pluginTemplatePath)
+        check_call(['git', 'commit', '--amend', '-m', 'Initial Openfx structure'], cwd=pluginTemplatePath)
+
+        #Create user's repo
+        req = config.github.post('/user/repos', data={
             "name": request.form['pluginName'],
             "private": False,
         }, format='json')
 
-    if req.status == 201:
-        # Create folder source folder
-        pluginTemplatePath = os.path.join(os.sep, 'tmp', 'pluginOFX')
-        os.mkdir(pluginTemplatePath)
-        # Change working directory
-        cwd = os.getcwd()
-        os.chdir(pluginTemplatePath)
-
-        # Create new repo from project template (squash all commits into one to get a clean history)
-        call(['git', 'init'])
-        call(['git', 'fetch', '--depth=1', '-n', 'https://github.com/tuttleofx/pluginOFX.git'])
-        output = check_output(['git', 'commit-tree', 'FETCH_HEAD^{tree}', '-m', 'Initial Openfx structure']).strip()
-        call(['git', 'reset', '--hard', output])
-
-        jsonForm = repoFormToJSON(request)
-
         # Push on user's repo
         owner = req.data['owner']['login']
         url = 'https://' + owner + ':' + session['github_token'][0] + '@github.com' +'/'+ owner +'/'+ request.form['pluginName'] + '.git'
-        call(['git', 'remote', 'add', 'origin', url])
-        call(['git', 'remote', '-v'])
-        call(['git', 'push', 'origin', 'master'])
+        check_call(['git', 'remote', 'add', 'origin', url], cwd=pluginTemplatePath)
+        check_call(['git', 'remote', '-v'], cwd=pluginTemplatePath)
+        check_call(['git', 'push', 'origin', 'master'], cwd=pluginTemplatePath)
 
+        # Delete cloned repo
         shutil.rmtree(pluginTemplatePath)
-        # Get back to old dir
-        os.chdir(cwd)
         status = 'success'
-        message = 'Repository created with success, check your Github account !'
-    else :
-        logging.warning('Error while creating a repo : ' + req.raw_data)
+        message = 'Repository created with success, check your Github account!'
+    except CalledProcessError:
         status = 'error'
-        message = req.data['errors'][0]['message']
+        message = 'There was an error creating your repository, please try again.'
+
     return render_template("createPlugin.html", user=user, provider=provider, status=status, message=message)
 
 @config.g_app.route('/create/sources', methods=['POST'])
 def downloadPluginTemplate():
-    call(['git', 'clone', '--recursive', 'https://github.com/tuttleofx/pluginOFX.git'], cwd=os.path.join(os.sep, 'tmp'))
-    pluginTemplatePath = os.path.join(os.sep, 'tmp', 'pluginOFX')
-    # Remove .git folder and files not needed by user using sources
-    shutil.rmtree(os.path.join(pluginTemplatePath,'.git'))
-    os.remove(os.path.join(pluginTemplatePath,'.gitmodules'))
+    pluginTemplatePath = os.path.join(os.sep, 'tmp', 'ofxPluginTemplate')
+    try:
+        check_call(['git', 'clone', 'https://github.com/tuttleofx/ofxPluginTemplate'], cwd=os.path.join(os.sep, 'tmp'))
 
-    jsonForm = repoFormToJSON(request)
+        jsonFile = repoFormToJSON(request)
+        check_call(['python','createPlugin.py', jsonFile, './'], cwd=pluginTemplatePath)
+        check_call(['git','submodule', 'update', '-i'], cwd=pluginTemplatePath)
 
-    shutil.make_archive(pluginTemplatePath, 'zip', pluginTemplatePath)
-    shutil.rmtree(pluginTemplatePath)
+        # Remove .git folder and files not needed by user using sources
+        shutil.rmtree(os.path.join(pluginTemplatePath,'.git'))
+        os.remove(os.path.join(pluginTemplatePath,'.gitmodules'))
+        # Remove createPlugin.py and the JSON used to replace data with user's data
+        os.remove(os.path.join(pluginTemplatePath,'createPlugin.py'))
+        os.remove(jsonFile)
 
-    return send_file(pluginTemplatePath + '.zip', as_attachment=True, attachment_filename="OpenFX_plugin_template.zip")
+        shutil.make_archive(pluginTemplatePath, 'zip', pluginTemplatePath)
+        # Delete cloned repo
+        shutil.rmtree(pluginTemplatePath)
+
+        return send_file(pluginTemplatePath + '.zip', as_attachment=True, attachment_filename="OpenFX_plugin_template.zip")
+    except CalledProcessError:
+        user = userManager.getUser()
+        provider = userManager.getOAuthProvider()
+        status = 'error'
+        message = 'There was an error creating your customized plugin, please try again.'
+
+        # Ensure to clean even if the process has failed
+        if os.path.isdir(pluginTemplatePath):
+            shutil.rmtree(pluginTemplatePath)
+
+        return render_template("createPlugin.html", user=user, provider=provider, status=status, message=message)
 
 def repoFormToJSON(request):
     pluginLabel = request.form["pluginLabel"]
@@ -538,13 +561,16 @@ def repoFormToJSON(request):
     else:
         pluginLongLabel = request.form["pluginLongLabel"]
 
-    return json.dumps({"TEMPLATE": request.form['pluginName'],
-                       "PLUGIN_NAME": request.form['pluginName'],
-                       "PLUGIN_LABEL": pluginLabel,
-                       "PLUGIN_LONG_LABEL": pluginLongLabel,
-                       "PLUGIN_GROUPING": request.form["pluginMenu"],
-                       "PLUGIN_UID": request.form["id"],
-                       "PLUGIN_DESCRIPTION": request.form["pluginDescription"]})
+    filePath = os.path.join(os.sep, 'tmp', 'JSONForm.json')
+    JSONFile, JSONFilePath = tempfile.mkstemp()
+    json.dump({"PLUGIN_NAME": str(request.form['pluginName']),
+               "PLUGIN_LABEL": str(pluginLabel),
+               "PLUGIN_LONG_LABEL": str(pluginLongLabel),
+               "PLUGIN_GROUPING": str(request.form["pluginMenu"]),
+               "PLUGIN_UID": str(request.form["id"]),
+               "PLUGIN_DESCRIPTION": str(request.form["pluginDescription"])}, os.fdopen(JSONFile, 'w'))
+
+    return JSONFilePath
 
 if __name__ == '__main__':
     config.g_app.run(host="0.0.0.0", port=5000, debug=True)
