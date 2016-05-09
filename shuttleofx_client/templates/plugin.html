@@ -111,13 +111,13 @@
 							<img class="gallery-preview-img" src="/plugin/{{plugin.pluginId}}/thumbnail/{{image}}"
 								data-toggle="modal" data-target="#fullSizeImage">
 
-							<div class="set-default-img" style="transform: translateY(-133%)">
+							<button class="set-default-img btn btn-link" style="margin: 0; padding: 0; transform: translateY(-133%)">
 								{% if image == plugin.defautImagePath %}
 								<i class="fa fa-check"></i>
 								{% else %}
 								<i class="fa fa-star"></i>
 								{% endif %}
-							</div>
+							</button>
 						</div>
                     </div>
                 {% endfor %}
