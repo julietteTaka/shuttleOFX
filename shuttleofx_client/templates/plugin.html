@@ -104,11 +104,17 @@
             {% else %}
                 {% for image in plugin.sampleImagesPath %}
                     <div class="col-md-3">
-                        <div class="gallery-preview-img preview-img panel panel-primary img-responsive"
-							 data-toggle="modal" data-target="#fullSizeImage" pluginId={{plugin.pluginId}} imageId={{image}}>
-
-                            <img src="/plugin/{{plugin.pluginId}}/thumbnail/{{image}}">
-                        </div>
+						<div>
+							<div class="gallery-preview-img preview-img panel panel-primary img-responsive"
+								 data-toggle="modal" data-target="#fullSizeImage">
+                            	<img src="/plugin/{{plugin.pluginId}}/thumbnail/{{image}}">
+						 	</div>
+							<div class="set-default-img">
+								{% if  user %}
+                        		<i class="fa fa-picture-o"></i>
+                        		{% endif %}
+							</div>
+						</div>
                     </div>
                 {% endfor %}
             {% endif %}

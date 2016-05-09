@@ -558,7 +558,7 @@ def getResourceData(resourceId):
      Returns the resource.
     '''
 
-    resourceData = config.resourceTable.find_one({ "_id" : ObjectId(resourceId)})
+    resourceData = config.resourceTable.find_one({"_id": ObjectId(resourceId)})
     if not resourceData:
         abort(404)
 
@@ -589,6 +589,23 @@ def addImageToPlugin(pluginId):
     plugin = config.pluginTable.find_one({"pluginId": pluginId})
 
     return mongodoc_jsonify(plugin)
+
+
+@config.g_app.route("/plugin/<int:pluginId>/defaultImage/<imageId>", methods=['POST'])
+def setPluginDefaultImage(pluginId, imageId):
+
+    plugin = config.pluginTable.find_one({"pluginId": pluginId})
+    if plugin == None:
+        abort(404)
+
+    config.pluginTable.update(
+        {"pluginId": pluginId},
+        {'$set': {"defautImagePath": imageId}},
+        upsert=True)
+    plugin = config.pluginTable.find_one({"pluginId": pluginId})
+
+    return mongodoc_jsonify(plugin)
+
 
 #TO DO : Tags
 config.pluginTable.ensure_index([

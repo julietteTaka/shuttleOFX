@@ -456,6 +456,14 @@ def addRenderToPlugin(pluginId, resourceId, renderId):
     return jsonify(**req.json())
 
 
+@config.g_app.route("/plugin/<int:pluginId>/defaultImage/<imageId>", methods=['POST'])
+def setPluginDefaultImage(pluginId, imageId):
+    req = requests.post(
+        config.catalogRootUri + "/plugin/" + str(pluginId) + "/defaultImage/" + str(imageId),
+        data=request.data, headers=request.headers)
+    return jsonify(**req.json())
+
+
 @config.g_app.route('/downloadImgFromUrl', methods=['POST'])
 def downloadImgFromUrl():
     '''
