@@ -22,17 +22,17 @@ $(document).ready(function () {
                 url: "/plugin/" + pluginId + "/defaultImage/" + imageId,
                 async: false //avoid an empty data when result is returned.
             }).done(function(){
-                // TODO : desactiver le bouton
+                $(".set-default-img").removeClass('disabled').find('i').attr("class", "fa fa-star");
             })
     }
 
-    // TODO : creer le bouton permettant de changer l image
     $(".set-default-img").click(function(event) {
 
         var pluginId = $(this).parent().find("img").attr("src").split("/plugin/")[1].split("/thumbnail/")[0];
         var imageId = $(this).parent().find("img").attr("src").split("/thumbnail/")[1];
 
         setDefaultImage(pluginId, imageId);
+        $(this).addClass('disabled').find('i').attr("class", "fa fa-check");
     });
 
 });
