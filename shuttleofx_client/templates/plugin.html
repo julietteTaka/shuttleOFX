@@ -110,16 +110,14 @@
 						<div class="preview-img panel panel-primary img-responsive">
 							<img class="gallery-preview-img" src="/plugin/{{plugin.pluginId}}/thumbnail/{{image}}"
 								data-toggle="modal" data-target="#fullSizeImage">
-						
-							{% if image == plugin.defautImagePath %}
-								<button class="set-default-img btn btn-primary disabled" style="transform: translateY(-133%)">
-									<i class="fa fa-check"></i>
-								</button>
-							{% else %}
-								<button class="set-default-img btn btn-primary" style="transform: translateY(-133%)">
-									<i class="fa fa-star"></i>
-								</button>
-							{% endif %}
+
+							<div class="set-default-img" style="transform: translateY(-133%)">
+								{% if image == plugin.defautImagePath %}
+								<i class="fa fa-check"></i>
+								{% else %}
+								<i class="fa fa-star"></i>
+								{% endif %}
+							</div>
 						</div>
                     </div>
                 {% endfor %}
