@@ -11,9 +11,6 @@ from pyTuttle import tuttle
 import config
 import Plugin
 
-if not os.path.exists(config.tmpRenderingPath):
-    os.makedirs(config.tmpRenderingPath)
-
 def extractDatasAsTar(datas, outputPath):
     '''
     Extract bundle as a tar file.
@@ -47,7 +44,6 @@ def extractDatasAsZip(datas, outputPath):
     except IOError:
         print "error while extracting the zip archive"
     else:
-        os.remove(tempFilePath)
         raise NotImplementedError()
         # TODO : extract archive as zip
 
@@ -87,7 +83,7 @@ def launchAnalyse(sharedBundleDatas, bundleExt, bundleBin, bundleId):
     sharedBundleDatas['analyse'] = 'waiting'
     sharedBundleDatas['extraction'] = 'running'
 
-    bundlePath = os.path.join(config.tmpRenderingPath, str(bundleId))
+    bundlePath = os.path.join(config.bundleRootPath, str(bundleId))
 
     os.mkdir(bundlePath)
 

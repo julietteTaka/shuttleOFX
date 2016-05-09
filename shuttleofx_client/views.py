@@ -11,7 +11,8 @@ from flask import (
 	redirect,
 	url_for,
 	session,
-	make_response
+	make_response,
+    send_file
 )
 import logging
 import config
@@ -122,6 +123,19 @@ def getPluginInfo(pluginRawIdentifier, pluginVersion="latest"):
 
     return render_template('pluginInfo.html', plugin=resp.json()['plugin'], versions=resp.json()['versions'], user=user)
 
+@config.g_app.route("/plugin/<int:pluginId>/version/<pluginVersion>/download/<bundleId>")
+@config.g_app.route("/plugin/<int:pluginId>/download/<bundleId>")
+def downloadPlugin(pluginId, bundleId, pluginVersion="latest"):
+    if pluginVersion is "latest":
+        req = requests.get(config.catalogRootUri+"/plugin/"+str(pluginId)+"/download/"+str(bundleId))
+    else:
+        req = requests.get(config.catalogRootUri+"/plugin/"+str(pluginId)+"/version/"+pluginVersion+"/download/"+str(bundleId))
+    if req.status_code != requests.codes.ok:
+        abort(make_response(req.content, req.status_code))
+
+    content = json.loads(req.content)
+    filename = 'Bundle_' + content['bundleId'] + '.' + content['fileExtension']
+    return send_file(content['filePath'], as_attachment=True, attachment_filename=filename)
 
 @config.g_app.route('/plugin/<pluginId>/image/<imageId>')
 def getSampleImagesForPlugin(pluginId, imageId):
