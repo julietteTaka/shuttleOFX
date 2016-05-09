@@ -470,6 +470,7 @@ def createUserRepo():
         status = 'error'
         message = 'You are trying to create a repository without being logged using Github.'
 
+    pluginTemplatePath = ''
     try:
         pluginTemplatePath = downloadPluginTemplateRepo(False)
 
@@ -502,8 +503,10 @@ def createUserRepo():
 
 @config.g_app.route('/create/sources', methods=['POST'])
 def downloadPluginTemplate():
+    pluginTemplatePath = ''
     try:
         pluginTemplatePath = downloadPluginTemplateRepo(True)
+
         shutil.make_archive(pluginTemplatePath, 'zip', pluginTemplatePath)
         # Delete cloned repo
         shutil.rmtree(pluginTemplatePath)
@@ -542,8 +545,8 @@ def downloadPluginTemplateRepo(submodule=False):
 
         check_call(['git', 'add', '-A'], cwd=pluginTemplatePath)
         check_call(['git', 'commit', '--amend', '-m', 'Initial Openfx structure'], cwd=pluginTemplatePath)
-    except CalledProcessError:
-        pluginTemplatePath = None
+    except CalledProcessError as e:
+        raise CalledProcessError(e.returncode, e.cmd, e.output)
 
     return pluginTemplatePath
 
