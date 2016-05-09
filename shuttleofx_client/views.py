@@ -388,8 +388,11 @@ def authorizedGithub():
         )
 
     session['github_token'] = (resp['access_token'], '')
-
-    redirectTarget = request.values.get('next') or request.referrer  or url_for('getPlugins')
+    # First connexion when you authorize access to your Github account
+    if request.referrer == 'https://github.com/':
+        redirectTarget = url_for('getPlugins')
+    else:
+        redirectTarget = request.values.get('next') or request.referrer or url_for('getPlugins')
     if redirectTarget == None:
         logging.warning('login/authorized redirectTarget is None')
 
