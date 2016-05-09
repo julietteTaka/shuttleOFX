@@ -98,6 +98,8 @@ function cookieManager(value){
  */
 function updateLinkWithUserSortingPrefs(link, override){
   var prefs = Cookies.getJSON("user_sorting_prefs");
+  if (prefs == undefined) return;
+
   var count = prefs.count,
       skip = prefs.skip,
       search = prefs.search,

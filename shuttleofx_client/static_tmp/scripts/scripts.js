@@ -69,6 +69,44 @@ $('[data-toggle]').on('click', function() {
   });
 });
 
+
+$('.order-catag label').on('click', function() {
+  var content = $(this).html();
+
+  if ($(this).hasClass('ascendant')) {
+  	//send catalog descendant
+  	$(this).html('<i class="fa fa-sort-alpha-desc"></i>Descending');
+  	$(this).removeClass('ascendant').addClass('descendant');
+  }else{
+  	//send catalog descendant
+  	$(this).html('<i class="fa fa-sort-alpha-asc"></i>Ascending');
+  	$(this).removeClass('descendant').addClass('ascendant');
+
+  };
+
+});
+
+function changeVersion(versionNumber) {
+  var currentUrl = window.location.href;
+  var decomposedUrl = currentUrl.split('/version');
+
+  var newUrl = decomposedUrl[0];
+
+  if (typeof decomposedUrl[1] != 'undefined') {
+    var currentTab = currentUrl.split('/');
+    currentTab = currentTab[currentTab.length - 1];
+
+    if (!/[a-zA-z]+/.test(currentTab)) {
+      window.location.href = newUrl + '/version/' + versionNumber.options[versionNumber.selectedIndex].value;
+      return;
+    };
+    window.location.href = newUrl + '/version/' + versionNumber.options[versionNumber.selectedIndex].value + '/' + currentTab;
+    return;
+  }
+  window.location.href = newUrl + '/version/' + versionNumber.options[versionNumber.selectedIndex].value;
+  return; 
+}
+
 // Force webkit browsers to redraw style changes
 // see : http://stackoverflow.com/a/3485654
 (function($) {
@@ -89,11 +127,11 @@ $('[data-toggle]').on('click', function() {
 
 var Bamboo = (function (window, document) {
 
-	var
+	var container = $('#container').length == 0 ? $('#containerHome') : $('#container')
 
+	var
 	// objects
 	openButton = $('.open'),
-	container = $('#container'),
 	cover = null,
 
 	// Browser checks

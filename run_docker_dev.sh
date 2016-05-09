@@ -14,7 +14,6 @@ sudo docker run -td --name shuttleofx_cnt \
 -v /opt/shuttleofx:/opt/shuttleofx \
 -v /etc/shuttleofx:/etc/shuttleofx \
 -v /var/run/docker.sock:/run/docker.sock \
--v /usr/bin/docker:/bin/docker \
 -v /tmp:/tmp \
 --cpu-shares=4096 \
 shuttleofx/shuttleofx-develop
