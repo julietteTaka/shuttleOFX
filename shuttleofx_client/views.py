@@ -490,8 +490,8 @@ def createUserRepo():
         # Delete cloned repo
         shutil.rmtree(pluginTemplatePath)
 
-        status = 'success'
-        message = 'Repository created with success, check your Github account!'
+
+        return render_template("createPluginSuccess.html", userGithubAlias=owner, repoName=request.form['pluginName'])
     except CalledProcessError:
         status = 'error'
         message = 'There was an error creating your repository, please try again.'
@@ -499,7 +499,7 @@ def createUserRepo():
         if os.path.isdir(pluginTemplatePath):
             shutil.rmtree(pluginTemplatePath)
 
-    return render_template("createPlugin.html", user=user, provider=provider, status=status, message=message)
+        return render_template("createPlugin.html", user=user, provider=provider, status=status, message=message)
 
 @config.g_app.route('/create/sources', methods=['POST'])
 def downloadPluginTemplate():
