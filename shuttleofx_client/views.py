@@ -293,7 +293,32 @@ def upload():
     user = userManager.getUser()
     return render_template("upload.html", user=user, uploaded=None)
 
+@config.g_app.route('/upload/automated/<token>', methods=['POST'])
+def uploadAutomated(token):
+    # COMMAND : curl -X POST -F 'file=@/home/olivier/Downloads/CImg.tar.gz' http://localhost/upload/automated/1
+    headerJSON = {'content-type' : 'application/json'}
 
+    bundleInfo = {"bundleName": '', 'bundleDescription': '', 'userId': token, 'companyId': ''}
+    req = requests.post(config.catalogRootUri + '/bundle', data=json.dumps(bundleInfo), headers=headerJSON)
+    if req.status_code != 200:
+        abort(req.status_code)
+
+    resp = req.json()
+    bundleId = str(resp.get('bundleId'))
+
+    filename = request.files['file'].filename
+    file = request.files['file']
+    file.save("/tmp/" + filename)
+    multiple_files = [('file', (filename, open("/tmp/" + filename, 'rb'), 'application/gzip'))]
+
+    req = requests.post(config.catalogRootUri + '/bundle/' + bundleId + '/archive', files = multiple_files)
+    if req.status_code != 200:
+        abort(req.status_code)
+    req = requests.post(config.catalogRootUri + '/bundle/' + bundleId + '/analyse', data = bundleInfo, headers = headerJSON)
+    if req.status_code != 200:
+        abort(req.status_code)
+
+    return 'success'
 
 @config.g_app.route('/bundle')
 def getBundles():
