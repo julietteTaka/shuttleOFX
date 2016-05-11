@@ -1,72 +1,69 @@
-{% extends "headersInformation.html" %}
+{% extends "layout.html" %}
 
 {% block nav %}
-<nav id="home-main-nav" class="navigation overflow row">
-        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-4 left-nav-container">
-            <div id="left-nav">
-                <a href="/">
-                    <div class="mainLogo">
-                        <img src="{{ url_for('static', filename='images/logo.png') }}">
-                        <span>ShuttleOFX</span>
-                    </div>
-                </a>
-                <ul id="home-links">
-                    {% if user %}
-                    <li class="userloged link">
-                        <img class="signedIn" src="{{user.picture}}">
-                        <p class="userName">
-                            {{user.name}}
-                            <a class="signedIn" href="/logout"><i class="fa fa-lock"></i>Logout</a>
-                        </p>
-                    </li>
-                    {% else %}
-                    <li class="userunloged link">
-                        <p class="userName">
-                            <a class="signedIn" href="#"><i class="fa fa-unlock"></i>Login</a>
-                        </p>
-                        <div>
-                            <a class="signedIn" href="/login/google"><i class="fa fa-google"></i>with Google</a>
-                            <a class="signedIn" href="/login/github"><i class="fa fa-github"></i>with Github</a>
-                        </div>
-                    </li>
-                    {% endif %}
+<nav id="main-nav" class="navigation overflow">
+	<div id="left-nav">
+		<a href="/">
+			<div class="mainLogo">
+				<img src="{{ url_for('static', filename='images/logo.png') }}">
+				<span>ShuttleOFX</span>
+			</div>
+		</a>
+		<ul id="home-links">
+			{% if user %}
+			<li class="userloged link">
+				<img class="signedIn" src="{{user.picture}}">
+				<p class="userName">
+					{{user.name}}
+					<a class="signedIn" href="/logout"><i class="fa fa-lock"></i>Logout</a>
+				</p>
+			</li>
+			{% else %}
+			<li class="userunloged link">
+				<p class="userName">
+					<a class="signedIn" href="#"><i class="fa fa-unlock"></i>Login</a>
+				</p>
+				<div>
+					<a class="signedIn" href="/login/google"><i class="fa fa-google"></i>with Google</a>
+					<a class="signedIn" href="/login/github"><i class="fa fa-github"></i>with Github</a>
+				</div>
+			</li>
+			{% endif %}
 
-                    <li class="title-nav" style="margin-top:2em;"><h4>NAVIGATION</h4></li>
+			<li class="title-nav" style="margin-top:2em;"><h4>NAVIGATION</h4></li>
 
-                    <li class="link">
-                        <a href='/plugin'><i class="fa fa-fw fa-crop"></i>Explore plugins</a>
-                        <div id="categories"></div>
-                    </li>
-                    <li class="link">
-                        <a href='/upload'><i class="fa fa-fw fa-cloud-upload"></i>Upload new plugins</a>
-                    </li>
-                    <li class="link">
-                        <a href='/about'><i class="fa fa-fw fa-info"></i>About OpenFX</a>
-                    </li>
-                    <li class="title-nav"><h4>MORE</h4></li>
-                    <li class="link">
-                        <a href='http://www.openeffects.org' target="_blank"><i class="fa fa-share-alt"></i>OFX community</a>
-                    </li>
-                    <li class="imac">
-                        <a href='http://www.ingenieur-imac.fr/' target="_blank">
-                            <img src="{{ url_for('static', filename='images/logo_ingenieur_imac_web.png') }}"/>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+			<li class="link">
+				<a href='/plugin'><i class="fa fa-fw fa-crop"></i>Explore plugins</a>
+				<div id="categories"></div>
+			</li>
+			<li class="link">
+				<a href='/upload'><i class="fa fa-fw fa-cloud-upload"></i>Upload new plugins</a>
+			</li>
+			<li class="link">
+				<a href='/about'><i class="fa fa-fw fa-info"></i>About OpenFX</a>
+			</li>
+			<li class="title-nav"><h4>MORE</h4></li>
+			<li class="link">
+				<a href='http://www.openeffects.org' target="_blank"><i class="fa fa-share-alt"></i>OFX community</a>
+			</li>
+			<li class="imac">
+				<a href='http://www.ingenieur-imac.fr/' target="_blank">
+					<img src="{{ url_for('static', filename='images/logo_ingenieur_imac_web.png') }}"/>
+				</a>
+			</li>
+		</ul>
+	</div>
 </nav>
 {% endblock %}
 
-{% block body %}
-
-<div class="row home-header-container">
-    <header class="home-header col-lg-9 col-md-9 col-sm-9 col-xs-8 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-4">
+{% block header %}
+    <header class="header home-header">
+        <span class="open icon">&#9776;</span>
         <div class="navbar search-bar">
+            {% block back_button %}{% endblock %}
             <form id="searchForm" action="/plugin">
-                <input type="text" placeholder="Search" id="searchquery" name="search"/>
-                <button id="searchtrigger" type="submit" value="Submitquery"><i class="fa fa-search"></i></button>
+                  <input type="text" placeholder="Search" id="searchquery" name="search"/>
+                  <button id="searchtrigger" type="submit" value="Submitquery"><i class="fa fa-search"></i></button>
             </form>
         </div>
         <div class="header-image">
@@ -89,11 +86,13 @@
             </div>
         </div>
     </header>
-</div>
+{% endblock %}
 
-<div class="row home-body-container">
-    <div class="home-body col-lg-9 col-md-9 col-sm-9 col-xs-8 col-lg-offset-3 col-md-offset-3 col-sm-offset-3 col-xs-offset-4">
-        <section id="welcome">
+
+{% block content %}
+	<div class="home-body main-content ">
+		<div class="container-fluid">
+			<div id="welcome" class="row">
             <div class="col-md-4">
                 <h1>Welcome <span>on board</span></h1>
             </div>
@@ -103,8 +102,8 @@
                     <br>Following the TuttleOFX initiative, the ambition is to promote a standard way to create image processing algorithms usable across softwares.
                 </p>
             </div>
-        </section>
-        <section id="users">
+        </div>
+        	<div id="users" class="row">
             <div class="col-md-4">
                 <div class="img">
                     <img src="{{ url_for('static', filename='images/personae/ga.png') }}" class="img-responsive">
@@ -149,11 +148,12 @@
                         </p>
                     </div>
                 </div>
-        </section>
-        <section id="frame">
-            <iframe src="https://player.vimeo.com/video/127664921?color=ff0179" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-        </section>
-        <section id="format">
+			</div>
+        </div>
+        	<div id="frame" class="row" >
+            	<iframe src="https://player.vimeo.com/video/127664921?color=ff0179" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+        	</div>
+        	<div id="format">
             <div class="col-md-4">
                 <h1 class="content-format">OpenFX <span>Open Standard</span></h1>
             </div>
@@ -162,14 +162,11 @@
                     OpenFX is an open standard for image processing plug-ins. It allows plug-ins written to the standard to work on any application that supports the standard. This avoids the current per application fragmentation of plugin development and support, which causes much heartache to everyone: plug-in developers, application developers and end-users alike.
                 </p>
             </div>
-        </section>
+        </div>
+		</div>
     </div>
-</div>
-
-
-
-
 {% endblock %}
+
 
 
 
