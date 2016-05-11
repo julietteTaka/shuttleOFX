@@ -5,15 +5,15 @@ import shutil
 import tempfile
 from functools import wraps
 from flask import (
-	request,
-	jsonify,
-	render_template,
-	abort,
-	Response,
-	redirect,
-	url_for,
-	session,
-	make_response,
+    request,
+    jsonify,
+    render_template,
+    abort,
+    Response,
+    redirect,
+    url_for,
+    session,
+    make_response,
     send_file
 )
 from subprocess import (check_call, check_output, CalledProcessError)
@@ -135,13 +135,13 @@ def getSampleImagesForPlugin(pluginId, imageId):
 
 @config.g_app.route('/category')
 def getCategory():
-	user = userManager.getUser()
-	try:
-		resp = requests.get(config.catalogRootUri + "/category", params=request.args)
-	except:
-		return render_template('plugins.html', dico=None, user=user)
+    user = userManager.getUser()
+    try:
+        resp = requests.get(config.catalogRootUri + "/category", params=request.args)
+    except:
+        return render_template('plugins.html', dico=None, user=user)
 
-	return render_template('plugins.html', dico=resp.json(), user=user)
+    return render_template('plugins.html', dico=resp.json(), user=user)
 
 @config.g_app.route('/demo')
 @config.g_app.route('/plugin/<pluginRawIdentifier>/demo')
@@ -295,22 +295,29 @@ def upload():
 
 @config.g_app.route('/upload/automated/<token>', methods=['POST'])
 def uploadAutomated(token):
-    # COMMAND : curl -X POST -F 'file=@/home/olivier/Downloads/CImg.tar.gz' http://localhost/upload/automated/1
+    # FIXME Upload need to be refactored to be able to do it with only one route
+    #       and thus avoid rewriting the same code in this function
+    # COMMAND : curl -s -o /dev/null -w "%{http_code}" -X POST -F 'file=@/home/olivier/Downloads/CImg.tar.gz' http://localhost/upload/automated/1
+    logging.warning('Automated upload started')
+    if token is None:
+        abort(400)
+    # Set metadata
     headerJSON = {'content-type' : 'application/json'}
-
     bundleInfo = {"bundleName": '', 'bundleDescription': '', 'userId': token, 'companyId': ''}
+    # Create bundle in DB
     req = requests.post(config.catalogRootUri + '/bundle', data=json.dumps(bundleInfo), headers=headerJSON)
     if req.status_code != 200:
         abort(req.status_code)
 
     resp = req.json()
     bundleId = str(resp.get('bundleId'))
-
+    # Save file sent by users
     filename = request.files['file'].filename
     file = request.files['file']
     file.save("/tmp/" + filename)
     multiple_files = [('file', (filename, open("/tmp/" + filename, 'rb'), 'application/gzip'))]
 
+    # Process bundle
     req = requests.post(config.catalogRootUri + '/bundle/' + bundleId + '/archive', files = multiple_files)
     if req.status_code != 200:
         abort(req.status_code)
@@ -318,7 +325,7 @@ def uploadAutomated(token):
     if req.status_code != 200:
         abort(req.status_code)
 
-    return 'success'
+    return Response(status=200)
 
 @config.g_app.route('/bundle')
 def getBundles():
@@ -491,7 +498,7 @@ def downloadImgFromUrl():
     req = requests.post(config.renderRootUri + "/downloadImgFromUrl", data=request.data, headers=header)
 
     if req.status_code != requests.codes.ok:
-    	abort(make_response(req.content, req.status_code))
+        abort(make_response(req.content, req.status_code))
 
     return req.content
 
@@ -513,23 +520,30 @@ def createPlugin():
 def createUserRepo():
     user = userManager.getUser()
     provider = userManager.getOAuthProvider()
-    if session['github_token'] is None:
+    githubToken = session['github_token'][0]
+    if githubToken is None:
         status = 'error'
         message = 'You are trying to create a repository without being logged using Github.'
 
     pluginTemplatePath = ''
     try:
         pluginTemplatePath = downloadPluginTemplateRepo(False)
-
+        pluginName = request.form['pluginName']
         #Create user's repo
         req = config.github.post('/user/repos', data={
-            "name": request.form['pluginName'],
+            "name": pluginName,
             "private": False,
         }, format='json')
 
-        # Push on user's repo
         owner = req.data['owner']['login']
-        url = 'https://' + owner + ':' + session['github_token'][0] + '@github.com' +'/'+ owner +'/'+ request.form['pluginName'] + '.git'
+
+        # Enable Travis
+        check_call(['travis', 'login', '--github-token', str(githubToken)], cwd=pluginTemplatePath)
+        check_call(['travis', 'enable', '-r', owner +'/'+ pluginName ], cwd=pluginTemplatePath)
+        check_call(['travis', 'env', 'set', 'TOKEN', str(githubToken), '--private', '-r', owner +'/'+ pluginName])
+
+        # Push on user's repo
+        url = 'https://' + owner + ':' + session['github_token'][0] + '@github.com' +'/'+ owner +'/'+ pluginName + '.git'
         check_call(['git', 'remote', 'add', 'origin', url], cwd=pluginTemplatePath)
         check_call(['git', 'remote', '-v'], cwd=pluginTemplatePath)
         check_call(['git', 'push', 'origin', 'master'], cwd=pluginTemplatePath)

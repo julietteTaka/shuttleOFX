@@ -5,8 +5,8 @@ FROM tuttleofx/tuttleofx:latest
 MAINTAINER ShuttleOFX <shuttleofx-dev@googlegroups.com>
 
 # Update repository, Download and Install
-RUN apt-get update && apt-get install -y vim wget python-setuptools python-pip nodejs-legacy npm xdg-utils libpython2.7 python-flask docker.io timelimit
-RUN pip install pymongo python-oauth2 flask-oauthlib
+RUN apt-get update && apt-get install -y vim wget python-setuptools python-pip nodejs-legacy npm xdg-utils libpython2.7 python-flask docker.io timelimit ruby-full
+RUN pip install pymongo python-oauth2 flask-oauthlib && gem install travis -v 1.8.2 --no-rdoc --no-ri
 
 #Install last mongodb version to have text search feature
 RUN cd /opt/ && \
