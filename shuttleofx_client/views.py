@@ -1,6 +1,8 @@
 import os
 import json
 import requests
+import shutil
+import tempfile
 from functools import wraps
 from flask import (
 	request,
@@ -14,6 +16,7 @@ from flask import (
 	make_response,
     send_file
 )
+from subprocess import (check_call, check_output, CalledProcessError)
 import logging
 import config
 import userManager
@@ -145,13 +148,13 @@ def getSampleImagesForPlugin(pluginId, imageId):
 
 @config.g_app.route('/category')
 def getCategory():
-	user = userManager.getUser()
-	try:
-		resp = requests.get(config.catalogRootUri + "/category", params=request.args)
-	except:
-		return render_template('plugins.html', dico=None, user=user)
+    user = userManager.getUser()
+    try:
+        resp = requests.get(config.catalogRootUri + "/category", params=request.args)
+    except:
+        return render_template('plugins.html', dico=None, user=user)
 
-	return render_template('plugins.html', dico=resp.json(), user=user)
+    return render_template('plugins.html', dico=resp.json(), user=user)
 
 @config.g_app.route('/demo')
 @config.g_app.route('/plugin/<pluginRawIdentifier>/demo')
@@ -303,7 +306,39 @@ def upload():
     user = userManager.getUser()
     return render_template("upload.html", user=user, uploaded=None)
 
+@config.g_app.route('/upload/automated/<token>', methods=['POST'])
+def uploadAutomated(token):
+    # FIXME Upload need to be refactored to be able to do it with only one route
+    #       and thus avoid rewriting the same code in this function
+    # COMMAND : curl -s -o /dev/null -w "%{http_code}" -X POST -F 'file=@/home/olivier/Downloads/CImg.tar.gz' http://localhost/upload/automated/1
+    logging.warning('Automated upload started')
+    if token is None:
+        abort(400)
+    # Set metadata
+    headerJSON = {'content-type' : 'application/json'}
+    bundleInfo = {"bundleName": '', 'bundleDescription': '', 'userId': token, 'companyId': ''}
+    # Create bundle in DB
+    req = requests.post(config.catalogRootUri + '/bundle', data=json.dumps(bundleInfo), headers=headerJSON)
+    if req.status_code != 200:
+        abort(req.status_code)
 
+    resp = req.json()
+    bundleId = str(resp.get('bundleId'))
+    # Save file sent by users
+    filename = request.files['file'].filename
+    file = request.files['file']
+    file.save("/tmp/" + filename)
+    multiple_files = [('file', (filename, open("/tmp/" + filename, 'rb'), 'application/gzip'))]
+
+    # Process bundle
+    req = requests.post(config.catalogRootUri + '/bundle/' + bundleId + '/archive', files = multiple_files)
+    if req.status_code != 200:
+        abort(req.status_code)
+    req = requests.post(config.catalogRootUri + '/bundle/' + bundleId + '/analyse', data = bundleInfo, headers = headerJSON)
+    if req.status_code != 200:
+        abort(req.status_code)
+
+    return Response(status=200)
 
 @config.g_app.route('/bundle')
 def getBundles():
@@ -476,7 +511,7 @@ def downloadImgFromUrl():
     req = requests.post(config.renderRootUri + "/downloadImgFromUrl", data=request.data, headers=header)
 
     if req.status_code != requests.codes.ok:
-    	abort(make_response(req.content, req.status_code))
+        abort(make_response(req.content, req.status_code))
 
     return req.content
 
@@ -487,6 +522,132 @@ def get_google_oauth_token():
 @config.github.tokengetter
 def get_github_oauth_token():
     return session.get('github_token')
+
+@config.g_app.route('/create')
+def createPlugin():
+    user = userManager.getUser()
+    provider = userManager.getOAuthProvider()
+    return render_template("createPlugin.html", user=user, provider=provider)
+
+@config.g_app.route('/create/repo', methods=['POST'])
+def createUserRepo():
+    user = userManager.getUser()
+    provider = userManager.getOAuthProvider()
+    githubToken = session['github_token'][0]
+    if githubToken is None:
+        status = 'error'
+        message = 'You are trying to create a repository without being logged using Github.'
+
+    pluginTemplatePath = ''
+    try:
+        pluginTemplatePath = downloadPluginTemplateRepo(False)
+        pluginName = request.form['pluginName']
+        #Create user's repo
+        req = config.github.post('/user/repos', data={
+            "name": pluginName,
+            "private": False,
+        }, format='json')
+
+        owner = req.data['owner']['login']
+
+        # Enable Travis
+        check_call(['travis', 'login', '--github-token', str(githubToken)], cwd=pluginTemplatePath)
+        check_call(['travis', 'enable', '-r', owner +'/'+ pluginName ], cwd=pluginTemplatePath)
+        check_call(['travis', 'env', 'set', 'TOKEN', str(githubToken), '--private', '-r', owner +'/'+ pluginName])
+
+        # Push on user's repo
+        url = 'https://' + owner + ':' + session['github_token'][0] + '@github.com' +'/'+ owner +'/'+ pluginName + '.git'
+        check_call(['git', 'remote', 'add', 'origin', url], cwd=pluginTemplatePath)
+        check_call(['git', 'remote', '-v'], cwd=pluginTemplatePath)
+        check_call(['git', 'push', 'origin', 'master'], cwd=pluginTemplatePath)
+
+        # Delete cloned repo
+        shutil.rmtree(pluginTemplatePath)
+
+
+        return render_template("createPluginSuccess.html", userGithubAlias=owner, repoName=request.form['pluginName'])
+    except CalledProcessError:
+        status = 'error'
+        message = 'There was an error creating your repository, please try again.'
+        # Ensure to clean even if the process has failed
+        if os.path.isdir(pluginTemplatePath):
+            shutil.rmtree(pluginTemplatePath)
+
+        return render_template("createPlugin.html", user=user, provider=provider, status=status, message=message)
+
+@config.g_app.route('/create/sources', methods=['POST'])
+def downloadPluginTemplate():
+    pluginTemplatePath = ''
+    try:
+        pluginTemplatePath = downloadPluginTemplateRepo(True)
+
+        shutil.make_archive(pluginTemplatePath, 'zip', pluginTemplatePath)
+        # Delete cloned repo
+        shutil.rmtree(pluginTemplatePath)
+
+        return send_file(pluginTemplatePath + '.zip', as_attachment=True, attachment_filename="OpenFX_plugin_template.zip")
+    except CalledProcessError:
+        user = userManager.getUser()
+        provider = userManager.getOAuthProvider()
+        status = 'error'
+        message = 'There was an error creating your customized plugin, please try again.'
+
+        # Ensure to clean even if the process has failed
+        if os.path.isdir(pluginTemplatePath):
+            shutil.rmtree(pluginTemplatePath)
+
+        return render_template("createPlugin.html", user=user, provider=provider, status=status, message=message)
+
+
+def downloadPluginTemplateRepo(submodule=False):
+    pluginTemplatePath = tempfile.mkdtemp()
+    try:
+        # Create new repo from project template (squash all commits into one to get a clean history)
+        check_call(['git', 'init'], cwd=pluginTemplatePath)
+        check_call(['git', 'fetch', '--depth=1', '-n', 'https://github.com/tuttleofx/ofxPluginTemplate.git'], cwd=pluginTemplatePath)
+        output = check_output(['git', 'commit-tree', 'FETCH_HEAD^{tree}', '-m', 'Initial Openfx structure'], cwd=pluginTemplatePath).strip()
+        check_call(['git', 'reset', '--hard', output], cwd=pluginTemplatePath)
+
+        # Replace template data with user's data
+        jsonFile = repoFormToJSON(request)
+        check_call(['python','createPlugin.py', jsonFile, './'], cwd=pluginTemplatePath)
+        if submodule:
+            check_call(['git', 'submodule', 'update', '-i'], cwd=pluginTemplatePath)
+        # Remove createPlugin.py and the JSON used to replace data with user's data
+        os.remove(os.path.join(pluginTemplatePath,'createPlugin.py'))
+        os.remove(jsonFile)
+
+        check_call(['git', 'add', '-A'], cwd=pluginTemplatePath)
+        check_call(['git', 'commit', '--amend', '-m', 'Initial Openfx structure'], cwd=pluginTemplatePath)
+    except CalledProcessError as e:
+        raise CalledProcessError(e.returncode, e.cmd, e.output)
+
+    return pluginTemplatePath
+
+def repoFormToJSON(request):
+    pluginLabel = request.form["pluginLabel"]
+    pluginLongLabel = request.form["pluginLongLabel"]
+
+    if not request.form["pluginLabel"]:
+        pluginLabel = request.form["pluginName"]
+    else:
+        pluginLabel = request.form["pluginLabel"]
+
+    if not request.form["pluginLongLabel"]:
+        pluginLongLabel = request.form["pluginName"]
+    else:
+        pluginLongLabel = request.form["pluginLongLabel"]
+
+    filePath = os.path.join(os.sep, 'tmp', 'JSONForm.json')
+    JSONFile, JSONFilePath = tempfile.mkstemp()
+    json.dump({"PLUGIN_NAME": str(request.form['pluginName']),
+               "PLUGIN_LABEL": str(pluginLabel),
+               "PLUGIN_LONG_LABEL": str(pluginLongLabel),
+               "PLUGIN_GROUPING": str(request.form["pluginMenu"]),
+               "PLUGIN_UID": str(request.form["id"]),
+               "PLUGIN_DESCRIPTION": str(request.form["pluginDescription"])}, os.fdopen(JSONFile, 'w'))
+
+    return JSONFilePath
 
 if __name__ == '__main__':
     config.g_app.run(host="0.0.0.0", port=5000, debug=True)
