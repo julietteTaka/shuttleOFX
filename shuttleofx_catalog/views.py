@@ -4,6 +4,7 @@ import logging
 import requests
 import re
 import math
+import shutil
 
 from time import sleep
 from bson import json_util, ObjectId
@@ -385,9 +386,24 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
 
     plugin = plugins[0]["plugin"]
 
-    logging.error(plugin);
-
     return mongodoc_jsonify({'plugin': plugin, 'versions': versions})
+
+@config.g_app.route("/plugin/<int:pluginId>/download/<bundleId>")
+@config.g_app.route("/plugin/<int:pluginId>/version/<pluginVersion>/download/<bundleId>")
+def downloadPlugin(pluginId, bundleId, pluginVersion="latest"):
+    fileExtension = 'zip'
+    filePath = os.path.join(config.bundleRootPath, bundleId + '.' + fileExtension)
+    dirPath = os.path.join(config.bundleRootPath, bundleId)
+
+    # Check if the zip already exists
+    if not os.path.isfile(filePath):
+        if os.path.isdir(dirPath):
+            shutil.make_archive(dirPath, fileExtension, dirPath)
+        else:
+            logging.error("Could not find Bundle " + bundleId + " folder")
+            abort(404)
+
+    return mongodoc_jsonify({'filePath': filePath, 'bundleId': bundleId, 'fileExtension': fileExtension})
 
 ### Comments Start _____________________________________________________________
 @config.g_app.route('/plugin/<int:pluginId>/version/<pluginVersion>/comments/updates', methods=['POST'])
