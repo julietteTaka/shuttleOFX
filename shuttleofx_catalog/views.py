@@ -4,7 +4,9 @@ import logging
 import requests
 import re
 import math
+import shutil
 
+from processify import processify
 from time import sleep
 from bson import json_util, ObjectId
 from bson.son import SON
@@ -15,6 +17,17 @@ import config
 from Bundle import Bundle
 from Plugin import Plugin
 
+
+@processify
+def generateThumbnail(imgFile):
+    from pyTuttle import tuttle
+    tuttle.core().preload(False)
+
+    tuttle.compute([
+        tuttle.NodeInit( "tuttle.pngreader", filename=imgFile),
+        tuttle.NodeInit( "tuttle.resize", width=256, keepRatio=1),
+        tuttle.NodeInit( "tuttle.pngwriter", filename=imgFile + "-thumbnail"),
+        ])
 
 def mongodoc_jsonify(*args, **kwargs):
     return Response(json.dumps(args[0], default=json_util.default), mimetype='application/json')
@@ -385,9 +398,24 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
 
     plugin = plugins[0]["plugin"]
 
-    logging.error(plugin);
-
     return mongodoc_jsonify({'plugin': plugin, 'versions': versions})
+
+@config.g_app.route("/plugin/<int:pluginId>/download/<bundleId>")
+@config.g_app.route("/plugin/<int:pluginId>/version/<pluginVersion>/download/<bundleId>")
+def downloadPlugin(pluginId, bundleId, pluginVersion="latest"):
+    fileExtension = 'zip'
+    filePath = os.path.join(config.bundleRootPath, bundleId + '.' + fileExtension)
+    dirPath = os.path.join(config.bundleRootPath, bundleId)
+
+    # Check if the zip already exists
+    if not os.path.isfile(filePath):
+        if os.path.isdir(dirPath):
+            shutil.make_archive(dirPath, fileExtension, dirPath)
+        else:
+            logging.error("Could not find Bundle " + bundleId + " folder")
+            abort(404)
+
+    return mongodoc_jsonify({'filePath': filePath, 'bundleId': bundleId, 'fileExtension': fileExtension})
 
 ### Comments Start _____________________________________________________________
 @config.g_app.route('/plugin/<int:pluginId>/version/<pluginVersion>/comments/updates', methods=['POST'])
@@ -495,6 +523,8 @@ def addResource():
     file = request.files['file']
     file.save(imgFile)
 
+    generateThumbnail(imgFile)
+
     resource = config.resourceTable.find_one({ "_id" : ObjectId(uid)})
     return mongodoc_jsonify(resource)
 
@@ -521,13 +551,30 @@ def getResourceById(resourceId):
     return mongodoc_jsonify(resourceData)
 
 
+@config.g_app.route('/resources/<resourceId>/thumbnail', methods=['GET'])
+def getResourceThumbnail(resourceId):
+    '''
+     Returns the resource.
+    '''
+
+    resourceData = config.resourceTable.find_one({ "_id" : ObjectId(resourceId)})
+    if not resourceData:
+        abort(404)
+
+    filePath = os.path.join (config.resourcesPath, resourceId + "-thumbnail")
+    if not os.path.isfile(filePath):
+        abort(404)
+
+    resource = open(filePath)
+    return Response(resource.read(), mimetype=resourceData['mimetype'])
+
 @config.g_app.route('/resources/<resourceId>/data', methods=['GET'])
 def getResourceData(resourceId):
     '''
      Returns the resource.
     '''
 
-    resourceData = config.resourceTable.find_one({ "_id" : ObjectId(resourceId)})
+    resourceData = config.resourceTable.find_one({"_id": ObjectId(resourceId)})
     if not resourceData:
         abort(404)
 
@@ -558,6 +605,23 @@ def addImageToPlugin(pluginId):
     plugin = config.pluginTable.find_one({"pluginId": pluginId})
 
     return mongodoc_jsonify(plugin)
+
+
+@config.g_app.route("/plugin/<int:pluginId>/defaultImage/<imageId>", methods=['POST'])
+def setPluginDefaultImage(pluginId, imageId):
+
+    plugin = config.pluginTable.find_one({"pluginId": pluginId})
+    if plugin == None:
+        abort(404)
+
+    config.pluginTable.update(
+        {"pluginId": pluginId},
+        {'$set': {"defautImagePath": imageId}},
+        upsert=True)
+    plugin = config.pluginTable.find_one({"pluginId": pluginId})
+
+    return mongodoc_jsonify(plugin)
+
 
 #TO DO : Tags
 config.pluginTable.ensure_index([

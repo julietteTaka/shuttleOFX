@@ -40,6 +40,9 @@
     <!-- jQuery -->
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 
+	<!-- JQuery UI -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+
     <!-- markdown -->
     {% block markdown %}{% endblock %}
     <script src="{{ url_for('static', filename='scripts/vendor/markdown.js') }}" charset="utf-8"></script>
@@ -88,6 +91,7 @@
             </li>
             <li>
                 <a href='/upload' {% if request.path == '/upload' %}class="active"{% endif %}><i class="fa fa-fw fa-cloud-upload"></i>Upload new plugins</a>
+                <a href='/create'><i class="fa fa-fw fa-plus"></i>Create a plugin</a>
             </li>
             <li>
                 <a href='/about' {% if request.path == '/about' %}class="active"{% endif %}><i class="fa fa-fw fa-info"></i>About OpenFX</a>
@@ -115,6 +119,7 @@
 <script src="{{ url_for('static', filename='scripts/vendor/js.cookie.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/counter.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/render.js') }}"></script>
+<script src="{{ url_for('static', filename='scripts/plugin.js') }}"></script>
 
 
 <script type="text/javascript">
