@@ -145,6 +145,11 @@ def getSampleImagesForPlugin(pluginId, imageId):
     req = requests.get(config.catalogRootUri + "/resources/" + str(imageId) + "/data")
     return Response(req.content, mimetype=req.headers["content-type"])
 
+@config.g_app.route('/plugin/<pluginId>/thumbnail/<imageId>')
+def getSampleThumbnailForPlugin(pluginId, imageId):
+    req = requests.get(config.catalogRootUri + "/resources/" + str(imageId) + "/thumbnail")
+    return Response(req.content, mimetype=req.headers["content-type"])
+
 
 @config.g_app.route('/category')
 def getCategory():
@@ -472,6 +477,7 @@ def addImageToPlugin(pluginId):
 
 @config.g_app.route("/plugin/<int:pluginId>/render/<renderId>/resource/<resourceId>", methods=['POST'])
 def addRenderToPlugin(pluginId, resourceId, renderId):
+
     # get rendered image
     req = requests.get(config.renderRootUri + "/render/" + renderId + "/resource/" + resourceId)
 
@@ -499,6 +505,14 @@ def addRenderToPlugin(pluginId, resourceId, renderId):
         config.catalogRootUri + "/plugin/" + str(pluginId) + "/images",
         data=json.dumps(data), headers=headers)
 
+    return jsonify(**req.json())
+
+
+@config.g_app.route("/plugin/<int:pluginId>/defaultImage/<imageId>", methods=['POST'])
+def setPluginDefaultImage(pluginId, imageId):
+    req = requests.post(
+        config.catalogRootUri + "/plugin/" + str(pluginId) + "/defaultImage/" + str(imageId),
+        data=request.data, headers=request.headers)
     return jsonify(**req.json())
 
 

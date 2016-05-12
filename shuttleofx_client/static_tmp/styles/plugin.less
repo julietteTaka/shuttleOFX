@@ -64,9 +64,24 @@ h2.title-plugin{
         max-width: 100%;
         transform: translateY(-50%);
     }
+    &:hover > .set-default-img{
+        display: inline-block;
+    }
+    .set-default-img{
+        display: none;
+    }
 }
 
-#addImageGallery{
+.set-default-img i.fa-star:hover {
+    color: #00796b;
+}
+
+#fullSizeImage {
+    z-index: 100000!important;
+    margin-top: 15%;
+}
+
+#addImageGallery {
     z-index: 100000!important;
     margin-top: 15%;
     .modal-body{
