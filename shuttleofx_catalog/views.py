@@ -228,6 +228,66 @@ def analyseBundle(bundleId):
         config.pluginTable.insert(currentPlugin.__dict__)
     return mongodoc_jsonify(bundle)
 
+@config.g_app.route('/plugin/<int:pluginId>/rate', methods=['POST'])
+def addUserRate(pluginId):
+
+    userId = request.get_json().get('userId')
+    score = request.get_json().get('score')
+    version = request.get_json().get('version')
+    logging.error("score : "+str(score)+" from user "+userId)
+    obj = {
+        userId : [{
+            "score" : score,
+            "version": [version[0], version[1]]
+        }]
+    }
+
+    # check if there is already a rating from this user
+    query = config.pluginTable.find_one(
+                                {   "pluginId": pluginId,
+                                    "rate.users."+userId: {"$exists":True},
+                                    "rate.users."+userId+".version.0" : version[0],
+                                    "rate.users."+userId+".version.1" : version[1],
+                                },
+                                {"rate":1})
+    logging.error(query)
+    if query == None :
+        logging.error("no score set. Setting the score...")
+        res = config.pluginTable.update_one( {"pluginId": pluginId}, {"$push":{"rate.users":obj}})
+    else :
+        logging.error("Score already set. Updating the score...")
+        res = config.pluginTable.update_one(
+                                {   "pluginId": pluginId,
+                                    "rate.users."+userId: {"$exists":True},
+                                    "rate.users."+userId+".version.0" : version[0],
+                                    "rate.users."+userId+".version.1" : version[1],
+                                },
+                                {   
+                                    "$set":{ "rate.users."+userId+".score":score }
+                                })
+    logging.error("done")
+
+    query = config.pluginTable.find_one(
+                            {   "pluginId": pluginId,
+                                "rate.users."+userId: {"$exists":True},
+                                "rate.users."+userId+".version.0" : version[0],
+                                "rate.users."+userId+".version.1" : version[1],
+                            },
+                            {"rate":1})
+    average = 0
+    for score in query['rate']['users']:
+        average += score["score"]
+    average = average / len(query['rate']['users'])
+
+    res = config.pluginTable.update_one( {"pluginId": pluginId}, {"$set":{"rate.global":average}})
+
+    result = config.pluginTable.find_one({"pluginId" : pluginId})
+    return mongodoc_jsonify(result)
+
+@config.g_app.route('/plugin/<int:pluginId>/rate', methods=['GET'])
+def getRate(pluginId):
+    result = config.pluginTable.find_one({"pluginId" : pluginId}, {'rate' : 1})
+    return mongodoc_jsonify(result)
 
 @config.g_app.route("/bundle/<bundleId>", methods=['DELETE'])
 def deleteBundle(bundleId):
@@ -293,7 +353,6 @@ def getAllPlugins():
     count = request.args.get('count', 20)
     if count:
         count = int(count)
-        logging.error(count)
 
     skip = request.args.get('skip', 1)
     if skip:
@@ -384,8 +443,6 @@ def getPlugin(pluginRawIdentifier, pluginVersion="latest", bundleId=None):
         abort(404)
 
     plugin = plugins[0]["plugin"]
-
-    logging.error(plugin);
 
     return mongodoc_jsonify({'plugin': plugin, 'versions': versions})
 

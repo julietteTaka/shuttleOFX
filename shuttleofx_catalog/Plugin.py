@@ -12,7 +12,10 @@ class Plugin(object):
         self.details = None
         self.tags = []
         self.presets = None
-        self.rate = 0
+        self.rate = {
+                    "global":0,
+                    "users":[]
+                    }
         self.defautImagePath = None
         self.sampleImagesPath = []
         self.parameters = []

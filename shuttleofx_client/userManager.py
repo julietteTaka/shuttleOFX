@@ -10,7 +10,7 @@ def getUser():
             logging.error("Bad request Google authentication API : " + str(resp.data))
         else:
             googleUser = resp.data
-            user = {'name': googleUser.get('name'), 'picture': googleUser.get('picture')}
+            user = {'name': googleUser.get('name'), 'picture': googleUser.get('picture'), "id":googleUser.get('id')}
             return user
     elif 'github_token' in session:
         resp = config.github.get('?access_token=' + str(session['github_token'][0]))

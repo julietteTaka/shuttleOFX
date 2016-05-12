@@ -30,6 +30,7 @@
                                 <span>{{versions[0].version.major}}.{{versions[0].version.minor}}</span>
                                 {% endif %}
                             </div>
+                            <div id="usersRate" attr-pluginScore="{{plugin.rate.global}}"></div>
                         </small>
                     </h1>
                 </div>
@@ -91,7 +92,7 @@
         <div class="row">
             {% if not plugin.sampleImagesPath %}
                 <div class="col-md-12">
-                    <p>No example found.... <i class="fa fa-meh-o"></i></p>
+                    <p>No example found.</p>
                     <p style="font-size: 16pt;"> 
                         {% if  user %}
                         Upload yours ! <i class="fa fa-rocket"></i>
@@ -113,6 +114,29 @@
             {% endif %}
         {% endif %}
 
+        {% if user %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h2>
+                        Rate this plugin
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                 <p>{{ plugin.rate }}</p>
+
+                <div id="rate" attr-pluginId="{{plugin.pluginId}}" attr-userId="{{user.id}}" attr-pluginVersionMajor="{{versions[0].version.major}}" attr-pluginVersionMinor="{{versions[0].version.minor}}" 
+
+                attr-userScore="{{ plugin.rate.users}}">
+                </div>
+                <br />
+                <span class="thanks">Thank you !</span>
+            </div>
+        </div>
+        {% endif %}
 
 
 {% if user %}

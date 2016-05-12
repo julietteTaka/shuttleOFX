@@ -95,7 +95,10 @@
                     <li class="plugin">
                         <a href="/plugin/{{plugin.rawIdentifier}}">
                         <div class="panel panel-primary">
+
                                 <div class="plugins-titles">
+                                                            <small class="rate" attr-pluginScore="{{ plugin.rate.global }}"></small>
+
                                     {% if plugin.sampleImagesPath|length != 0 %}
                                         {% set image = plugin.sampleImagesPath[0] %}
                                         {% set imagePath = "/plugin/" ~ plugin.pluginId ~ "/image/" ~ image %}
@@ -105,11 +108,13 @@
                                         {% set class = "" %}
                                     {% endif %}
                                     <img src="{{ imagePath }}" alt="" class="img-responsive plugin-thumbnail {{ class }}" />
+
                                     <h3 class="panel-title">
                                         {{plugin.label}}
                                     </h3>
                                 </div>
                             <div class="plugins-info">
+
                                 <p>
                                     {% if "OfxPropPluginDescription" in plugin.properties %}
                                         {{plugin.properties.OfxPropPluginDescription.value}}

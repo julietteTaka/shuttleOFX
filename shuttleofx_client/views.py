@@ -139,6 +139,15 @@ def getCategory():
 
 	return render_template('plugins.html', dico=resp.json(), user=user)
 
+@config.g_app.route('/plugin/<pluginId>/rate', methods=['POST'])
+def ratePlugin(pluginId):
+    header = {'content-type' : 'application/json'}
+    previousRate = requests.get(config.catalogRootUri + "/plugin/" + pluginId + "/rate")
+    logging.error(previousRate.json())
+    
+    req = requests.post(config.catalogRootUri + "/plugin/" + pluginId + "/rate", data=request.data, headers=header)
+    return req.content
+
 @config.g_app.route('/demo')
 @config.g_app.route('/plugin/<pluginRawIdentifier>/demo')
 @config.g_app.route("/plugin/<pluginRawIdentifier>/version/<pluginVersion>/demo")
