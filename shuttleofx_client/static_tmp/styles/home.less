@@ -123,19 +123,19 @@
         }
     }
     #frame {
-        position: relative;
-        //margin-top: 40em;
-        margin-top: -3%;
-        margin-bottom: -17%;
-        padding-bottom: 56.25%; /* 16:9 */
-        padding-top: 2em;
-        height: 0;
+        padding: 5% 0;
+        & > div{
+            position: relative;
+            padding-bottom: 37.25%; /* 16:9 */
+            height: 0;
+        }
         iframe {
             position: absolute;
-            top: 12%;
-            left: 25%;
-            width: 50%;
-            height: 50%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
         }
         @media (max-width: 991px) {
             margin-top: 5em;
@@ -153,7 +153,6 @@
 .home-footer {
     width: 100%;
      #format {
-        //margin-top: -15em;
         padding-top: 2em;
         height: 14em;
         background-color: @ofxColor;
@@ -193,9 +192,6 @@
         }
         p {
             color: white;
-        }
-        @media (max-width: 1155px) {
-            margin-top: -6.5em;
         }
         @media (max-width: 991px) {
             margin-top: -7em;
