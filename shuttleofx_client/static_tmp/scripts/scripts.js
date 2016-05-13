@@ -104,7 +104,7 @@ function changeVersion(versionNumber) {
     return;
   }
   window.location.href = newUrl + '/version/' + versionNumber.options[versionNumber.selectedIndex].value;
-  return; 
+  return;
 }
 
 // Force webkit browsers to redraw style changes
@@ -127,7 +127,7 @@ function changeVersion(versionNumber) {
 
 var Bamboo = (function (window, document) {
 
-	var container = $('#container').length == 0 ? $('#containerHome') : $('#container')
+	var container = $('#container').length == 0 ? $('#homeContainer') : $('#container')
 
 	var
 	// objects

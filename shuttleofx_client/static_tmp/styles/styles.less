@@ -5,6 +5,7 @@
 html,body{
     height: 100%;
     z-index: 1;
+    overflow-x: hidden;
 }
 
 .page-app{
@@ -227,7 +228,7 @@ header{
 @media only screen and (min-width: 875px) {
     .navigation { width: 265px }
     #container {left: 265px; overflow: auto; -webkit-overflow-scrolling: touch; }
-    #containerHome {left: 265px; overflow: auto; -webkit-overflow-scrolling: touch; }
+    #homeContainer {left: 265px; overflow: auto; -webkit-overflow-scrolling: touch; }
     header .icon { display: none }
     header .navbar{padding-right: 265px;}
 }
@@ -259,7 +260,7 @@ header{
     header form#searchForm{
        line-height: 70px;
     }
-    .navbar.navbar{
+    .navbar.bar{
         height: 75px;
     }
 }
@@ -270,7 +271,6 @@ header{
 
 
 .header-content{
-    padding-right: 265px;
     //height:80px;
     color: #fff;
     width: 100%;
@@ -567,7 +567,7 @@ ul.right-nav li .fa{
             }
         }
     }
-    
+
     .legacy{
         border-top: 1px solid #ddd;
         background: #fff;

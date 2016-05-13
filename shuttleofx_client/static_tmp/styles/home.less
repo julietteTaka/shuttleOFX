@@ -3,168 +3,222 @@
 ------------------------------------------------------------------
 */
 
-.headerImg{
-    position : fixed;
-    margin-top:10px;
-}
-
-#containerHome{
-    position: relative;
-    min-height: 100%;
-    height: 1px;
-    background-color: white;
-    header{
-        height : 312px;
-        overflow:hidden;
-    }
-    .appTitle, small {
-        margin-left : 220px;
-        margin-top : 50px;
-    }
-    small {
-        font-size: 20px;
-    }
-}
-
-#containerHome{
-    section{
-        display : block;
-    }
-    background-color: white!important;
-}
-
-#welcome{
-    background-color: white!important;
-    padding-top: 25em;
-    margin-bottom: 0.5em;
-    h1{
-        font-family: 'Roboto-Light';
-        color: @grey;
-        font-weight: 200;
-        font-size: 3em;
-        text-transform: uppercase;
-        margin-top: 10px;
-        line-height: 1;
-        span{
-            display: block;
-            font-size: 98%;
-        }
-    }
-}
-
-#users{
-    padding-top: 8em;
-    padding-bottom: 8em;
-    background-color: white;
-    .user-content li{
-        cursor : pointer;
-        h2{
-            text-align : center;
-            width : 100%;
-            //clear :both;
-            display : block;
-            float : left;
-            text-align :center;
-                &::before{
-                    position: absolute;
-                    content: "";
-                    left: 50%;
-                    transform: translate(-50%);
-                    margin-top: 55px;
-                    width: 100px;
-                    height: 3px;
-                    background-color: @ofxColor;
-                }
-        }
-        .inner{
-            padding-left : 20px;
-            padding-right : 20px;
-        }
-
-    }
-
-
-
-    .description{
-        float : left;
-        p{
-            margin-top : 25px;
-            display: inline-block;
-            height : 150px;
-            text-align :center;
-        }
-        //display: none;
-    }
-
-     img{
-        display:block;
-        max-width: 150px;
-        border-radius: 150px;
-        margin : auto;
-        text-align :center;
-
-     }
-
-    .user-active {
-        display: table;
-    }
-
-    .user-inactive {
-        display: table;
-    }
-}
-
-
-#format{
-    z-index :50;
-    padding-top: 3em;
-    padding-bottom: 1em;
-    background: @ofxColor url(../images/logoOpa.png);
-    background-size: 50%;
-    background-position: center -100px;
-    background-repeat: no-repeat;
-    overflow: hidden;
-
-    h1{
-        font-family: 'Roboto-Light';
-        color: #fff;
-        font-weight: 200;
-        margin-bottom: 3em;
-        font-size: 2em;
+.imac {
+    a {
+        margin: 1.5em 0;
         text-align: center;
-        text-transform: uppercase;
-        &::before{
-            position: absolute;
-            content: "";
-            left: 50%;
-            transform: translate(-50%);
-            margin-top: 55px;
-            width: 100px;
-            height: 3px;
-            background-color: #fff;
+        img {
+            display: inline-block;
+            width: 2.5em;
         }
-    }
-    h1.content-format{
-        font-family: 'Roboto-Light';
-        color: #fff;
-        font-weight: 200;
-        margin-bottom: 1.5em;
-        font-size: 4em;
-        text-transform: uppercase;
-        margin-top: 10px;
-        text-align: left;
-        line-height: 1;
-        &::before{
-            display: none;
-        }
-        span{
-            display: block;
-            font-size: 48%;
-        }
-    }
-    p{
-        color: #fff;
-        font-family: 'Roboto-Light';
     }
 }
 
+.home-header {
+        height: 240px;
+        overflow: hidden;
+        padding-left: 0;
+        position: initial;
+
+        .search-bar {
+            padding-right: 0;
+        }
+
+        .header-image {
+            position: relative;
+            margin-top: 10px;
+            img {
+                position: absolute;
+                bottom: -12em;
+                //left: -1px;
+                width: 100%;
+                max-height: 240px;
+                max-width: 1328px;
+            }
+        }
+        .header-content {
+            p {
+                font-weight: bold;
+                font-style: normal;
+            }
+        }
+    }
+
+.home-body.main-content {
+    padding-top: 20px;
+    margin-bottom: -7%; /* Horrible fix but the deadline is tommorrow, sorry :) */
+}
+
+.home-body {
+
+    background-color: white;
+
+    .container-fluid {
+        max-width: 1400px;
+    }
+
+    #welcome {
+        margin-top: 2em;
+        h1{
+            font-family: 'Roboto-Light';
+            font-weight: 200;
+            font-size: 3em;
+            text-transform: uppercase;
+            margin-top: 10px;
+            line-height: 1;
+            span{
+                display: block;
+                font-size: 98%;
+            }
+            @media (max-width: 991px) {
+                text-align: center;
+            }
+        }
+    }
+    #users {
+        img{
+            width: 50%;
+            max-width: 170px;
+            margin: 2em 0 -.5em 0;
+            margin-left: auto;
+            margin-right: auto;
+            //padding: 0 4em;
+            text-align: center;
+            border-radius: 50%;
+        }
+        .title {
+            position: relative;
+            text-align: center;
+        }
+        .title::before {
+            content: "";
+            position: absolute;
+            bottom: -.5em;
+            left: 25%;
+            width: 50%;
+            height: 2px;
+            background-color: @ofxColor;
+        }
+        .description {
+            margin: 1em 0;
+            padding: 0 1em;
+        }
+        @media (max-width: 991px) {
+            margin-top: 2em;
+            .img{
+                display: inline-block;
+                width: 45%;
+            }
+            .group {
+                display: inline-block;
+                width: 45%;
+            }
+        }
+        @media (max-width: 768px) {
+            .img{
+                img {
+                    padding: 0;
+                }
+            }
+        }
+    }
+    #frame {
+        padding: 5% 0;
+        & > div{
+            position: relative;
+            padding-bottom: 37.25%; /* 16:9 */
+            height: 0;
+        }
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+        }
+        @media (max-width: 991px) {
+            margin-top: 5em;
+        }
+        @media (max-width: 768px) {
+            iframe{
+                left: 1%;
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+}
+
+.home-footer {
+    width: 100%;
+     #format {
+        padding-top: 2em;
+        height: 14em;
+        background-color: @ofxColor;
+        background: @ofxColor url(../images/logoOpa.png);
+        background-size: 40%;
+        background-position: center - 5em;
+        background-repeat: no-repeat;
+        overflow: hidden;
+        h1 {
+            font-family: 'Roboto-Light';
+            color: white;
+            font-weight: 200;
+            font-size: 3em;
+            text-align: center;
+            text-transform: uppercase;
+            &.content-format{
+                font-size: 3.5em;
+                text-align: center;
+                line-height: 1;
+                &::before{
+                    display: none;
+                }
+                span{
+                    display: block;
+                    font-size: 48%;
+                }
+            }
+        }
+        h1 span::before{
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 5%;
+            width: 90%;
+            height: 2px;
+            background-color: white;
+        }
+        p {
+            color: white;
+        }
+        @media (max-width: 991px) {
+            margin-top: -7em;
+            width: 102.25%;
+            height: 20.75em;
+            h1 {
+                margin-bottom: .75em;
+            }
+            h1 span::before{
+                bottom: -.5em;
+                left: 12.5%;
+                width: 75%;
+            }
+        }
+        @media (max-width: 768px) {
+            margin-top:  2em;
+            padding-top: .5em;
+            width: 102.25%;
+            height: 22.75em;
+            h1 {
+                margin-bottom: .75em;
+            }
+            h1 span::before{
+                bottom: -.5em;
+                left: 12.5%;
+                width: 75%;
+            }
+        }
+    }
+}
