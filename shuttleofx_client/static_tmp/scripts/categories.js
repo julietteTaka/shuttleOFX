@@ -22,6 +22,21 @@ $(document).ready(function() {
     });
 });
 
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+};
+
 $.ajax({
     url: '/plugins',
     type: 'GET',
@@ -52,6 +67,9 @@ $.ajax({
 });
 
 function generateHtmlFromCategoriesTree(object, previous){
+    var urlCategory = getUrlParameter('search');
+    var pluginCategory = $("#grouping").attr("attr-grouping");
+    var linkClass = "";
     var html = '<ul>';
     for (var i = 0; i < Object.keys(object).length; i++) {
         var link = previous;
@@ -61,10 +79,18 @@ function generateHtmlFromCategoriesTree(object, previous){
         } else {
             link += '/' + Object.keys(object)[i];
         }
+
+                //if current url matches the category
+        if (urlCategory == link.split("/category?search=")[1]){
+            linkClass ="class = 'activeCategory'";
+        }else{
+            linkClass = "";
+        }
+
         if ($.isEmptyObject(object[Object.keys(object)[i]])) {
-            html += '<li><i class="nofolder fa fa-fw"> - </i><a href="'+ link + '">' + Object.keys(object)[i] + '</a>';
+            html += '<li><i class="nofolder fa fa-fw"> - </i><a href="'+ link + '"'+linkClass+'>' + Object.keys(object)[i] + '</a>';
         } else {
-            html += '<li><i class="folder fa fa-fw fa-folder"></i><a href="'+ link + '">' + Object.keys(object)[i] + '</a>';
+            html += '<li><i class="folder fa fa-fw fa-folder"></i><a href="'+ link + '"'+linkClass+'>' + Object.keys(object)[i] + '</a>';
             html += generateHtmlFromCategoriesTree(object[Object.keys(object)[i]], link);
         }
         html += '</li>';
