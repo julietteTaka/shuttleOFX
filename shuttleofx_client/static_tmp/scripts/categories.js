@@ -88,12 +88,9 @@ function generateHtmlFromCategoriesTree(object, previous){
         }
 
         if ($.isEmptyObject(object[Object.keys(object)[i]])) {
-            console.log(Object.keys(object)[i])
-            console.log(pluginCategory)
             html += '<li><i class="nofolder fa fa-fw"> - </i><a href="'+ link + '"'+linkClass+'>' + Object.keys(object)[i] + '</a>';
         } else {
             html += '<li><i class="folder fa fa-fw fa-folder"></i><a href="'+ link + '"'+linkClass+'>' + Object.keys(object)[i] + '</a>';
-            console.log(Object.keys(object)[i])
             html += generateHtmlFromCategoriesTree(object[Object.keys(object)[i]], link);
         }
         html += '</li>';

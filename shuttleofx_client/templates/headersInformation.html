@@ -91,7 +91,7 @@
             </li>
             <li>
                 <a href='/upload' {% if request.path == '/upload' %}class="active"{% endif %}><i class="fa fa-fw fa-cloud-upload"></i>Upload new plugins</a>
-                <a href='/create'><i class="fa fa-fw fa-plus"></i>Create a plugin</a>
+                <a href='/create' {% if request.path == '/create' %}class="active"{% endif %}><i class="fa fa-fw fa-plus"></i>Create a plugin</a>
             </li>
             <li>
                 <a href='/about' {% if request.path == '/about' %}class="active"{% endif %}><i class="fa fa-fw fa-info"></i>About OpenFX</a>
