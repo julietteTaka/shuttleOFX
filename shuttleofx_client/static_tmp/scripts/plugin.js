@@ -35,4 +35,13 @@ $(document).ready(function () {
         $(this).addClass("disabled").find('i').attr("class", "fa fa-check");
     });
 
+// recognize URLs and make them cliquable
+
+    $(".main-content").LinkRecognition({
+        target: "_blank",
+        cssClass: "external-link"
+    });
+
+
+
 });
