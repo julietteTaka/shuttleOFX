@@ -1,24 +1,24 @@
 {% extends "layout.html" %}
 
 {% block header %}
-    <header class="header home-header">
+    <header class="header primary home-header">
         <span class="open icon">&#9776;</span>
-        <div class="navbar search-bar">
-            {% block back_button %}{% endblock %}
-            <form id="searchForm" action="/plugin">
-                  <input type="text" placeholder="Search" id="searchquery" name="search"/>
-                  <button id="searchtrigger" type="submit" value="Submitquery"><i class="fa fa-search"></i></button>
-            </form>
-        </div>
-        <div class="header-image">
-            <img alt="header image" src="{{ url_for('static', filename='images/header.png') }}" />
-        </div>
+
         <div class="header-content">
+            <div class="navbar search-bar">
+                {% block back_button %}{% endblock %}
+                <form id="searchForm" action="/plugin">
+                      <input type="text" placeholder="Search" id="searchquery" name="search"/>
+                      <button id="searchtrigger" type="submit" value="Submitquery"><i class="fa fa-search"></i></button>
+                </form>
+            </div>
             <div class="top-header">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-lg-6 col-lg-offset-4 col-md-6 col-md-offset-6 col-sm-7 col-sm-offset-5">
-                            <h1 class="appTitle">
+                            <!--<div class="image-box"></div>-->
+
+                        <div class="appTitle">
+                            <h1>
                                 ShuttleOFX
                             </h1>
                             <p>
