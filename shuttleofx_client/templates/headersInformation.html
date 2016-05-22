@@ -19,9 +19,10 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/bootstrap.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/bootstrap-markdown.min.css') }}">
     <!--
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/material.css') }}">
-    -->
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/material.css') }}">-->
+    
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/main.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/vendor/bamboo.css') }}">
     {% block styles %}
     {% endblock %}
 
@@ -62,14 +63,17 @@
                 <span>ShuttleOFX</span>
             </div>
         </a>
-        <ul>
+        <ul class="root-nav">
             {% if user %}
                 <li class="userloged">
-                    <img class="signedIn" src="{{user.picture}}">
-                    <p class="userName">
-                        {{user.name}}
-                        <a class="signedIn" href="/logout"><i class="fa fa-lock"></i>Logout</a>
-                    </p>
+
+                            <img class="signedIn" src="{{user.picture}}">
+
+                            <p class="userName">
+                                {{user.name}}
+                                <a class="signedIn" href="/logout"><i class="fa fa-lock"></i>Logout</a>
+                            </p>
+
                 </li>
             {% else %}
                 <li class="userunloged">
@@ -83,7 +87,7 @@
                 </li>
             {% endif %}
 
-            <li class="title-nav" style="margin-top:2em;"><h4>NAVIGATION</h4></li>
+            <li class="title-nav"><h4>NAVIGATION</h4></li>
             <li>
                 <a href='/' {% if request.path == '/' %}class="active"{% endif %}><i class="fa fa-fw fa-home"></i>Home</a>
             </li>
@@ -93,6 +97,8 @@
             </li>
             <li>
                 <a href='/upload' {% if request.path == '/upload' %}class="active"{% endif %}><i class="fa fa-fw fa-cloud-upload"></i>Upload new plugins</a>
+            </li>
+            <li>
                 <a href='/create' {% if request.path == '/create' %}class="active"{% endif %}><i class="fa fa-fw fa-plus"></i>Create a plugin</a>
             </li>
             <li>
@@ -102,16 +108,14 @@
             <li>
                 <a href='http://www.openeffects.org' target="_blank"><i class="fa fa-share-alt"></i>OFX community</a>
             </li>
-
-
-			<li class="title-nav"></li>
-			<li class=>
-				<a href='http://www.ingenieur-imac.fr/' target="_blank">
-					<img src="{{ url_for('static', filename='images/logo_imac.png') }}"
-						style="display: inline-block; width: 23px"/>
-					IMAC engineer school
-				</a>
-			</li>
+            <li>
+                <a href='http://www.ingenieur-imac.fr/' target="_blank">
+                    <div class="imac-link">
+                        <img src="{{ url_for('static', filename='images/logo_imac.png') }}"/>
+                        IMAC engineer school
+                    </div>
+                </a>
+            </li>
         </ul>
     </div>
 </nav>
@@ -119,7 +123,6 @@
 
 {% block body %}
 {% endblock %}
-
 
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script src="{{ url_for('static', filename='scripts/vendor/ripples.js') }}"></script>
@@ -133,6 +136,8 @@
 <script src="{{ url_for('static', filename='scripts/counter.js') }}"></script>
 <script src="{{ url_for('static', filename='scripts/plugin.js') }}"></script>
 
+<script src="{{ url_for('static', filename='scripts/vendor/bamboo.0.1.js') }}"></script>
+
 <!-- FIXME Script inclusion is a total mess, we load scripts that we need only on specific pages 
            Should use the block script and inheritance -->
 <script type="text/javascript">
@@ -144,14 +149,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $.material.init();
-        var site = new Bamboo({
-            menu: true,
-            breakpoint: 768,
-            menuWidth: 265,
-            headerHeight: 50,
-            resize: function(){
-            }
-        });
+        var site = new Bamboo();
     });
 </script>
 

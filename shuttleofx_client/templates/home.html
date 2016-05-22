@@ -1,24 +1,24 @@
 {% extends "layout.html" %}
 
 {% block header %}
-    <header class="header home-header">
+    <header class="header primary home-header">
         <span class="open icon">&#9776;</span>
-        <div class="navbar search-bar">
-            {% block back_button %}{% endblock %}
-            <form id="searchForm" action="/plugin">
-                  <input type="text" placeholder="Search" id="searchquery" name="search"/>
-                  <button id="searchtrigger" type="submit" value="Submitquery"><i class="fa fa-search"></i></button>
-            </form>
-        </div>
-        <div class="header-image">
-            <img alt="header image" src="{{ url_for('static', filename='images/header.png') }}" />
-        </div>
+
         <div class="header-content">
+            <div class="navbar search-bar">
+                {% block back_button %}{% endblock %}
+                <form id="searchForm" action="/plugin">
+                      <input type="text" placeholder="Search" id="searchquery" name="search"/>
+                      <button id="searchtrigger" type="submit" value="Submitquery"><i class="fa fa-search"></i></button>
+                </form>
+            </div>
             <div class="top-header">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-lg-6 col-lg-offset-4 col-md-6 col-md-offset-6 col-sm-7 col-sm-offset-5">
-                            <h1 class="appTitle">
+                            <!--<div class="image-box"></div>-->
+
+                        <div class="appTitle">
+                            <h1>
                                 ShuttleOFX
                             </h1>
                             <p>
@@ -37,10 +37,10 @@
 	<div class="home-body main-content ">
 		<div class="container-fluid">
 			<div id="welcome" class="row">
-                <div class="col-md-4">
+                <div class="col-md-5 col-centered">
                     <h1>Welcome <span>on board</span></h1>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-6 col-centered">
                     <p>
                         The ShuttleOFX platform is designed to share OpenFX plugins between plugins creators (industrials, developpers, researchers, students, ...) and graphic artists.
                         <br>Following the TuttleOFX initiative, the ambition is to promote a standard way to create image processing algorithms usable across softwares.
@@ -58,7 +58,7 @@
                         </div>
                         <div class="description">
                             <p>
-                                Find the plugin that really fits your needs, have a look on its documentation and try it online.
+                                Find the plugin that fits your needs, have a look on its documentation and try it online.
                             </p>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
                         </div>
                         <div class="description">
                             <p>
-                                Provide beta testing for people interested in your work.
+                                Share the result of your work with the community. Upload your plugin to bring visibility on your products.
                             </p>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
                         </div>
                         <div class="description">
                             <p>
-                                Share the result of your work with the community. Upload your plugin to bring visibility on your products.
+                                Provide beta testing for people interested in your work.
                             </p>
                         </div>
                     </div>
@@ -96,16 +96,17 @@
             </div>
         	<div id="frame" class="row" >
                 <div class="col-xl-6 col-xl-offset-3 col-md-8 col-md-offset-2 col-xs-8 col-xs-offset-2">
-                    <iframe src="https://player.vimeo.com/video/127664921?color=ff0179" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                    <iframe width="930" height="523" src="https://www.youtube.com/embed/TdTZ0LIvo2o" frameborder="0" allowfullscreen></iframe>
                 </div>
         	</div>
 		</div>
-        <div class="home-footer">
-            <div id="format">
-                <div class="col-md-4">
+
+        <div id="home-footer">
+            <div class="row">
+                <div class="col-md-5 col-centered">
                     <h1 class="content-format">OpenFX <span>Open Standard</span></h1>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-5 col-centered">
                     <p>
                         OpenFX is an open standard for image processing plug-ins. It allows plug-ins written to the standard to work on any application that supports the standard. This avoids the current per application fragmentation of plugin development and support, which causes much heartache to everyone: plug-in developers, application developers and end-users alike.
                     </p>
