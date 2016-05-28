@@ -4,6 +4,8 @@ ShuttleOFX
 The ShuttleOFX platform is designed to share [OpenFX](http://openeffects.org) plugins between plugins creators (industrials, developpers, researchers, students, ...) and graphic artists. 
 Following the [TuttleOFX](http://www.tuttleofx.org) initiative, the ambition is to promote a standard way to create image processing algorithms usable across softwares.
 
+[![Stories in Ready](https://badge.waffle.io/shuttleofx/ShuttleOFX.png?label=ready&title=Ready)](http://waffle.io/shuttleofx/ShuttleOFX)
+[![Stories in Progress](https://badge.waffle.io/shuttleofx/ShuttleOFX.png?label=in progress&title=In Progress)](http://waffle.io/shuttleofx/ShuttleOFX)
 
 ##### ShuttleOFX
 >- website: [http://shuttleofx.org](http://shuttleofx.org)

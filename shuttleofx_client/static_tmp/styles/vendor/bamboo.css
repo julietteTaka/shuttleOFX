@@ -1,0 +1,74 @@
+
+	.loading {
+		background-image: url(../images/loader.gif);
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: 32px;
+	}
+	/*.loading.subview { min-height: 300px; }*/
+	#container { margin: 0; position: relative; z-index: 2;}
+	#cover { display: none; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: rgba(255,255,255,0); z-index: 600; }
+
+	header.primary {
+		position: relative;
+	}
+	header.primary .icon {
+		z-index: 22;
+		position: absolute;
+		width: 50px;
+		top: 0;
+		left: 0;
+		font-size: 26px;
+		line-height: 49px;
+		text-align: center;
+	}
+	header.primary .side {
+		left: auto;
+		right: 0;
+	}
+	header.primary hgroup {
+		text-align: center
+	}
+	header.primary hgroup h1 {
+		z-index: 20;
+		position: absolute;
+		top: 0;
+		left: 50px;
+		right: 50px;
+		margin: 0;
+		line-height:
+		49px; margin: 0;
+		font-size: 20px;
+	}
+	.navigation {
+		z-index: 1;
+		width: 100%;
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	}
+
+	#content { padding: 5px 20px; }
+
+
+@media only screen and (min-width: 768px) {
+
+	/*	Bamboo
+	=========================== */
+	#container { left: 265px; width: auto; }
+	#scroller { background:#f9f9f9; }
+
+	/*	Header
+	=========================== */
+	header.primary { background: transparent; border: none }
+	header.primary .icon { display: none }
+	header.primary hgroup { text-align: left; padding: 20px 20px 5px 20px }
+	header.primary hgroup h1 { position: relative; left: 0; right: auto; font-size: 30px; line-height: 34px; }
+
+	/*	Navigation
+	=========================== */
+	.navigation { max-width: 265px }
+
+}
