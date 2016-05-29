@@ -1,5 +1,4 @@
-# Set the base image to Ubuntu
-FROM tuttleofx/tuttleofx:latest
+FROM tuttleofx/tuttleofx:python2-latest
 
 # File Author / Maintainer
 MAINTAINER ShuttleOFX <shuttleofx-dev@googlegroups.com>
