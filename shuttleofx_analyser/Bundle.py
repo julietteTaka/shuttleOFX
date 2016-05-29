@@ -55,7 +55,7 @@ def analyse(pluginPath):
 
     pluginCache = tuttle.core().getPluginCache()
     pluginCache.addDirectoryToPath(str(pluginPath))
-    tuttle.core().getFormatter().setLogLevel_int(5)
+    tuttle.core().getFormatter().setLogLevel(5)
     tuttle.core().preload(False)
     plugins = pluginCache.getPlugins()
 
