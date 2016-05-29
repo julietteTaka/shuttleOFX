@@ -50,7 +50,7 @@ def configLocalPluginPath(ofxPluginPaths):
         logging.info("ofxPluginPath:" + str(ofxPluginPath))
         tuttle.core().getPluginCache().addDirectoryToPath(str(ofxPluginPath))
     pluginCache = tuttle.core().getPluginCache()
-    tuttle.core().getFormatter().setLogLevel_int(5)
+    tuttle.core().getFormatter().setLogLevel(5)
     tuttle.core().preload(False)
 
     logging.debug('Number of Plugins:' + str(len(pluginCache.getPlugins())))
