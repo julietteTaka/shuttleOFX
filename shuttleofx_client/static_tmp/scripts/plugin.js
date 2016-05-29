@@ -37,11 +37,20 @@ $(document).ready(function () {
 
 // recognize URLs and make them cliquable
 
-    $(".main-content").LinkRecognition({
-        target: "_blank",
-        cssClass: "external-link"
-    });
-
-
-
+    if ($(".plugin-description").length) {
+        $(".plugin-description").LinkRecognition({
+            target: "_blank",
+            cssClass: "external-link"
+        });
+    }
+    
+    console.log($(".comment-content"))
+    if ($(".comment-content").length) {
+        $(".comment-content").each(function(){
+            $(this).LinkRecognition({
+                target: "_blank",
+                cssClass: "external-link"
+            });
+        })
+     }
 });
