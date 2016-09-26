@@ -1,7 +1,6 @@
 $( document ).ready(function() {
     $("#rate").raty({
         click: function(score, evt) {
-        //alert('ID: ' + $(this).attr('id') + "\nscore: " + score + "\nevent: " + evt);
             $(".thanks").animate({opacity:1});
             var pluginId = $("#rate").attr("attr-pluginId");
             var userId = $("#rate").attr("attr-userId");
@@ -19,13 +18,9 @@ $( document ).ready(function() {
                 }),
               })
               .error(function(data) {
-                    console.log("error")
-              })
-              .success(function(data){
-                  console.log(data)
+                  console.log("error", data);
               })
               .done(function(data){
-                console.log("done")
                 location.reload();
               });
             }

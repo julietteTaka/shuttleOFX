@@ -126,11 +126,16 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                 <p>{{ plugin.rate }}</p>
+                {% set scores = plugin.rate.users %}
+                <i>{{ scores }}</i>
+                 
 
-                <div id="rate" attr-pluginId="{{plugin.pluginId}}" attr-userId="{{user.id}}" attr-pluginVersionMajor="{{versions[0].version.major}}" attr-pluginVersionMinor="{{versions[0].version.minor}}" 
-
-                attr-userScore="{{ plugin.rate.users}}">
+                <div id="rate" 
+                    attr-pluginId="{{plugin.pluginId}}"
+                    attr-userId="{{user.id}}"
+                    attr-pluginVersionMajor="{{versions[0].version.major}}"
+                    attr-pluginVersionMinor="{{versions[0].version.minor}}" 
+                    attr-userScore="{{ plugin.rate.users}}">
                 </div>
                 <br />
                 <span class="thanks">Thank you !</span>
