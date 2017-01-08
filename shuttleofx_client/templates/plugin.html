@@ -106,11 +106,22 @@
 							<img class="gallery-preview-img" src="/plugin/{{plugin.pluginId}}/thumbnail/{{image}}"
 								data-toggle="modal" data-target="#fullSizeImage">
 
-							<button class="set-default-img btn btn-link" style="margin: 0; padding: 0; transform: translateY(-133%)">
+							<button 
+                                {% if image == plugin.defautImagePath %}
+                                    {% set isDisable = "disabled" %}
+                                {% else %}
+                                    {% set isDisable = "" %}
+
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                
+                                title="Define as default image"
+                                {% endif %}
+                                class="set-default-img btn btn-link {{ isDisable }}" style="margin: 0; padding: 0; transform: translateY(-133%)">
 								{% if image == plugin.defautImagePath %}
-								<i class="fa fa-check"></i>
-								{% else %}
 								<i class="fa fa-star"></i>
+								{% else %}
+								<i class="fa fa-star-o"></i>
 								{% endif %}
 							</button>
 						</div>
